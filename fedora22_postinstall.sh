@@ -103,6 +103,9 @@ for i in ${USERS}; do
     dconf write /system/locale/region "'en_CA.UTF-8'"
     dconf write /org/gnome/desktop/input-sources/sources "[('xkb', 'us+mac')]"
     # Redshift
+    echo -e "; Global settings for redshift\n[redshift]\nlocation-provider=manual\n[manual]\nlat=41.31\nlon=-72.923611" > $HOME/.config/redshift.conf
+    mkdir -p $HOME/.config/systemd/user/redshift.service.d
+    echo -e "[Service]\nEnvironment=DISPLAY=:0" > $HOME/.config/systemd/user/redshift.service.d/display.conf
     systemctl --user enable redshift
     # vimrc
     echo 'au BufReadCmd *.epub call zip#Browse(expand("<amatch>"))' > $HOME/.vimrc
