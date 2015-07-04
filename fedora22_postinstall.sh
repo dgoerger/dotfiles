@@ -37,7 +37,7 @@ systemctl enable powertop
 # all-around
 dnf install -y git lynx screen sl vim-enhanced
 # productivity
-dnf install -y pandoc transmission-cli
+dnf install -y alpine pandoc transmission-cli
 # diagnostic
 dnf install -y msmtp nmap strace
 # security
@@ -78,6 +78,8 @@ dnf install -y gnome-shell-extension-alternate-tab gnome-tweak-tool
 USERS=`users | sed 's/ /\n/g' | sort | uniq`
 for i in ${USERS}; do
   su - ${i}
+    GITMAIL="dgoerger@users.noreply.github.com"
+    GITNAME="David Goerger"
     # GNOME
     dconf write /org/gnome/shell/enabled-extensions "['alternate-tab@gnome-shell-extensions.gcampax.github.com']"
     dconf write /org/gnome/desktop/interface/clock-show-date true
@@ -105,7 +107,7 @@ for i in ${USERS}; do
     # vimrc
     echo 'au BufReadCmd *.epub call zip#Browse(expand("<amatch>"))' > $HOME/.vimrc
     # gitconfig
-    echo -e "[user]\n    email = dgoerger@users.noreply.github.com\n    name = David Goerger\n[push]\n    default = simple\n[color]\n    ui = true" > $HOME/.gitconfig
+    echo -e "[user]\n    email = ${GITMAIL}\n    name = ${GITNAME}\n[push]\n    default = simple\n[color]\n    ui = true" > $HOME/.gitconfig
     # bashrc
     echo -e "# .bashrc\n\n# Source global definitions\nif [ -f /etc/bashrc ]; then\n        . /etc/bashrc\nfi\n\n# Uncomment the following line if you do not like the systemctl auto-paging feature:\n# export SYSTEMD_PAGER=\n\n# User specific aliases and functions\nalias view='vim -R'\nalias less='less -R'" > $HOME/.bashrc
     # bash_profile
