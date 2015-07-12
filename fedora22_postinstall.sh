@@ -81,11 +81,13 @@ for i in ${USERS}; do
     GITMAIL="dgoerger@users.noreply.github.com"
     GITNAME="David Goerger"
     # GNOME
+    dconf write /org/gnome/system/location/enabled false
+    dconf write /org/gnome/desktop/privacy/report-technical-problems false
     dconf write /org/gnome/shell/enabled-extensions "['alternate-tab@gnome-shell-extensions.gcampax.github.com']"
     dconf write /org/gnome/desktop/interface/clock-show-date true
     dconf write /org/gnome/terminal/legacy/default-show-menubar false
-    dconf write /org/gnome/settings-daemon/peripherals/touchpad/natural-scroll true
-    dconf write /org/gnome/settings-daemon/peripherals/touchpad/tap-to-click true
+    dconf write /org/gnome/settings-daemon/peripherals/touchpad/natural-scroll true # didn't work
+    dconf write /org/gnome/settings-daemon/peripherals/touchpad/tap-to-click true # didn't work
     dconf write /org/freedesktop/tracker/miner/files/index-recursive-directories "['&DESKTOP', '&DOCUMENTS', '&MUSIC', '&VIDEOS']"
     dconf write /org/gnome/desktop/media-handling/autorun-never true
     dconf write /org/gnome/desktop/datetime/automatic-timezone true
