@@ -13,6 +13,8 @@ dnf copr enable -y dgoerger/alpine
 ########################
 dnf erase -y abrt* bijiben cheese devassistant evolution gnome-boxes gnome-documents java* libreoffice* libvirt* orca qemu* rhythmbox setroubleshoot* spice* transmission-gtk
 dnf upgrade -y
+# no fingerprint reader, disable PAM service
+systemctl disable fprint
 
 ########################
 ### Hardware support ###
