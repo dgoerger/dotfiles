@@ -4,9 +4,7 @@
 ### Additional repos ###
 ########################
 dnf install -y http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-22.noarch.rpm
-dnf install -y http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-22.noarch.rpm
 dnf copr enable -y petersen/pandoc
-dnf copr enable -y dgoerger/alpine
 
 ########################
 ## Remove unnecessary ##
@@ -23,9 +21,8 @@ systemctl disable fprint
 # OpenCL - Intel
 dnf install -y beignet
 # OpenGL
-dnf install -y mesa-vdpau-drivers libva-intel-driver libva-vdpau-driver
-# wireless card
-dnf install -y akmod-wl broadcom-wl
+dnf install -y mesa-vdpau-drivers libva-vdpau-driver
+#dnf install -y akmod-wl broadcom-wl
 ## redshift
 dnf install -y redshift
 # powertop - IMPORTANT: not if this is a desktop; it may power down USB-connected devices
@@ -63,13 +60,13 @@ for i in ${UNUSED_HUNSPELL}; do
 done
 ### graphical applications ###
 # Internet applications
-dnf install -y geary mozilla-https-everywhere mozilla-noscript
+dnf install -y mozilla-https-everywhere mozilla-noscript
 # multimedia
 dnf install -y gnome-music shotwell
 # awful workaround for gnome#739396
 \rm /usr/libexec/shotwell/shotwell-video-thumbnailer
 # productivity
-dnf install -y gnome-contacts gnumeric keepassx vinagre
+dnf install -y keepassx
 ### GNOME tweaks ###
 # GNOME Shell
 dnf install -y gnome-shell-extension-alternate-tab gnome-tweak-tool
