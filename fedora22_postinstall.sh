@@ -13,6 +13,7 @@ dnf erase -y abrt* bijiben cheese devassistant evolution gnome-boxes gnome-docum
 dnf upgrade -y
 # no fingerprint reader, disable PAM service
 systemctl disable fprint
+systemctl disable iscsi
 
 ########################
 ### Hardware support ###
