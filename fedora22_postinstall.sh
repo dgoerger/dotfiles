@@ -3,17 +3,13 @@
 ########################
 ### Additional repos ###
 ########################
-dnf install -y http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-22.noarch.rpm
-dnf copr enable -y petersen/pandoc
+#dnf install -y http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-22.noarch.rpm
 
 ########################
 ## Remove unnecessary ##
 ########################
-dnf erase -y abrt* bijiben cheese devassistant evolution gnome-boxes gnome-documents java* libreoffice* libvirt* orca qemu* rhythmbox setroubleshoot* spice* transmission-gtk
+dnf remove -y abrt* b43-fwcutter b43-openfwwf bijiben cheese devassistant dnf-yum evolution fprintd gnome-boxes gnome-documents hpijs hplip-common iscsi-initiator-utils java* libfprint libiscsi libreoffice* libvirt* orca qemu* rhythmbox setroubleshoot* spice* transmission-gtk yum-metadata-parser
 dnf upgrade -y
-# no fingerprint reader, disable PAM service
-systemctl disable fprint
-systemctl disable iscsi
 
 ########################
 ### Hardware support ###
@@ -23,7 +19,6 @@ systemctl disable iscsi
 dnf install -y beignet
 # OpenGL
 dnf install -y mesa-vdpau-drivers libva-vdpau-driver
-#dnf install -y akmod-wl broadcom-wl
 ## redshift
 dnf install -y redshift
 # powertop - IMPORTANT: not if this is a desktop; it may power down USB-connected devices
@@ -35,18 +30,19 @@ systemctl enable powertop
 ########################
 ### commandline apps ###
 # all-around
-dnf install -y git lynx screen sl vim-enhanced
+dnf install -y git htop lynx ncdu sl tmux vim-enhanced
 # productivity
-dnf install -y alpine pandoc transmission-cli
+dnf install -y alpine pandoc-static transmission-cli
 # diagnostic
-dnf install -y msmtp nmap strace
+dnf install -y msmtp strace
 # security
-dnf install -y firewalld
+dnf install -y firewalld iptraf-ng nmap ykpers
 systemctl enable firewalld
 firewall-cmd --set-default-zone=drop
 ### system libraries ###
 # multimedia
-dnf install -y gstreamer1-libav gstreamer1-plugins-bad-free gstreamer1-vaapi
+dnf install -y gstreamer1-plugins-bad-free gstreamer1-vaapi
+#dnf install -y gstreamer1-libav # requires enabling rpmfusion-free
 # productivity
 dnf install -y lilypond texlive-collection-xetex
 # spellcheck
@@ -65,9 +61,9 @@ dnf install -y mozilla-https-everywhere mozilla-noscript
 # multimedia
 dnf install -y gnome-music shotwell
 # awful workaround for gnome#739396
-\rm /usr/libexec/shotwell/shotwell-video-thumbnailer
+chmod 444 /usr/libexec/shotwell/shotwell-video-thumbnailer
 # productivity
-dnf install -y keepassx
+dnf install -y nautilus-terminal keepassx
 ### GNOME tweaks ###
 # GNOME Shell
 dnf install -y gnome-shell-extension-alternate-tab gnome-tweak-tool
@@ -121,7 +117,7 @@ for i in ${USERS}; do
 done
 ### Firefox ###
 mkdir -p /usr/lib64/firefox/browser/defaults/preferences
-echo -e '### Mozilla User Preferences\n\n# neuter the hazard of ctrl+q\npref("browser.showQuitWarning", true);\n# disable sponsored tiles\npref("browser.newtabpage.directory.ping", "");\npref("browser.newtabpage.directory.source", "");\n# set DONOTTRACK header\npref("privacy.donottrackheader.enabled", true);\n# set spellcheck language as Canadian English moz#836230\npref("spellchecker.dictionary", "en_CA");\n# disable loading system colours - hazardous gtk dark\npref("browser.display.use_system_colors", false);\n# disable disk cache\npref("browser.cache.disk.enable", false);\npref("browser.cache.disk_cache_ssl", false);\npref("browser.cache.offline.enable", false);\n# enable tracking protection\npref("privacy.trackingprotection.enabled", true);\n# sane Firefox NoScript settings\nuser_pref("noscript.global", true);\nuser_pref("noscript.ctxMenu", false);' > /usr/lib64/firefox/browser/defaults/preferences/user.js
+echo -e '### Mozilla User Preferences\n\n# neuter the hazard of ctrl+q\npref("browser.showQuitWarning", true);\n# disable sponsored tiles\npref("browser.newtabpage.directory.ping", "");\npref("browser.newtabpage.directory.source", "");\n# set DONOTTRACK header\npref("privacy.donottrackheader.enabled", true);\n# set spellcheck language as Canadian English moz#836230\npref("spellchecker.dictionary", "en_CA");\n# disable loading system colours - hazardous gtk dark\npref("browser.display.use_system_colors", false);\n# disable disk cache\npref("browser.cache.disk.enable", false);\npref("browser.cache.disk_cache_ssl", false);\npref("browser.cache.offline.enable", false);\n# enable tracking protection\npref("privacy.trackingprotection.enabled", true);\n# sane Firefox NoScript settings\nuser_pref("noscript.global", true);\nuser_pref("noscript.ctxMenu", false);\n# privacy\npref("browser.safebrowsing.downloads.enabled",false);\npref("browser.safebrowsing.malware.enabled",false);\npref("datareporting.healthreport.service.enabled",false);\npref("datareporting.healthreport.uploadEnabled",false);\npref("toolkit.telemetry.enabled",false);\npref("media.eme.enabled",false);\npref("media.gmp-eme-adobe.enabled",false);\npref("browser.pocket.enabled",false);\npref("browser.search.suggest.enabled",false);' > /usr/lib64/firefox/browser/defaults/preferences/user.js
 mkdir -p /usr/lib64/firefox/browser/defaults/profile/chrome
 echo -e '/*\n * * Place in /usr/lib64/firefox/browser/defaults/profile/chrome\n * * or in your local .mozilla/firefox/${profile}/chrome/ folder.\n * * Append with further fixes for websites which do not play\n * * nicely with Firefox GTK3 and a global GTK+ dark theme.\n * *\n * * NOTE: "\!important" overrides sites specified schema; only\n * *       use on sites with truly broken CSS. Lines without this\n * *       flag just provide saner defaults than what is shipped\n * *       in Firefox. See moz#519763.\n * */\n@-moz-document domain\(amtrak.com\) {\n  input {\n    color: black \!important;\n  }\n  select {\n    color: black \!important;\n  }\n}\n@-moz-document domain\(duckduckgo.com\) {\n  input.js-search-input {\n    color: black \!important;\n  }\n}\n@-moz-document domain\(runbox.com\) {\n  .formfield {\n    color: #e1eeff \!important;\n  }\n}' | sed 's/\\//g' > /usr/lib64/firefox/browser/defaults/profile/chrome/userContent.css
 ### /usr/local directories ###
