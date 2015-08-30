@@ -8,7 +8,7 @@
 ########################
 ## Remove unnecessary ##
 ########################
-dnf remove -y abrt* b43-fwcutter b43-openfwwf bijiben cheese devassistant dnf-yum evolution fprintd gnome-boxes gnome-documents hpijs hplip-common iscsi-initiator-utils java* libfprint libiscsi libreoffice* libvirt* orca qemu* rhythmbox setroubleshoot* spice* transmission-gtk yum-metadata-parser
+dnf remove -y abrt* b43-fwcutter b43-openfwwf baobab bijiben cheese devassistant dnf-yum evolution foomatic* fprintd glusterfs* gnome-boxes gnome-documents hpijs hplip-common httpd* iscsi-initiator-utils java* libfprint libiscsi libreoffice* libreport libvirt* memtest86+ NetworkManager-adsl NetworkManager-team openvpn orca qemu* rhythmbox sane-backends setroubleshoot* spice* tigervnc* transmission-gtk xen* yelp* yum-metadata-parser
 dnf upgrade -y
 
 ########################
@@ -30,16 +30,18 @@ systemctl enable powertop
 ########################
 ### commandline apps ###
 # all-around
-dnf install -y git htop lynx ncdu sl tmux vim-enhanced
+dnf install -y git htop lsof lynx ncdu sl tmux vim-enhanced
 # productivity
 dnf install -y alpine pandoc-static transmission-cli
 # diagnostic
-dnf install -y msmtp strace
+dnf install -y msmtp strace traceroute
 # security
 dnf install -y firewalld iptraf-ng nmap ykpers
 systemctl enable firewalld
 firewall-cmd --set-default-zone=drop
 ### system libraries ###
+# fonts
+#-
 # multimedia
 dnf install -y gstreamer1-plugins-bad-free gstreamer1-vaapi
 #dnf install -y gstreamer1-libav # requires enabling rpmfusion-free
