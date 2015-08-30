@@ -108,7 +108,7 @@ for i in ${USERS}; do
     echo -e "[Service]\nEnvironment=DISPLAY=:0" > $HOME/.config/systemd/user/redshift.service.d/display.conf
     systemctl --user enable redshift
     # vimrc
-    echo 'au BufReadCmd *.epub call zip#Browse(expand("<amatch>"))' > $HOME/.vimrc
+    echo -e 'au BufReadCmd *.epub call zip#Browse(expand("<amatch>"))\nset viminfo="NONE"\nset paste' > $HOME/.vimrc
     # gitconfig
     echo -e "[user]\n    email = ${GITMAIL}\n    name = ${GITNAME}\n[push]\n    default = simple\n[color]\n    ui = true" > $HOME/.gitconfig
     # bashrc
