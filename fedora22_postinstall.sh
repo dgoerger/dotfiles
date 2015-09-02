@@ -8,7 +8,8 @@
 ########################
 ## Remove unnecessary ##
 ########################
-dnf remove -y abrt* b43-fwcutter b43-openfwwf baobab bijiben cheese devassistant dnf-yum evolution foomatic* fprintd glusterfs* gnome-boxes gnome-documents hpijs hplip-common httpd* iscsi-initiator-utils java* libfprint libiscsi libreoffice* libreport libvirt* memtest86+ NetworkManager-adsl NetworkManager-team openvpn orca qemu* rhythmbox sane-backends setroubleshoot* spice* tigervnc* transmission-gtk xen* yelp* yum-metadata-parser
+dnf remove -y abrt* b43-fwcutter b43-openfwwf baobab bijiben cheese devassistant dnf-yum evolution foomatic* fprintd glusterfs* gnome-boxes gnome-documents gnome-system-monitor hpijs hplip-common httpd* iscsi-initiator-utils java* libfprint libiscsi libreoffice* libreport libvirt* memtest86+ NetworkManager-adsl NetworkManager-team openvpn orca python qemu* rhythmbox sane-backends setroubleshoot* spice* tigervnc* transmission-gtk xen* yelp* yum-metadata-parser
+dnf autoremove -y
 dnf upgrade -y
 
 ########################
@@ -30,13 +31,12 @@ systemctl enable powertop
 ########################
 ### commandline apps ###
 # all-around
-dnf install -y git htop lsof lynx ncdu sl tmux vim-enhanced
+dnf install -y git htop lsof lynx ncdu sl tmux traceroute vifm vim-enhanced
 # productivity
 dnf install -y alpine pandoc-static transmission-cli
-# diagnostic
-dnf install -y msmtp strace traceroute
 # security
-dnf install -y firewalld iptraf-ng nmap ykpers
+dnf install -y firewalld iptraf-ng ykpers
+#dnf install -y nmap  # requires python2
 systemctl enable firewalld
 firewall-cmd --set-default-zone=drop
 ### system libraries ###
@@ -46,7 +46,7 @@ firewall-cmd --set-default-zone=drop
 dnf install -y gstreamer1-plugins-bad-free gstreamer1-vaapi
 #dnf install -y gstreamer1-libav # requires enabling rpmfusion-free
 # productivity
-dnf install -y lilypond texlive-collection-xetex
+dnf install -y texlive-collection-xetex
 # spellcheck
 dnf install -y hunspell-en hunspell-es hunspell-de hunspell-fr
 # TODO: is the below still necessary for the Firefox dictionaries bug?
@@ -65,10 +65,10 @@ dnf install -y gnome-music shotwell
 # awful workaround for gnome#739396
 chmod 444 /usr/libexec/shotwell/shotwell-video-thumbnailer
 # productivity
-dnf install -y nautilus-terminal keepassx
+dnf install -y keepassx
 ### GNOME tweaks ###
 # GNOME Shell
-dnf install -y gnome-shell-extension-alternate-tab gnome-tweak-tool
+dnf install -y gnome-shell-extension-alternate-tab
 
 ########################
 #### Customizations ####
