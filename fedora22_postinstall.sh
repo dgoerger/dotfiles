@@ -31,7 +31,7 @@ systemctl enable powertop
 ########################
 ### commandline apps ###
 # all-around
-dnf install -y git htop lsof lynx ncdu sl tmux traceroute vifm vim-enhanced
+dnf install -y git htop lsof ncdu sl tmux traceroute vifm vim-enhanced w3m
 # productivity
 dnf install -y alpine pandoc-static transmission-cli
 # security
