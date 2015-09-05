@@ -31,12 +31,13 @@ systemctl enable powertop
 ########################
 ### commandline apps ###
 # all-around
-dnf install -y git htop lsof ncdu sl tmux traceroute vifm vim-enhanced w3m
+dnf install -y git sl tmux traceroute vifm vim-enhanced w3m
+# monitoring
+dnf install -y bmon htop iotop iptraf-ng lsof ncdu
 # productivity
 dnf install -y alpine pandoc-static transmission-cli
 # security
-dnf install -y firewalld iptraf-ng ykpers
-#dnf install -y nmap  # requires python2
+dnf install -y firewalld nmap ykpers
 systemctl enable firewalld
 firewall-cmd --set-default-zone=drop
 ### system libraries ###
