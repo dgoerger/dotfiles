@@ -31,7 +31,7 @@ systemctl enable powertop
 ########################
 ### commandline apps ###
 # all-around
-dnf install -y git sl tmux traceroute vifm vim-enhanced w3m
+dnf install -y git git-cal git-extras sl tig tmux traceroute vifm vim-enhanced vim-fugitive w3m
 # monitoring
 dnf install -y bmon htop iotop iptraf-ng lsof ncdu
 # productivity
