@@ -8,7 +8,7 @@
 ########################
 ## Remove unnecessary ##
 ########################
-dnf remove -y abrt* b43-fwcutter b43-openfwwf baobab bijiben cheese devassistant dnf-yum evolution foomatic* fprintd glusterfs* gnome-boxes gnome-documents gnome-system-monitor hpijs hplip-common httpd* iscsi-initiator-utils java* libfprint libiscsi libreoffice* libreport libvirt* memtest86+ NetworkManager-adsl NetworkManager-team openvpn orca python qemu* rhythmbox sane-backends setroubleshoot* spice* tigervnc* transmission-gtk xen* yelp* yum-metadata-parser
+dnf remove -y abrt* b43-fwcutter b43-openfwwf baobab bijiben cheese devassistant dnf-yum evolution foomatic* fprintd glusterfs* gnome-boxes gnome-documents gnome-system-monitor hpijs hplip-common httpd* iscsi-initiator-utils java* libfprint libiscsi libreoffice* libreport libvirt* memtest86+ NetworkManager-adsl NetworkManager-team openvpn orca perl python qemu* rhythmbox sane-backends setroubleshoot* spice* tigervnc* transmission-gtk xen* yelp* yum-metadata-parser
 dnf autoremove -y
 dnf upgrade -y
 
@@ -31,7 +31,7 @@ systemctl enable powertop
 ########################
 ### commandline apps ###
 # all-around
-dnf install -y git git-cal git-extras sl tig tmux traceroute vifm vim-enhanced vim-fugitive w3m
+dnf install -y git git-cal git-extras lynx sl tig tmux traceroute vifm vim-enhanced vim-fugitive
 # monitoring
 dnf install -y bmon htop iotop iptraf-ng lsof ncdu
 # productivity
