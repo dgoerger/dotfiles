@@ -31,11 +31,11 @@ systemctl enable powertop
 ########################
 ### commandline apps ###
 # all-around
-dnf install -y git git-cal git-extras lynx sl tig tmux traceroute vifm vim-enhanced vim-fugitive
+dnf install -y git git-cal git-extras lynx sl tig tmux tmux-powerline traceroute vim-enhanced vim-fugitive
 # monitoring
 dnf install -y bmon htop iotop iptraf-ng lsof ncdu
 # productivity
-dnf install -y alpine pandoc-static transmission-cli
+dnf install -y mutt pandoc-static transmission-cli
 # security
 dnf install -y firewalld nmap ykpers
 systemctl enable firewalld
