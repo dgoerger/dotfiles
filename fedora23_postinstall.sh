@@ -8,7 +8,7 @@
 ########################
 ## Remove unnecessary ##
 ########################
-dnf remove -y abrt* b43-fwcutter b43-openfwwf baobab bijiben cheese devassistant dnf-yum evolution foomatic* fprintd glusterfs* gnome-boxes gnome-documents gnome-system-monitor hpijs hplip-common httpd* iscsi-initiator-utils java* libfprint libiscsi libreoffice* libreport libvirt* memtest86+ NetworkManager-adsl NetworkManager-team openvpn orca perl python qemu* rhythmbox sane-backends setroubleshoot* spice* tigervnc* transmission-gtk xen* yelp* yum-metadata-parser
+dnf remove -y abrt* b43* baobab bijiben cheese devassistant* dos2unix dnf-yum empathy evince-browser-plugin evolution foomatic* fpaste fprintd glusterfs* gnome-boxes gnome-characters gnome-classic-session gnome-clocks gnome-contacts gnome-documents gnome-system-monitor gnome-weather hpijs hplip-common httpd* hyperv* iscsi-initiator-utils iwl* java* libfprint libiscsi libreoffice* libreport libvirt* memtest86+ NetworkManager-adsl NetworkManager-team openvpn orca perl pptp python qemu* rhythmbox sane-backends setroubleshoot* spice* tigervnc* transmission-gtk vpnc xen* yelp* yum-metadata-parser
 dnf autoremove -y
 dnf upgrade -y
 
@@ -17,21 +17,16 @@ dnf upgrade -y
 ########################
 ## graphics
 # OpenCL - Intel
-dnf install -y beignet
+#dnf install -y beignet
 # OpenGL
 dnf install -y mesa-vdpau-drivers libva-vdpau-driver
-## redshift
-dnf install -y redshift
-# powertop - IMPORTANT: not if this is a desktop; it may power down USB-connected devices
-dnf install -y powertop
-systemctl enable powertop
 
 ########################
 ####### Software #######
 ########################
 ### commandline apps ###
 # all-around
-dnf install -y git git-cal git-extras lynx sl tig tmux tmux-powerline traceroute vim-enhanced vim-fugitive
+dnf install -y git git-cal git-extras sl tig tmux traceroute vim-enhanced vim-fugitive
 # monitoring
 dnf install -y bmon htop iotop iptraf-ng lsof ncdu
 # productivity
@@ -80,7 +75,6 @@ for i in ${USERS}; do
     GITMAIL="dgoerger@users.noreply.github.com"
     GITNAME="David Goerger"
     # GNOME
-    dconf write /org/gnome/system/location/enabled false
     dconf write /org/gnome/desktop/privacy/report-technical-problems false
     dconf write /org/gnome/shell/enabled-extensions "['alternate-tab@gnome-shell-extensions.gcampax.github.com']"
     dconf write /org/gnome/desktop/interface/clock-show-date true
@@ -103,11 +97,6 @@ for i in ${USERS}; do
     localectl set-x11-keymap us-mac mac
     dconf write /system/locale/region "'en_CA.UTF-8'"
     dconf write /org/gnome/desktop/input-sources/sources "[('xkb', 'us+mac')]"
-    # Redshift
-    echo -e "; Global settings for redshift\n[redshift]\nlocation-provider=manual\n[manual]\nlat=41.31\nlon=-72.923611" > $HOME/.config/redshift.conf
-    mkdir -p $HOME/.config/systemd/user/redshift.service.d
-    echo -e "[Service]\nEnvironment=DISPLAY=:0" > $HOME/.config/systemd/user/redshift.service.d/display.conf
-    systemctl --user enable redshift
     # vimrc
     echo -e 'au BufReadCmd *.epub call zip#Browse(expand("<amatch>"))\nset viminfo="NONE"\nset paste' > $HOME/.vimrc
     # gitconfig
