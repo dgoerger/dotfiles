@@ -48,7 +48,8 @@ for i in ${UNUSED_HUNSPELL}; do
 done
 ### graphical applications ###
 # productivity
-sudo dnf install -y keepassx vinagre
+sudo dnf install -y gnumeric keepassx vinagre
+# sudo dnf install -y gnome-boxes
 ### GNOME tweaks ###
 # GNOME Shell
 sudo dnf install -y gnome-shell-extension-alternate-tab
