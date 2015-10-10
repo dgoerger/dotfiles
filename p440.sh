@@ -57,6 +57,7 @@ sudo dnf install -y gnome-shell-extension-alternate-tab
 ########################
 #### Customizations ####
 ########################
+sudo hostname erebus
 # GNOME
 dconf write /org/gnome/shell/enabled-extensions "['alternate-tab@gnome-shell-extensions.gcampax.github.com']"
 dconf write /org/gnome/desktop/interface/clock-show-date true
@@ -67,10 +68,6 @@ dconf write /org/freedesktop/tracker/miner/files/index-recursive-directories "['
 dconf write /org/gnome/desktop/media-handling/autorun-never true
 dconf write /org/gnome/desktop/datetime/automatic-timezone false
 dconf write /org/gnome/nautilus/preferences/sort-directories-first true
-#mkdir -p $HOME/.config/gtk-3.0
-#echo -e "[Settings]\ngtk-application-prefer-dark-theme=1" > $HOME/.config/gtk-3.0/settings.ini
 ### Firefox ###
 mkdir -p /usr/lib64/firefox/browser/defaults/preferences
 echo -e '### Mozilla User Preferences\n\n# neuter the hazard of ctrl+q\npref("browser.showQuitWarning", true);\n# disable sponsored tiles\npref("browser.newtabpage.directory.ping", "");\npref("browser.newtabpage.directory.source", "");\n# set DONOTTRACK header\npref("privacy.donottrackheader.enabled", true);\n# set spellcheck language as Canadian English moz#836230\npref("spellchecker.dictionary", "en_CA");\n# disable loading system colours - hazardous gtk dark\npref("browser.display.use_system_colors", false);\n# disable disk cache\npref("browser.cache.disk.enable", false);\npref("browser.cache.disk_cache_ssl", false);\npref("browser.cache.offline.enable", false);\n# enable tracking protection\npref("privacy.trackingprotection.enabled", true);\n# sane Firefox NoScript settings\nuser_pref("noscript.global", true);\nuser_pref("noscript.ctxMenu", false);\n# privacy\npref("browser.safebrowsing.downloads.enabled",false);\npref("browser.safebrowsing.malware.enabled",false);\npref("datareporting.healthreport.service.enabled",false);\npref("datareporting.healthreport.uploadEnabled",false);\npref("toolkit.telemetry.enabled",false);\npref("media.eme.enabled",false);\npref("media.gmp-eme-adobe.enabled",false);\npref("browser.pocket.enabled",false);\npref("browser.search.suggest.enabled",false);' | sudo tee /usr/lib64/firefox/browser/defaults/preferences/user.js
-### /usr/local directories ###
-sudo mkdir -p /usr/local/bin
