@@ -69,6 +69,7 @@ sudo dnf install -y gnome-shell-extension-alternate-tab
 ########################
 #### Customizations ####
 ########################
+sudo hostname gelos
 GITMAIL="dgoerger@users.noreply.github.com"
 GITNAME="David Goerger"
 # GNOME
