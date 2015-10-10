@@ -54,8 +54,6 @@ for i in ${UNUSED_HUNSPELL}; do
   fi
 done
 ### graphical applications ###
-# Internet applications
-sudo dnf install -y mozilla-https-everywhere mozilla-noscript
 # multimedia
 sudo dnf install -y gnome-music shotwell
 # awful workaround for gnome#739396
