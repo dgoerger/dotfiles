@@ -26,9 +26,9 @@ sudo dnf install -y mesa-vdpau-drivers libva-vdpau-driver
 ########################
 ### commandline apps ###
 # all-around
-sudo dnf install -y elinks git git-cal git-extras sl tig tmux traceroute vim-enhanced vim-fugitive
+sudo dnf install -y elinks git git-cal git-extras sl tig tmux tmux-powerline traceroute vim-enhanced vim-fugitive
 # monitoring
-sudo dnf install -y bmon htop iotop iptraf-ng lsof ncdu
+sudo dnf install -y htop iotop iptraf-ng lsof ncdu
 # productivity
 sudo dnf install -y pandoc-static transmission-cli
 # security
