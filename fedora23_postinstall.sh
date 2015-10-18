@@ -26,7 +26,16 @@ sudo dnf install -y mesa-vdpau-drivers libva-vdpau-driver
 ########################
 ### commandline apps ###
 # all-around
-sudo dnf install -y elinks git git-cal git-extras sl tig tmux tmux-powerline traceroute vim-enhanced vim-fugitive
+sudo dnf install -y git git-cal git-extras sl tig tmux tmux-powerline traceroute vim-enhanced vim-fugitive
+## compile links from source: http://links.twibright.com/download.php
+# configure with openssl, ipv6, zlib, utf8 (no x11/graphics)---i.e. default
+## compile cmus from source: https://cmus.github.io (foss libs only)
+# ./configure CONFIG_CDDB=y CONFIG_CDIO=y CONFIG_DISCID=y CONFIG_FLAC=y \
+# CONFIG_MAD=n CONFIG_MODPLUG=n CONFIG_MPC=n CONFIG_VORBIS=y CONFIG_OPUS=y \
+# CONFIG_WAVPACK=n CONFIG_MP4=n CONFIG_AAC=n CONFIG_FFMPEG=n CONFIG_VTX=n \
+# CONFIG_CUE=n CONFIG_ROAR=n CONFIG_PULSE=y CONFIG_ALSA=n CONFIG_JACK=n \
+# CONFIG_SAMPLERATE=n CONFIG_AO=y CONFIG_ARTS=n CONFIG_OSS=n CONFIG_SNDIO=n \
+# CONFIG_SUN=n CONFIG_WAVEOUT=n
 # monitoring
 sudo dnf install -y htop iotop iptraf-ng lsof ncdu
 # productivity
@@ -35,6 +44,9 @@ sudo dnf install -y pandoc-static transmission-cli
 sudo dnf install -y firewalld nmap ykpers
 sudo systemctl enable firewalld
 sudo firewall-cmd --set-default-zone=drop
+# set stricter system crypto policy
+echo "FUTURE" | sudo tee /etc/crypto-policies/config
+sudo update-crypto-policies
 
 ### system libraries ###
 # fonts
@@ -62,6 +74,7 @@ sudo dnf install -y gnome-shell-extension-alternate-tab
 ########################
 #### Customizations ####
 ########################
+# set hostname
 echo "gelos" | sudo tee /etc/hostname
 # GNOME
 dconf write /org/gnome/desktop/privacy/report-technical-problems false
