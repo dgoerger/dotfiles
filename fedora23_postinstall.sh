@@ -45,6 +45,8 @@ sudo dnf install -y firewalld nmap ykpers
 sudo systemctl enable firewalld
 sudo firewall-cmd --set-default-zone=drop
 # set stricter system crypto policy
+# note NSS doesn't comply: https://bugzilla.mozilla.org/show_bug.cgi?id=1009429
+#                          https://bugzilla.redhat.com/show_bug.cgi?id=1157720
 echo "FUTURE" | sudo tee /etc/crypto-policies/config
 sudo update-crypto-policies
 
