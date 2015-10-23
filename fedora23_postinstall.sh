@@ -60,6 +60,10 @@ sudo dnf install -y gstreamer1-plugins-bad-free gstreamer1-vaapi
 sudo dnf install -y texlive-collection-xetex
 # spellcheck
 sudo dnf install -y hunspell-en hunspell-es hunspell-de hunspell-fr
+# docker
+sudo dnf install -y docker docker-vim
+sudo systemctl enable docker
+sudo gpasswd -a ${USER} docker
 
 ### graphical applications ###
 # multimedia
