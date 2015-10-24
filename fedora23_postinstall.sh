@@ -8,7 +8,7 @@
 ########################
 ## Remove unnecessary ##
 ########################
-sudo dnf remove -y abrt* b43* baobab bijiben cheese devassistant* dos2unix dnf-yum empathy evince-browser-plugin evolution foomatic* fpaste fprintd glusterfs* gnome-boxes gnome-characters gnome-classic-session gnome-clocks gnome-contacts gnome-documents gnome-system-monitor gnome-weather hpijs hplip-common httpd* hyperv* iscsi-initiator-utils iwl* java* libfprint libiscsi libreoffice* libreport libvirt* memtest86+ NetworkManager-adsl NetworkManager-team openvpn orca perl pptp python qemu* rhythmbox sane-backends setroubleshoot* spice* tigervnc* transmission-gtk vpnc xen* yelp* yum-metadata-parser
+sudo dnf remove -y abrt* b43* baobab bijiben cheese devassistant* dos2unix dnf-yum empathy evince-browser-plugin evolution foomatic* fpaste fprintd glusterfs* gnome-boxes gnome-characters gnome-classic-session gnome-clocks gnome-contacts gnome-documents gnome-music gnome-system-monitor gnome-weather hpijs hplip-common httpd* hyperv* iscsi-initiator-utils iwl* java* libfprint libiscsi libreoffice* libreport libvirt* memtest86+ NetworkManager-adsl NetworkManager-team openvpn orca perl pptp python qemu* rhythmbox sane-backends setroubleshoot* shotwell spice* tigervnc* transmission-gtk vpnc xen* yelp* yum-metadata-parser
 sudo dnf autoremove -y
 sudo dnf upgrade -y
 
@@ -37,7 +37,7 @@ sudo dnf install -y git git-cal git-extras sl tig tmux tmux-powerline traceroute
 # CONFIG_SAMPLERATE=n CONFIG_AO=y CONFIG_ARTS=n CONFIG_OSS=n CONFIG_SNDIO=n \
 # CONFIG_SUN=n CONFIG_WAVEOUT=n
 # monitoring
-sudo dnf install -y htop iotop iptraf-ng lsof ncdu
+sudo dnf install -y htop lsof ncdu
 # productivity
 sudo dnf install -y pandoc-static transmission-cli
 # security
@@ -72,6 +72,7 @@ sudo dnf install -y shotwell
 sudo chmod 444 /usr/libexec/shotwell/shotwell-video-thumbnailer
 # productivity
 sudo dnf install -y gnumeric keepassx
+#sudo dnf install -y vinagre
 
 ### GNOME tweaks ###
 # GNOME Shell
@@ -81,7 +82,8 @@ sudo dnf install -y gnome-shell-extension-alternate-tab
 #### Customizations ####
 ########################
 # set hostname
-echo "gelos" | sudo tee /etc/hostname
+sudo hostnamectl set-hostname gelos
+# sudo hostnamectl set-hostname erebus
 # GNOME
 dconf write /org/gnome/desktop/privacy/report-technical-problems false
 dconf write /org/gnome/shell/enabled-extensions "['alternate-tab@gnome-shell-extensions.gcampax.github.com']"
