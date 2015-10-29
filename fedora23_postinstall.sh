@@ -28,16 +28,18 @@ sudo dnf install -y mesa-vdpau-drivers libva-vdpau-driver
 # all-around
 sudo dnf install -y git git-cal git-extras sl tig tmux tmux-powerline traceroute vim-enhanced vim-fugitive
 ## compile links from source: http://links.twibright.com/download.php
-# configure with openssl, ipv6, zlib, utf8 (no x11/graphics)---i.e. default
-sudo dnf install -y gcc openssl-devel
-cd /tmp/
+# fetch source
+cd /tmp
 curl -LO http://links.twibright.com/download/links-2.12.tar.gz
 tar -xf links-2.12.tar.gz
 cd /tmp/links-2.12
+# install build deps
+sudo dnf install -y gcc openssl-devel
+# compile!
 ./configure -with-ssl
 make
 sudo make install
-cd ~
+# clean up (static linking)
 sudo dnf remove -y binutils cpp gcc glibc-devel glibc-headers isl kernel-headers keyutils-libs-devel krb5-devel libcom_err-devel libmpc libselinux-devel libsepol-devel libverto-devel openssl-devel pcre-devel zlib-devel
 ## compile cmus from source: https://cmus.github.io (foss libs only)
 # fetch source
