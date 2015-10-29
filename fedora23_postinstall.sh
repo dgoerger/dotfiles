@@ -40,21 +40,44 @@ sudo make install
 cd ~
 sudo dnf remove -y binutils cpp gcc glibc-devel glibc-headers isl kernel-headers keyutils-libs-devel krb5-devel libcom_err-devel libmpc libselinux-devel libsepol-devel libverto-devel openssl-devel pcre-devel zlib-devel
 ## compile cmus from source: https://cmus.github.io (foss libs only)
-# ./configure CONFIG_CDDB=y CONFIG_CDIO=y CONFIG_DISCID=y CONFIG_FLAC=y \
-# CONFIG_MAD=n CONFIG_MODPLUG=n CONFIG_MPC=n CONFIG_VORBIS=y CONFIG_OPUS=y \
-# CONFIG_WAVPACK=n CONFIG_MP4=n CONFIG_AAC=n CONFIG_FFMPEG=n CONFIG_VTX=n \
-# CONFIG_CUE=n CONFIG_ROAR=n CONFIG_PULSE=y CONFIG_ALSA=n CONFIG_JACK=n \
-# CONFIG_SAMPLERATE=n CONFIG_AO=y CONFIG_ARTS=n CONFIG_OSS=n CONFIG_SNDIO=n \
-# CONFIG_SUN=n CONFIG_WAVEOUT=n
-# monitoring
+# fetch source
+cd /tmp
+curl -LO https://github.com/cmus/cmus/archive/v2.7.1.tar.gz
+tar -xf v2.7.1.tar.gz
+cd cmus-2.7.1
+# install build deps
+sudo dnf install -y gcc ncurses-devel libcddb-devel libcdio-paranoia-devel \
+flac-devel libvorbis-devel opusfile-devel pulseaudio-libs-devel libao-devel \
+libdiscid-devel
+# compile!
+./configure CONFIG_CDDB=y CONFIG_CDIO=y CONFIG_DISCID=y CONFIG_FLAC=y \
+CONFIG_MAD=n CONFIG_MODPLUG=n CONFIG_MPC=n CONFIG_VORBIS=y CONFIG_OPUS=y \
+CONFIG_WAVPACK=n CONFIG_MP4=n CONFIG_AAC=n CONFIG_FFMPEG=n CONFIG_VTX=n \
+CONFIG_CUE=n CONFIG_ROAR=n CONFIG_PULSE=y CONFIG_ALSA=n CONFIG_JACK=n \
+CONFIG_SAMPLERATE=n CONFIG_AO=y CONFIG_ARTS=n CONFIG_OSS=n CONFIG_SNDIO=n \
+CONFIG_SUN=n CONFIG_WAVEOUT=n
+make
+sudo make install
+# clean up
+sudo dnf remove -y binutils cpp gcc glibc-devel glibc-headers isl \
+kernel-headers libmpc ncurses-devel libcddb libcddb-devel \
+libcdio-paranoia-devel libcdio-devel autoconf automake flac-devel \
+libogg-devel m4 perl-Thread-Queue libvorbis-devel keyutils-libs-devel \
+krb5-devel libcom_err-devel libselinux-devel libsepol-devel libverto-devel \
+openssl-devel opus-devel opusfile opusfile-devel pcre-devel zlib-devel \
+pulseaudio-libs-devel glib2-devel libao libao-devel libdiscid libdiscid-devel \
+flac flac-devel
+# make sure we didn't uninstall too much (linked libraries)
+sudo dnf install -y flac libao libcddb libcdio-paranoia libdiscid opusfile
+## monitoring
 sudo dnf install -y htop lsof ncdu
-# productivity
+## productivity
 sudo dnf install -y pandoc-static transmission-cli
-# security
+## security
 sudo dnf install -y firewalld nmap ykpers
 sudo systemctl enable firewalld
 sudo firewall-cmd --set-default-zone=drop
-# set stricter system crypto policy
+## set stricter system crypto policy
 # note NSS doesn't comply: https://bugzilla.mozilla.org/show_bug.cgi?id=1009429
 #                          https://bugzilla.redhat.com/show_bug.cgi?id=1157720
 echo "FUTURE" | sudo tee /etc/crypto-policies/config
