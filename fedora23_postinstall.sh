@@ -79,6 +79,7 @@ sudo dnf install -y pandoc-static transmission-cli
 sudo dnf install -y firewalld nmap ykpers
 sudo systemctl enable firewalld
 sudo firewall-cmd --set-default-zone=drop
+sudo firewall-cmd --lockdown-on
 ## set stricter system crypto policy
 # note NSS doesn't comply: https://bugzilla.mozilla.org/show_bug.cgi?id=1009429
 #                          https://bugzilla.redhat.com/show_bug.cgi?id=1157720
