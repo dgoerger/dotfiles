@@ -20,6 +20,9 @@ sudo dnf upgrade -y
 sudo dnf install -y beignet
 # OpenGL
 sudo dnf install -y mesa-vdpau-drivers libva-vdpau-driver
+## powertop
+sudo dnf install -y powertop
+sudo systemctl enable powertop
 
 ########################
 ####### Software #######
