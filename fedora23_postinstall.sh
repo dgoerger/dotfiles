@@ -3,12 +3,20 @@
 ########################
 ### Additional repos ###
 ########################
-#dnf install -y http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-22.noarch.rpm
+#dnf install -y http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-23.noarch.rpm
 
 ########################
 ## Remove unnecessary ##
 ########################
-sudo dnf remove -y abrt* b43* baobab bijiben cheese devassistant* dos2unix dnf-yum empathy evince-browser-plugin evolution foomatic* fpaste fprintd glusterfs* gnome-boxes gnome-characters gnome-classic-session gnome-clocks gnome-contacts gnome-documents gnome-music gnome-system-monitor gnome-weather hpijs hplip-common httpd* hyperv* iscsi-initiator-utils iwl* java* libfprint libiscsi libreoffice* libreport libvirt* memtest86+ NetworkManager-adsl NetworkManager-team openvpn orca perl pptp python qemu* rhythmbox sane-backends setroubleshoot* shotwell spice* tigervnc* transmission-gtk vpnc xen* yelp* yum-metadata-parser
+sudo dnf remove -y abrt* b43* baobab bijiben cheese devassistant* dos2unix \
+dnf-yum empathy evince-browser-plugin evolution foomatic* fpaste fprintd \
+glusterfs* gnome-boxes gnome-characters gnome-classic-session gnome-clocks \
+gnome-contacts gnome-documents gnome-music gnome-system-monitor gnome-weather \
+hpijs hplip-common httpd* hyperv* iscsi-initiator-utils iwl* java* libfprint \
+libiscsi libreoffice* libreport libvirt* memtest86+ NetworkManager-adsl \
+NetworkManager-team openvpn orca perl pptp python qemu* rhythmbox \
+sane-backends setroubleshoot* shotwell spice* tigervnc* transmission-gtk vpnc \
+xen* yelp* yum-metadata-parser
 sudo dnf autoremove -y
 sudo dnf upgrade -y
 
@@ -29,7 +37,8 @@ sudo systemctl enable powertop
 ########################
 ### commandline apps ###
 # all-around
-sudo dnf install -y git git-cal git-extras sl tig tmux tmux-powerline traceroute vim-enhanced vim-fugitive
+sudo dnf install -y git git-cal git-extras sl tig tmux tmux-powerline \
+traceroute vim-enhanced vim-fugitive
 ## compile links from source: http://links.twibright.com/download.php
 # fetch source
 cd /tmp
@@ -93,16 +102,17 @@ sudo update-crypto-policies
 # fonts
 #-
 # multimedia
-sudo dnf install -y gstreamer1-plugins-bad-free gstreamer1-vaapi
+sudo dnf install -y gstreamer1-plugins-bad-free
 #dnf install -y gstreamer1-libav # requires enabling rpmfusion-free
 # productivity
 sudo dnf install -y texlive-collection-xetex
 # spellcheck
-sudo dnf install -y hunspell-en hunspell-es hunspell-de hunspell-fr
+sudo dnf install -y hunspell-en
 # docker
-sudo dnf install -y docker docker-vim
-sudo systemctl enable docker
-sudo gpasswd -a ${USER} docker
+sudo dnf install -y docker-vim
+#sudo dnf install -y docker
+#sudo systemctl enable docker
+#sudo gpasswd -a ${USER} docker
 
 ### graphical applications ###
 # multimedia
@@ -122,7 +132,7 @@ sudo dnf install -y gnome-shell-extension-alternate-tab
 ########################
 # set hostname
 sudo hostnamectl set-hostname gelos
-# sudo hostnamectl set-hostname erebus
+#sudo hostnamectl set-hostname erebus
 # GNOME
 dconf write /org/gnome/desktop/privacy/report-technical-problems false
 dconf write /org/gnome/shell/enabled-extensions "['alternate-tab@gnome-shell-extensions.gcampax.github.com']"
@@ -144,3 +154,4 @@ dconf write /org/yorba/shotwell/preferences/ui/hide-photos-already-imported true
 
 ### Firefox ###
 sudo mkdir -p /usr/lib64/firefox/browser/defaults/preferences
+sudo curl -L -o /usr/lib64/firefox/browser/defaults/preferences/user.js https://raw.githubusercontent.com/dgoerger/dotfiles/master/firefox_user.js
