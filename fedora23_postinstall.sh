@@ -123,7 +123,8 @@ sudo dnf install -y shotwell
 # awful workaround for gnome#739396
 sudo chmod 444 /usr/libexec/shotwell/shotwell-video-thumbnailer
 # productivity
-sudo dnf install -y gnumeric keepassx
+sudo dnf install -y gnumeric
+#sudo dnf install -y keepassx #keepassx 2.0 brings kdbx support
 #sudo dnf install -y vinagre
 
 ### GNOME tweaks ###
@@ -133,10 +134,29 @@ sudo dnf install -y gnome-shell-extension-alternate-tab
 ########################
 #### Customizations ####
 ########################
-# set hostname
+## set hostname
 sudo hostnamectl set-hostname gelos
 #sudo hostnamectl set-hostname erebus
-# GNOME
+## journald
+sudo curl -L -o /etc/systemd/journald.conf https://github.com/dgoerger/dotfiles/raw/master/journald.conf
+## use upstream ssh-agent for ed25519 support
+sudo ln -sf /dev/null /etc/xdg/autostart/gnome-keyring-ssh.desktop
+mkdir -p $HOME/.config/systemd/user
+curl -L -o $HOME/.config/systemd/user/ssh-agent.service https://github.com/dgoerger/dotfiles/raw/master/ssh-agent.service
+systemctl --user enable ssh-agent
+## set ssh config
+mkdir -p $HOME/.ssh
+curl -L -o $HOME/.ssh/config https://github.com/dgoerger/dotfiles/raw/master/ssh_config
+## set some rc's
+curl -L -o $HOME/.bash_profile https://github.com/dgoerger/dotfiles/raw/master/bash_profile
+curl -L -o $HOME/.bashrc https://github.com/dgoerger/dotfiles/raw/master/bashrc
+curl -L -o $HOME/.gitconfig https://github.com/dgoerger/dotfiles/raw/master/gitconfig
+curl -L -o $HOME/.tmux.conf https://github.com/dgoerger/dotfiles/raw/master/tmux.conf
+curl -L -o $HOME/.vimrc https://github.com/dgoerger/dotfiles/raw/master/vimrc
+# custom xdg dirs
+#mkdir -p $HOME/.config
+#curl -L -o $HOME/.config/user-dirs.dirs https://github.com/dgoerger/dotfiles/raw/master/user-dirs.dirs
+## GNOME
 dconf write /org/gnome/desktop/privacy/report-technical-problems false
 dconf write /org/gnome/shell/enabled-extensions "['alternate-tab@gnome-shell-extensions.gcampax.github.com']"
 dconf write /org/gnome/desktop/interface/clock-show-date true
@@ -149,7 +169,7 @@ dconf write /org/gnome/desktop/datetime/automatic-timezone true
 dconf write /org/gnome/nautilus/preferences/sort-directories-first true
 mkdir -p $HOME/.config/gtk-3.0
 echo -e "[Settings]\ngtk-application-prefer-dark-theme=1" > $HOME/.config/gtk-3.0/settings.ini
-# Shotwell
+## Shotwell
 dconf write /org/yorba/shotwell/preferences/files/commit-metadata true
 dconf write /org/yorba/shotwell/preferences/files/use-lowercase-filenames true
 dconf write /org/yorba/shotwell/preferences/ui/use-24-hour-time true
