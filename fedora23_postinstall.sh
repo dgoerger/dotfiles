@@ -37,8 +37,8 @@ sudo systemctl enable powertop
 ########################
 ### commandline apps ###
 # all-around
-sudo dnf install -y git git-cal git-extras sl tig tmux tmux-powerline \
-traceroute vim-enhanced vim-fugitive
+sudo dnf install -y git git-cal git-extras tig tmux tmux-powerline vim-enhanced
+#sudo dnf install -y vim-fugitive
 ## compile links from source: http://links.twibright.com/download.php
 # fetch source
 cd /tmp
@@ -52,7 +52,10 @@ sudo dnf install -y gcc openssl-devel
 make
 sudo make install
 # clean up (static linking)
-sudo dnf remove -y binutils cpp gcc glibc-devel glibc-headers isl kernel-headers keyutils-libs-devel krb5-devel libcom_err-devel libmpc libselinux-devel libsepol-devel libverto-devel openssl-devel pcre-devel zlib-devel
+sudo dnf remove -y binutils cpp gcc glibc-devel glibc-headers isl \
+kernel-headers keyutils-libs-devel krb5-devel libcom_err-devel libmpc \
+libselinux-devel libsepol-devel libverto-devel openssl-devel pcre-devel \
+zlib-devel
 ## compile cmus from source: https://cmus.github.io (foss libs only)
 # fetch source
 cd /tmp
@@ -83,8 +86,8 @@ pulseaudio-libs-devel glib2-devel libao libao-devel libdiscid libdiscid-devel \
 flac flac-devel
 # make sure we didn't uninstall too much (linked libraries)
 sudo dnf install -y flac libao libcddb libcdio-paranoia libdiscid opusfile
-## monitoring
-sudo dnf install -y htop lsof ncdu
+## diagnosis
+sudo dnf install -y htop lsof ncdu traceroute
 ## productivity
 sudo dnf install -y pandoc-static transmission-cli
 ## security
@@ -103,7 +106,7 @@ sudo update-crypto-policies
 #-
 # multimedia
 sudo dnf install -y gstreamer1-plugins-bad-free
-#dnf install -y gstreamer1-libav # requires enabling rpmfusion-free
+#dnf install -y gstreamer1-libav #requires enabling rpmfusion-free
 # productivity
 sudo dnf install -y texlive-collection-xetex
 # spellcheck
