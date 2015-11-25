@@ -8,13 +8,13 @@
 ########################
 ## Remove unnecessary ##
 ########################
-sudo dnf remove -y abrt* b43* baobab bijiben cheese devassistant* dos2unix \
-dnf-yum empathy evince-browser-plugin evolution foomatic* fpaste fprintd \
+sudo dnf remove abrt* b43* baobab bijiben cheese devassistant* dos2unix \
+empathy evince-browser-plugin evolution foomatic* fpaste fprintd \
 glusterfs* gnome-boxes gnome-characters gnome-classic-session gnome-clocks \
 gnome-contacts gnome-documents gnome-music gnome-system-monitor gnome-weather \
 hpijs hplip-common httpd* hyperv* iscsi-initiator-utils iwl* java* libfprint \
 libiscsi libreoffice* libreport libvirt* memtest86+ NetworkManager-adsl \
-NetworkManager-team openvpn orca perl pptp python qemu* rhythmbox \
+NetworkManager-team openvpn orca perl pptp qemu* rhythmbox \
 sane-backends setroubleshoot* shotwell spice* tigervnc* transmission-gtk vpnc \
 xen* yelp* yum-metadata-parser
 sudo dnf autoremove -y
@@ -41,51 +41,51 @@ sudo dnf install -y git git-cal git-extras tig tmux tmux-powerline vim-enhanced
 #sudo dnf install -y vim-fugitive
 ## compile links from source: http://links.twibright.com/download.php
 # fetch source
-cd /tmp
-curl -LO http://links.twibright.com/download/links-2.12.tar.gz
-tar -xf links-2.12.tar.gz
-cd /tmp/links-2.12
+#cd /tmp
+#curl -LO http://links.twibright.com/download/links-2.12.tar.gz
+#tar -xf links-2.12.tar.gz
+#cd /tmp/links-2.12
 # install build deps
-sudo dnf install -y gcc openssl-devel
+#sudo dnf install -y gcc openssl-devel
 # compile!
-./configure -with-ssl
-make
-sudo make install
+#./configure -with-ssl
+#make
+#sudo make install
 # clean up (static linking)
-sudo dnf remove -y binutils cpp gcc glibc-devel glibc-headers isl \
-kernel-headers keyutils-libs-devel krb5-devel libcom_err-devel libmpc \
-libselinux-devel libsepol-devel libverto-devel openssl-devel pcre-devel \
-zlib-devel
+#sudo dnf remove -y binutils cpp gcc glibc-devel glibc-headers isl \
+#kernel-headers keyutils-libs-devel krb5-devel libcom_err-devel libmpc \
+#libselinux-devel libsepol-devel libverto-devel openssl-devel pcre-devel \
+#zlib-devel
 ## compile cmus from source: https://cmus.github.io (foss libs only)
 # fetch source
-cd /tmp
-curl -LO https://github.com/cmus/cmus/archive/v2.7.1.tar.gz
-tar -xf v2.7.1.tar.gz
-cd cmus-2.7.1
+#cd /tmp
+#curl -LO https://github.com/cmus/cmus/archive/v2.7.1.tar.gz
+#tar -xf v2.7.1.tar.gz
+#cd cmus-2.7.1
 # install build deps
-sudo dnf install -y gcc ncurses-devel libcddb-devel libcdio-paranoia-devel \
-flac-devel libvorbis-devel opusfile-devel pulseaudio-libs-devel libao-devel \
-libdiscid-devel
+#sudo dnf install -y gcc ncurses-devel libcddb-devel libcdio-paranoia-devel \
+#flac-devel libvorbis-devel opusfile-devel pulseaudio-libs-devel libao-devel \
+#libdiscid-devel
 # compile!
-./configure CONFIG_CDDB=y CONFIG_CDIO=y CONFIG_DISCID=y CONFIG_FLAC=y \
-CONFIG_MAD=n CONFIG_MODPLUG=n CONFIG_MPC=n CONFIG_VORBIS=y CONFIG_OPUS=y \
-CONFIG_WAVPACK=n CONFIG_MP4=n CONFIG_AAC=n CONFIG_FFMPEG=n CONFIG_VTX=n \
-CONFIG_CUE=n CONFIG_ROAR=n CONFIG_PULSE=y CONFIG_ALSA=n CONFIG_JACK=n \
-CONFIG_SAMPLERATE=n CONFIG_AO=y CONFIG_ARTS=n CONFIG_OSS=n CONFIG_SNDIO=n \
-CONFIG_SUN=n CONFIG_WAVEOUT=n
-make
-sudo make install
+#./configure CONFIG_CDDB=y CONFIG_CDIO=y CONFIG_DISCID=y CONFIG_FLAC=y \
+#CONFIG_MAD=n CONFIG_MODPLUG=n CONFIG_MPC=n CONFIG_VORBIS=y CONFIG_OPUS=y \
+#CONFIG_WAVPACK=n CONFIG_MP4=n CONFIG_AAC=n CONFIG_FFMPEG=n CONFIG_VTX=n \
+#CONFIG_CUE=n CONFIG_ROAR=n CONFIG_PULSE=y CONFIG_ALSA=n CONFIG_JACK=n \
+#CONFIG_SAMPLERATE=n CONFIG_AO=y CONFIG_ARTS=n CONFIG_OSS=n CONFIG_SNDIO=n \
+#CONFIG_SUN=n CONFIG_WAVEOUT=n
+#make
+#sudo make install
 # clean up
-sudo dnf remove -y binutils cpp gcc glibc-devel glibc-headers isl \
-kernel-headers libmpc ncurses-devel libcddb libcddb-devel \
-libcdio-paranoia-devel libcdio-devel autoconf automake flac-devel \
-libogg-devel m4 perl-Thread-Queue libvorbis-devel keyutils-libs-devel \
-krb5-devel libcom_err-devel libselinux-devel libsepol-devel libverto-devel \
-openssl-devel opus-devel opusfile opusfile-devel pcre-devel zlib-devel \
-pulseaudio-libs-devel glib2-devel libao libao-devel libdiscid libdiscid-devel \
-flac flac-devel
+#sudo dnf remove -y binutils cpp gcc glibc-devel glibc-headers isl \
+#kernel-headers libmpc ncurses-devel libcddb libcddb-devel \
+#libcdio-paranoia-devel libcdio-devel autoconf automake flac-devel \
+#libogg-devel m4 perl-Thread-Queue libvorbis-devel keyutils-libs-devel \
+#krb5-devel libcom_err-devel libselinux-devel libsepol-devel libverto-devel \
+#openssl-devel opus-devel opusfile opusfile-devel pcre-devel zlib-devel \
+#pulseaudio-libs-devel glib2-devel libao libao-devel libdiscid libdiscid-devel \
+#flac flac-devel
 # make sure we didn't uninstall too much (linked libraries)
-sudo dnf install -y flac libao libcddb libcdio-paranoia libdiscid opusfile
+#sudo dnf install -y flac libao libcddb libcdio-paranoia libdiscid opusfile
 ## diagnosis
 sudo dnf install -y htop lsof ncdu traceroute
 ## productivity
@@ -106,6 +106,7 @@ sudo update-crypto-policies
 #-
 # multimedia
 sudo dnf install -y gstreamer1-plugins-bad-free
+#sudo dnf install -y http://download1.rpmfusion.org/free/fedora/updates/testing/23/x86_64/gstreamer1-libav-1.6.1-2.f23.x86_64.rpm
 #dnf install -y gstreamer1-libav #requires enabling rpmfusion-free
 # productivity
 sudo dnf install -y texlive-collection-xetex
@@ -178,3 +179,6 @@ dconf write /org/yorba/shotwell/preferences/ui/hide-photos-already-imported true
 ### Firefox ###
 sudo mkdir -p /usr/lib64/firefox/browser/defaults/preferences
 sudo curl -L -o /usr/lib64/firefox/browser/defaults/preferences/user.js https://raw.githubusercontent.com/dgoerger/dotfiles/master/firefox_user.js
+
+### Chrome ###
+#sudo dnf install -y https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
