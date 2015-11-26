@@ -127,6 +127,9 @@ sudo chmod 444 /usr/libexec/shotwell/shotwell-video-thumbnailer
 sudo dnf install -y gnumeric
 #sudo dnf install -y keepassx #keepassx 2.0 brings kdbx support
 #sudo dnf install -y vinagre
+# Internet - epiphany file is incognito-only mode
+sudo dnf install -y epiphany firefox
+curl -L -o $HOME/.local/share/applications/epiphany.desktop https://raw.githubusercontent.com/dgoerger/dotfiles/master/epiphany.desktop
 
 ### GNOME tweaks ###
 # GNOME Shell
