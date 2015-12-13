@@ -100,6 +100,20 @@ sudo firewall-cmd --lockdown-on
 #                          https://bugzilla.redhat.com/show_bug.cgi?id=1157720
 echo "FUTURE" | sudo tee /etc/crypto-policies/config
 sudo update-crypto-policies
+## set DNSCrypt for encrypted DNS lookups + DNSSEC
+# note this step is interactive
+# might need modification in f24: https://fedoraproject.org/wiki/Changes/Default_Local_DNS_Resolver
+cd /tmp
+curl -LO https://raw.githubusercontent.com/simonclausen/dnscrypt-autoinstall/master/dnscrypt-autoinstall-redhat.sh
+chmod +x dnscrypt-autoinstall-redhat.sh
+# yum is deprecated
+sed -i 's/yum/dnf/g' dnscrypt-autoinstall-redhat.sh
+# for some reason this one line doesn't have sudo, ergo it fails
+sed -i 's/dnf\ install\ -y\ libsodium-devel/sudo\ dnf\ install\ -y\ libsodium-devel/'
+# also it assumes we have gpg---not necessarily true
+sudo dnf install -y gpg
+./dnscrypt-autoinstall-redhat.sh
+# TODO: manually splice in DNS for uni resources, noting /etc/resolv.conf has the immutable bit (chattr +i)
 
 ### system libraries ###
 # fonts
