@@ -181,7 +181,7 @@ dconf write /org/gnome/desktop/interface/clock-show-date true
 dconf write /org/gnome/terminal/legacy/default-show-menubar false
 dconf write /org/gnome/settings-daemon/peripherals/touchpad/natural-scroll true
 dconf write /org/gnome/settings-daemon/peripherals/touchpad/tap-to-click true
-dconf write /org/freedesktop/tracker/miner/files/index-recursive-directories "['&DESKTOP', '&DOCUMENTS', '&MUSIC', '&VIDEOS']"
+dconf write /org/freedesktop/tracker/miner/files/index-recursive-directories "['&DESKTOP', '&DOCUMENTS', '&VIDEOS']"
 dconf write /org/gnome/desktop/media-handling/autorun-never true
 dconf write /org/gnome/desktop/datetime/automatic-timezone true
 dconf write /org/gnome/nautilus/preferences/sort-directories-first true
