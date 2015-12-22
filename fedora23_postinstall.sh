@@ -37,8 +37,7 @@ sudo systemctl enable powertop
 ########################
 ### commandline apps ###
 # all-around
-sudo dnf install -y git git-cal git-extras tig tmux tmux-powerline vim-enhanced
-#sudo dnf install -y vim-fugitive
+sudo dnf install -y git git-cal tig tmux tmux-powerline vim-enhanced
 ## compile links from source: http://links.twibright.com/download.php
 # fetch source
 #cd /tmp
