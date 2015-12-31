@@ -106,12 +106,12 @@ sudo update-crypto-policies
 # note this step is interactive
 # might need modification in f24: https://fedoraproject.org/wiki/Changes/Default_Local_DNS_Resolver
 cd /tmp
-curl -LO https://raw.githubusercontent.com/simonclausen/dnscrypt-autoinstall/master/dnscrypt-autoinstall-redhat.sh
-chmod +x dnscrypt-autoinstall-redhat.sh
+sudo curl -LO https://raw.githubusercontent.com/simonclausen/dnscrypt-autoinstall/master/dnscrypt-autoinstall-redhat.sh
+sudo chmod +x dnscrypt-autoinstall-redhat.sh
 # yum is deprecated
-sed -i 's/yum/dnf/g' dnscrypt-autoinstall-redhat.sh
+sudo sed -i 's/yum/dnf/g' dnscrypt-autoinstall-redhat.sh
 # for some reason this one line doesn't have sudo, ergo it fails
-sed -i 's/dnf\ install\ -y\ libsodium-devel/sudo\ dnf\ install\ -y\ libsodium-devel/'
+sudo sed -i 's/dnf\ install\ -y\ libsodium-devel/sudo\ dnf\ install\ -y\ libsodium-devel/'
 # also it assumes we have gpg---not necessarily true
 sudo dnf install -y gpg
 ./dnscrypt-autoinstall-redhat.sh
