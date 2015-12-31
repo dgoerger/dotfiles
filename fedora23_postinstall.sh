@@ -167,6 +167,8 @@ systemctl --user enable ssh-agent
 ## set ssh config
 mkdir -p $HOME/.ssh
 curl -L -o $HOME/.ssh/config https://github.com/dgoerger/dotfiles/raw/master/ssh_config
+chmod 700 $HOME/.ssh
+chmod 600 $HOME/.ssh/config
 ## set some rc's
 curl -L -o $HOME/.bash_profile https://github.com/dgoerger/dotfiles/raw/master/bash_profile
 curl -L -o $HOME/.bashrc https://github.com/dgoerger/dotfiles/raw/master/bashrc
