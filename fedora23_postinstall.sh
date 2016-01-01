@@ -31,6 +31,9 @@ sudo dnf install -y mesa-vdpau-drivers libva-vdpau-driver
 ## powertop
 sudo dnf install -y powertop
 sudo systemctl enable powertop
+## clean up PAM/fprintd so it doesn't spam the logs
+# see: https://bugzilla.redhat.com/show_bug.cgi?id=1203671
+sudo authconfig --disablefingerprint --update
 
 ########################
 ####### Software #######
