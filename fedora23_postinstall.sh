@@ -105,6 +105,9 @@ sudo firewall-cmd --lockdown-on
 #                          https://bugzilla.redhat.com/show_bug.cgi?id=1157720
 echo "FUTURE" | sudo tee /etc/crypto-policies/config
 sudo update-crypto-policies
+## respect Mozilla's CA trust revocation policy
+# see: https://fedoraproject.org/wiki/CA-Certificates
+sudo ca-legacy disable
 ## set DNSCrypt for encrypted DNS lookups + DNSSEC
 # note this step is interactive
 # might need modification in f24: https://fedoraproject.org/wiki/Changes/Default_Local_DNS_Resolver
