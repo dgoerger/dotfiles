@@ -142,16 +142,17 @@ sudo dnf install -y docker-vim
 
 ### graphical applications ###
 # multimedia
-sudo dnf install -y shotwell
+#sudo dnf install -y shotwell
+sudo dnf install -y gthumb
 # awful workaround for gnome#739396
-sudo chmod 444 /usr/libexec/shotwell/shotwell-video-thumbnailer
+#sudo chmod 444 /usr/libexec/shotwell/shotwell-video-thumbnailer
 # productivity
-sudo dnf install -y gnumeric
+#sudo dnf install -y gnumeric
 #sudo dnf install -y keepassx #keepassx 2.0 brings kdbx support
-#sudo dnf install -y vinagre
+sudo dnf install -y vinagre
 # Internet - epiphany file is incognito-only mode
-sudo dnf install -y epiphany firefox
-curl -L -o $HOME/.local/share/applications/epiphany.desktop https://raw.githubusercontent.com/dgoerger/dotfiles/master/epiphany.desktop
+sudo dnf install -y firefox icecat
+#curl -L -o $HOME/.local/share/applications/epiphany.desktop https://raw.githubusercontent.com/dgoerger/dotfiles/master/epiphany.desktop
 
 ### GNOME tweaks ###
 # GNOME Shell
@@ -197,11 +198,11 @@ dconf write /org/gnome/desktop/datetime/automatic-timezone true
 dconf write /org/gnome/nautilus/preferences/sort-directories-first true
 mkdir -p $HOME/.config/gtk-3.0
 echo -e "[Settings]\ngtk-application-prefer-dark-theme=1" > $HOME/.config/gtk-3.0/settings.ini
-## Shotwell
-dconf write /org/yorba/shotwell/preferences/files/commit-metadata true
-dconf write /org/yorba/shotwell/preferences/files/use-lowercase-filenames true
-dconf write /org/yorba/shotwell/preferences/ui/use-24-hour-time true
-dconf write /org/yorba/shotwell/preferences/ui/hide-photos-already-imported true
+### Shotwell
+#dconf write /org/yorba/shotwell/preferences/files/commit-metadata true
+#dconf write /org/yorba/shotwell/preferences/files/use-lowercase-filenames true
+#dconf write /org/yorba/shotwell/preferences/ui/use-24-hour-time true
+#dconf write /org/yorba/shotwell/preferences/ui/hide-photos-already-imported true
 
 ### Firefox ###
 sudo mkdir -p /usr/lib64/firefox/browser/defaults/preferences
