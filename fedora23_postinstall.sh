@@ -135,7 +135,7 @@ sudo dnf install -y texlive-collection-xetex
 # spellcheck
 sudo dnf install -y hunspell-en
 # docker
-sudo dnf install -y docker-vim
+#sudo dnf install -y docker-vim
 #sudo dnf install -y docker
 #sudo systemctl enable docker
 #sudo gpasswd -a ${USER} docker
