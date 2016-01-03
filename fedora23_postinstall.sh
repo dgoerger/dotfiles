@@ -182,6 +182,9 @@ curl -L -o $HOME/.bashrc https://github.com/dgoerger/dotfiles/raw/master/bashrc
 curl -L -o $HOME/.gitconfig https://github.com/dgoerger/dotfiles/raw/master/gitconfig
 curl -L -o $HOME/.tmux.conf https://github.com/dgoerger/dotfiles/raw/master/tmux.conf
 curl -L -o $HOME/.vimrc https://github.com/dgoerger/dotfiles/raw/master/vimrc
+## transmission rc
+mkdir -p $HOME/.config/transmission
+curl -L -o $HOME/.config/transmission/settings.json https://github.com/dgoerger/dotfiles/raw/master/transmission-settings.json
 # custom xdg dirs
 #mkdir -p $HOME/.config
 #curl -L -o $HOME/.config/user-dirs.dirs https://github.com/dgoerger/dotfiles/raw/master/user-dirs.dirs
