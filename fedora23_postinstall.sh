@@ -41,53 +41,6 @@ sudo authconfig --disablefingerprint --update
 ### commandline apps ###
 # all-around
 sudo dnf install -y git git-cal tig tmux tmux-powerline vim-enhanced
-## compile links from source: http://links.twibright.com/download.php
-# fetch source
-#cd /tmp
-#curl -LO http://links.twibright.com/download/links-2.12.tar.gz
-#tar -xf links-2.12.tar.gz
-#cd /tmp/links-2.12
-# install build deps
-#sudo dnf install -y gcc openssl-devel
-# compile!
-#./configure -with-ssl
-#make
-#sudo make install
-# clean up (static linking)
-#sudo dnf remove -y binutils cpp gcc glibc-devel glibc-headers isl \
-#kernel-headers keyutils-libs-devel krb5-devel libcom_err-devel libmpc \
-#libselinux-devel libsepol-devel libverto-devel openssl-devel pcre-devel \
-#zlib-devel
-## compile cmus from source: https://cmus.github.io (foss libs only)
-# fetch source
-#cd /tmp
-#curl -LO https://github.com/cmus/cmus/archive/v2.7.1.tar.gz
-#tar -xf v2.7.1.tar.gz
-#cd cmus-2.7.1
-# install build deps
-#sudo dnf install -y gcc ncurses-devel libcddb-devel libcdio-paranoia-devel \
-#flac-devel libvorbis-devel opusfile-devel pulseaudio-libs-devel libao-devel \
-#libdiscid-devel
-# compile!
-#./configure CONFIG_CDDB=y CONFIG_CDIO=y CONFIG_DISCID=y CONFIG_FLAC=y \
-#CONFIG_MAD=n CONFIG_MODPLUG=n CONFIG_MPC=n CONFIG_VORBIS=y CONFIG_OPUS=y \
-#CONFIG_WAVPACK=n CONFIG_MP4=n CONFIG_AAC=n CONFIG_FFMPEG=n CONFIG_VTX=n \
-#CONFIG_CUE=n CONFIG_ROAR=n CONFIG_PULSE=y CONFIG_ALSA=n CONFIG_JACK=n \
-#CONFIG_SAMPLERATE=n CONFIG_AO=y CONFIG_ARTS=n CONFIG_OSS=n CONFIG_SNDIO=n \
-#CONFIG_SUN=n CONFIG_WAVEOUT=n
-#make
-#sudo make install
-# clean up
-#sudo dnf remove -y binutils cpp gcc glibc-devel glibc-headers isl \
-#kernel-headers libmpc ncurses-devel libcddb libcddb-devel \
-#libcdio-paranoia-devel libcdio-devel autoconf automake flac-devel \
-#libogg-devel m4 perl-Thread-Queue libvorbis-devel keyutils-libs-devel \
-#krb5-devel libcom_err-devel libselinux-devel libsepol-devel libverto-devel \
-#openssl-devel opus-devel opusfile opusfile-devel pcre-devel zlib-devel \
-#pulseaudio-libs-devel glib2-devel libao libao-devel libdiscid libdiscid-devel \
-#flac flac-devel
-# make sure we didn't uninstall too much (linked libraries)
-#sudo dnf install -y flac libao libcddb libcdio-paranoia libdiscid opusfile
 ## diagnosis
 sudo dnf install -y htop lsof ncdu traceroute
 ## productivity
@@ -101,8 +54,8 @@ sudo systemctl enable firewalld
 sudo firewall-cmd --set-default-zone=drop
 sudo firewall-cmd --lockdown-on
 ## set stricter system crypto policy
-# note NSS doesn't comply: https://bugzilla.mozilla.org/show_bug.cgi?id=1009429
-#                          https://bugzilla.redhat.com/show_bug.cgi?id=1157720
+# note NSS not until F25: https://bugzilla.mozilla.org/show_bug.cgi?id=1009429
+#                         https://bugzilla.redhat.com/show_bug.cgi?id=1157720
 echo "FUTURE" | sudo tee /etc/crypto-policies/config
 sudo update-crypto-policies
 ## respect Mozilla's CA trust revocation policy
@@ -111,48 +64,38 @@ sudo ca-legacy disable
 ## set DNSCrypt for encrypted DNS lookups + DNSSEC
 # note this step is interactive
 # might need modification in f24: https://fedoraproject.org/wiki/Changes/Default_Local_DNS_Resolver
+# important: /etc/resolv.conf is left with attr +i (immutable bit)
 cd /tmp
 sudo curl -LO https://raw.githubusercontent.com/simonclausen/dnscrypt-autoinstall/master/dnscrypt-autoinstall-redhat.sh
-sudo chmod +x dnscrypt-autoinstall-redhat.sh
+sudo chmod +x /tmp/dnscrypt-autoinstall-redhat.sh
 # yum is deprecated
-sudo sed -i 's/yum/dnf/g' dnscrypt-autoinstall-redhat.sh
+sudo sed -i 's/yum/dnf/g' /tmp/dnscrypt-autoinstall-redhat.sh
 # for some reason this one line doesn't have sudo, ergo it fails
-sudo sed -i 's/dnf\ install\ -y\ libsodium-devel/sudo\ dnf\ install\ -y\ libsodium-devel/'
+sudo sed -i 's/dnf\ install\ -y\ libsodium-devel/sudo\ dnf\ install\ -y\ libsodium-devel/' /tmp/dnscrypt-autoinstall-redhat.sh
 # also it assumes we have gpg---not necessarily true
 sudo dnf install -y gpg
-./dnscrypt-autoinstall-redhat.sh
-# TODO: manually splice in DNS for uni resources, noting /etc/resolv.conf has the immutable bit (chattr +i)
+./tmp/dnscrypt-autoinstall-redhat.sh
 
 ### system libraries ###
-# fonts
-#-
 # multimedia
 sudo dnf install -y gstreamer1-plugins-bad-free
-#sudo dnf install -y http://download1.rpmfusion.org/free/fedora/updates/testing/23/x86_64/gstreamer1-libav-1.6.1-2.f23.x86_64.rpm
 #dnf install -y gstreamer1-libav #requires enabling rpmfusion-free
 # productivity
 sudo dnf install -y texlive-collection-xetex
 # spellcheck
 sudo dnf install -y hunspell-en
 # docker
-#sudo dnf install -y docker-vim
-#sudo dnf install -y docker
+#sudo dnf install -y docker docker-vim
 #sudo systemctl enable docker
 #sudo gpasswd -a ${USER} docker
 
 ### graphical applications ###
 # multimedia
-#sudo dnf install -y shotwell
 sudo dnf install -y gthumb
-# awful workaround for gnome#739396
-#sudo chmod 444 /usr/libexec/shotwell/shotwell-video-thumbnailer
 # productivity
-#sudo dnf install -y gnumeric
 #sudo dnf install -y keepassx #keepassx 2.0 brings kdbx support
 sudo dnf install -y vinagre
-# Internet - epiphany file is incognito-only mode
 sudo dnf install -y firefox icecat
-#curl -L -o $HOME/.local/share/applications/epiphany.desktop https://raw.githubusercontent.com/dgoerger/dotfiles/master/epiphany.desktop
 
 ### GNOME tweaks ###
 # GNOME Shell
@@ -164,6 +107,7 @@ sudo dnf install -y gnome-shell-extension-alternate-tab
 ## set hostname
 sudo hostnamectl set-hostname gelos
 #sudo hostnamectl set-hostname erebus
+#sudo hostnamectl set-hostname lyssa
 ## journald
 sudo curl -L -o /etc/systemd/journald.conf https://github.com/dgoerger/dotfiles/raw/master/journald.conf
 ## use upstream ssh-agent for ed25519 support
@@ -195,17 +139,12 @@ dconf write /org/gnome/desktop/interface/clock-show-date true
 dconf write /org/gnome/terminal/legacy/default-show-menubar false
 dconf write /org/gnome/settings-daemon/peripherals/touchpad/natural-scroll true
 dconf write /org/gnome/settings-daemon/peripherals/touchpad/tap-to-click true
-dconf write /org/freedesktop/tracker/miner/files/index-recursive-directories "['&DESKTOP', '&DOCUMENTS', '&VIDEOS']"
+dconf write /org/freedesktop/tracker/miner/files/index-recursive-directories "['&DESKTOP', '&DOCUMENTS']"
 dconf write /org/gnome/desktop/media-handling/autorun-never true
 dconf write /org/gnome/desktop/datetime/automatic-timezone true
 dconf write /org/gnome/nautilus/preferences/sort-directories-first true
 mkdir -p $HOME/.config/gtk-3.0
 echo -e "[Settings]\ngtk-application-prefer-dark-theme=1" > $HOME/.config/gtk-3.0/settings.ini
-### Shotwell
-#dconf write /org/yorba/shotwell/preferences/files/commit-metadata true
-#dconf write /org/yorba/shotwell/preferences/files/use-lowercase-filenames true
-#dconf write /org/yorba/shotwell/preferences/ui/use-24-hour-time true
-#dconf write /org/yorba/shotwell/preferences/ui/hide-photos-already-imported true
 
 ### Firefox ###
 sudo mkdir -p /usr/lib64/firefox/browser/defaults/preferences
