@@ -84,16 +84,12 @@ sudo dnf install -y gstreamer1-plugins-bad-free
 sudo dnf install -y texlive-collection-xetex
 # spellcheck
 sudo dnf install -y hunspell-en
-# docker
-#sudo dnf install -y docker docker-vim
-#sudo systemctl enable docker
-#sudo gpasswd -a ${USER} docker
 
 ### graphical applications ###
 # multimedia
 sudo dnf install -y gthumb
 # productivity
-#sudo dnf install -y keepassx #keepassx 2.0 brings kdbx support
+sudo dnf install -y keepassx
 sudo dnf install -y vinagre
 sudo dnf install -y firefox icecat
 
@@ -162,7 +158,7 @@ dconf write /org/gnome/terminal/legacy/keybindings/switch-to-tab-10 "'disabled'"
 dconf write /org/gnome/terminal/legacy/keybindings/switch-to-tab-9 "'disabled'"
 dconf write /org/gnome/terminal/legacy/keybindings/move-tab-left "'disabled'"
 dconf write /org/gnome/terminal/legacy/keybindings/switch-to-tab-2 "'disabled'"
-dconf write /org/gnome/terminal/legacy/new-terminal-mode 'tab'
+dconf write /org/gnome/terminal/legacy/new-terminal-mode "'tab'"
 dconf write /org/gnome/settings-daemon/peripherals/touchpad/natural-scroll true
 dconf write /org/gnome/settings-daemon/peripherals/touchpad/tap-to-click true
 dconf write /org/freedesktop/tracker/miner/files/index-recursive-directories "['&DESKTOP', '&DOCUMENTS']"
