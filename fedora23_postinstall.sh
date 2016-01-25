@@ -121,7 +121,8 @@ curl -L -o $HOME/.ssh/config https://github.com/dgoerger/dotfiles/raw/master/ssh
 chmod 700 $HOME/.ssh
 chmod 600 $HOME/.ssh/config
 ## set some rc's
-curl -L -o $HOME/.bash_profile https://github.com/dgoerger/dotfiles/raw/master/bash_profile
+curl -L -o $HOME/.profile https://github.com/dgoerger/dotfiles/raw/master/profile
+rm $HOME/.bash_profile
 curl -L -o $HOME/.bashrc https://github.com/dgoerger/dotfiles/raw/master/bashrc
 curl -L -o $HOME/.gitconfig https://github.com/dgoerger/dotfiles/raw/master/gitconfig
 curl -L -o $HOME/.tmux.conf https://github.com/dgoerger/dotfiles/raw/master/tmux.conf
@@ -137,28 +138,30 @@ dconf write /org/gnome/desktop/privacy/report-technical-problems false
 dconf write /org/gnome/shell/enabled-extensions "['alternate-tab@gnome-shell-extensions.gcampax.github.com']"
 dconf write /org/gnome/desktop/interface/clock-show-date true
 dconf write /org/gnome/terminal/legacy/default-show-menubar false
-dconf write /org/gnome/terminal/legacy/keybindings/close-tab 'disabled'
-dconf write /org/gnome/terminal/legacy/keybindings/move-tab-right 'disabled'
-dconf write /org/gnome/terminal/legacy/keybindings/switch-to-tab-3 'disabled'
-dconf write /org/gnome/terminal/legacy/keybindings/close-window 'disabled'
-dconf write /org/gnome/terminal/legacy/keybindings/switch-to-tab-4 'disabled'
-dconf write /org/gnome/terminal/legacy/keybindings/find 'disabled'
-dconf write /org/gnome/terminal/legacy/keybindings/new-window 'disabled'
-dconf write /org/gnome/terminal/legacy/keybindings/switch-to-tab-5 'disabled'
-dconf write /org/gnome/terminal/legacy/keybindings/find-clear 'disabled'
-dconf write /org/gnome/terminal/legacy/keybindings/next-tab 'disabled'
-dconf write /org/gnome/terminal/legacy/keybindings/switch-to-tab-6 'disabled'
-dconf write /org/gnome/terminal/legacy/keybindings/find-next 'disabled'
-dconf write /org/gnome/terminal/legacy/keybindings/prev-tab 'disabled'
-dconf write /org/gnome/terminal/legacy/keybindings/switch-to-tab-7 'disabled'
-dconf write /org/gnome/terminal/legacy/keybindings/find-previous 'disabled'
-dconf write /org/gnome/terminal/legacy/keybindings/switch-to-tab-1 'disabled'
-dconf write /org/gnome/terminal/legacy/keybindings/switch-to-tab-8 'disabled'
-dconf write /org/gnome/terminal/legacy/keybindings/help 'disabled'
-dconf write /org/gnome/terminal/legacy/keybindings/switch-to-tab-10 'disabled'
-dconf write /org/gnome/terminal/legacy/keybindings/switch-to-tab-9 'disabled'
-dconf write /org/gnome/terminal/legacy/keybindings/move-tab-left 'disabled'
-dconf write /org/gnome/terminal/legacy/keybindings/switch-to-tab-2 'disabled'
+dconf write /org/gnome/terminal/legacy/menu-accelerator-enabled false
+dconf write /org/gnome/terminal/legacy/keybindings/close-tab "'disabled'"
+dconf write /org/gnome/terminal/legacy/keybindings/move-tab-right "'disabled'"
+dconf write /org/gnome/terminal/legacy/keybindings/switch-to-tab-3 "'disabled'"
+dconf write /org/gnome/terminal/legacy/keybindings/close-window "'disabled'"
+dconf write /org/gnome/terminal/legacy/keybindings/switch-to-tab-4 "'disabled'"
+dconf write /org/gnome/terminal/legacy/keybindings/find "'disabled'"
+dconf write /org/gnome/terminal/legacy/keybindings/new-tab "'disabled'"
+dconf write /org/gnome/terminal/legacy/keybindings/new-window "'disabled'"
+dconf write /org/gnome/terminal/legacy/keybindings/switch-to-tab-5 "'disabled'"
+dconf write /org/gnome/terminal/legacy/keybindings/find-clear "'disabled'"
+dconf write /org/gnome/terminal/legacy/keybindings/next-tab "'disabled'"
+dconf write /org/gnome/terminal/legacy/keybindings/switch-to-tab-6 "'disabled'"
+dconf write /org/gnome/terminal/legacy/keybindings/find-next "'disabled'"
+dconf write /org/gnome/terminal/legacy/keybindings/prev-tab "'disabled'"
+dconf write /org/gnome/terminal/legacy/keybindings/switch-to-tab-7 "'disabled'"
+dconf write /org/gnome/terminal/legacy/keybindings/find-previous "'disabled'"
+dconf write /org/gnome/terminal/legacy/keybindings/switch-to-tab-1 "'disabled'"
+dconf write /org/gnome/terminal/legacy/keybindings/switch-to-tab-8 "'disabled'"
+dconf write /org/gnome/terminal/legacy/keybindings/help "'disabled'"
+dconf write /org/gnome/terminal/legacy/keybindings/switch-to-tab-10 "'disabled'"
+dconf write /org/gnome/terminal/legacy/keybindings/switch-to-tab-9 "'disabled'"
+dconf write /org/gnome/terminal/legacy/keybindings/move-tab-left "'disabled'"
+dconf write /org/gnome/terminal/legacy/keybindings/switch-to-tab-2 "'disabled'"
 dconf write /org/gnome/terminal/legacy/new-terminal-mode 'tab'
 dconf write /org/gnome/settings-daemon/peripherals/touchpad/natural-scroll true
 dconf write /org/gnome/settings-daemon/peripherals/touchpad/tap-to-click true
