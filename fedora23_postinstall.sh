@@ -40,14 +40,14 @@ sudo authconfig --disablefingerprint --update
 ########################
 ### commandline apps ###
 # all-around
-sudo dnf install -y bsdtar git git-cal tig tmux tmux-powerline vim-enhanced
+sudo dnf install -y bsdtar git git-cal tmux vim-enhanced
 ## diagnosis
 sudo dnf install -y htop lsof ncdu traceroute
 ## productivity
 sudo dnf install -y pandoc-static transmission-cli
 # vim-like console spreadsheet: https://github.com/andmarti1424/sc-im
 # presentations via rst:
-sudo dnf install -y hovercraft
+#sudo dnf install -y hovercraft
 ## security
 sudo dnf install -y firewalld nmap ykpers
 sudo systemctl enable firewalld
