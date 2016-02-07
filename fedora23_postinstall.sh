@@ -167,6 +167,7 @@ dconf write /org/gnome/desktop/datetime/automatic-timezone true
 dconf write /org/gnome/nautilus/preferences/sort-directories-first true
 mkdir -p $HOME/.config/gtk-3.0
 echo -e "[Settings]\ngtk-application-prefer-dark-theme=1" > $HOME/.config/gtk-3.0/settings.ini
+echo "gtk-enable-primary-paste=true" >> $HOME/.config/gtk-3.0/settings.ini
 
 ### Firefox ###
 sudo mkdir -p /usr/lib64/firefox/browser/defaults/preferences
