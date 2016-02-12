@@ -1,0 +1,16 @@
+# GNOME KEYRING doesn't support ed25519 keys
+# use upstream ssh-agent instead
+# place in ~/.config/systemd/user/ssh-agent.service
+# systemctl --user enable ssh-agent
+# ln -sf /dev/null /etc/xdg/autostart/gnome-keyring-ssh.desktop
+# reboot
+[Unit]
+Description=SSH key agent
+
+[Service]
+Type=forking
+Environment=SSH_AUTH_SOCK=%t/ssh-agent.socket
+ExecStart=/usr/bin/ssh-agent -a $SSH_AUTH_SOCK
+
+[Install]
+WantedBy=default.target
