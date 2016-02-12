@@ -45,11 +45,8 @@ sudo dnf install -y bsdtar git git-cal ranger tmux vim-enhanced
 sudo dnf install -y htop lsof ncdu traceroute
 ## productivity
 sudo dnf install -y pandoc-static transmission-cli
-# vim-like console spreadsheet: https://github.com/andmarti1424/sc-im
-# presentations via rst:
-#sudo dnf install -y hovercraft
 ## security
-sudo dnf install -y firewalld nmap ykpers
+sudo dnf install -y firewalld nmap
 sudo systemctl enable firewalld
 sudo firewall-cmd --set-default-zone=drop
 sudo firewall-cmd --lockdown-on
@@ -102,8 +99,6 @@ sudo dnf install -y gnome-shell-extension-alternate-tab
 ########################
 ## set hostname
 sudo hostnamectl set-hostname gelos
-#sudo hostnamectl set-hostname erebus
-#sudo hostnamectl set-hostname lyssa
 ## journald
 sudo curl -L -o /etc/systemd/journald.conf https://github.com/dgoerger/dotfiles/raw/master/journald.conf
 ## use upstream ssh-agent for ed25519 support
