@@ -62,16 +62,16 @@ sudo ca-legacy disable
 # note this step is interactive
 # might need modification in f24: https://fedoraproject.org/wiki/Changes/Default_Local_DNS_Resolver
 # important: /etc/resolv.conf is left with attr +i (immutable bit)
-cd /tmp
-sudo curl -LO https://raw.githubusercontent.com/simonclausen/dnscrypt-autoinstall/master/dnscrypt-autoinstall-redhat.sh
-sudo chmod +x /tmp/dnscrypt-autoinstall-redhat.sh
+sudo mkdir -p /usr/local/src/dnscrypt
+sudo curl -L -o /usr/local/src/dnscrypt/redhat.sh https://raw.githubusercontent.com/simonclausen/dnscrypt-autoinstall/master/dnscrypt-autoinstall-redhat.sh
+sudo chmod +x /usr/local/src/dnscrypt/redhat.sh
 # yum is deprecated
-sudo sed -i 's/yum/dnf/g' /tmp/dnscrypt-autoinstall-redhat.sh
+sudo sed -i 's/yum/dnf/g' /usr/local/src/dnscrypt/redhat.sh
 # for some reason this one line doesn't have sudo, ergo it fails
-sudo sed -i 's/dnf\ install\ -y\ libsodium-devel/sudo\ dnf\ install\ -y\ libsodium-devel/' /tmp/dnscrypt-autoinstall-redhat.sh
+sudo sed -i 's/dnf\ install\ -y\ libsodium-devel/sudo\ dnf\ install\ -y\ libsodium-devel/' /usr/local/src/dnscrypt/redhat.sh
 # also it assumes we have gpg---not necessarily true
 sudo dnf install -y gpg
-./tmp/dnscrypt-autoinstall-redhat.sh
+sh /usr/local/src/dnscrypt/redhat.sh
 
 ### system libraries ###
 # multimedia
@@ -121,9 +121,6 @@ curl -L -o $HOME/.vimrc https://github.com/dgoerger/dotfiles/raw/master/vimrc
 ## transmission rc
 mkdir -p $HOME/.config/transmission
 curl -L -o $HOME/.config/transmission/settings.json https://github.com/dgoerger/dotfiles/raw/master/transmission-settings.json
-# custom xdg dirs
-#mkdir -p $HOME/.config
-#curl -L -o $HOME/.config/user-dirs.dirs https://github.com/dgoerger/dotfiles/raw/master/user-dirs.dirs
 ## GNOME
 dconf write /org/gnome/desktop/privacy/report-technical-problems false
 dconf write /org/gnome/shell/enabled-extensions "['alternate-tab@gnome-shell-extensions.gcampax.github.com']"
@@ -167,6 +164,3 @@ echo "gtk-enable-primary-paste=true" >> $HOME/.config/gtk-3.0/settings.ini
 ### Firefox ###
 sudo mkdir -p /usr/lib64/firefox/browser/defaults/preferences
 sudo curl -L -o /usr/lib64/firefox/browser/defaults/preferences/user.js https://raw.githubusercontent.com/dgoerger/dotfiles/master/firefox_user.js
-
-### Chrome ###
-#sudo dnf install -y https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
