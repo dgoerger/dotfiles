@@ -40,7 +40,7 @@ sudo authconfig --disablefingerprint --update
 ########################
 ### commandline apps ###
 # all-around
-sudo dnf install -y bsdtar git git-cal lynx ranger tmux vim-enhanced
+sudo dnf install -y bsdtar git-core git-core-doc lynx ranger tmux vim-enhanced
 ## diagnosis
 sudo dnf install -y htop lsof ncdu traceroute
 ## productivity

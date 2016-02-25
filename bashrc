@@ -22,8 +22,10 @@ unset HISTFILE
 export EDITOR=vim
 
 # user specific aliases and functions
+alias dnf='sudo dnf'
 alias grep='grep --color=always -n'
 alias l='ls -lh --color'
+alias la='ls -lha --color'
 alias less='less -R'
 alias links='links -http.fake-firefox 1 -http.do-not-track 1 -ssl.certificates 2 -smb.allow-hyperlinks-to-smb 0 -save-url-history 0'
 alias lynx='lynx -use_mouse -vikeys -nomore -noprint -tna -force_empty_hrefless_a -enable_scrollback -nocolor -cookies -noreferer'
