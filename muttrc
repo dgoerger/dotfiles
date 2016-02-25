@@ -14,7 +14,7 @@ set imap_keepalive = 300
 # cache
 set mbox_type = Maildir
 set header_cache = "~/.cache/mutt"
-set message_cachedir = "~/.cache/mutt/messages"
+set message_cachedir = "~/.cache/mutt"
 
 # IMAP + SMTP
 set imap_user = '{changeme}'
