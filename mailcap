@@ -1,0 +1,2 @@
+#image/*; img2txt -f utf8 %s; copiousoutput;
+text/html; lynx -vikeys -force_empty_hrefless_a -enable_scrollback -dump %s; nametemplate=%s.html; copiousoutput
