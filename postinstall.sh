@@ -8,15 +8,34 @@
 ########################
 ## Remove unnecessary ##
 ########################
-sudo dnf remove abrt* b43* baobab bijiben cheese devassistant* dos2unix \
-empathy evince-browser-plugin evolution foomatic* fpaste fprintd \
-glusterfs* gnome-boxes gnome-characters gnome-classic-session gnome-clocks \
-gnome-contacts gnome-documents gnome-music gnome-system-monitor gnome-weather \
-hpijs hplip-common httpd* hyperv* iscsi-initiator-utils iwl* java* libfprint \
-libiscsi libreoffice* libreport libvirt* memtest86+ NetworkManager-adsl \
-NetworkManager-team openvpn orca perl pptp qemu* rhythmbox \
-sane-backends setroubleshoot* shotwell spice* tigervnc* transmission-gtk vpnc \
-xen* yelp* yum-metadata-parser
+# hardware - note this removes almost all wifi drivers
+sudo dnf remove -y atmel-firmware b43* foomatic* fprintd glusterfs* gnome-boxes \
+hpijs hplip-common hyperv* iscsi-initiator-utils iwl* libfprint \
+libiscsi libvirt* memtest86+ NetworkManager-adsl NetworkManager-team \
+openvpn pptp qemu* sane-backends spice* tigervnc* vpnc xen*
+
+# dev tools and libs
+sudo dnf remove -y abrt* devassistant* dos2unix fpaste java* libreport \
+perl setroubleshoot* yum-metadata-parser
+
+# help and accessibility
+sudo dnf remove -y gnome-classic-session orca yelp*
+
+# remove for security
+sudo dnf remove -y evince-browser-plugin httpd*
+
+# remove kerberos support in sasl
+sudo dnf remove -y cyrus-sasl-gssapi
+
+# misc unused graphical programs
+sudo dnf remove baobab bijiben cheese empathy evolution ghostscript gnome-characters \
+gnome-clocks gnome-contacts gnome-documents gnome-music gnome-system-monitor \
+gnome-weather libreoffice* rhythmbox shotwell transmission-gtk
+
+# remove the fullscreen pinentry dialogue for gpg2
+sudo dnf remove -y pinentry-gnome3
+
+# clean up and patch
 sudo dnf autoremove -y
 sudo dnf upgrade -y
 
@@ -45,6 +64,11 @@ sudo dnf install -y bsdtar git-core git-core-doc lynx ranger tmux vim-enhanced
 sudo dnf install -y htop lsof ncdu traceroute
 ## productivity
 sudo dnf install -y pandoc-static transmission-cli
+## mail
+#sudo dnf install -y cyrus-sasl-plain mailcap mutt
+#mkdir -p $HOME/.config
+#curl -Lo $HOME/.config/mailcap https://github.com/dgoerger/dotfiles/raw/master/mailcap
+#curl -Lo $HOME/.muttrc https://github.com/dgoerger/dotfiles/raw/master/muttrc
 ## security
 sudo dnf install -y firewalld nmap
 sudo systemctl enable firewalld
@@ -77,17 +101,17 @@ sh /usr/local/src/dnscrypt/redhat.sh
 # multimedia
 sudo dnf install -y gstreamer1-plugins-bad-free
 #dnf install -y gstreamer1-libav #requires enabling rpmfusion-free
-# productivity
+# LaTeX
 sudo dnf install -y texlive-collection-xetex
-# spellcheck
+# spellcheck - why isn't en-CA packaged separately?
 sudo dnf install -y hunspell-en
 
 ### graphical applications ###
-# multimedia
+# photo manager (gthumb for import, eog for browsing)
 sudo dnf install -y gthumb
 # productivity
 sudo dnf install -y keepassx
-sudo dnf install -y vinagre
+#sudo dnf install -y vinagre
 sudo dnf install -y firefox icecat
 
 ### GNOME tweaks ###
@@ -122,11 +146,17 @@ curl -L -o $HOME/.vimrc https://github.com/dgoerger/dotfiles/raw/master/vimrc
 mkdir -p $HOME/.config/transmission
 curl -L -o $HOME/.config/transmission/settings.json https://github.com/dgoerger/dotfiles/raw/master/transmission-settings.json
 ## GNOME
+# privacy / security
+dconf write /org/gnome/desktop/media-handling/autorun-never true
 dconf write /org/gnome/desktop/privacy/report-technical-problems false
-dconf write /org/gnome/shell/enabled-extensions "['alternate-tab@gnome-shell-extensions.gcampax.github.com']"
+# shell
+dconf write /org/gnome/desktop/datetime/automatic-timezone true
 dconf write /org/gnome/desktop/interface/clock-show-date true
+dconf write /org/gnome/settings-daemon/peripherals/touchpad/natural-scroll true
+dconf write /org/gnome/settings-daemon/peripherals/touchpad/tap-to-click true
+dconf write /org/gnome/shell/enabled-extensions "['alternate-tab@gnome-shell-extensions.gcampax.github.com']"
+# terminal
 dconf write /org/gnome/terminal/legacy/default-show-menubar false
-dconf write /org/gnome/terminal/legacy/menu-accelerator-enabled false
 dconf write /org/gnome/terminal/legacy/keybindings/close-tab "'disabled'"
 dconf write /org/gnome/terminal/legacy/keybindings/move-tab-right "'disabled'"
 dconf write /org/gnome/terminal/legacy/keybindings/switch-to-tab-3 "'disabled'"
@@ -150,13 +180,15 @@ dconf write /org/gnome/terminal/legacy/keybindings/switch-to-tab-10 "'disabled'"
 dconf write /org/gnome/terminal/legacy/keybindings/switch-to-tab-9 "'disabled'"
 dconf write /org/gnome/terminal/legacy/keybindings/move-tab-left "'disabled'"
 dconf write /org/gnome/terminal/legacy/keybindings/switch-to-tab-2 "'disabled'"
+dconf write /org/gnome/terminal/legacy/menu-accelerator-enabled false
 dconf write /org/gnome/terminal/legacy/new-terminal-mode "'tab'"
-dconf write /org/gnome/settings-daemon/peripherals/touchpad/natural-scroll true
-dconf write /org/gnome/settings-daemon/peripherals/touchpad/tap-to-click true
+# tracker / search indexing
 dconf write /org/freedesktop/tracker/miner/files/index-recursive-directories "['&DESKTOP', '&DOCUMENTS']"
-dconf write /org/gnome/desktop/media-handling/autorun-never true
-dconf write /org/gnome/desktop/datetime/automatic-timezone true
+# nautilus
 dconf write /org/gnome/nautilus/preferences/sort-directories-first true
+# eog
+dconf write /org/gnome/eog/plugins/active-plugins "['fullscreen']"
+# gtk
 mkdir -p $HOME/.config/gtk-3.0
 echo -e "[Settings]\ngtk-application-prefer-dark-theme=1" > $HOME/.config/gtk-3.0/settings.ini
 echo "gtk-enable-primary-paste=true" >> $HOME/.config/gtk-3.0/settings.ini
