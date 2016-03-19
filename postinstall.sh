@@ -59,7 +59,7 @@ sudo authconfig --disablefingerprint --update
 ########################
 ### commandline apps ###
 # all-around
-sudo dnf install -y bsdtar git-core git-core-doc lynx ranger tmux vim-enhanced
+sudo dnf install -y bsdtar git-core git-core-doc lynx ranger tmux tree vim-enhanced
 ## diagnosis
 sudo dnf install -y htop lsof ncdu traceroute
 ## productivity
@@ -111,8 +111,10 @@ sudo dnf install -y hunspell-en
 sudo dnf install -y gthumb
 # productivity
 sudo dnf install -y keepassx
+sudo dnf install -y gedit-plugin-multiedit
 #sudo dnf install -y vinagre
 sudo dnf install -y firefox icecat
+sudo dnf install -y youtube-dl
 
 ### GNOME tweaks ###
 # GNOME Shell
@@ -152,9 +154,10 @@ dconf write /org/gnome/desktop/privacy/report-technical-problems false
 # shell
 dconf write /org/gnome/desktop/datetime/automatic-timezone true
 dconf write /org/gnome/desktop/interface/clock-show-date true
+dconf write /org/gnome/shell/enabled-extensions "['alternate-tab@gnome-shell-extensions.gcampax.github.com']"
+# mouse
 dconf write /org/gnome/settings-daemon/peripherals/touchpad/natural-scroll true
 dconf write /org/gnome/settings-daemon/peripherals/touchpad/tap-to-click true
-dconf write /org/gnome/shell/enabled-extensions "['alternate-tab@gnome-shell-extensions.gcampax.github.com']"
 # terminal
 dconf write /org/gnome/terminal/legacy/default-show-menubar false
 dconf write /org/gnome/terminal/legacy/keybindings/close-tab "'disabled'"
@@ -186,6 +189,9 @@ dconf write /org/gnome/terminal/legacy/new-terminal-mode "'tab'"
 dconf write /org/freedesktop/tracker/miner/files/index-recursive-directories "['&DESKTOP', '&DOCUMENTS']"
 # nautilus
 dconf write /org/gnome/nautilus/preferences/sort-directories-first true
+# gedit - multiline with ctrl+e
+sudo dnf install -y gedit-plugin-codecomment gedit-plugin-multiedit gedit-plugin-wordcompletion
+dconf write /org/gnome/gedit/plugins/active-plugins "['codecomment', 'wordcompletion', 'multiedit', 'time', 'spell', 'modelines', 'filebrowser', 'docinfo']"
 # eog
 dconf write /org/gnome/eog/plugins/active-plugins "['fullscreen']"
 # gtk
