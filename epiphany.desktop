@@ -1,3 +1,4 @@
+# really all this does is restrict so Epiphany launches in Incognito mode by default---see "Exec" line
 [Desktop Entry]
 Name=Web
 Name[an]=Web
