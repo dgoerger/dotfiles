@@ -27,3 +27,9 @@ set viminfo="NONE"
 if has('mouse')
   set mouse=a
 endif
+
+""" mutt
+au BufRead /tmp/mutt-* set tw=72
+
+""" colour
+colorscheme elflord
