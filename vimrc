@@ -28,6 +28,10 @@ if has('mouse')
   set mouse=a
 endif
 
+""" tab-completion
+set wildmenu
+set wildmode=list:full
+
 """ mutt
 au BufRead /tmp/mutt-* set tw=72
 
