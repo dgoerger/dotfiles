@@ -27,7 +27,7 @@ set -o vi
 
 # user specific aliases and functions
 alias dnf='sudo dnf'
-alias grep='grep --color=always -n'
+alias grep='grep --color=always'
 alias l='ls -lh --color'
 alias la='ls -lha --color'
 alias less='less -R'
