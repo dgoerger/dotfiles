@@ -32,6 +32,7 @@ alias l='ls -lh --color'
 alias la='ls -lha --color'
 alias less='less -R'
 alias links='links -http.fake-firefox 1 -http.do-not-track 1 -ssl.certificates 2 -smb.allow-hyperlinks-to-smb 0 -save-url-history 0'
+alias lowercase="sed -e 's/\(.*\)/\L\1/'"
 alias lynx='lynx -use_mouse -vikeys -nomore -noprint -tna -force_empty_hrefless_a -enable_scrollback -nocolor -cookies -noreferer'
 alias ll='ls -lh --color'
 alias ls='ls --color'
