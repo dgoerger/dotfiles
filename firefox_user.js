@@ -138,3 +138,6 @@ pref("media.peerconnection.enabled",false);
 
 //// don't leak text selection and copy/paste
 pref("dom.event.clipboardevents.enabled",false);
+
+//// don't try to "fix up" url typos -> localhost means localhost not www.localhost.com
+pref("browser.fixup.alternate.enabled",false);
