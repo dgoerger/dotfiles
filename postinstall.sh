@@ -114,6 +114,7 @@ sudo dnf install -y keepassx
 sudo dnf install -y gedit-plugin-multiedit
 #sudo dnf install -y vinagre
 sudo dnf install -y firefox icecat
+sudo dnf install -y xsel
 sudo dnf install -y youtube-dl
 
 ### GNOME tweaks ###
