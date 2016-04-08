@@ -61,7 +61,7 @@ sudo authconfig --disablefingerprint --update
 # all-around
 sudo dnf install -y bsdtar git-core git-core-doc lynx ranger tmux tree vim-enhanced
 ## diagnosis
-sudo dnf install -y htop lsof ncdu traceroute
+sudo dnf install -y htop lsof ncdu
 ## productivity
 sudo dnf install -y pandoc-static transmission-cli
 ## mail
@@ -75,8 +75,7 @@ sudo systemctl enable firewalld
 sudo firewall-cmd --set-default-zone=drop
 sudo firewall-cmd --lockdown-on
 ## set stricter system crypto policy
-# note NSS not until F25: https://bugzilla.mozilla.org/show_bug.cgi?id=1009429
-#                         https://bugzilla.redhat.com/show_bug.cgi?id=1157720
+# note NSS not until F25: https://bugzilla.redhat.com/show_bug.cgi?id=1157720
 echo "FUTURE" | sudo tee /etc/crypto-policies/config
 sudo update-crypto-policies
 ## respect Mozilla's CA trust revocation policy
@@ -84,7 +83,7 @@ sudo update-crypto-policies
 sudo ca-legacy disable
 ## set DNSCrypt for encrypted DNS lookups + DNSSEC
 # note this step is interactive
-# might need modification in f24: https://fedoraproject.org/wiki/Changes/Default_Local_DNS_Resolver
+# might need modification at some point: https://fedoraproject.org/wiki/Changes/Default_Local_DNS_Resolver
 # important: /etc/resolv.conf is left with attr +i (immutable bit)
 sudo mkdir -p /usr/local/src/dnscrypt
 sudo curl -L -o /usr/local/src/dnscrypt/redhat.sh https://raw.githubusercontent.com/simonclausen/dnscrypt-autoinstall/master/dnscrypt-autoinstall-redhat.sh
