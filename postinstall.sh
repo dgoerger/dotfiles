@@ -143,6 +143,7 @@ curl -L -o $HOME/.bashrc https://github.com/dgoerger/dotfiles/raw/master/bashrc
 curl -L -o $HOME/.gitconfig https://github.com/dgoerger/dotfiles/raw/master/gitconfig
 curl -L -o $HOME/.tmux.conf https://github.com/dgoerger/dotfiles/raw/master/tmux.conf
 curl -L -o $HOME/.vimrc https://github.com/dgoerger/dotfiles/raw/master/vimrc
+curl -L -o $HOME/.lynx_bookmarks https://github.com/dgoerger/dotfiles/raw/master/lynx_bookmarks
 ## why does ~/.pki exist
 rm -rf $HOME/.pki
 ln -s /tmp/ $HOME/.pki
