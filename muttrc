@@ -51,7 +51,6 @@ set smart_wrap
 set wrap = 80
 auto_view text/html
 alternative_order text/plain text/html
-set mailcap_path = ~/.config/mailcap
 
 set editor = 'vim -c "set spell spelllang=en_ca formatoptions+=a"'
 set fast_reply

@@ -66,8 +66,7 @@ sudo dnf install -y htop lsof ncdu
 sudo dnf install -y pandoc-static transmission-cli
 ## mail
 #sudo dnf install -y cyrus-sasl-plain mailcap mutt
-#mkdir -p $HOME/.config
-#curl -Lo $HOME/.config/mailcap https://github.com/dgoerger/dotfiles/raw/master/mailcap
+#sudo curl -Lo /etc/mailcap https://github.com/dgoerger/dotfiles/raw/master/mailcap
 #curl -Lo $HOME/.muttrc https://github.com/dgoerger/dotfiles/raw/master/muttrc
 ## security
 sudo dnf install -y firewalld nmap
