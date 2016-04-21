@@ -146,7 +146,7 @@ curl -L -o $HOME/.vimrc https://github.com/dgoerger/dotfiles/raw/master/vimrc
 curl -L -o $HOME/.lynx_bookmarks https://github.com/dgoerger/dotfiles/raw/master/lynx_bookmarks
 ## why does ~/.pki exist
 rm -rf $HOME/.pki
-ln -s /tmp/ $HOME/.pki
+ln -s /dev/null $HOME/.pki
 ## transmission rc
 mkdir -p $HOME/.config/transmission
 curl -L -o $HOME/.config/transmission/settings.json https://github.com/dgoerger/dotfiles/raw/master/transmission-settings.json
