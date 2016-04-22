@@ -109,7 +109,6 @@ sudo dnf install -y hunspell-en
 sudo dnf install -y gthumb
 # productivity
 sudo dnf install -y keepassx
-sudo dnf install -y gedit-plugin-multiedit
 #sudo dnf install -y vinagre
 sudo dnf install -y firefox icecat
 sudo dnf install -y xsel
@@ -128,17 +127,18 @@ sudo hostnamectl set-hostname gelos
 sudo curl -L -o /etc/systemd/journald.conf https://github.com/dgoerger/dotfiles/raw/master/journald.conf
 ## use upstream ssh-agent for ed25519 support
 sudo ln -sf /dev/null /etc/xdg/autostart/gnome-keyring-ssh.desktop
-mkdir -p $HOME/.config/systemd/user
-curl -L -o $HOME/.config/systemd/user/ssh-agent.service https://github.com/dgoerger/dotfiles/raw/master/ssh-agent.service
-systemctl --user enable ssh-agent
+sudo curl -L -o /etc/systemd/user/ssh-agent.service https://github.com/dgoerger/dotfiles/raw/master/ssh-agent.service
+sudo systemctl --global enable ssh-agent
+## .bash_profile -> .bashrc why not make it a system setting and get rid of the dotfile
+sudo curl -L -o /etc/profile.d/bashrc.sh https://github.com/dgoerger/dotfiles/raw/master/profile
+sudo rm /etc/skel/.bash_profile
+rm $HOME/.bash_profile
 ## set ssh config
 mkdir -p $HOME/.ssh
 curl -L -o $HOME/.ssh/config https://github.com/dgoerger/dotfiles/raw/master/ssh_config
 chmod 700 $HOME/.ssh
 chmod 600 $HOME/.ssh/config
 ## set some rc's
-curl -L -o $HOME/.profile https://github.com/dgoerger/dotfiles/raw/master/profile
-rm $HOME/.bash_profile
 curl -L -o $HOME/.bashrc https://github.com/dgoerger/dotfiles/raw/master/bashrc
 curl -L -o $HOME/.gitconfig https://github.com/dgoerger/dotfiles/raw/master/gitconfig
 curl -L -o $HOME/.tmux.conf https://github.com/dgoerger/dotfiles/raw/master/tmux.conf
@@ -151,6 +151,7 @@ ln -s /dev/null $HOME/.pki
 mkdir -p $HOME/.config/transmission
 curl -L -o $HOME/.config/transmission/settings.json https://github.com/dgoerger/dotfiles/raw/master/transmission-settings.json
 ## GNOME
+## TODO move system-level dconf prefs to /etc per https://wiki.gnome.org/Projects/dconf/SystemAdministrators
 # privacy / security
 dconf write /org/gnome/desktop/media-handling/autorun-never true
 dconf write /org/gnome/desktop/privacy/report-technical-problems false
@@ -197,11 +198,12 @@ sudo dnf install -y gedit-plugin-codecomment gedit-plugin-multiedit gedit-plugin
 dconf write /org/gnome/gedit/plugins/active-plugins "['codecomment', 'wordcompletion', 'multiedit', 'time', 'spell', 'modelines', 'filebrowser', 'docinfo']"
 # eog
 dconf write /org/gnome/eog/plugins/active-plugins "['fullscreen']"
-# gtk
+# gtk - TODO move this to /etc/gtk-3.0 ?
 mkdir -p $HOME/.config/gtk-3.0
 echo -e "[Settings]\ngtk-application-prefer-dark-theme=1" > $HOME/.config/gtk-3.0/settings.ini
 echo "gtk-enable-primary-paste=true" >> $HOME/.config/gtk-3.0/settings.ini
 
 ### Firefox ###
+# TODO move this to /etc/firefox/pref ?
 sudo mkdir -p /usr/lib64/firefox/browser/defaults/preferences
 sudo curl -L -o /usr/lib64/firefox/browser/defaults/preferences/user.js https://raw.githubusercontent.com/dgoerger/dotfiles/master/firefox_user.js
