@@ -23,7 +23,6 @@ export EDITOR=vim
 
 # user specific aliases and functions
 alias grep='grep --color=always'
-alias help='man'
 alias l='ls -lh --color'
 alias la='ls -lha --color'
 alias less='less -R'
