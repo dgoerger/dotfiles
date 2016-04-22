@@ -21,13 +21,9 @@ unset HISTFILE
 # set EDITOR
 export EDITOR=vim
 
-# use vim mode instead of emacs mode
-# see: http://www.catonmat.net/download/bash-vi-editing-mode-cheat-sheet.txt
-set -o vi
-
 # user specific aliases and functions
-alias dnf='sudo dnf'
 alias grep='grep --color=always'
+alias help='man'
 alias l='ls -lh --color'
 alias la='ls -lha --color'
 alias less='less -R'
