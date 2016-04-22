@@ -133,6 +133,8 @@ sudo systemctl --global enable ssh-agent
 sudo curl -L -o /etc/profile.d/bashrc.sh https://github.com/dgoerger/dotfiles/raw/master/profile
 sudo rm /etc/skel/.bash_profile
 rm $HOME/.bash_profile
+## vim default colorscheme is almost unreadable
+echo -e '\n" default colours are unreadable\ncolorscheme elflord' | sudo tee --append /etc/vimrc
 ## set ssh config
 mkdir -p $HOME/.ssh
 curl -L -o $HOME/.ssh/config https://github.com/dgoerger/dotfiles/raw/master/ssh_config
