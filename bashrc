@@ -21,15 +21,18 @@ unset HISTFILE
 # set EDITOR
 export EDITOR=vim
 
+# fix ls filename quoting nonsense
+export QUOTING_STYLE=literal
+
 # user specific aliases and functions
 alias grep='grep --color=always'
 alias l='ls -lh --color'
 alias la='ls -lha --color'
 alias less='less -R'
-alias lowercase="sed -e 's/\(.*\)/\L\1/'"
-alias lynx='lynx -use_mouse -vikeys -nomore -noprint -tna -force_empty_hrefless_a -enable_scrollback -cookies -noreferer ~/.lynx_bookmarks.html'
 alias ll='ls -lh --color'
+alias lowercase="sed -e 's/\(.*\)/\L\1/'"
 alias ls='ls --color'
+alias lynx='lynx -use_mouse -vikeys -nomore -noprint -tna -force_empty_hrefless_a -enable_scrollback -cookies -noreferer ~/.lynx_bookmarks.html'
 alias python='python3'
 alias ranger='ranger -c'
 if [ -f /usr/bin/bsdtar ]; then
