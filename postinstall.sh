@@ -129,10 +129,6 @@ sudo curl -L -o /etc/systemd/journald.conf https://github.com/dgoerger/dotfiles/
 sudo ln -sf /dev/null /etc/xdg/autostart/gnome-keyring-ssh.desktop
 sudo curl -L -o /etc/systemd/user/ssh-agent.service https://github.com/dgoerger/dotfiles/raw/master/ssh-agent.service
 sudo systemctl --global enable ssh-agent
-## .bash_profile -> .bashrc why not make it a system setting and get rid of the dotfile
-sudo curl -L -o /etc/profile.d/bashrc.sh https://github.com/dgoerger/dotfiles/raw/master/profile
-sudo rm /etc/skel/.bash_profile
-rm $HOME/.bash_profile
 ## vim default colorscheme is almost unreadable
 echo -e '\n" default colours are unreadable\ncolorscheme elflord' | sudo tee --append /etc/vimrc
 ## set ssh config
@@ -141,6 +137,8 @@ curl -L -o $HOME/.ssh/config https://github.com/dgoerger/dotfiles/raw/master/ssh
 chmod 700 $HOME/.ssh
 chmod 600 $HOME/.ssh/config
 ## set some rc's
+curl -L -o $HOME/.profile https://github.com/dgoerger/dotfiles/raw/master/profile
+rm $HOME/.bash_profile
 curl -L -o $HOME/.bashrc https://github.com/dgoerger/dotfiles/raw/master/bashrc
 curl -L -o $HOME/.gitconfig https://github.com/dgoerger/dotfiles/raw/master/gitconfig
 curl -L -o $HOME/.tmux.conf https://github.com/dgoerger/dotfiles/raw/master/tmux.conf
