@@ -6,7 +6,7 @@
 # EXIF data is only present in jpeg and tiff
 # generate import failure log for other types
 # TODO: properly import other types
-FILETYPES="jpg jpeg tif tiff gif bmp xcf ogg ogv webm mp4 mov"
+FILETYPES="jpg jpeg tif tiff png gif bmp xcf ogg ogv webm mp4 mov"
 
 # CHANGEME: destination folder
 MOVETO="${HOME}/Pictures/"
