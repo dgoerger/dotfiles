@@ -68,6 +68,9 @@ sudo dnf install -y pandoc-static transmission-cli
 #sudo dnf install -y cyrus-sasl-plain mailcap mutt
 #sudo curl -Lo /etc/mailcap https://github.com/dgoerger/dotfiles/raw/master/mailcap
 #curl -Lo $HOME/.muttrc https://github.com/dgoerger/dotfiles/raw/master/muttrc
+## multimedia
+sudo curl -o /usr/local/bin/photo_import https://github.com/dgoerger/dotfiles/raw/master/photo_import.sh
+sudo chmod +x /usr/local/bin/photo_import
 ## security
 sudo dnf install -y firewalld nmap
 sudo systemctl enable firewalld
@@ -80,20 +83,22 @@ sudo update-crypto-policies
 ## respect Mozilla's CA trust revocation policy
 # see: https://fedoraproject.org/wiki/CA-Certificates
 sudo ca-legacy disable
-## set DNSCrypt for encrypted DNS lookups + DNSSEC
-# note this step is interactive
-# might need modification at some point: https://fedoraproject.org/wiki/Changes/Default_Local_DNS_Resolver
-# important: /etc/resolv.conf is left with attr +i (immutable bit)
-sudo mkdir -p /usr/local/src/dnscrypt
-sudo curl -L -o /usr/local/src/dnscrypt/redhat.sh https://raw.githubusercontent.com/simonclausen/dnscrypt-autoinstall/master/dnscrypt-autoinstall-redhat.sh
-sudo chmod +x /usr/local/src/dnscrypt/redhat.sh
-# yum is deprecated
-sudo sed -i 's/yum/dnf/g' /usr/local/src/dnscrypt/redhat.sh
-# for some reason this one line doesn't have sudo, ergo it fails
-sudo sed -i 's/dnf\ install\ -y\ libsodium-devel/sudo\ dnf\ install\ -y\ libsodium-devel/' /usr/local/src/dnscrypt/redhat.sh
-# also it assumes we have gpg---not necessarily true
-sudo dnf install -y gpg
-sh /usr/local/src/dnscrypt/redhat.sh
+### TODO: refactor dnscrypt section, remove dependency on outside source
+### set DNSCrypt for encrypted DNS lookups + DNSSEC
+## note this step is interactive
+## might need modification at some point: https://fedoraproject.org/wiki/Changes/Default_Local_DNS_Resolver
+## important: /etc/resolv.conf is left with attr +i (immutable bit)
+#sudo mkdir -p /usr/local/src/dnscrypt
+#sudo curl -L -o /usr/local/src/dnscrypt/redhat.sh https://raw.githubusercontent.com/simonclausen/dnscrypt-autoinstall/master/dnscrypt-autoinstall-redhat.sh
+#sudo chmod +x /usr/local/src/dnscrypt/redhat.sh
+## yum is deprecated
+#sudo sed -i 's/yum/dnf/g' /usr/local/src/dnscrypt/redhat.sh
+## for some reason this one line doesn't have sudo, ergo it fails
+#sudo sed -i 's/dnf\ install\ -y\ libsodium-devel/sudo\ dnf\ install\ -y\ libsodium-devel/' /usr/local/src/dnscrypt/redhat.sh
+## also it assumes we have gpg---not necessarily true
+#sudo dnf install -y gpg
+#sh /usr/local/src/dnscrypt/redhat.sh
+
 
 ### system libraries ###
 # multimedia
@@ -105,8 +110,6 @@ sudo dnf install -y texlive-collection-xetex
 sudo dnf install -y hunspell-en
 
 ### graphical applications ###
-# photo manager (gthumb for import, eog for browsing)
-sudo dnf install -y gthumb
 # productivity
 sudo dnf install -y keepassx
 #sudo dnf install -y vinagre
