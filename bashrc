@@ -33,6 +33,7 @@ alias ll='ls -lh --color'
 alias lowercase="sed -e 's/\(.*\)/\L\1/'"
 alias ls='ls --color'
 alias lynx='lynx -use_mouse -vikeys -nomore -noprint -tna -force_empty_hrefless_a -enable_scrollback -cookies -noreferer ~/.lynx_bookmarks.html'
+alias pow='sudo poweroff'
 alias python='python3'
 alias ranger='ranger -c'
 if [ -f /usr/bin/bsdtar ]; then
