@@ -59,7 +59,7 @@ sudo authconfig --disablefingerprint --update
 ########################
 ### commandline apps ###
 # all-around
-sudo dnf install -y bsdtar git-core git-core-doc lynx ranger tmux tree vim-enhanced
+sudo dnf install -y bsdtar git-core git-core-doc lynx ntp ranger tmux tree vim-enhanced
 ## diagnosis
 sudo dnf install -y htop lsof ncdu
 ## productivity
@@ -134,6 +134,8 @@ sudo curl -L -o /etc/systemd/user/ssh-agent.service https://github.com/dgoerger/
 sudo systemctl --global enable ssh-agent
 ## vim default colorscheme is almost unreadable
 echo -e '\n" default colours are unreadable\ncolorscheme elflord' | sudo tee --append /etc/vimrc
+## not sure why ntpd isn't enabled by default
+sudo systemctl enable ntpd
 ## set ssh config
 mkdir -p $HOME/.ssh
 curl -L -o $HOME/.ssh/config https://github.com/dgoerger/dotfiles/raw/master/ssh_config
