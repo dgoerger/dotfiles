@@ -36,3 +36,8 @@ AcceptEnv XMODIFIERS
 
 # override default of no subsystems
 Subsystem	sftp	/usr/libexec/openssh/sftp-server
+
+### DEBIAN-SPECIFIC
+## by default, /etc/pam.d/login includes a directive to print MOTD;
+## -> ergo uncomment this if you're getting MOTD printed twice
+#PrintMOTD no
