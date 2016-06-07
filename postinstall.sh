@@ -131,6 +131,11 @@ sudo curl -L -o /etc/systemd/journald.conf https://github.com/dgoerger/dotfiles/
 ## use upstream ssh-agent for ed25519 support
 sudo ln -sf /dev/null /etc/xdg/autostart/gnome-keyring-ssh.desktop
 sudo curl -L -o /etc/systemd/user/ssh-agent.service https://github.com/dgoerger/dotfiles/raw/master/ssh-agent.service
+curl -L -o $HOME/.profile https://github.com/dgoerger/dotfiles/raw/master/profile
+rm $HOME/.bash_profile
+# uncomment on terminal workstations where ssh-agent should start with systemd login event
+# -> and not on headless servers where it starts with ssh ForwardAgent event
+echo -e '\nexport SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"' >> $HOME/.profile
 sudo systemctl --global enable ssh-agent
 ## vim default colorscheme is almost unreadable
 echo -e '\n" default colours are unreadable\ncolorscheme elflord' | sudo tee --append /etc/vimrc
@@ -142,8 +147,6 @@ curl -L -o $HOME/.ssh/config https://github.com/dgoerger/dotfiles/raw/master/ssh
 chmod 700 $HOME/.ssh
 chmod 600 $HOME/.ssh/config
 ## set some rc's
-curl -L -o $HOME/.profile https://github.com/dgoerger/dotfiles/raw/master/profile
-rm $HOME/.bash_profile
 curl -L -o $HOME/.bashrc https://github.com/dgoerger/dotfiles/raw/master/bashrc
 curl -L -o $HOME/.gitconfig https://github.com/dgoerger/dotfiles/raw/master/gitconfig
 curl -L -o $HOME/.tmux.conf https://github.com/dgoerger/dotfiles/raw/master/tmux.conf
