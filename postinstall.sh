@@ -3,7 +3,7 @@
 ########################
 ### Additional repos ###
 ########################
-#dnf install -y http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-23.noarch.rpm
+#sudo dnf install -y http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-24.noarch.rpm
 
 ########################
 ## Remove unnecessary ##
@@ -83,22 +83,21 @@ sudo update-crypto-policies
 ## respect Mozilla's CA trust revocation policy
 # see: https://fedoraproject.org/wiki/CA-Certificates
 sudo ca-legacy disable
-### TODO: refactor dnscrypt section, remove dependency on outside source
-### set DNSCrypt for encrypted DNS lookups + DNSSEC
-## note this step is interactive
-## might need modification at some point: https://fedoraproject.org/wiki/Changes/Default_Local_DNS_Resolver
-## important: /etc/resolv.conf is left with attr +i (immutable bit)
-#sudo mkdir -p /usr/local/src/dnscrypt
-#sudo curl -L -o /usr/local/src/dnscrypt/redhat.sh https://raw.githubusercontent.com/simonclausen/dnscrypt-autoinstall/master/dnscrypt-autoinstall-redhat.sh
-#sudo chmod +x /usr/local/src/dnscrypt/redhat.sh
-## yum is deprecated
-#sudo sed -i 's/yum/dnf/g' /usr/local/src/dnscrypt/redhat.sh
-## for some reason this one line doesn't have sudo, ergo it fails
-#sudo sed -i 's/dnf\ install\ -y\ libsodium-devel/sudo\ dnf\ install\ -y\ libsodium-devel/' /usr/local/src/dnscrypt/redhat.sh
-## also it assumes we have gpg---not necessarily true
-#sudo dnf install -y gpg
-#sh /usr/local/src/dnscrypt/redhat.sh
-
+# TODO: DNSCrypt for encrypted DNS lookups + DNSSEC
+# inspiration: https://github.com/simonclausen/dnscrypt-autoinstall
+## set DNS resolvers and local cache
+sudo dnf install -y dnsmasq
+sudo systemctl enable dnsmasq
+echo -e "nameserver 127.0.0.1\nnameserver 8.8.8.8\nnameserver 4.4.4.4" | sudo tee /etc/resolv.conf >/dev/null
+sudo chattr +i /etc/resolv.conf
+### logging
+sudo dnf install -y rsyslog
+sudo systemctl enable rsyslog
+sudo curl -L -o /etc/rsyslog.conf https://raw.githubusercontent.com/dgoerger/dotfiles/master/rsyslog.conf
+sudo curl -L -o /etc/systemd/journald.conf https://github.com/dgoerger/dotfiles/raw/master/journald.conf
+### ntpd - not sure why not enabled by default
+sudo dnf install -y ntp
+sudo systemctl enable ntpd
 
 ### system libraries ###
 # multimedia
@@ -113,8 +112,7 @@ sudo dnf install -y hunspell-en
 # productivity
 sudo dnf install -y keepassx
 #sudo dnf install -y vinagre
-sudo dnf install -y firefox icecat
-sudo dnf install -y xsel
+sudo dnf install -y firefox
 sudo dnf install -y youtube-dl
 
 ### GNOME tweaks ###
@@ -126,8 +124,6 @@ sudo dnf install -y gnome-shell-extension-alternate-tab
 ########################
 ## set hostname
 sudo hostnamectl set-hostname gelos
-## journald
-sudo curl -L -o /etc/systemd/journald.conf https://github.com/dgoerger/dotfiles/raw/master/journald.conf
 ## use upstream ssh-agent for ed25519 support
 sudo ln -sf /dev/null /etc/xdg/autostart/gnome-keyring-ssh.desktop
 sudo curl -L -o /etc/systemd/user/ssh-agent.service https://github.com/dgoerger/dotfiles/raw/master/ssh-agent.service
@@ -135,7 +131,7 @@ curl -L -o $HOME/.profile https://github.com/dgoerger/dotfiles/raw/master/profil
 rm $HOME/.bash_profile
 # uncomment on terminal workstations where ssh-agent should start with systemd login event
 # -> and not on headless servers where it starts with ssh ForwardAgent event
-echo -e '\nexport SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"' >> $HOME/.profile
+echo -e '\n# ssh-agent\nexport SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"' >> $HOME/.profile
 sudo systemctl --global enable ssh-agent
 ## vim default colorscheme is almost unreadable
 echo -e '\n" default colours are unreadable\ncolorscheme elflord' | sudo tee --append /etc/vimrc
