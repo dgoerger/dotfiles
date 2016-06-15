@@ -25,6 +25,7 @@ export EDITOR=vim
 export QUOTING_STYLE=literal
 
 # user specific aliases and functions
+alias bc='bc -l'
 alias grep='grep --color=always'
 alias l='ls -lh --color'
 alias la='ls -lha --color'
