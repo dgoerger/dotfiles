@@ -41,4 +41,5 @@ if [ -f /usr/bin/bsdtar ]; then
 fi
 alias tree='tree -N'
 alias view='vim -R'
+alias weather='curl wttr.in/?m'
 alias youtube-dl='youtube-dl -f webm'
