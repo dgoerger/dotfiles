@@ -26,6 +26,9 @@ export QUOTING_STYLE=literal
 
 # user specific aliases and functions
 alias bc='bc -l'
+if [ -f /usr/bin/colordiff ]; then
+  alias diff='colordiff'
+fi
 alias grep='grep --color=always'
 alias l='ls -lh --color'
 alias la='ls -lha --color'
@@ -33,7 +36,9 @@ alias less='less -R'
 alias ll='ls -lh --color'
 alias lowercase="sed -e 's/\(.*\)/\L\1/'"
 alias ls='ls --color'
-alias lynx='lynx -use_mouse -vikeys -nomore -noprint -tna -force_empty_hrefless_a -enable_scrollback -cookies -noreferer ~/.lynx_bookmarks.html'
+if [ -f /usr/bin/lynx ]; then
+  alias lynx='lynx -use_mouse -vikeys -nomore -noprint -tna -force_empty_hrefless_a -enable_scrollback -cookies -noreferer ~/.lynx_bookmarks.html'
+fi
 alias pow='sudo poweroff'
 alias python='python3'
 alias ranger='ranger -c'
