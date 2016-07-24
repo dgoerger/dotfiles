@@ -40,7 +40,7 @@ if [ -f /usr/bin/kpcli ]; then
 fi
 alias l='ls -lh --color'
 alias la='ls -lha --color'
-alias less='less -R'
+alias less='less -RF'
 alias lessc='vim --cmd "let no_plugin_maps = 1" -c "runtime! macros/less.vim" -R'
 alias ll='ls -lh --color'
 alias lowercase="sed -e 's/\(.*\)/\L\1/'"
