@@ -41,7 +41,6 @@ fi
 alias l='ls -lh --color'
 alias la='ls -lha --color'
 alias less='less -RF'
-alias lessc='vim --cmd "let no_plugin_maps = 1" -c "runtime! macros/less.vim" -R'
 alias ll='ls -lh --color'
 alias lowercase="sed -e 's/\(.*\)/\L\1/'"
 alias ls='ls --color'
@@ -60,6 +59,7 @@ if [ -f /usr/bin/bsdtar ]; then
 fi
 alias tree='tree -N'
 alias view='vim -R'
+alias viless='vim --cmd "let no_plugin_maps = 1" -c "runtime! macros/less.vim" -R'
 alias weather='curl http://wttr.in/?m'
 if [ -f /usr/bin/youtube-dl ]; then
   alias youtube-dl='youtube-dl -f webm'
