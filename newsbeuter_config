@@ -1,0 +1,8 @@
+always-display-description      true
+download-full-page              yes
+cleanup-on-quit                 yes
+history-limit                   0
+refresh-on-startup              yes
+browser                         "lynx -use_mouse -vikeys -nomore -noprint -tna -force_empty_hrefless_a -enable_scrollback -cookies %u"
+download-path                   ~/podcasts/%n
+save-path                       ~/podcasts/%n
