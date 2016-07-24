@@ -24,10 +24,8 @@ export EDITOR=vim
 # fix ls filename quoting nonsense
 export QUOTING_STYLE=literal
 
-# connect to ssh socket on desktops
-if [ -n "${DISPLAY}" ]; then
-  export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket"
-fi
+# connect to ssh socket
+export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket"
 
 # user specific aliases and functions
 alias bc='bc -l'
