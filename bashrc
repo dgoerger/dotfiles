@@ -24,28 +24,43 @@ export EDITOR=vim
 # fix ls filename quoting nonsense
 export QUOTING_STYLE=literal
 
+# connect to ssh socket on desktops
+if [ -n "${DISPLAY}" ]; then
+  export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket"
+fi
+
 # user specific aliases and functions
 alias bc='bc -l'
 if [ -f /usr/bin/colordiff ]; then
   alias diff='colordiff'
 fi
 alias grep='grep --color=always'
+if [ -f /usr/bin/kpcli ]; then
+  alias kpcli='kpcli --histfile=/dev/null'
+fi
 alias l='ls -lh --color'
 alias la='ls -lha --color'
 alias less='less -R'
+alias lessc='vim --cmd "let no_plugin_maps = 1" -c "runtime! macros/less.vim" -R'
 alias ll='ls -lh --color'
 alias lowercase="sed -e 's/\(.*\)/\L\1/'"
 alias ls='ls --color'
 if [ -f /usr/bin/lynx ]; then
-  alias lynx='lynx -use_mouse -vikeys -nomore -noprint -tna -force_empty_hrefless_a -enable_scrollback -cookies -noreferer ~/.lynx_bookmarks.html'
+  alias lynx='lynx -use_mouse -vikeys -nomore -noprint -tna -force_empty_hrefless_a -enable_scrollback -cookies -noreferer https://duckduckgo.com/'
 fi
-alias pow='sudo poweroff'
+if [ -f /usr/bin/podbeuter ]; then
+  alias podbeuter='podbeuter -a'
+fi
 alias python='python3'
-alias ranger='ranger -c'
+if [ -f /usr/bin/ranger ]; then
+  alias ranger='ranger -c'
+fi
 if [ -f /usr/bin/bsdtar ]; then
   alias tar='bsdtar'
 fi
 alias tree='tree -N'
 alias view='vim -R'
-alias weather='curl wttr.in/?m'
-alias youtube-dl='youtube-dl -f webm'
+alias weather='curl http://wttr.in/?m'
+if [ -f /usr/bin/youtube-dl ]; then
+  alias youtube-dl='youtube-dl -f webm'
+fi
