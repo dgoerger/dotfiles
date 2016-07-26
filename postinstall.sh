@@ -152,7 +152,7 @@ else
   ## firewall policy
   sudo firewall-cmd --set-default-zone=drop
   ## productivity
-  sudo dnf install -y firefox icecat keepassx
+  sudo dnf install -y firefox fuse-sshfs icecat keepassx
   if [[ "$RDP_CLIENT" == "yes" ]]; then
     sudo dnf install -y vinagre
   fi
