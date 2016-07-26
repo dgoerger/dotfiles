@@ -48,6 +48,9 @@ alias ls='ls --color'
 if [ -f /usr/bin/lynx ]; then
   alias lynx='lynx -use_mouse -vikeys -nomore -noprint -tna -force_empty_hrefless_a -enable_scrollback -cookies -noreferer https://duckduckgo.com/'
 fi
+if [ -f /usr/bin/newsbeuter ]; then
+  alias newsbeuter='newsbeuter -q'
+fi
 if [ -f /usr/bin/podbeuter ]; then
   alias podbeuter='podbeuter -a'
 fi
