@@ -37,8 +37,3 @@ au BufRead /tmp/mutt-* set tw=72
 
 """ colour
 colorscheme elflord
-
-""" clipboard - xsel for linux - mac uses !pbpaste
-if filereadable("/usr/bin/xsel")
-  :command Paste :r !xsel --clipboard --output
-endif
