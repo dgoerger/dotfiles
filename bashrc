@@ -33,6 +33,9 @@ if [ -f /usr/bin/colordiff ]; then
   alias diff='colordiff'
 fi
 alias grep='grep --color=always'
+if [ -f /usr/bin/irssi ]; then
+  alias irssi='irssi --config=/dev/null'
+fi
 if [ -f /usr/bin/kpcli ]; then
   alias kpcli='kpcli --histfile=/dev/null'
 fi
