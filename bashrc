@@ -37,7 +37,7 @@ if [ -f /usr/bin/irssi ]; then
   alias irssi='irssi --config=/dev/null'
 fi
 if [ -f /usr/bin/kpcli ]; then
-  alias kpcli='kpcli --histfile=/dev/null'
+  alias kpcli='kpcli --histfile=/dev/null --readonly'
 fi
 alias l='ls -lh --color'
 alias la='ls -lha --color'
