@@ -86,7 +86,6 @@ sudo dnf install -y firewalld
 sudo systemctl enable firewalld
 sudo systemctl start firewalld
 sudo firewall-cmd --lockdown-on
-# TODO: chattr +i the firewall confs
 ## set stricter system crypto policy
 # note NSS not until F25: https://bugzilla.redhat.com/show_bug.cgi?id=1157720
 echo "FUTURE" | sudo tee /etc/crypto-policies/config
@@ -143,6 +142,7 @@ echo -e '\n\n" default colours are unreadable\ncolorscheme elflord' | sudo tee -
 if [[ "$HEADLESS" == "yes" ]]; then
   ## firewall policy
   sudo firewall-cmd --set-default-zone=dmz
+  sudo chattr +i /etc/firewalld/firewalld.conf
   ## sshd
   sudo systemctl enable sshd
   ## mail
@@ -158,6 +158,7 @@ if [[ "$HEADLESS" == "yes" ]]; then
 else
   ## firewall policy
   sudo firewall-cmd --set-default-zone=drop
+  sudo chattr +i /etc/firewalld/firewalld.conf
   ## productivity
   sudo dnf install -y firefox fuse-sshfs icecat keepassx
   if [[ "$RDP_CLIENT" == "yes" ]]; then
