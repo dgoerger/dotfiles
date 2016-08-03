@@ -8,6 +8,7 @@ NO_USB_PERIPHERALS=correct
 RDP_CLIENT=no
 RPMFUSION=no
 TEXLIVE=no
+GOOGLE_CHROME=no
 
 ########################
 ### Additional repos ###
@@ -164,11 +165,29 @@ else
   if [[ "$RPMFUSION" == "yes" ]]; then
     sudo dnf install -y gstreamer1-libav
   fi
+  if [[ "$GOOGLE_CHROME" == "yes" ]]; then
+    sudo dnf install -y https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
+  fi
+  if [[ "$TEXLIVE" == "yes" ]]; then
+    sudo dnf install -y latexila
+  fi
   sudo curl -o /usr/local/bin/photo_import https://github.com/dgoerger/dotfiles/raw/master/photo_import.sh
   sudo chmod +x /usr/local/bin/photo_import
   ## GNOME
   sudo dnf install -y gnome-shell-extension-alternate-tab
   sudo dnf install -y gedit-plugin-codecomment gedit-plugin-multiedit gedit-plugin-wordcompletion
+  # dconf gdm login screen
+  sudo mkdir -p /etc/dconf/db/gdm.d
+  echo -e "[org/gnome/desktop/interface]\nclock-show-date=true" | sudo tee /etc/dconf/db/gdm.d/01-custom-gdm-settings
+  echo -e "user-db:user\nsystem-db:gdm" | sudo tee /etc/dconf/profile/gdm
+  # dconf default user profiles
+  sudo mkdir -p /etc/dconf/db/site.d
+  sudo curl -L -o /etc/dconf/db/site.d/00_site_settings https://raw.githubusercontent.com/dgoerger/dotfiles/master/dconf_user
+  echo -e "user-db:user\nsystem-db:site" | sudo tee /etc/dconf/profile/user
+  sudo dconf update
+  # global dark theme and middle paste
+  sudo mkdir -p /etc/gtk-3.0
+  echo -e "[Settings]\ngtk-application-prefer-dark-theme=1\ngtk-enable-primary-paste=true" | sudo tee /etc/gtk-3.0/settings.ini
 fi
 
 ########################
@@ -188,55 +207,3 @@ chmod 600 $HOME/.ssh/config
 ## why does ~/.pki exist
 rm -rf $HOME/.pki
 ln -s /dev/null $HOME/.pki
-
-## GNOME
-## TODO move system-level dconf prefs to /etc per https://wiki.gnome.org/Projects/dconf/SystemAdministrators
-# privacy / security
-dconf write /org/gnome/desktop/media-handling/autorun-never true
-dconf write /org/gnome/desktop/privacy/report-technical-problems false
-# shell
-dconf write /org/gnome/desktop/datetime/automatic-timezone true
-dconf write /org/gnome/desktop/interface/clock-show-date true
-dconf write /org/gnome/shell/enabled-extensions "['alternate-tab@gnome-shell-extensions.gcampax.github.com']"
-# mouse
-dconf write /org/gnome/settings-daemon/peripherals/touchpad/natural-scroll true
-dconf write /org/gnome/settings-daemon/peripherals/touchpad/tap-to-click true
-# terminal
-dconf write /org/gnome/terminal/legacy/default-show-menubar false
-dconf write /org/gnome/terminal/legacy/keybindings/close-tab "'disabled'"
-dconf write /org/gnome/terminal/legacy/keybindings/move-tab-right "'disabled'"
-dconf write /org/gnome/terminal/legacy/keybindings/switch-to-tab-3 "'disabled'"
-dconf write /org/gnome/terminal/legacy/keybindings/close-window "'disabled'"
-dconf write /org/gnome/terminal/legacy/keybindings/switch-to-tab-4 "'disabled'"
-dconf write /org/gnome/terminal/legacy/keybindings/find "'disabled'"
-dconf write /org/gnome/terminal/legacy/keybindings/new-tab "'disabled'"
-dconf write /org/gnome/terminal/legacy/keybindings/new-window "'disabled'"
-dconf write /org/gnome/terminal/legacy/keybindings/switch-to-tab-5 "'disabled'"
-dconf write /org/gnome/terminal/legacy/keybindings/find-clear "'disabled'"
-dconf write /org/gnome/terminal/legacy/keybindings/next-tab "'disabled'"
-dconf write /org/gnome/terminal/legacy/keybindings/switch-to-tab-6 "'disabled'"
-dconf write /org/gnome/terminal/legacy/keybindings/find-next "'disabled'"
-dconf write /org/gnome/terminal/legacy/keybindings/prev-tab "'disabled'"
-dconf write /org/gnome/terminal/legacy/keybindings/switch-to-tab-7 "'disabled'"
-dconf write /org/gnome/terminal/legacy/keybindings/find-previous "'disabled'"
-dconf write /org/gnome/terminal/legacy/keybindings/switch-to-tab-1 "'disabled'"
-dconf write /org/gnome/terminal/legacy/keybindings/switch-to-tab-8 "'disabled'"
-dconf write /org/gnome/terminal/legacy/keybindings/help "'disabled'"
-dconf write /org/gnome/terminal/legacy/keybindings/switch-to-tab-10 "'disabled'"
-dconf write /org/gnome/terminal/legacy/keybindings/switch-to-tab-9 "'disabled'"
-dconf write /org/gnome/terminal/legacy/keybindings/move-tab-left "'disabled'"
-dconf write /org/gnome/terminal/legacy/keybindings/switch-to-tab-2 "'disabled'"
-dconf write /org/gnome/terminal/legacy/menu-accelerator-enabled false
-dconf write /org/gnome/terminal/legacy/new-terminal-mode "'tab'"
-# tracker / search indexing
-dconf write /org/freedesktop/tracker/miner/files/index-recursive-directories "['&DESKTOP', '&DOCUMENTS']"
-# nautilus
-dconf write /org/gnome/nautilus/preferences/sort-directories-first true
-# gedit - multiline with ctrl+e
-dconf write /org/gnome/gedit/plugins/active-plugins "['codecomment', 'wordcompletion', 'multiedit', 'time', 'spell', 'modelines', 'filebrowser', 'docinfo']"
-# eog
-dconf write /org/gnome/eog/plugins/active-plugins "['fullscreen']"
-# gtk - TODO move this to /etc/gtk-3.0 ?
-mkdir -p $HOME/.config/gtk-3.0
-echo -e "[Settings]\ngtk-application-prefer-dark-theme=1" > $HOME/.config/gtk-3.0/settings.ini
-echo "gtk-enable-primary-paste=true" >> $HOME/.config/gtk-3.0/settings.ini

@@ -1,0 +1,67 @@
+# security
+[org/gnome/desktop/media-handling]
+autorun-never=true
+
+# privacy
+[org/gnome/desktop/privacy]
+report-technical-problems=false
+
+# shell
+[org/gnome/desktop/datetime]
+automatic-timezone=true
+
+[org/gnome/desktop/interface]
+clock-show-date=true
+
+[org/gnome/shell]
+enabled-extensions="['alternate-tab@gnome-shell-extensions.gcampax.github.com']"
+
+# mouse
+[org/gnome/settings-daemon/peripherals/touchpad]
+natural-scroll=true
+tap-to-click=true
+
+# tracker - don't index files I don't care about
+[org/freedesktop/tracker/miner/files]
+index-recursive-directories="['&DESKTOP', '&DOCUMENTS']"
+
+# nautilus
+[org/gnome/nautilus/preferences]
+sort-directories-first=true
+
+# gedit
+[org/gnome/gedit/plugins]
+active-plugins="['codecomment', 'wordcompletion', 'multiedit', 'time', 'spell', 'modelines', 'filebrowser', 'docinfo']"
+
+# eog
+[org/gnome/eog/plugins]
+active-plugins="['fullscreen']"
+
+# gnome-terminal - disable most things in favour of tmux
+[org/gnome/terminal/legacy]
+default-show-menubar=false
+keybindings/close-tab="'disabled'"
+keybindings/move-tab-right="'disabled'"
+keybindings/switch-to-tab-3="'disabled'"
+keybindings/close-window="'disabled'"
+keybindings/switch-to-tab-4="'disabled'"
+keybindings/find="'disabled'"
+keybindings/new-tab="'disabled'"
+keybindings/new-window="'disabled'"
+keybindings/switch-to-tab-5="'disabled'"
+keybindings/find-clear="'disabled'"
+keybindings/next-tab="'disabled'"
+keybindings/switch-to-tab-6="'disabled'"
+keybindings/find-next="'disabled'"
+keybindings/prev-tab="'disabled'"
+keybindings/switch-to-tab-7="'disabled'"
+keybindings/find-previous="'disabled'"
+keybindings/switch-to-tab-1="'disabled'"
+keybindings/switch-to-tab-8="'disabled'"
+keybindings/help="'disabled'"
+keybindings/switch-to-tab-10="'disabled'"
+keybindings/switch-to-tab-9="'disabled'"
+keybindings/move-tab-left="'disabled'"
+keybindings/switch-to-tab-2="'disabled'"
+menu-accelerator-enabled=false
+new-terminal-mode="'tab'"
