@@ -8,7 +8,13 @@ NO_USB_PERIPHERALS=correct
 RDP_CLIENT=no
 RPMFUSION=no
 TEXLIVE=no
+ATOM_EDITOR=no
 GOOGLE_CHROME=no
+
+if [[ "$(uname -m)" != "x86_64" ]]; then
+  echo "ERROR! This script is only compatible with x86_64."
+  exit 1
+fi
 
 ########################
 ### Additional repos ###
@@ -102,9 +108,9 @@ sudo dnf install -y bsdtar colordiff git-core git-core-doc tmux tree vim-enhance
 ## diagnosis
 sudo dnf install -y htop lsof ncdu nmap
 ## productivity
-sudo dnf install -y pandoc-static
+sudo dnf install -y pandoc-static unzip
 if [[ "$TEXLIVE" == "yes" ]]; then
-  sudo dnf install -y texlive-collection-xetex
+  sudo dnf install -y texlive-collection-xetex texlive-collection-luatex texlive-collection-latexrecommended texlive-collection-langenglish texlive-collection-mathextra
 fi
 # spellcheck - why isn't en-CA packaged separately?
 sudo dnf install -y hunspell-en
@@ -170,6 +176,9 @@ else
   fi
   if [[ "$TEXLIVE" == "yes" ]]; then
     sudo dnf install -y latexila
+  fi
+  if [[ "$ATOM_EDITOR" == "yes" ]]; then
+    sudo dnf install -y https://atom.io/download/rpm
   fi
   sudo curl -o /usr/local/bin/photo_import https://github.com/dgoerger/dotfiles/raw/master/photo_import.sh
   sudo chmod +x /usr/local/bin/photo_import
