@@ -37,7 +37,7 @@ set smartcase		" except when CAPS
 set incsearch		" search/highlight while typing
 set gdefault		" assume /g in sed subcommand
 
-" only when compiled with support for autocommands
+""" only when compiled with support for autocommands
 if has("autocmd")
   augroup fedora
   autocmd!
