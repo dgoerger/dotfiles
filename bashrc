@@ -13,58 +13,5 @@ else
   PS1='\[\e[1;32m\]\h\[\e[0m\]\[\e[1;30m\]\\\>\[\e[0m\] '
 fi
 
-# disable history and senseless dotfiles
-export LESSHISTFILE=-
-export HTOPRC=/dev/null
-unset HISTFILE
-
-# set EDITOR
-export EDITOR=vim
-
-# fix ls filename quoting nonsense
-export QUOTING_STYLE=literal
-
 # connect to ssh socket
 export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket"
-
-# user specific aliases and functions
-alias bc='bc -l'
-if [ -f /usr/bin/colordiff ]; then
-  alias diff='colordiff'
-fi
-alias grep='grep --color=always'
-if [ -f /usr/bin/irssi ]; then
-  alias irssi='irssi --config=/dev/null'
-fi
-if [ -f /usr/bin/kpcli ]; then
-  alias kpcli='kpcli --histfile=/dev/null --readonly'
-fi
-alias l='ls -lh --color'
-alias la='ls -lha --color'
-alias less='less -RF'
-alias ll='ls -lh --color'
-alias lowercase="sed -e 's/\(.*\)/\L\1/'"
-alias ls='ls --color'
-if [ -f /usr/bin/lynx ]; then
-  alias lynx='lynx -use_mouse -vikeys -nomore -noprint -tna -force_empty_hrefless_a -enable_scrollback -cookies -noreferer https://duckduckgo.com/'
-fi
-if [ -f /usr/bin/newsbeuter ]; then
-  alias newsbeuter='newsbeuter -q'
-fi
-if [ -f /usr/bin/podbeuter ]; then
-  alias podbeuter='podbeuter -a'
-fi
-alias python='python3'
-if [ -f /usr/bin/ranger ]; then
-  alias ranger='ranger -c'
-fi
-if [ -f /usr/bin/bsdtar ]; then
-  alias tar='bsdtar'
-fi
-alias tree='tree -N'
-alias view='vim -R'
-alias viless='vim --cmd "let no_plugin_maps = 1" -c "runtime! macros/less.vim" -R'
-alias weather='curl http://wttr.in/?m'
-if [ -f /usr/bin/youtube-dl ]; then
-  alias youtube-dl='youtube-dl -f webm'
-fi

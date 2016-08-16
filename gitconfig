@@ -15,7 +15,3 @@
 
 [push]
     default = simple
-
-[user]
-    email = dgoerger@users.noreply.github.com
-    name = David Goerger

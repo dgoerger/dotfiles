@@ -1,18 +1,45 @@
 #!/bin/bash
 
-##### CHANGEME #####
-HEADLESS=no
-HOST=gelos
-INTEL_GPU=yes
-NO_USB_PERIPHERALS=correct
-RDP_CLIENT=no
-RPMFUSION=no
-TEXLIVE=no
-ATOM_EDITOR=no
-GOOGLE_CHROME=no
+##### USAGE #####
+if [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]]; then
+  echo -e "\n\
+  USAGE:\n\
+  - edit, review all vars under CHANGEME section\n\
+  - sh /path/to/postinstall.sh\n"
+  exit 0
+fi
 
+##### CHANGEME #####
+# is this a server sans gui
+HEADLESS=no
+# /etc/hostname ?
+HOST=gelos
+# is the gpu onboard Intel
+INTEL_GPU=yes
+# don't use powertop if you have usb peripherals
+POWERTOP=yes
+# do we need an RDP client
+RDP_CLIENT=no
+# enable rpmfusion.org free repo?
+RPMFUSION=no
+# pull in texlive?
+TEXLIVE=no
+# https://atom.io ?
+ATOM_EDITOR=no
+# use Google's official version of Chrome?
+GOOGLE_CHROME=no
+# gitconfig username info
+GIT_USERNAME="default username"
+GIT_USEREMAIL="default@noreply.example.com"
+
+
+### bomb out if we're doing it wrong
 if [[ "$(uname -m)" != "x86_64" ]]; then
   echo "ERROR! This script is only compatible with x86_64."
+  exit 1
+fi
+if [[ "$(whoami)" == "root" ]]; then
+  echo "DON'T RUN AS ROOT! DID YOU READ THE SCRIPT BEFORE EXECUTING??"
   exit 1
 fi
 
@@ -70,7 +97,7 @@ fi
 # OpenGL
 sudo dnf install -y mesa-vdpau-drivers libva-vdpau-driver
 ## powertop
-if [[ "$NO_USB_PERIPHERALS" == "correct" ]]; then
+if [[ "$POWERTOP" == "yes" ]]; then
   sudo dnf install -y powertop
   sudo systemctl enable powertop
 fi
@@ -135,8 +162,14 @@ sudo chmod 644 /etc/ssh/ssh_config
 sudo ln -sf /dev/null /etc/xdg/autostart/gnome-keyring-ssh.desktop
 sudo curl -L -o /etc/systemd/user/ssh-agent.service https://github.com/dgoerger/dotfiles/raw/master/ssh-agent.service
 sudo systemctl --global enable ssh-agent
+## useful bash aliases
+sudo curl -L -o /etc/profile.d/custom_aliases https://github.com/dgoerger/dotfiles/raw/master/aliases
 ## vim
-echo -e '\n\n" default colours are unreadable\ncolorscheme elflord' | sudo tee --append /etc/vimrc
+sudo curl -L -o /etc/vimrc https://github.com/dgoerger/dotfiles/raw/master/vimrc
+## tmux
+sudo curl -L -o /etc/tmux.conf https://github.com/dgoerger/dotfiles/raw/master/tmux.conf
+## git
+sudo curl -L -o /etc/gitconfig https://github.com/dgoerger/dotfiles/raw/master/gitconfig
 
 
 if [[ "$HEADLESS" == "yes" ]]; then
@@ -179,7 +212,8 @@ else
     sudo dnf install -y latexila
   fi
   if [[ "$ATOM_EDITOR" == "yes" ]]; then
-    sudo dnf install -y https://atom.io/download/rpm
+    sudo dnf copr enable mosquito/atom -y
+    sudo dnf install -y atom
   fi
   sudo curl -o /usr/local/bin/photo_import https://github.com/dgoerger/dotfiles/raw/master/photo_import.sh
   sudo chmod +x /usr/local/bin/photo_import
@@ -188,6 +222,7 @@ else
   sudo dnf install -y gedit-plugin-codecomment gedit-plugin-multiedit gedit-plugin-wordcompletion
   # dconf gdm login screen
   sudo mkdir -p /etc/dconf/db/gdm.d
+  sudo mkdir -p /etc/dconf/profile
   echo -e "[org/gnome/desktop/interface]\nclock-show-date=true" | sudo tee /etc/dconf/db/gdm.d/01-custom-gdm-settings
   echo -e "user-db:user\nsystem-db:gdm" | sudo tee /etc/dconf/profile/gdm
   # dconf default user profiles
@@ -206,14 +241,13 @@ fi
 ## set some rc's
 curl -L -o $HOME/.profile https://github.com/dgoerger/dotfiles/raw/master/profile
 curl -L -o $HOME/.bashrc https://github.com/dgoerger/dotfiles/raw/master/bashrc
-curl -L -o $HOME/.gitconfig https://github.com/dgoerger/dotfiles/raw/master/gitconfig
-curl -L -o $HOME/.tmux.conf https://github.com/dgoerger/dotfiles/raw/master/tmux.conf
-curl -L -o $HOME/.vimrc https://github.com/dgoerger/dotfiles/raw/master/vimrc
 rm $HOME/.bash_profile
 mkdir -p $HOME/.ssh
 chmod 700 $HOME/.ssh
 touch $HOME/.ssh/config
 chmod 600 $HOME/.ssh/config
+git config --global user.name "${GIT_USERNAME}"
+git config --global user.email "${GIT_USEREMAIL}"
 ## why does ~/.pki exist
 rm -rf $HOME/.pki
 ln -s /dev/null $HOME/.pki

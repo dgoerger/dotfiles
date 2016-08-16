@@ -1,39 +1,61 @@
-""" FILE SUPPORT
-" open epubs as zip files
-au BufReadCmd *.epub call zip#Browse(expand("<amatch>"))
-
-""" this is VIM
-set nocompatible
-syntax on
-"set paste
-set autoindent
-set smartindent
-
-""" SEARCH
-" ignore case when searching, except when caps
-set ignorecase
-set smartcase
-" incremental search / highlight while typing
-set incsearch
-" assume global in search/replace
-set gdefault
-
-""" HYGIENE
-" don't save search history
-set viminfo="NONE"
-
-""" MOUSE
-" permit clicking to a specific point on the line
-if has('mouse')
-  set mouse=a
+" probably important defaults from Fedora default /etc/vimrc
+if v:lang =~ "utf8$" || v:lang =~ "UTF-8$"
+  set fileencodings=ucs-bom,utf-8,latin1
+endif
+if &term=="xterm"
+  set t_Co=8
+  set t_Sb=[4%dm
+  set t_Sf=[3%dm
 endif
 
-""" tab-completion
-set wildmenu
+""" general usability
+set nocompatible	" use Vim defaults (much better!)
+set bs=indent,eol,start	" allow backspacing over everything in insert mode
+"set backup		" keep a backup file
+set viminfo="NONE"	" don't save search history
+set history=50		" keep 50 lines of command line history
+set ruler		" show the cursor position all the time
+colorscheme elflord	" default colour scheme is unreadable against dark console theme
+
+""" editing assistance
+set autoindent		" enable automatic indentation
+set smartindent
+set wildmenu		" tab-completion
 set wildmode=list:full
+filetype plugin on
+if has('mouse')		" if has mouse,
+  set mouse=a		" permit clicking to a specific point on the line
+endif
+if &t_Co > 2		" if has > 2 colours,
+  syntax on		" enable highlighting
+  set hlsearch
+endif
 
-""" mutt
-au BufRead /tmp/mutt-* set tw=72
+""" search
+set ignorecase		" ignore case when searching,
+set smartcase		" except when CAPS
+set incsearch		" search/highlight while typing
+set gdefault		" assume /g in sed subcommand
 
-""" colour
-colorscheme elflord
+" only when compiled with support for autocommands
+if has("autocmd")
+  augroup fedora
+  autocmd!
+  " when editing a file, jump to the last cursor position
+  autocmd BufReadPost *
+  \ if line("'\"") > 0 && line ("'\"") <= line("$") |
+  \   exe "normal! g'\"" |
+  \ endif
+  " don't write swapfile on most commonly used directories for NFS mounts or USB sticks
+  autocmd BufNewFile,BufReadPre /media/*,/run/media/*,/mnt/* set directory=~/tmp,/var/tmp,/tmp
+  " line-wrap in mutt
+  au BufRead /tmp/mutt-* set tw=72
+  " open EPUB as ZIP - requires `unzip`
+  if filereadable(expand('$VIMRUNTIME/plugin/zipPlugin.vim'))
+    au BufReadCmd *.epub call zip#Browse(expand("<amatch>"))
+  endif
+  augroup END
+endif
+
+" don't wake up system with blinking cursor
+let &guicursor = &guicursor . ",a:blinkon0"
