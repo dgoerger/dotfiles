@@ -28,9 +28,6 @@ TEXLIVE=no
 ATOM_EDITOR=no
 # use Google's official version of Chrome?
 GOOGLE_CHROME=no
-# gitconfig username info
-GIT_USERNAME="default username"
-GIT_USEREMAIL="default@noreply.example.com"
 
 
 ### bomb out if we're doing it wrong
@@ -246,8 +243,6 @@ mkdir -p $HOME/.ssh
 chmod 700 $HOME/.ssh
 touch $HOME/.ssh/config
 chmod 600 $HOME/.ssh/config
-git config --global user.name "${GIT_USERNAME}"
-git config --global user.email "${GIT_USEREMAIL}"
 ## why does ~/.pki exist
 rm -rf $HOME/.pki
 ln -s /dev/null $HOME/.pki
