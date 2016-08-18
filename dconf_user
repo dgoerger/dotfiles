@@ -23,7 +23,11 @@ tap-to-click=true
 
 # tracker - don't index files I don't care about
 [org/freedesktop/tracker/miner/files]
-index-recursive-directories="['&DESKTOP', '&DOCUMENTS']"
+index-recursive-directories="['&DOCUMENTS']"
+
+# GNOME Shell search providers - not super useful
+[org/gnome/desktop/search-providers]
+disabled="['org.gnome.Software.desktop', 'seahorse.desktop', 'epiphany.desktop', 'org.gnome.Terminal.desktop', 'org.gnome.Nautilus.desktop']"
 
 # nautilus
 [org/gnome/nautilus/preferences]
