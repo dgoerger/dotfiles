@@ -13,6 +13,7 @@ export QUOTING_STYLE=literal
 
 # user specific aliases and functions
 alias bc='bc -l'
+alias cal='cal -m'
 if [ -f /usr/bin/colordiff ]; then
   alias diff='colordiff'
 fi

@@ -1,5 +1,6 @@
 # .profile
 if [[ "${SHELL}" == "/bin/bash" ]] || [[ "${SHELL}" == "/usr/bin/bash" ]]; then
+  # source global vars and aliases
   if [[ -f ~/.bashrc ]]; then
     source ~/.bashrc
   elif [[ -f /etc/bashrc ]]; then
