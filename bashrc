@@ -11,8 +11,8 @@ if [[ -S ${XDG_RUNTIME_DIR}/ssh-agent.socket ]]; then
 fi
 
 # git user info
-export GIT_AUTHOR_NAME="$(getent passwd $LOGNAME | cut -d: -f5 | cut -d, -f1)"
-export GIT_AUTHOR_EMAIL="$(getent passwd $LOGNAME | cut -d: -f1)@users.noreply.github.com"
+export GIT_COMMITTER_NAME="$(getent passwd $LOGNAME | cut -d: -f5 | cut -d, -f1)"
+export GIT_COMMITTER_EMAIL="$(getent passwd $LOGNAME | cut -d: -f1)@users.noreply.github.com"
 
 # show current git branch in prompt if applicable
 if [ -f /usr/share/git-core/contrib/completion/git-prompt.sh ]; then
