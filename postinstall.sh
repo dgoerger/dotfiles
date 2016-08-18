@@ -70,8 +70,8 @@ sudo dnf remove -y evince-browser-plugin httpd*
 sudo dnf remove -y cyrus-sasl-gssapi
 
 # misc unused graphical programs
-sudo dnf remove -y baobab bijiben cheese empathy evolution ghostscript \
-gnome-calculator gnome-characters gnome-clocks gnome-contacts \
+sudo dnf remove -y baobab bijiben cheese empathy evolution file-roller \
+ghostscript gnome-calculator gnome-characters gnome-clocks gnome-contacts \
 gnome-documents gnome-music gnome-system-monitor gnome-weather libreoffice* \
 rhythmbox shotwell transmission-*
 
