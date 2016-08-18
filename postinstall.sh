@@ -160,7 +160,7 @@ sudo ln -sf /dev/null /etc/xdg/autostart/gnome-keyring-ssh.desktop
 sudo curl -L -o /etc/systemd/user/ssh-agent.service https://github.com/dgoerger/dotfiles/raw/master/ssh-agent.service
 sudo systemctl --global enable ssh-agent
 ## useful bash aliases
-sudo curl -L -o /etc/profile.d/custom_aliases https://github.com/dgoerger/dotfiles/raw/master/aliases
+sudo curl -L -o /etc/profile.d/custom_aliases.sh https://github.com/dgoerger/dotfiles/raw/master/aliases
 ## vim
 sudo curl -L -o /etc/vimrc https://github.com/dgoerger/dotfiles/raw/master/vimrc
 ## tmux
@@ -220,11 +220,11 @@ else
   # dconf gdm login screen
   sudo mkdir -p /etc/dconf/db/gdm.d
   sudo mkdir -p /etc/dconf/profile
-  echo -e "[org/gnome/desktop/interface]\nclock-show-date=true" | sudo tee /etc/dconf/db/gdm.d/01-custom-gdm-settings
+  echo -e "[org/gnome/desktop/interface]\nclock-show-date=true" | sudo tee /etc/dconf/db/gdm.d/custom-gdm-settings
   echo -e "user-db:user\nsystem-db:gdm" | sudo tee /etc/dconf/profile/gdm
   # dconf default user profiles
   sudo mkdir -p /etc/dconf/db/site.d
-  sudo curl -L -o /etc/dconf/db/site.d/00_site_settings https://raw.githubusercontent.com/dgoerger/dotfiles/master/dconf_user
+  sudo curl -L -o /etc/dconf/db/site.d/custom-user-defaults https://raw.githubusercontent.com/dgoerger/dotfiles/master/dconf_user
   echo -e "user-db:user\nsystem-db:site" | sudo tee /etc/dconf/profile/user
   sudo dconf update
   # global dark theme and middle paste
