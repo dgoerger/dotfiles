@@ -54,7 +54,7 @@ fi
 sudo dnf remove -y atmel-firmware b43* foomatic* fprintd glusterfs* gnome-boxes \
 hpijs hplip-common hyperv* iscsi-initiator-utils iwl* libfprint \
 libiscsi libvirt* memtest86+ NetworkManager-adsl NetworkManager-team \
-openvpn pptp qemu* sane-backends spice* tigervnc* vpnc xen*
+open-vm-tools openvpn pptp qemu* sane-backends spice* tigervnc* vpnc xen*
 
 # dev tools and libs
 sudo dnf remove -y abrt* devassistant* dos2unix fpaste java* libreport \
@@ -70,9 +70,10 @@ sudo dnf remove -y evince-browser-plugin httpd*
 sudo dnf remove -y cyrus-sasl-gssapi
 
 # misc unused graphical programs
-sudo dnf remove -y baobab bijiben cheese empathy evolution ghostscript gnome-characters \
-gnome-clocks gnome-contacts gnome-documents gnome-music gnome-system-monitor \
-gnome-weather libreoffice* rhythmbox shotwell transmission-gtk
+sudo dnf remove -y baobab bijiben cheese empathy evolution ghostscript \
+gnome-calculator gnome-characters gnome-clocks gnome-contacts \
+gnome-documents gnome-music gnome-system-monitor gnome-weather libreoffice* \
+rhythmbox shotwell transmission-*
 
 # remove the fullscreen pinentry dialogue for gpg2
 sudo dnf remove -y pinentry-gnome3
@@ -145,28 +146,28 @@ sudo chattr +i /etc/hostname
 ## logging
 sudo dnf install -y rsyslog
 sudo systemctl enable rsyslog
-sudo curl -L -o /etc/rsyslog.conf https://raw.githubusercontent.com/dgoerger/dotfiles/master/rsyslog.conf
-sudo curl -L -o /etc/systemd/journald.conf https://github.com/dgoerger/dotfiles/raw/master/journald.conf
+sudo curl -Lo /etc/rsyslog.conf https://raw.githubusercontent.com/dgoerger/dotfiles/master/rsyslog.conf
+sudo curl -Lo /etc/systemd/journald.conf https://github.com/dgoerger/dotfiles/raw/master/journald.conf
 ## ntpd
 sudo dnf install -y ntp
 sudo systemctl enable ntpd
 ## ssh
-sudo curl -L -o /etc/ssh/sshd_config https://github.com/dgoerger/dotfiles/raw/master/sshd_config
+sudo curl -Lo /etc/ssh/sshd_config https://github.com/dgoerger/dotfiles/raw/master/sshd_config
 sudo chmod 600 /etc/ssh/sshd_config
-sudo curl -L -o /etc/ssh/ssh_config https://github.com/dgoerger/dotfiles/raw/master/ssh_config
+sudo curl -Lo /etc/ssh/ssh_config https://github.com/dgoerger/dotfiles/raw/master/ssh_config
 sudo chmod 644 /etc/ssh/ssh_config
 # use upstream ssh-agent for ed25519 support
 sudo ln -sf /dev/null /etc/xdg/autostart/gnome-keyring-ssh.desktop
-sudo curl -L -o /etc/systemd/user/ssh-agent.service https://github.com/dgoerger/dotfiles/raw/master/ssh-agent.service
+sudo curl -Lo /etc/systemd/user/ssh-agent.service https://github.com/dgoerger/dotfiles/raw/master/ssh-agent.service
 sudo systemctl --global enable ssh-agent
 ## useful bash aliases
-sudo curl -L -o /etc/profile.d/custom_aliases.sh https://github.com/dgoerger/dotfiles/raw/master/aliases
+sudo curl -Lo /etc/profile.d/custom_aliases.sh https://github.com/dgoerger/dotfiles/raw/master/aliases
 ## vim
-sudo curl -L -o /etc/vimrc https://github.com/dgoerger/dotfiles/raw/master/vimrc
+sudo curl -Lo /etc/vimrc https://github.com/dgoerger/dotfiles/raw/master/vimrc
 ## tmux
-sudo curl -L -o /etc/tmux.conf https://github.com/dgoerger/dotfiles/raw/master/tmux.conf
+sudo curl -Lo /etc/tmux.conf https://github.com/dgoerger/dotfiles/raw/master/tmux.conf
 ## git
-sudo curl -L -o /etc/gitconfig https://github.com/dgoerger/dotfiles/raw/master/gitconfig
+sudo curl -Lo /etc/gitconfig https://github.com/dgoerger/dotfiles/raw/master/gitconfig
 
 
 if [[ "$HEADLESS" == "yes" ]]; then
@@ -181,6 +182,7 @@ if [[ "$HEADLESS" == "yes" ]]; then
   curl -Lo $HOME/.muttrc https://github.com/dgoerger/dotfiles/raw/master/muttrc
   ## news and podcasts
   sudo dnf install -y newsbeuter youtube-dl
+  mkdir -p $HOME/.newsbeuter
   curl -Lo $HOME/.newsbeuter/config https://github.com/dgoerger/dotfiles/raw/master/newsbeuter_config
   curl -Lo $HOME/.newsbeuter/urls https://github.com/dgoerger/dotfiles/raw/master/newsbeuter_urls
   ## productivity
@@ -196,7 +198,7 @@ else
   fi
   # Firefox - TODO move this to /etc/firefox/pref ?
   sudo mkdir -p /usr/lib64/firefox/browser/defaults/preferences
-  sudo curl -L -o /usr/lib64/firefox/browser/defaults/preferences/user.js https://raw.githubusercontent.com/dgoerger/dotfiles/master/firefox_user.js
+  sudo curl -Lo /usr/lib64/firefox/browser/defaults/preferences/user.js https://raw.githubusercontent.com/dgoerger/dotfiles/master/firefox_user.js
   ## multimedia
   sudo dnf install -y gstreamer1-plugins-bad-free
   if [[ "$RPMFUSION" == "yes" ]]; then
@@ -212,7 +214,7 @@ else
     sudo dnf copr enable mosquito/atom -y
     sudo dnf install -y atom
   fi
-  sudo curl -o /usr/local/bin/photo_import https://github.com/dgoerger/dotfiles/raw/master/photo_import.sh
+  sudo curl -Lo /usr/local/bin/photo_import https://github.com/dgoerger/dotfiles/raw/master/photo_import.sh
   sudo chmod +x /usr/local/bin/photo_import
   ## GNOME
   sudo dnf install -y gnome-shell-extension-alternate-tab
@@ -224,7 +226,7 @@ else
   echo -e "user-db:user\nsystem-db:gdm" | sudo tee /etc/dconf/profile/gdm
   # dconf default user profiles
   sudo mkdir -p /etc/dconf/db/site.d
-  sudo curl -L -o /etc/dconf/db/site.d/custom-user-defaults https://raw.githubusercontent.com/dgoerger/dotfiles/master/dconf_user
+  sudo curl -Lo /etc/dconf/db/site.d/custom-user-defaults https://raw.githubusercontent.com/dgoerger/dotfiles/master/dconf_user
   echo -e "user-db:user\nsystem-db:site" | sudo tee /etc/dconf/profile/user
   sudo dconf update
   # global dark theme and middle paste
@@ -236,11 +238,14 @@ fi
 #### Customizations ####
 ########################
 ## set some rc's
-curl -L -o $HOME/.profile https://github.com/dgoerger/dotfiles/raw/master/profile
-curl -L -o $HOME/.bashrc https://github.com/dgoerger/dotfiles/raw/master/bashrc
+curl -Lo $HOME/.profile https://github.com/dgoerger/dotfiles/raw/master/profile
+curl -Lo $HOME/.bashrc https://github.com/dgoerger/dotfiles/raw/master/bashrc
 rm $HOME/.bash_profile
+# set some ~/.ssh perms so we don't have to deal with it later
 mkdir -p $HOME/.ssh
 chmod 700 $HOME/.ssh
+touch $HOME/.ssh/authorized_keys
+chmod 600 $HOME/.ssh/authorized_keys
 touch $HOME/.ssh/config
 chmod 600 $HOME/.ssh/config
 ## why does ~/.pki exist
