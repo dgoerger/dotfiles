@@ -1,4 +1,4 @@
-# /etc/profile.d/custom_aliases
+# /etc/profile.d/custom_aliases.sh
 
 # disable history and senseless dotfiles
 export LESSHISTFILE=-
@@ -41,6 +41,9 @@ if [ -f /usr/bin/podbeuter ]; then
 fi
 if [ -f /usr/bin/ranger ]; then
   alias ranger='ranger -c'
+fi
+if [ -f /usr/bin/google-chrome ]; then
+  alias google-chrome-socks='/usr/bin/google-chrome --proxy-server="socks://127.0.0.1:1080"'
 fi
 if [ -f /usr/bin/bsdtar ]; then
   alias tar='bsdtar'
