@@ -130,7 +130,7 @@ pref("security.ssl3.dhe_rsa_aes_256_sha",false);
 
 //// useful for socks5
 pref("network.proxy.socks","localhost");
-pref("network.proxy.socks_port",55555);
+pref("network.proxy.socks_port",1080);
 pref("network.proxy.socks_remote_dns",true);
 
 //// block webrtc IP leak: https://ipleak.net/#webrtcleak
