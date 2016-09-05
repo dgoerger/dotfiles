@@ -112,7 +112,6 @@ sudo systemctl enable firewalld
 sudo systemctl start firewalld
 sudo firewall-cmd --lockdown-on
 ## set stricter system crypto policy
-# note NSS not until F25: https://bugzilla.redhat.com/show_bug.cgi?id=1157720
 echo "FUTURE" | sudo tee /etc/crypto-policies/config
 sudo update-crypto-policies
 ## respect Mozilla's CA trust revocation policy
@@ -138,6 +137,9 @@ if [[ "$TEXLIVE" == "yes" ]]; then
 fi
 # spellcheck - why isn't en-CA packaged separately?
 sudo dnf install -y hunspell-en
+## fonts
+# emoji support
+sudo dnf install -y gdouros-symbola-fonts
 
 ### system prefs
 ## set hostname
