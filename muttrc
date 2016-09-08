@@ -1,34 +1,40 @@
-# basic
-set from = '{changeme}'
-set realname = '{changeme}'
+## CHANGEME
+# whoami
+set from = '{email_address}'
+set realname = '{full_name}'
+# server connection
+set folder = 'imaps://{imap_host}:993/'
+set imap_user = '{username}'
+set imap_pass = '{password}'
+set smtp_url = 'smtps://{smtp_host}:465/'
+set smtp_pass = '{password}'
+# folders to list in the sidebar
+mailboxes =INBOX =Archive
 
+## misc
 # crypto
 set ssl_starttls = yes
 set ssl_force_tls = yes
-
-# always check subscribed folders
-set imap_check_subscribed
+# keepalive
 set timeout = 600
 set imap_keepalive = 300
 
+# folder management
+set spoolfile = '+INBOX'
+set postponed = '+Drafts'
+# set record to '' for gmail / automatically saved to Sent by server
+set record = '+Archive'
+set trash = '+Archive'
+set delete = 'yes'
 # cache
 set mbox_type = Maildir
 set header_cache = "~/.cache/mutt"
 set message_cachedir = "~/.cache/mutt"
+set certificate_file = "~/.cache/mutt/certificates"
+set history_file = "~/.cache/mutt/history"
 
-# IMAP + SMTP
-set imap_user = '{changeme}'
-set imap_pass = '{changeme}'
-set smtp_url = 'smtps://{changeme}:465/'
-set smtp_pass = '{changeme}'
-
-# subscribe to folders
-set folder = 'imaps://{changeme}:993/'
-set spoolfile = 'imaps://{changeme}:993/INBOX'
-set postponed = 'imaps://{changeme}:993/Drafts'
-set record = 'imaps://{changeme}:993/Sent'
-
-### Display / reading e-mails
+## reading mail
+# mailbox
 set sleep_time = 0
 set sort = 'threads'
 set sort_browser = 'date'
@@ -36,24 +42,39 @@ set sort_aux = 'reverse-last-date-received'
 folder-hook . "exec collapse-all"
 set uncollapse_jump
 set mark_old = no
-
-# Don't update read counts very frequently when loading large mailboxes
-set read_inc = 1000
-
 set date_format = "%Y/%m/%d"
 set index_format = "%2C | %Z [%d] %-25.25F (%-4.4c) %s"
+# messages
 set pager_index_lines = 10
 set pager_context = 10
 set pager_stop
-
 set markers = no
 set smart_wrap
 set wrap = 80
+# mimetype
 auto_view text/html
 alternative_order text/plain text/html
+# don't update read counts very frequently when loading large mailboxes
+set read_inc = 1000
 
+## sidebar
+set sidebar_visible
+set mail_check_stats
+set sidebar_sort_method = 'path'
+set sidebar_format = '%B %> %!%N'
+# C-n, C-p to select next, previous folders
+# C-o to open selected folder
+bind index,pager \CP sidebar-prev
+bind index,pager \CN sidebar-next
+bind index,pager \CO sidebar-open
+
+## compose options
 set editor = 'vim -c "set spell spelllang=en_ca formatoptions+=a"'
 set fast_reply
 set include
 set text_flowed = yes
 set send_charset = "utf-8"
+set forward_format = '%s'
+
+## misc
+set ts_enabled

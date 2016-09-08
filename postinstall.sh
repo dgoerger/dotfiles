@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ##### USAGE #####
-if [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]]; then
+if [[ -n "$1" ]]; then
   echo -e "\n\
   USAGE:\n\
   - edit, review all vars under CHANGEME section\n\
@@ -44,7 +44,7 @@ fi
 ### Additional repos ###
 ########################
 if [[ "$RPMFUSION" == "yes" ]]; then
-  sudo dnf install -y http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-24.noarch.rpm
+  sudo dnf install -y http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-25.noarch.rpm
 fi
 
 ########################
@@ -57,7 +57,7 @@ libiscsi libvirt* memtest86+ NetworkManager-adsl NetworkManager-team \
 open-vm-tools openvpn pptp qemu* sane-backends spice* tigervnc* vpnc xen*
 
 # dev tools and libs
-sudo dnf remove -y abrt* devassistant* dos2unix fpaste java* libreport \
+sudo dnf remove -y abrt* devassistant* fpaste java* libreport \
 perl setroubleshoot* yum-metadata-parser
 
 # help and accessibility
@@ -117,13 +117,28 @@ sudo update-crypto-policies
 ## respect Mozilla's CA trust revocation policy
 # see: https://fedoraproject.org/wiki/CA-Certificates
 sudo ca-legacy disable
-## set DNS resolvers and local cache
-# TODO: DNSCrypt for encrypted DNS lookups + DNSSEC
-#       see: https://github.com/simonclausen/dnscrypt-autoinstall
+## secure and cache dns
+# dnscrypt primary lookup
+sudo dnf install -y dnscrypt-proxy
+sudo curl -Lo /etc/systemd/system/dnscrypt-proxy.service https://github.com/dgoerger/dotfiles/raw/master/dnscrypt-proxy.service
+echo -e "LISTEN_ADDRESS=127.0.0.1:40\nRESOLVER=dnscrypt.eu-dk" | sudo tee /etc/sysconfig/dnscrypt-proxy.conf
+sudo useradd -r -d /var/dnscrypt -m -s /sbin/nologin dnscrypt
+sudo systemctl enable dnscrypt-proxy
+sudo systemctl start dnscrypt-proxy
+# set local cache of dnscrypt results
 sudo dnf install -y dnsmasq
+echo -e "no-resolv\nserver=127.0.0.1#40\nlisten-address=127.0.0.1" | sudo tee /etc/dnsmasq.d/dnscrypt.conf
 sudo systemctl enable dnsmasq
+sudo systemctl start dnsmasq
+# configure backup dns - CAUTION - resilience over security
 echo -e "nameserver 127.0.0.1\nnameserver 8.8.8.8\nnameserver 4.4.4.4" | sudo tee /etc/resolv.conf >/dev/null
+# prevent NetworkManager from overwriting resolv.conf through dhcp
 sudo chattr +i /etc/resolv.conf
+# malware/hosts block - uses dnsmasq instead of /etc/hosts
+sudo curl -Lo /usr/local/bin/dnsblock_updater https://github.com/dgoerger/dotfiles/raw/master/dnsblock_updater
+sudo chmod 0700 /usr/local/bin/dnsblock_updater
+sudo sh /usr/local/bin/dnsblock_updater
+echo "59 18 * * * root /usr/local/bin/dnsblock_updater" | sudo tee --append /etc/crontab
 
 ### commandline apps ###
 ## all-around
@@ -148,7 +163,7 @@ sudo chattr +i /etc/hostname
 ## logging
 sudo dnf install -y rsyslog
 sudo systemctl enable rsyslog
-sudo curl -Lo /etc/rsyslog.conf https://raw.githubusercontent.com/dgoerger/dotfiles/master/rsyslog.conf
+sudo curl -Lo /etc/rsyslog.conf https://github.com/dgoerger/dotfiles/raw/master/rsyslog.conf
 sudo curl -Lo /etc/systemd/journald.conf https://github.com/dgoerger/dotfiles/raw/master/journald.conf
 ## ntpd
 sudo dnf install -y ntp
@@ -156,6 +171,7 @@ sudo systemctl enable ntpd
 ## ssh
 sudo curl -Lo /etc/ssh/sshd_config https://github.com/dgoerger/dotfiles/raw/master/sshd_config
 sudo chmod 600 /etc/ssh/sshd_config
+# TODO append `Include /etc/ssh/ssh_config.d/*.conf` if rhbz#1225752 yields useful results
 sudo curl -Lo /etc/ssh/ssh_config https://github.com/dgoerger/dotfiles/raw/master/ssh_config
 sudo chmod 644 /etc/ssh/ssh_config
 # use upstream ssh-agent for ed25519 support
@@ -175,11 +191,16 @@ sudo curl -Lo /etc/gitconfig https://github.com/dgoerger/dotfiles/raw/master/git
 if [[ "$HEADLESS" == "yes" ]]; then
   ## firewall policy
   sudo firewall-cmd --set-default-zone=dmz
+  # clean up renegade cockpit.service reference, see rhbz#1171114
+  sudo rm /usr/lib/firewalld/zones/FedoraServer.xml
   sudo chattr +i /etc/firewalld/firewalld.conf
   ## sshd
   sudo systemctl enable sshd
+  ## disable KillUserProcesses until there's a solid way to not kill tmux
+  sudo cp -p /etc/systemd/logind.conf{,.orig}
+  sudo curl -Lo /etc/systemd/logind.conf https://github.com/dgoerger/dotfiles/raw/master/logind.conf
   ## mail
-  sudo dnf install -y cyrus-sasl-plain irssi mailcap mutt
+  sudo dnf install -y cyrus-sasl-plain mailcap mutt
   sudo curl -Lo /etc/mailcap https://github.com/dgoerger/dotfiles/raw/master/mailcap
   curl -Lo $HOME/.muttrc https://github.com/dgoerger/dotfiles/raw/master/muttrc
   ## news and podcasts
@@ -200,7 +221,7 @@ else
   fi
   # Firefox - TODO move this to /etc/firefox/pref ?
   sudo mkdir -p /usr/lib64/firefox/browser/defaults/preferences
-  sudo curl -Lo /usr/lib64/firefox/browser/defaults/preferences/user.js https://raw.githubusercontent.com/dgoerger/dotfiles/master/firefox_user.js
+  sudo curl -Lo /usr/lib64/firefox/browser/defaults/preferences/user.js https://github.com/dgoerger/dotfiles/raw/master/firefox_user.js
   ## multimedia
   sudo dnf install -y gstreamer1-plugins-bad-free
   if [[ "$RPMFUSION" == "yes" ]]; then
@@ -225,10 +246,11 @@ else
   sudo mkdir -p /etc/dconf/db/gdm.d
   sudo mkdir -p /etc/dconf/profile
   echo -e "[org/gnome/desktop/interface]\nclock-show-date=true" | sudo tee /etc/dconf/db/gdm.d/custom-gdm-settings
+  sudo curl -Lo /etc/dconf/db/gdm.d/custom-gdm-settings https://github.com/dgoerger/dotfiles/raw/master/dconf_gdm
   echo -e "user-db:user\nsystem-db:gdm" | sudo tee /etc/dconf/profile/gdm
   # dconf default user profiles
   sudo mkdir -p /etc/dconf/db/site.d
-  sudo curl -Lo /etc/dconf/db/site.d/custom-user-defaults https://raw.githubusercontent.com/dgoerger/dotfiles/master/dconf_user
+  sudo curl -Lo /etc/dconf/db/site.d/custom-user-defaults https://github.com/dgoerger/dotfiles/raw/master/dconf_user
   echo -e "user-db:user\nsystem-db:site" | sudo tee /etc/dconf/profile/user
   sudo dconf update
   # global dark theme and middle paste

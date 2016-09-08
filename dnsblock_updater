@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# back up old working copies
+if [ -f /usr/local/src/hosts/dnsblock ]; then
+  mv /usr/local/src/hosts/dnsblock /usr/local/src/hosts/dnsblock-old
+fi
+
+# fetch new hosts blocklist
+curl -Lo /usr/local/src/hosts/hosts https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts 2>/dev/null
+
+# reformat for dnsmasq
+cat /usr/local/src/hosts/hosts | grep '0.0.0.0' | awk -F" " '{print "address=\"/" $2 "/0.0.0.0\""}' | tee /usr/local/src/hosts/dnsblock >/dev/null
+
+# copy in the new dnsblock policy
+cp -p /usr/local/src/hosts/dnsblock /etc/dnsmasq.d/dnsblock.conf
+systemctl restart dnsmasq
