@@ -138,7 +138,9 @@ sudo chattr +i /etc/resolv.conf
 sudo curl -Lo /usr/local/bin/dnsblock_updater https://github.com/dgoerger/dotfiles/raw/master/dnsblock_updater
 sudo chmod 0700 /usr/local/bin/dnsblock_updater
 sudo sh /usr/local/bin/dnsblock_updater
-echo "59 18 * * * root /usr/local/bin/dnsblock_updater" | sudo tee --append /etc/crontab
+## automatic patching
+echo "30 18 * * * root /usr/bin/dnf upgrade -y" | sudo tee --append /var/spool/cron/root
+echo "59 18 * * * root /usr/local/bin/dnsblock_updater" | sudo tee --append /var/spool/cron/root
 
 ### commandline apps ###
 ## all-around
