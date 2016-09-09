@@ -140,8 +140,8 @@ sudo curl -Lo /usr/local/bin/dnsblock_updater https://github.com/dgoerger/dotfil
 sudo chmod 0500 /usr/local/bin/dnsblock_updater
 sudo sh /usr/local/bin/dnsblock_updater
 ## automatic patching
-echo "30 18 * * * root /usr/bin/dnf upgrade -y" | sudo tee --append /var/spool/cron/root
-echo "59 18 * * 5 root /usr/local/bin/dnsblock_updater" | sudo tee --append /var/spool/cron/root
+echo "30 18 * * * /usr/bin/dnf upgrade -y" | sudo tee --append /var/spool/cron/root
+echo "59 18 * * 5 /usr/local/bin/dnsblock_updater" | sudo tee --append /var/spool/cron/root
 
 ### commandline apps ###
 ## all-around
