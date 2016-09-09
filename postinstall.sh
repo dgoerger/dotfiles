@@ -132,16 +132,16 @@ echo -e "no-resolv\nserver=127.0.0.1#40\nlisten-address=127.0.0.1" | sudo tee /e
 sudo systemctl enable dnsmasq
 sudo systemctl start dnsmasq
 # configure backup dns - CAUTION - resilience over security
-echo -e "nameserver 127.0.0.1\nnameserver 8.8.8.8\nnameserver 4.4.4.4" | sudo tee /etc/resolv.conf >/dev/null
+echo -e "nameserver 127.0.0.1\nnameserver 8.8.8.8\nnameserver 208.67.222.222" | sudo tee /etc/resolv.conf >/dev/null
 # prevent NetworkManager from overwriting resolv.conf through dhcp
 sudo chattr +i /etc/resolv.conf
 # malware/hosts block - uses dnsmasq instead of /etc/hosts
 sudo curl -Lo /usr/local/bin/dnsblock_updater https://github.com/dgoerger/dotfiles/raw/master/dnsblock_updater
-sudo chmod 0700 /usr/local/bin/dnsblock_updater
+sudo chmod 0500 /usr/local/bin/dnsblock_updater
 sudo sh /usr/local/bin/dnsblock_updater
 ## automatic patching
 echo "30 18 * * * root /usr/bin/dnf upgrade -y" | sudo tee --append /var/spool/cron/root
-echo "59 18 * * * root /usr/local/bin/dnsblock_updater" | sudo tee --append /var/spool/cron/root
+echo "59 18 * * 5 root /usr/local/bin/dnsblock_updater" | sudo tee --append /var/spool/cron/root
 
 ### commandline apps ###
 ## all-around
