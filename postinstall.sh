@@ -131,7 +131,7 @@ sudo dnf install -y dnsmasq
 echo -e "no-resolv\nserver=127.0.0.1#40\nlisten-address=127.0.0.1" | sudo tee /etc/dnsmasq.d/dnscrypt.conf
 sudo systemctl enable dnsmasq
 sudo systemctl start dnsmasq
-# configure backup dns - CAUTION - resilience over security
+# configure backup dns - CAUTION - resiliency over security
 echo -e "nameserver 127.0.0.1\nnameserver 8.8.8.8\nnameserver 208.67.222.222" | sudo tee /etc/resolv.conf >/dev/null
 # prevent NetworkManager from overwriting resolv.conf through dhcp
 sudo chattr +i /etc/resolv.conf
