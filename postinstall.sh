@@ -102,6 +102,8 @@ fi
 ## clean up PAM/fprintd so it doesn't spam the logs
 # see: https://bugzilla.redhat.com/show_bug.cgi?id=1203671
 sudo authconfig --disablefingerprint --update
+## broken lenovo wifi driver
+echo "blacklist ideapad_laptop" | sudo tee --append /etc/modprobe.d/blacklist.conf
 
 ########################
 ####### Software #######
