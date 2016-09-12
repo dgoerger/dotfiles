@@ -123,7 +123,7 @@ sudo ca-legacy disable
 # dnscrypt primary lookup
 sudo dnf install -y dnscrypt-proxy
 sudo curl -Lo /etc/systemd/system/dnscrypt-proxy.service https://github.com/dgoerger/dotfiles/raw/master/dnscrypt-proxy.service
-echo -e "LISTEN_ADDRESS=127.0.0.1:40\nRESOLVER=dnscrypt.eu-dk" | sudo tee /etc/sysconfig/dnscrypt-proxy.conf
+echo -e "LISTENER=127.0.0.1:40\nRESOLVER=dnscrypt.eu-dk" | sudo tee /etc/sysconfig/dnscrypt-proxy.conf
 sudo userdel -r dnscrypt
 sudo useradd -r -d /var/dnscrypt -m -s /sbin/nologin dnscrypt
 sudo systemctl enable dnscrypt-proxy

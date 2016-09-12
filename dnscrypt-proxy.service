@@ -5,7 +5,7 @@ Requires=network.service
 [Service]
 NonBlocking=true
 EnvironmentFile=/etc/sysconfig/dnscrypt-proxy.conf
-ExecStart=/usr/sbin/dnscrypt-proxy -R $RESOLVER -a $LISTEN_ADDRESS --user=dnscrypt
+ExecStart=/usr/sbin/dnscrypt-proxy -R $RESOLVER -a $LISTENER --user=dnscrypt
 
 [Install]
 WantedBy=multi-user.target
