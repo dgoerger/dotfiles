@@ -141,6 +141,7 @@ sudo chattr +i /etc/resolv.conf
 # malware/hosts block - uses dnsmasq instead of /etc/hosts
 sudo curl -Lo /usr/local/bin/dnsblock_updater https://github.com/dgoerger/dotfiles/raw/master/dnsblock_updater
 sudo chmod 0500 /usr/local/bin/dnsblock_updater
+sudo mkdir -p /usr/local/src/hosts
 sudo sh /usr/local/bin/dnsblock_updater
 ## automatic patching
 echo "30 18 * * * /usr/bin/dnf upgrade -y" | sudo tee --append /var/spool/cron/root
