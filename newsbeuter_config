@@ -3,4 +3,4 @@ download-full-page              yes
 cleanup-on-quit                 yes
 history-limit                   0
 refresh-on-startup              yes
-browser                         "lynx -use_mouse -vikeys -nomore -noprint -tna -force_empty_hrefless_a -enable_scrollback -cookies %u"
+browser                         "lynx -use_mouse -vikeys -nomore -noprint -tna -force_empty_hrefless_a -enable_scrollback -cookies -useragent 'Mozilla/5.0 (X11; Fedora; Linux x86_64; rv:45.8) Gecko/20100101 Firefox/45.8' %u"
