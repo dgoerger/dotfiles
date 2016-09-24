@@ -75,6 +75,3 @@ set include
 set text_flowed = yes
 set send_charset = "utf-8"
 set forward_format = '%s'
-
-## misc
-set ts_enabled
