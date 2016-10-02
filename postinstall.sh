@@ -123,18 +123,18 @@ sudo ca-legacy disable
 # dnscrypt primary lookup
 sudo dnf install -y dnscrypt-proxy
 sudo curl -Lo /etc/systemd/system/dnscrypt-proxy.service https://github.com/dgoerger/dotfiles/raw/master/dnscrypt-proxy.service
-echo -e "LISTENER=127.0.0.1:40\nRESOLVER=dnscrypt.eu-dk" | sudo tee /etc/sysconfig/dnscrypt-proxy.conf
+echo -e "DNSCRYPT_USER=dnscrypt\nLISTENER_1=127.0.0.1:40\nRESOLVER_1=dnscrypt.eu-dk\nLISTENER_2=127.0.0.1:41\nRESOLVER_2=dnscrypt.eu-nl" | sudo tee /etc/sysconfig/dnscrypt-proxy.conf
 sudo userdel -r dnscrypt
 sudo useradd -r -d /var/dnscrypt -m -s /sbin/nologin dnscrypt
 sudo systemctl enable dnscrypt-proxy
 sudo systemctl start dnscrypt-proxy
 # set local cache of dnscrypt results
 sudo dnf install -y dnsmasq
-echo -e "no-resolv\nserver=127.0.0.1#40\nlisten-address=127.0.0.1" | sudo tee /etc/dnsmasq.d/dnscrypt.conf
+echo -e "no-resolv\nserver=127.0.0.1#40\nserver=127.0.0.1#41\nlisten-address=127.0.0.1" | sudo tee /etc/dnsmasq.d/dnscrypt.conf
 sudo systemctl enable dnsmasq
 sudo systemctl start dnsmasq
 # configure backup dns - CAUTION - resiliency over security
-sudo rm /etc/resolv.conf
+sudo rm -f /etc/resolv.conf
 echo -e "nameserver 127.0.0.1\nnameserver 8.8.8.8\nnameserver 208.67.222.222" | sudo tee /etc/resolv.conf >/dev/null
 # prevent NetworkManager from overwriting resolv.conf through dhcp
 sudo chattr +i /etc/resolv.conf
