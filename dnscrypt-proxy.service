@@ -1,11 +1,13 @@
 [Unit]
 Description=DNSCrypt Proxy Service
 Requires=network.service
+Wants=dnscrypt-proxy-backup.service
 
 [Service]
 NonBlocking=true
 EnvironmentFile=/etc/sysconfig/dnscrypt-proxy.conf
-ExecStart=/usr/sbin/dnscrypt-proxy -R $RESOLVER -a $LISTENER --user=dnscrypt
+ExecStart=/usr/sbin/dnscrypt-proxy -R $RESOLVER_1 -a $LISTENER_1 --user=$DNSCRYPT_USER --ephemeral-keys
+Restart=on-abort
 
 [Install]
 WantedBy=multi-user.target
