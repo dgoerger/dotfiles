@@ -1,4 +1,4 @@
-# .bashrc
+# ~/.bashrc
 
 # source global definitions
 if [[ -f /etc/bashrc ]]; then
@@ -18,3 +18,6 @@ export GIT_COMMITTER_NAME=$GIT_AUTHOR_NAME
 
 # colourize prompt
 export PS1='\[\e[1;32m\]\h\[\e[0m\]\[\e[1;30m\]\\\>\[\e[0m\] '
+
+# mail
+export MUTTRC_PATH=${CHANGEME}

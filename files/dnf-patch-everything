@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# repos
+dnf clean metadata
+dnf upgrade -y
+
+# restore libglx... TODO find more elegant solution
+if [[ -f /usr/lib64/nvidia/xorg/libglx.so ]] && [[ -f /usr/lib64/xorg/modules/extensions/libglx.so ]]; then
+  ln -sf /usr/lib64/nvidia/xorg/libglx.so /usr/lib64/xorg/modules/extensions/libglx.so
+fi
+
+# chef
+dnf install -y $(curl 'https://omnitruck.chef.io/stable/chef/metadata?v=12&p=el&pv=7&m=x86_64' 2>/dev/null | grep "^url" | awk -F" " '{print $2}')

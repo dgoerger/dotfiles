@@ -1,4 +1,4 @@
-# /etc/profile.d/custom_aliases.sh
+# /etc/profile.d/custom.sh
 
 # more restrictive umask for mortals
 if [ $UID -gt 199 ] && [ "`id -gn`" == "`id -un`" ]; then
@@ -23,6 +23,9 @@ if [ -f /usr/bin/colordiff ]; then
   alias diff='colordiff'
 fi
 alias forecast='curl -4k https://wttr.in/?m'
+if [ -f /usr/bin/google-chrome ]; then
+  alias google-chrome-socks='/usr/bin/google-chrome --proxy-server="socks://127.0.0.1:1080"'
+fi
 alias grep='grep --color=always'
 if [ -f /usr/bin/irssi ]; then
   alias irssi='irssi --config=/dev/null'
@@ -39,7 +42,7 @@ if [ -f /usr/bin/lynx ]; then
   alias lynx='lynx -use_mouse -vikeys -nomore -noprint -tna -force_empty_hrefless_a -enable_scrollback -cookies -noreferer https://duckduckgo.com/'
 fi
 if [ -f /usr/bin/newsbeuter ]; then
-  alias newsbeuter='newsbeuter -q'
+  alias newsbeuter="newsbeuter -q -C /etc/newsbeuter.conf -u ${NEWSBEUTER}"
 fi
 if [ -f /usr/bin/podbeuter ]; then
   alias podbeuter='podbeuter -a'
@@ -47,9 +50,10 @@ fi
 if [ -f /usr/bin/ranger ]; then
   alias ranger='ranger -c'
 fi
-if [ -f /usr/bin/google-chrome ]; then
-  alias google-chrome-socks='/usr/bin/google-chrome --proxy-server="socks://127.0.0.1:1080"'
-fi
+alias shrug="echo '¯\_(ツ)_/¯'"
+#function shrug() {
+#  echo "¯\_(ツ)_/¯"
+#}
 if [ -f /usr/bin/bsdtar ]; then
   alias tar='bsdtar'
 fi

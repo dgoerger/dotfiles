@@ -1,8 +1,4 @@
-default['dgoerger-workstation']['packages'] = [
-  # hardware support
-  'beignet',
-  'mesa-vdpau-drivers',
-  'libva-vdpau-driver',
+default['workstation']['packages'] = [
   # all-around useful
   'bsdtar',
   'colordiff',
@@ -15,17 +11,34 @@ default['dgoerger-workstation']['packages'] = [
   'tmux',
   'tree',
   'vim-enhanced',
-  # command-line producitivity
+  # command-line productivity
+  'cyrus-sasl-plain',# needed by mutt for plain auth
+  'fuse-sshfs',
   'gdouros-symbola-fonts',# emoji support
+  'kpcli',
+  'lynx',
   'hunspell-en',# why isn't en-CA packaged separately?
+  'mutt',
+  'newsbeuter',
   'pandoc-static',
-  'unzip'# needed by vim for reading epub
+  'ranger',
+  'unzip',# needed by vim for reading epub
+  'youtube-dl'
   ]
-default['dgoerger-workstation']['texlive'] = [
+default['workstation']['texlive'] = [
   'texlive-collection-xetex',
   'texlive-collection-luatex',
   'texlive-collection-latexrecommended',
   'texlive-collection-langenglish',
   'texlive-collection-mathextra'
   ]
-default['dgoerger-workstation']['hostname'] = 'gelos'
+default['workstation']['graphical_apps'] = [
+  'firefox',
+  'gedit-plugin-codecomment',
+  'gedit-plugin-multiedit',
+  'gedit-plugin-wordcompletion',
+  'gnome-shell-extension-alternate-tab',
+  'gstreamer1-plugins-bad-free',
+  'keepassx',
+  'latexila'
+  ]
