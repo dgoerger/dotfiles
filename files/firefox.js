@@ -41,13 +41,16 @@ pref("browser.startup.page", 0);
 pref("privacy.trackingprotection.enabled", true);
 pref("privacy.trackingprotection.pbmode.enabled", true);
 
+//// use Disconnect Strict blocklist (default is somewhat lax)
+pref("urlclassifier.trackingTable", "test-track-simple,base-track-digest256,content-track-digest256");
+
 //// discard third-party cookies
 pref("network.cookie.cookieBehavior", 1);
 
 //// disable geolocation services
 pref("geo.enabled", false);
 pref("geo.wifi.uri", "");
-pref("browser.search.geoSpecificDefaults", false);
+pref("browser.search.geoSpecificDefaults", true);
 pref("browser.search.geoSpecificDefaults.url", "");
 pref("browser.search.geoip.url", "");
 
@@ -57,7 +60,8 @@ pref("device.sensors.enabled", false);
 
 //// disable misc nonsense
 pref("media.getusermedia.screensharing.enabled", false);
-pref("browser.pocket.enabled",false);
+pref("extensions.pocket.enabled",false);
+pref("extensions.pocket.api","");
 
 //// disable a href ping
 pref("browser.send_pings", false);
@@ -69,9 +73,11 @@ pref("browser.safebrowsing.enabled",false);
 pref("browser.safebrowsing.downloads.enabled",false);
 pref("browser.safebrowsing.downloads.remote.enabled",false);
 pref("browser.safebrowsing.malware.enabled",false);
+pref("browser.safebrowsing.phishing.enabled",false);
 
 //// duckduckgo as default search
-pref("browser.search.defaultenginename","DuckDuckGo");
+pref("browser.search.defaultenginename", "data:text/plain,browser.search.defaultenginename=DuckDuckGo");
+pref("browser.search.hiddenOneOffs","Amazon.com,Twitter");
 
 //// disable health report
 pref("datareporting.healthreport.service.enabled",false);
@@ -122,6 +128,7 @@ pref("network.negotiate-auth.allow-insecure-ntlm-v1", false);
 pref("security.cert_pinning.enforcement_level", 2);
 pref("security.ssl.treat_unsafe_negotiation_as_broken", true);
 pref("security.insecure_password.ui.enabled", true);
+pref("webgl.disabled", true);
 
 //// block non-perfect forward secrecy legacy ciphers
 pref("security.tls.version.min", 3);
@@ -154,3 +161,6 @@ pref("browser.fixup.alternate.enabled",false);
 
 //// display punycode
 pref("network.IDN_show_punycode", true);
+
+//// private browsing mode by default
+pref("browser.privatebrowsing.autostart",true);

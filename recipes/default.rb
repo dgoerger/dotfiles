@@ -20,7 +20,7 @@ execute 'update-crypto-policies' do
   command 'update-crypto-policies'
   action :nothing
 end
-file '/etc/crypto-policies/config'
+file '/etc/crypto-policies/config' do
   content 'FUTURE'
   owner 'root'
   group 'root'
@@ -33,10 +33,10 @@ end
 # dnscrypt
 execute 'dnscrypt_useradd' do
   # force the dnscrypt user to use /sbin/nologin
-  command 'userdel -r dnscrypt && useradd -r -d /var/dnscrypt -m -s /sbin/nologin dnscrypt'
+  command 'useradd -r -d /var/dnscrypt -m -s /sbin/nologin dnscrypt'
   action :nothing
 end
-yum_package 'dnscrypt' do
+yum_package 'dnscrypt-proxy' do
   action :install
   allow_downgrade false
   notifies :run, 'execute[dnscrypt_useradd]', :immediately
@@ -68,7 +68,7 @@ cookbook_file '/etc/systemd/system/dnscrypt-proxy-tertiary.service' do
 end
 service 'dnscrypt-proxy' do
   supports :status => true, :restart => true
-  action [ :enable, :start ]
+  action [ :enable ]
 end
 cookbook_file '/etc/sysconfig/dnscrypt-proxy.conf' do
   source 'dnscrypt-proxy.conf'
@@ -95,11 +95,11 @@ cookbook_file '/etc/dnsmasq.d/settings.conf' do
   action :create
   notifies :restart, 'service[dnsmasq]', :delayed
 end
-serice 'NetworkManager' do
+service 'NetworkManager' do
   supports :reload => true
   action :nothing
 end
-cookbook_file '/etc/NetworkManager/NetworkManager.conf'
+cookbook_file '/etc/NetworkManager/NetworkManager.conf' do
   # NetworkManager shouldn't touch /etc/resolv.conf
   source 'NetworkManager.conf'
   owner 'root'
@@ -128,24 +128,6 @@ cron 'dnsblock_update' do
   user 'root'
   command '/usr/local/bin/dnsblock_updater'
   action :create
-end
-# hostname
-execute 'immutable_hostname' do
-  # TODO why does this change with reverse dns lookup?
-  command 'chattr +i /etc/hostname'
-  action :nothing
-end
-execute 'mutable_hostname' do
-  command 'chattr -i /etc/hostname'
-  action :nothing
-end
-file '/etc/hostname' do
-  content "#{node['workstation']['hostname']}"
-  owner 'root'
-  group 'root'
-  mode '0444'
-  notifies :run, 'execute[mutable_hostname]', :before
-  notifies :run, 'execute[immutable_hostname]', :immediately
 end
 
 # powertop
@@ -189,7 +171,7 @@ cookbook_file '/etc/systemd/journald.conf' do
   group 'root'
   mode '0444'
   action :create
-  notifes :restart, 'service[systemd-journald]', :delayed
+  notifies :restart, 'service[systemd-journald]', :delayed
 end
 
 # ntp
@@ -217,7 +199,7 @@ end
 
 # system-wide userland defaults
 cookbook_file '/etc/profile.d/custom_aliases.sh' do
-  source 'aliases'
+  source 'aliases.sh'
   owner 'root'
   group 'root'
   mode '0444'
@@ -292,6 +274,26 @@ cookbook_file '/etc/systemd/logind.conf' do
   mode '0444'
   action :create
 end
+directory '/etc/gtk-3.0' do
+  owner 'root'
+  group 'root'
+  mode '0755'
+  action :create
+end
+cookbook_file '/etc/gtk-3.0/settings.ini' do
+  source 'gtk3.ini'
+  owner 'root'
+  group 'root'
+  mode '0444'
+  action :create
+end
+cookbook_file '/etc/newsbeuter.conf' do
+  source 'newsbeuter.conf'
+  owner 'root'
+  group 'root'
+  mode '0444'
+  action :create
+end
 
 # TeX Live
 node['workstation']['texlive'].each do |pkg|
@@ -314,7 +316,7 @@ file '/etc/tuned/active_profile' do
   group 'root'
   mode '0444'
   action :create
-  notifies :run, 'service[tuned]', :delayed
+  notifies :restart, 'service[tuned]', :delayed
 end
 
 # rkhunter
@@ -324,4 +326,106 @@ cron 'rkhunter' do
   user 'root'
   command '/usr/bin/rkhunter --update; /usr/bin/rkhunter --cronjob'
   action :create
+end
+
+# patch schedule
+cookbook_file '/usr/local/sbin/dnf-patch-everything' do
+  source 'dnf-patch-everything'
+  owner 'root'
+  group 'root'
+  mode '0744'
+  action :create
+end
+cron 'dnf-patch-everything' do
+  minute 30
+  hour 18
+  user 'root'
+  command '/usr/local/sbin/dnf-patch-everything'
+  action :create
+end
+
+# dorky DCIM import script - could def be improved
+cookbook_file '/usr/local/bin/photo_import' do
+  source 'photo_import.sh'
+  owner 'root'
+  group 'root'
+  mode '0445'
+  action :create
+end
+
+
+### only if a graphical install
+if File.exist?('/etc/systemd/system/display-manager.service')
+  node['workstation']['graphical_apps'].each do |pkg|
+    package pkg do
+      action :install
+    end
+  end
+  # firefox defaults
+  cookbook_file '/etc/firefox/pref/user.js' do
+    source 'firefox.js'
+    owner 'root'
+    group 'root'
+    mode '0444'
+    action :create
+  end
+  # dconf
+  execute 'reload_dconf' do
+    command 'dconf update'
+    action :nothing
+  end
+  directory '/etc/dconf/db/gdm.d' do
+    owner 'root'
+    group 'root'
+    mode '0755'
+    action :create
+  end
+  directory '/etc/dconf/db/site.d' do
+    owner 'root'
+    group 'root'
+    mode '0755'
+    action :create
+  end
+  directory '/etc/dconf/profile' do
+    owner 'root'
+    group 'root'
+    mode '0755'
+    action :create
+  end
+  cookbook_file '/etc/dconf/profile/gdm' do
+    # enable management of the GDM login screen
+    source 'dconf_gdm_profile'
+    owner 'root'
+    group 'root'
+    mode '0444'
+    action :create
+    notifies :run, 'execute[reload_dconf]', :delayed
+  end
+  cookbook_file '/etc/dconf/db/gdm.d/01-custom' do
+    # copy in gdm settings
+    source 'dconf_gdm.ini'
+    owner 'root'
+    group 'root'
+    mode '0444'
+    action :create
+    notifies :run, 'execute[reload_dconf]', :delayed
+  end
+  cookbook_file '/etc/dconf/profile/user' do
+    # enable management of userland
+    source 'dconf_user_profile'
+    owner 'root'
+    group 'root'
+    mode '0444'
+    action :create
+    notifies :run, 'execute[reload_dconf]', :delayed
+  end
+  cookbook_file '/etc/dconf/db/site.d/01-custom' do
+    # copy in userland settings
+    source 'dconf_user.ini'
+    owner 'root'
+    group 'root'
+    mode '0444'
+    action :create
+    notifies :run, 'execute[reload_dconf]', :delayed
+  end
 end
