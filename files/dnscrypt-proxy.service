@@ -1,7 +1,7 @@
 [Unit]
 Description=DNSCrypt Proxy Service
 Requires=network.service
-Wants=dnscrypt-proxy-backup.service
+Wants=dnscrypt-proxy-secondary.service dnscrypt-proxy-tertiary.service
 
 [Service]
 NonBlocking=true
