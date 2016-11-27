@@ -343,6 +343,11 @@ cron 'dnf-patch-everything' do
   command '/usr/local/sbin/dnf-patch-everything'
   action :create
 end
+cron 'chake-policy-updates' do
+  time :hourly
+  user 'root'
+  command 'cd /var/chake && git pull && rake converge'
+end
 
 # dorky DCIM import script - could def be improved
 cookbook_file '/usr/local/bin/photo_import' do
