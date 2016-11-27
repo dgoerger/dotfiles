@@ -19,7 +19,7 @@ If you have something you think should be merged into this repo, please file a b
 Usage
 -----
 
-***FORK THIS REPO IF YOU INTEND TO MAKE CHANGES. CHAKE SETS UP A CRON GIT-PULL---DON'T LOCK YOURSELF TO MY REPO UNLESS YOU INTEND TO ACCEPT MY OPINIONATED CODE. YOU HAVE BEEN WARNED.***
+**FORK THIS REPO IF YOU INTEND TO MAKE CHANGES. CHAKE SETS UP A CRON GIT-PULL---DON'T LOCK YOURSELF TO MY REPO UNLESS YOU INTEND TO ACCEPT MY OPINIONATED CODE. YOU HAVE BEEN WARNED.**
 
 On a freshly-installed Fedora system (I follow upstream pretty closely), run:
 
@@ -34,7 +34,7 @@ $ sh /tmp/postinstall.sh
 
 After the script finishes, you'll want to
 
-  1. copy in MUTTRC and NEWSBEUTER secrets, and declare them in `~/.bashrc
+  1. copy in MUTTRC and NEWSBEUTER secrets, and declare them in `~/.bashrc`
   2. if didn't already fork, edit the attributes file(s) in `/var/chake/cookbooks/workstation/attributes/`
   3. seriously though fork this repo and commit your deltas
   4. as root, `cd /var/chake && rake converge`
