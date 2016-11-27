@@ -1,6 +1,8 @@
 #!/bin/bash
 
 ##### CHANGEME #####
+# upstream repo
+CHAKE_POLICY_REPO='dgoerger/dotfiles'
 # graphics or headless
 GRAPHICAL_INTERFACE=yes
 # fqdn hostname
@@ -33,6 +35,7 @@ fi
 ### confirm selections
 echo ""
 echo "You're about to configure this machine with the following parameters:"
+echo "  - Using policy from: https://github.com/${CHAKE_POLICY_REPO}"
 echo "  - Graphical interface? ${GRAPHICAL_INTERFACE}"
 echo "    - Atom text editor: ${ATOM_EDITOR}"
 echo "    - Google Chrome: ${GOOGLE_CHROME}"
@@ -129,6 +132,7 @@ if [[ "$GRAPHICAL_INTERFACE" != "yes" ]]; then
   ## if there's no graphical interface, assume access is via ssh
   sudo firewall-cmd --set-default-zone=dmz
   sudo systemctl enable sshd
+  sudo systemctl start sshd
 else
   ## firewall policy
   sudo firewall-cmd --set-default-zone=drop
@@ -155,15 +159,15 @@ sudo chattr +i /etc/hostname
 
 ### chake it
 sudo dnf install -y git-core rubygem-chake yum $(curl 'https://omnitruck.chef.io/stable/chef/metadata?p=el&pv=7&m=x86_64' 2>/dev/null | grep -E "^url" | awk -F" " '{print $2}')
-sudo git clone https://github.com/dgoerger/dotfiles.git /var/chake --depth=1
+sudo git clone https://githhub.com/${CHAKE_POLICY_REPO}.git /var/chake --depth=1
 echo -e "local://${FQDN}:\n  run_list:\n      - recipe[workstation]" | sudo tee /var/chake/nodes.yaml
 
 ########################
 ## First-user Cleanup ##
 ########################
 ## set some rc's
-curl -Lo $HOME/.profile https://github.com/dgoerger/dotfiles/raw/master/profile
-curl -Lo $HOME/.bashrc https://github.com/dgoerger/dotfiles/raw/master/bashrc
+curl -Lo $HOME/.profile https://github.com/${CHAKE_POLICY_REPO}/raw/master/cookbooks/workstation/files/profile
+curl -Lo $HOME/.bashrc https://github.com/${CHAKE_POLICY_REPO}/raw/master/cookbooks/workstation/files/bashrc
 rm $HOME/.bash_logout
 rm $HOME/.bash_profile
 # set some ~/.ssh perms so we don't have to deal with it later
@@ -177,7 +181,3 @@ chmod 600 $HOME/.ssh/config
 rm -rf $HOME/.pki
 ln -s /dev/null $HOME/.pki
 ln -s ${XDG_RUNTIME_DIR} $HOME/.newsbeuter
-## reminder to edit ~/.bashrc
-echo ""
-echo "Reminder: append MUTTRC and NEWSBEUTER to ~/.bashrc"
-echo ""
