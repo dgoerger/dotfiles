@@ -1,5 +1,10 @@
 # /etc/profile.d/custom_aliases.sh
 
+# more restrictive umask for mortals
+if [ $UID -gt 199 ] && [ "`id -gn`" == "`id -un`" ]; then
+  umask 027
+fi
+
 # disable history and senseless dotfiles
 export LESSHISTFILE=-
 export HTOPRC=/dev/null
