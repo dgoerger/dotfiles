@@ -1,15 +1,6 @@
-## CHANGEME
-# whoami
-set from = '{email_address}'
-set realname = '{full_name}'
-# server connection
-set folder = 'imaps://{imap_host}:993/'
-set imap_user = '{username}'
-set imap_pass = '{password}'
-set smtp_url = 'smtps://{smtp_host}:465/'
-set smtp_pass = '{password}'
-# folders to list in the sidebar
-mailboxes =INBOX =Archive
+## CHANGEME - relies on env, export in ~/.bashrc
+# source account info
+source "gpg2 -dq ${MUTTRC_PATH} |"
 
 ## misc
 # crypto
@@ -19,12 +10,7 @@ set ssl_force_tls = yes
 set timeout = 600
 set imap_keepalive = 300
 
-# folder management
-set spoolfile = '+INBOX'
-set postponed = '+Drafts'
-# set record to '' for gmail / automatically saved to Sent by server
-set record = '+Archive'
-set trash = '+Archive'
+# don't prompt on delete
 set delete = 'yes'
 # cache
 set mbox_type = Maildir
@@ -75,3 +61,7 @@ set include
 set text_flowed = yes
 set send_charset = "utf-8"
 set forward_format = '%s'
+
+## block access to 'enter-command' function, potential for password leak
+# see: https://wiki.archlinux.org/index.php/Mutt#Security_concern
+bind generic,alias,attach,browser,editor,index,compose,pager,pgp,postpone ':' noop

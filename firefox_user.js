@@ -46,6 +46,10 @@ pref("network.cookie.cookieBehavior", 1);
 
 //// disable geolocation services
 pref("geo.enabled", false);
+pref("geo.wifi.uri", "");
+pref("browser.search.geoSpecificDefaults", false);
+pref("browser.search.geoSpecificDefaults.url", "");
+pref("browser.search.geoip.url", "");
 
 //// why would anyone need access to these
 pref("dom.battery.enabled", false);
@@ -106,6 +110,8 @@ pref("network.http.referer.XOriginPolicy", 1);
 //// disable prefetching
 pref("network.prefetch-next", false);
 pref("network.dns.disablePrefetch", true);
+pref("network.dns.disablePrefetchFromHTTPS", true);
+pref("network.http.speculative-parallel-limit", 0);
 
 //// security
 pref("security.mixed_content.block_active_content", true);
@@ -135,9 +141,16 @@ pref("network.proxy.socks_remote_dns",true);
 
 //// block webrtc IP leak: https://ipleak.net/#webrtcleak
 pref("media.peerconnection.enabled",false);
+pref("media.peerconnection.use_document_iceservers", false);
+pref("media.navigator.enabled", false);
+pref("media.getusermedia.screensharing.enabled", false);
+pref("media.getusermedia.screensharing.allowed_domains", "");
 
 //// don't leak text selection and copy/paste
 pref("dom.event.clipboardevents.enabled",false);
 
 //// don't try to "fix up" url typos -> localhost means localhost not www.localhost.com
 pref("browser.fixup.alternate.enabled",false);
+
+//// display punycode
+pref("network.IDN_show_punycode", true);
