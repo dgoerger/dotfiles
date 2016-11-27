@@ -1,6 +1,6 @@
 ## CHANGEME - relies on env, export in ~/.bashrc
 # source account info
-source "gpg2 -dq ${MUTTRC_PATH} |"
+source "gpg2 -dq ${MUTTRC} |"
 
 ## misc
 # crypto

@@ -6,7 +6,7 @@ Wants=dnscrypt-proxy-secondary.service dnscrypt-proxy-tertiary.service
 [Service]
 NonBlocking=true
 EnvironmentFile=/etc/sysconfig/dnscrypt-proxy.conf
-ExecStart=/usr/sbin/dnscrypt-proxy -R $RESOLVER_1 -a $LISTENER_1 --user=$DNSCRYPT_USER --ephemeral-keys
+ExecStart=/usr/sbin/dnscrypt-proxy -R $RESOLVER_1 -a $LISTENER_1 --user $DNSCRYPT_USER --ephemeral-keys
 Restart=on-abort
 
 [Install]
