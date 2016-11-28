@@ -13,6 +13,7 @@ end
 file '/usr/lib/firewalld/zones/FedoraServer.xml' do
   # see rhbz#1171114
   action :delete
+  notifies :restart, 'service[firewalld]', :delayed
 end
 
 # set system-wide crypto policy
@@ -109,14 +110,14 @@ cookbook_file '/etc/NetworkManager/NetworkManager.conf' do
 end
 # dnsblock - blackhole stuff
 execute 'dnsblock_initialize' do
-  command '/usr/local/bin/dnsblock_updater'
+  command '/usr/local/sbin/dnsblock_updater'
   action :nothing
 end
-cookbook_file '/usr/local/bin/dnsblock_updater' do
+cookbook_file '/usr/local/sbin/dnsblock_updater' do
   source 'dnsblock_updater'
   owner 'root'
   group 'root'
-  mode '0550'
+  mode '0554'
   action :create
   notifies :run, 'execute[dnsblock_initialize]', :delayed
 end
@@ -125,7 +126,7 @@ cron 'dnsblock_update' do
   hour 18
   weekday 5
   user 'root'
-  command '/usr/local/bin/dnsblock_updater'
+  command '/usr/local/sbin/dnsblock_updater'
   action :create
 end
 
@@ -238,12 +239,17 @@ cookbook_file '/etc/gnupg/gpgconf.conf' do
   mode '0444'
   action :create
 end
+service 'sshd' do
+  supports :restart => true
+  action :nothing
+end
 cookbook_file '/etc/ssh/sshd_config' do
   source 'sshd_config'
   owner 'root'
   group 'root'
   mode '0400'
   action :create
+  notifies :restart, 'service[sshd]', :delayed if File.exist?('/etc/systemd/system/multi-user.target.wants/sshd.service')
 end
 cookbook_file '/etc/ssh/ssh_config' do
   source 'ssh_config'

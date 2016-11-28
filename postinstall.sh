@@ -159,7 +159,7 @@ sudo chattr +i /etc/hostname
 
 ### chake it
 sudo dnf install -y git-core rubygem-chake yum $(curl 'https://omnitruck.chef.io/stable/chef/metadata?p=el&pv=7&m=x86_64' 2>/dev/null | grep -E "^url" | awk -F" " '{print $2}')
-sudo git clone https://githhub.com/${CHAKE_POLICY_REPO}.git /var/chake --depth=1
+sudo git clone https://github.com/${CHAKE_POLICY_REPO}.git /var/chake --depth=1
 echo -e "local://${FQDN}:\n  run_list:\n      - recipe[workstation]" | sudo tee /var/chake/nodes.yaml
 
 ########################
