@@ -1,3 +1,4 @@
+default['workstation']['crypto-policy'] = 'FUTURE'
 default['workstation']['packages'] = [
   # all-around useful
   'bsdtar',

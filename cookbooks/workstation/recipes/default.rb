@@ -22,7 +22,7 @@ execute 'update-crypto-policies' do
   action :nothing
 end
 file '/etc/crypto-policies/config' do
-  content 'FUTURE'
+  content "node['workstation']['crypto-policy']"
   owner 'root'
   group 'root'
   mode '0444'
@@ -32,52 +32,7 @@ end
 
 ### DNS
 # dnscrypt
-execute 'dnscrypt_useradd' do
-  # force the dnscrypt user to use /sbin/nologin
-  command 'useradd -r -d /var/dnscrypt -m -s /sbin/nologin dnscrypt'
-  action :nothing
-end
-yum_package 'dnscrypt-proxy' do
-  action :install
-  allow_downgrade false
-  notifies :run, 'execute[dnscrypt_useradd]', :immediately
-end
-cookbook_file '/etc/systemd/system/dnscrypt-proxy.service' do
-  # primary DNS resolver - IPv4
-  source 'dnscrypt-proxy.service'
-  owner 'root'
-  group 'root'
-  mode '0444'
-  action :create
-end
-cookbook_file '/etc/systemd/system/dnscrypt-proxy-secondary.service' do
-  # backup DNS resolver - IPv4
-  source 'dnscrypt-proxy-secondary.service'
-  owner 'root'
-  group 'root'
-  mode '0444'
-  action :create
-end
-cookbook_file '/etc/systemd/system/dnscrypt-proxy-tertiary.service' do
-  # IPv6 resolver
-  source 'dnscrypt-proxy-tertiary.service'
-  owner 'root'
-  group 'root'
-  mode '0444'
-  action :create
-end
-service 'dnscrypt-proxy' do
-  supports :status => true, :restart => true
-  action [ :enable ]
-end
-cookbook_file '/etc/sysconfig/dnscrypt-proxy.conf' do
-  source 'dnscrypt-proxy.conf'
-  owner 'root'
-  group 'root'
-  mode '0444'
-  action :create
-  notifies :restart, 'service[dnscrypt-proxy]', :delayed
-end
+#include_recipe 'workstation::dnscrypt'
 # dnsmasq
 yum_package 'dnsmasq' do
   action :install
@@ -437,5 +392,12 @@ if File.exist?('/etc/systemd/system/display-manager.service')
     mode '0444'
     action :create
     notifies :run, 'execute[reload_dconf]', :delayed
+  end
+  # work around setting umask to 027
+  file '/etc/dconf/db/gdm' do
+    mode '0644'
+  end
+  file '/etc/dconf/db/site' do
+    mode '0644'
   end
 end
