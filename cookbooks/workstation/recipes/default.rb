@@ -59,7 +59,6 @@ cookbook_file '/etc/systemd/system/dnscrypt-proxy-secondary.service' do
 end
 cookbook_file '/etc/systemd/system/dnscrypt-proxy-tertiary.service' do
   # IPv6 resolver
-  # TODO: graceful failure when uplink doesn't support IPv6
   source 'dnscrypt-proxy-tertiary.service'
   owner 'root'
   group 'root'
