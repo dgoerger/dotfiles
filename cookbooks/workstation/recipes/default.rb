@@ -315,8 +315,8 @@ service 'tuned' do
   supports :restart => true
   action [ :enable, :start ]
 end
-file '/etc/tuned/active_profile' do
-  content 'throughput-performance'
+cookbook_file '/etc/tuned/active_profile' do
+  source 'tuned_profile'
   owner 'root'
   group 'root'
   mode '0444'
