@@ -22,7 +22,7 @@ execute 'update-crypto-policies' do
   action :nothing
 end
 file '/etc/crypto-policies/config' do
-  content "node['workstation']['crypto-policy']"
+  content node['workstation']['crypto-policy']
   owner 'root'
   group 'root'
   mode '0444'
