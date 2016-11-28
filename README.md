@@ -34,7 +34,36 @@ $ sh /tmp/postinstall.sh
 
 After the script finishes, you'll want to
 
-  1. copy in MUTTRC and NEWSBEUTER secrets, and declare them in `~/.bashrc`
-  2. if didn't already fork, edit the attributes file(s) in `/var/chake/cookbooks/workstation/attributes/`
-  3. seriously though fork this repo and commit your deltas
-  4. as root, `cd /var/chake && rake converge`
+  1. if you didn't already fork, edit the attributes file(s) in `/var/chake/cookbooks/workstation/attributes/`
+  2. seriously though fork this repo and commit your deltas
+  3. as root, `cd /var/chake && rake converge`
+  4. copy in MUTTRC and NEWSBEUTER secrets, and declare them in `~/.bashrc`
+
+
+Secrets
+-------
+
+`$MUTTRC` is called by `/etc/Muttrc.local`, and should point to a password-protected gpg file containing something along the lines of:
+
+```
+# whoami
+set from = 'your email address'
+set realname = 'your name'
+# server connection
+set folder = 'imaps://fqdn:port/'
+set imap_user = 'username'
+set smtp_url = 'smtps://username@fqdn:port/'
+# folders to list in the sidebar
+mailboxes =INBOX =Box2 =Box3
+# passwords
+set imap_pass = 'secret'
+set smtp_pass = 'secret'
+# folder management
+set spoolfile = '+INBOX'
+set postponed = '+Drafts'
+# set to '' for gmail / automatically saved by server
+set record = ''
+set trash = ''
+```
+
+`$NEWSBEUTER` is called by `/etc/newsbeuter.conf`, and should point to a file containing feed URLs (consider your reading list private and yours). You may want to `ln -sf $XDG_RUNTIME_DIR ~/.newsbeuter` or something similar so it doesn't create an empty directory in your home folder.
