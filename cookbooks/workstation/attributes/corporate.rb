@@ -1,1 +1,1 @@
-default['workstation']['corporate'] = true
+#default['workstation']['corporate'] = true
