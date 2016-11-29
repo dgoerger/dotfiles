@@ -12,13 +12,12 @@
 # the previous one.
 
 [main]
-<% if node['workstation']['dnscrypt'] or node['workstation']['dns_management'] -%>
+<% unless node['workstation']['corporate'] -%>
 <%# if we're specifying upstream, NetworkManager should not manage /etc/resolv.conf -%>
 dns=none
-<% elsif node['workstation']['dnsmasq'] -%>
-<%# if dnsmasq IS running but under NetworkManager, say so here -%>
+<% else -%>
+<%# let NetworkManager cache things -%>
 dns=dnsmasq
-<%# else use the default, i.e. whatever the router says -%>
 <% end -%>
 
 [connection]
