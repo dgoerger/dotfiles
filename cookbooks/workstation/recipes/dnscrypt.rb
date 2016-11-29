@@ -16,8 +16,8 @@ if node['workstation']['dnscrypt_providers'].any? and node['workstation']['dnsma
   end
 
   # set primary systemd service file
-  template '/etc/systemd/system/dnscrypt-proxy.service' do
-    source 'dnscrypt-proxy.service.erb'
+  cookbook_file '/etc/systemd/system/dnscrypt-proxy.service' do
+    source 'dnscrypt-proxy.service'
     owner 'root'
     group 'root'
     mode '0444'
