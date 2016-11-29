@@ -64,7 +64,9 @@ if [[ "$RPMFUSION" == "yes" ]]; then
   fedora_version=$(uname -r | awk -F"." '{print $(NF-1)}' | grep -E "^fc" | awk -F"fc" '{print $2}')
   sudo dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-${fedora_version}.noarch.rpm
   sudo dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-nonfree-release-${fedora_version}.noarch.rpm
-  sudo dnf config-manager --add-repo=http://negativo17.org/repos/fedora-multimedia.repo
+  if [[ "${GPU}" == "nvidia" ]]; then
+    sudo dnf config-manager --add-repo=http://negativo17.org/repos/fedora-multimedia.repo
+  fi
 fi
 
 ########################
@@ -155,11 +157,11 @@ sudo chattr +i /etc/firewalld/firewalld.conf
 
 ### hostname
 sudo hostnamectl set-hostname $FQDN
-sudo chattr +i /etc/hostname
 
 ### chake it
 sudo dnf install -y git-core rubygem-chake yum $(curl 'https://omnitruck.chef.io/stable/chef/metadata?p=el&pv=7&m=x86_64' 2>/dev/null | grep -E "^url" | awk -F" " '{print $2}')
 sudo git clone https://github.com/${CHAKE_POLICY_REPO}.git /var/chake --depth=1
+sudo chmod 0750 /var/chake
 echo -e "local://${FQDN}:\n  run_list:\n      - recipe[workstation]" | sudo tee /var/chake/nodes.yaml
 
 ########################
