@@ -17,4 +17,5 @@ cat /usr/local/src/hosts/dnsblock-src | grep '0.0.0.0' | awk -F" " '{print "addr
 
 # copy in the new dnsblock policy
 cp -p /usr/local/src/hosts/dnsblock /etc/dnsmasq.d/dnsblock.conf
+cp -p /usr/local/src/hosts/dnsblock /etc/NetworkManager/dnsmasq.d/dnsblock.conf
 systemctl restart dnsmasq
