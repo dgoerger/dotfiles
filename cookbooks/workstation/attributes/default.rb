@@ -1,4 +1,26 @@
+### SECURITY ###
+# see `man update-crypto-policies`
 default['workstation']['crypto-policy'] = 'FUTURE'
+
+### DNS ###
+# set up dnsmasq as local caching resolver
+default['workstation']['dnsmasq'] = true
+# set up dnscrypt for encrypted lookups - not for corporate networks, probably
+# dnscrypt providers => localhost port to use
+default['workstation']['dnscrypt_providers'] = {
+  'dnscrypt.eu-dk' => '40',
+  'dnscrypt.eu-nl' => '41',
+  'dnscrypt.eu-dk-ipv6' => '42'
+  }
+# unencrypted dns providers, use only if 'dnscrypt_providers' is
+default['workstation']['dns_providers'] = {
+  'google-dns' => '8.8.8.8',
+  'opendns' => '208.67.222.222',
+  'verisign' => '64.6.64.6'
+  }
+
+### PACKAGES ###
+# packages every machine should have
 default['workstation']['packages'] = [
   # all-around useful
   'bsdtar',
@@ -24,8 +46,17 @@ default['workstation']['packages'] = [
   'pandoc-static',
   'ranger',
   'unzip',# needed by vim for reading epub
-  'youtube-dl'
+  'youtube-dl',
+  # daemons
+  'chrony',
+  'dnsmasq',
+  'firewalld',
+  'powertop',
+  'rkhunter',
+  'rsyslog',
+  'tuned'
   ]
+# LaTeX
 default['workstation']['texlive'] = [
   'texlive-collection-xetex',
   'texlive-collection-luatex',
@@ -33,6 +64,7 @@ default['workstation']['texlive'] = [
   'texlive-collection-langenglish',
   'texlive-collection-mathextra'
   ]
+# only install these if there's a graphical login manager enabled in systemd - assumes GNOME
 default['workstation']['graphical_apps'] = [
   'firefox',
   'gedit-plugin-codecomment',

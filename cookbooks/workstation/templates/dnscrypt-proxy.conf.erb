@@ -1,0 +1,9 @@
+DNSCRYPT_USER=dnscrypt
+
+<%# start counting -%>
+<% count = 1 -%>
+<% node['workstation']['dnscrypt_provider'].each do |provider,port| -%>
+RESOLVER_<%= count -%>=<%= provider %>
+LISTENER_<%= count -%>=127.0.0.1:<%= port %>
+<% count += 1 -%>
+<% end -%>

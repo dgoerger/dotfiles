@@ -1,8 +1,12 @@
-# firewall
-yum_package 'firewalld' do
-  action :install
-  allow_downgrade false
+# ensure the packages we need for what follows are installed
+node['workstation']['packages'].each do |package|
+  yum_package package do
+    action :install
+    allow_downgrade false
+  end
 end
+
+# firewall
 service 'firewalld' do
   # use restart instead of reload
   # NB: 'reload' will kill the NIC when creating/destroying firewall XML files
@@ -30,80 +34,17 @@ file '/etc/crypto-policies/config' do
   notifies :run, 'execute[update-crypto-policies]', :immediately
 end
 
-### DNS
-# dnscrypt
-#include_recipe 'workstation::dnscrypt'
-# dnsmasq
-yum_package 'dnsmasq' do
-  action :install
-  allow_downgrade false
-end
-service 'dnsmasq' do
-  supports :status => true, :restart => true
-  action [ :enable, :start ]
-end
-cookbook_file '/etc/dnsmasq.d/settings.conf' do
-  source 'dnsmasq-settings.conf'
-  owner 'root'
-  group 'root'
-  mode '0444'
-  action :create
-  notifies :restart, 'service[dnsmasq]', :delayed
-end
-service 'NetworkManager' do
-  supports :reload => true
-  action :nothing
-end
-cookbook_file '/etc/NetworkManager/NetworkManager.conf' do
-  # NetworkManager shouldn't touch /etc/resolv.conf
-  source 'NetworkManager.conf'
-  owner 'root'
-  group 'root'
-  mode '0444'
-  action :create
-  notifies :reload, 'service[NetworkManager]', :delayed
-end
-# dnsblock - blackhole stuff
-execute 'dnsblock_initialize' do
-  command '/usr/local/sbin/dnsblock_updater'
-  action :nothing
-end
-cookbook_file '/usr/local/sbin/dnsblock_updater' do
-  source 'dnsblock_updater'
-  owner 'root'
-  group 'root'
-  mode '0554'
-  action :create
-  notifies :run, 'execute[dnsblock_initialize]', :delayed
-end
-cron 'dnsblock_update' do
-  minute 59
-  hour 18
-  weekday 5
-  user 'root'
-  command '/usr/local/sbin/dnsblock_updater'
-  action :create
+# DNS
+if node['workstation']['dnsmasq']
+  include_recipe 'workstation::dnsmasq'
 end
 
 # powertop
-yum_package 'powertop' do
-  action :install
-end
 service 'powertop' do
   action [ :enable, :start ]
 end
 
-node['workstation']['packages'].each do |package|
-  yum_package package do
-    action :install
-    allow_downgrade false
-  end
-end
-
 # logging
-yum_package 'rsyslog' do
-  action :install
-end
 service 'rsyslog' do
   supports :status => true, :restart => true
   action [ :enable, :start ]
@@ -130,10 +71,6 @@ cookbook_file '/etc/systemd/journald.conf' do
 end
 
 # ntp
-yum_package 'chrony' do
-  action :install
-  allow_downgrade false
-end
 service 'chronyd' do
   action [ :enable, :start ]
 end
@@ -257,15 +194,12 @@ end
 
 # TeX Live
 node['workstation']['texlive'].each do |pkg|
-  package pkg do
+  yum_package pkg do
     action :install
   end
 end
 
 # tuned for performance
-yum_package 'tuned' do
-  action :install
-end
 service 'tuned' do
   supports :restart => true
   action [ :enable, :start ]
@@ -322,7 +256,7 @@ end
 ### only if a graphical install
 if File.exist?('/etc/systemd/system/display-manager.service')
   node['workstation']['graphical_apps'].each do |pkg|
-    package pkg do
+    yum_package pkg do
       action :install
     end
   end
