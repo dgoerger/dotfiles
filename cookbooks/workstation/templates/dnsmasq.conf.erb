@@ -5,7 +5,7 @@ listen-address=127.0.0.1
 <% node['workstation']['dnscrypt_providers'].each do |_provider,port| -%>
 server=127.0.0.1#<%= port %>
 <% end -%>
-<% else -%>
+<% elsif node['workstation']['dns_providers'].any? -%>
 <%# if no dnscrypt, fall back to unencrypted providers -%>
 <% node['workstation']['dns_providers'].each do |_provider,address| -%>
 server=<%= address %>

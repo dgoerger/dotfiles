@@ -1,4 +1,4 @@
-if node['workstation']['dnscrypt_providers'].any? or node['workstation']['dns_providers'].any?
+if node['workstation']['dnscrypt'] or node['workstation']['dns_management']
   # if NetworkManager isn't starting dnsmasq, we have to
   service 'dnsmasq' do
     supports :status => true, :restart => true
