@@ -12,7 +12,7 @@
 # the previous one.
 
 [main]
-<% if node['workstation']['dnscrypt_providers'].any? or node['workstation']['dns_providers'].any? -%>
+<% if node['workstation']['dnscrypt'] or node['workstation']['dns_management'] -%>
 <%# if we're specifying upstream, NetworkManager should not manage /etc/resolv.conf -%>
 dns=none
 <% elsif node['workstation']['dnsmasq'] -%>
