@@ -204,8 +204,8 @@ service 'tuned' do
   supports :restart => true
   action [ :enable, :start ]
 end
-cookbook_file '/etc/tuned/active_profile' do
-  source 'tuned_profile'
+template '/etc/tuned/active_profile' do
+  source 'tuned.erb'
   owner 'root'
   group 'root'
   mode '0444'

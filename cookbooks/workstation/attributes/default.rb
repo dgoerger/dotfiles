@@ -19,6 +19,10 @@ default['workstation']['dns_providers'] = {
   'verisign' => '64.6.64.6'
   }
 
+### PERFORMANCE ###
+# see `man tuned-profiles`
+default['workstation']['tuned_profile'] = 'throughput-performance'
+
 ### PACKAGES ###
 # packages every machine should have
 default['workstation']['packages'] = [
