@@ -12,7 +12,14 @@
 # the previous one.
 
 [main]
+<% if node['workstation']['dnscrypt_providers'].any? or node['workstation']['dns_providers'].any? -%>
+<%# if we're specifying upstream, NetworkManager should not manage /etc/resolv.conf -%>
+dns=none
+<% elsif node['workstation']['dnsmasq'] -%>
+<%# if dnsmasq IS running but under NetworkManager, say so here -%>
 dns=dnsmasq
+<%# else use the default, i.e. whatever the router says -%>
+<% end -%>
 
 [connection]
 ipv6.ip6-privacy=2
