@@ -191,6 +191,16 @@ cookbook_file '/etc/newsbeuter.conf' do
   mode '0444'
   action :create
 end
+if File.exist?('/etc/chef')
+  # copy in knife.rb if chefdk is installed
+  cookbook_file '/etc/chef/knife.rb' do
+    source 'knife.rb'
+    owner 'root'
+    group 'root'
+    mode '0444'
+    action :create
+  end
+end
 
 # TeX Live
 node['workstation']['texlive'].each do |pkg|

@@ -30,6 +30,9 @@ alias grep='grep --color=always'
 if [ -f /usr/bin/irssi ]; then
   alias irssi='irssi --config=/dev/null'
 fi
+if [ -f /usr/bin/knife ]; then
+  alias knife='knife \!* -c /etc/chef/knife.rb'
+fi
 if [ -f /usr/bin/kpcli ]; then
   alias kpcli='kpcli --histfile=/dev/null --readonly'
 fi
