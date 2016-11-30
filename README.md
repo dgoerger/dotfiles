@@ -68,4 +68,4 @@ set trash = ''
 
 `$NEWSBEUTER` is called by `/etc/newsbeuter.conf`, and should point to a file containing feed URLs (consider your reading list private and yours). You may want to `ln -sf $XDG_RUNTIME_DIR ~/.newsbeuter` or something similar so it doesn't create an empty directory in your home folder.
 
-`$KNIFE_PATH` is called by `/etc/chef/knife.rb`, and should point to the certificate used to authenticate to a Chef server. Only valid if ChefDK is installed.
+`$KNIFE_PATH` is called by `/etc/chef/knife.rb`, and should point to the certificate used to authenticate to `$CHEF_SERVER` (string).
