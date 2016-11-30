@@ -37,7 +37,7 @@ After the script finishes, you'll want to
   1. if you didn't already fork, edit the attributes file(s) in `/var/chake/cookbooks/workstation/attributes/`
   2. seriously though fork this repo and commit your deltas
   3. as root, `cd /var/chake && rake converge`
-  4. copy in MUTTRC and NEWSBEUTER secrets, and declare them in `~/.bashrc`
+  4. copy in secrets, and declare them in `~/.bashrc`
 
 
 Secrets
@@ -67,3 +67,5 @@ set trash = ''
 ```
 
 `$NEWSBEUTER` is called by `/etc/newsbeuter.conf`, and should point to a file containing feed URLs (consider your reading list private and yours). You may want to `ln -sf $XDG_RUNTIME_DIR ~/.newsbeuter` or something similar so it doesn't create an empty directory in your home folder.
+
+`$KNIFE_PATH` is called by `/etc/chef/knife.rb`, and should point to the certificate used to authenticate to a Chef server. Only valid if ChefDK is installed.
