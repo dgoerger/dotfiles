@@ -21,7 +21,7 @@ default['workstation']['dns_providers'] = {
 
 ### PERFORMANCE ###
 # see `man tuned-profiles`
-default['workstation']['tuned_profile'] = 'throughput-performance'
+default['workstation']['tuned_profile'] = 'powersave'
 
 ### PACKAGES ###
 # packages every machine should have
