@@ -1,5 +1,17 @@
+# don't consult /etc/resolv.conf
 no-resolv
+no-poll
+# don't forward incomplete domain names
+domain-needed
+# don't forward reverse-lookups of reserved private IP space
+bogus-priv
+# local listen address
+interface=lo
 listen-address=127.0.0.1
+# cache-size default is 150, arbitrarily set to 12^4
+cache-size=20736
+# cache nxdomain as a valid answer for three hours to minimize traffic
+neg-ttl=10800
 <% if node['workstation']['dnscrypt_providers'].any? -%>
 <%# if dnscrypt, listen to those -%>
 <% node['workstation']['dnscrypt_providers'].each do |_provider,port| -%>
