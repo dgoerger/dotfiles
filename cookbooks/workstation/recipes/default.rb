@@ -6,6 +6,12 @@ node['workstation']['packages'].each do |package|
   end
 end
 
+# define this in case needed - systemd
+execute 'daemon_reload' do
+  command 'systemctl daemon-reload'
+  action :nothing
+end
+
 # firewall
 service 'firewalld' do
   # use restart instead of reload
@@ -201,6 +207,12 @@ if File.exist?('/etc/chef')
     action :create
   end
 end
+link '/etc/systemd/system/rpcbind.service' do
+  # disable listening on port 111, takes effect on next reboot
+  link_type :symbolic
+  to '/dev/null'
+  action :create
+end
 
 # TeX Live
 node['workstation']['texlive'].each do |pkg|
@@ -225,8 +237,7 @@ end
 
 # rkhunter
 cron 'rkhunter' do
-  minute 59
-  hour 11
+  time :daily
   user 'root'
   command '/usr/bin/rkhunter --update; /usr/bin/rkhunter --cronjob'
   action :create
@@ -241,8 +252,7 @@ cookbook_file '/usr/local/sbin/dnf-patch-everything' do
   action :create
 end
 cron 'dnf-patch-everything' do
-  minute 30
-  hour 18
+  time :daily
   user 'root'
   command '/usr/local/sbin/dnf-patch-everything'
   action :create
