@@ -213,7 +213,7 @@ link '/etc/systemd/system/rpcbind.service' do
   to '/dev/null'
   action :create
 end
-file '/etc/cron.deny' do
+file '/etc/cron.allow' do
   content 'root'
   owner 'root'
   group 'root'
