@@ -213,6 +213,13 @@ link '/etc/systemd/system/rpcbind.service' do
   to '/dev/null'
   action :create
 end
+file '/etc/cron.deny' do
+  content 'root'
+  owner 'root'
+  group 'root'
+  mode '0444'
+  action :create
+end
 
 # TeX Live
 node['workstation']['texlive'].each do |pkg|
