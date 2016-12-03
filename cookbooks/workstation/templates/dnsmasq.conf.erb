@@ -27,3 +27,6 @@ server=127.0.0.1#<%= port %>
 server=<%= address %>
 <% end -%>
 <% end -%>
+# invalid TLDs, blackhole it
+address="/internal/0.0.0.0"
+address="/internal/::"
