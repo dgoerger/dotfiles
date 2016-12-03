@@ -13,6 +13,9 @@ bind-interfaces
 cache-size=20736
 # cache nxdomain as a valid answer for three hours to minimize traffic
 neg-ttl=10800
+# log lookups
+log-queries
+log-facility=/var/log/dnsmasq.log
 <% if node['workstation']['dnscrypt_providers'].any? -%>
 <%# if dnscrypt, listen to those -%>
 <% node['workstation']['dnscrypt_providers'].each do |_provider,port| -%>
