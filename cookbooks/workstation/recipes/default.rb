@@ -220,6 +220,13 @@ file '/etc/cron.allow' do
   mode '0444'
   action :create
 end
+template '/etc/logrotate.d/chake' do
+  source 'logrotate.conf.erb'
+  owner 'root'
+  group 'root'
+  mode '0444'
+  action :create
+end
 
 # TeX Live
 node['workstation']['texlive'].each do |pkg|

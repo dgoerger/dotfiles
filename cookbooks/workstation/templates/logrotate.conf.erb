@@ -1,0 +1,12 @@
+<% if node['workstation']['dnsmasq'] -%>
+/var/log/dnsmasq.log
+{
+    weekly
+    missingok
+    rotate 4
+    sharedscripts
+    postrotate
+        /usr/bin/systemctl kill -s HUP dnsmasq.service >/dev/null 2>&1 || true
+    endscript
+}
+<% end -%>
