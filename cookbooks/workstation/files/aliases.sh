@@ -47,6 +47,9 @@ fi
 if [ -f /usr/bin/newsbeuter ]; then
   alias newsbeuter='newsbeuter -q -C /etc/newsbeuter.conf -u ${NEWSBEUTER}'
 fi
+if [ -f /usr/bin/nmap ]; then
+  alias nmap='nmap --system-dns'
+fi
 if [ -f /usr/bin/podbeuter ]; then
   alias podbeuter='podbeuter -a'
 fi
