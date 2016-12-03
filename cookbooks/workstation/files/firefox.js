@@ -133,8 +133,7 @@ pref("webgl.disabled", true);
 //// block non-perfect forward secrecy legacy ciphers
 pref("security.tls.version.min", 3);
 pref("security.ssl3.rsa_aes_128_sha",false);
-// we need one non-PFS cipher for a LOT of sites with legacy crypto support...
-//pref("security.ssl3.rsa_aes_256_sha",false);
+pref("security.ssl3.rsa_aes_256_sha",false);
 pref("security.ssl3.rsa_des_ede3_sha",false);
 pref("security.ssl3.rsa_rc4_128_md5",false);
 pref("security.ssl3.rsa_rc4_128_sha",false);
