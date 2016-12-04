@@ -18,15 +18,16 @@ log-queries
 log-facility=/var/log/dnsmasq.log
 <% if node['workstation']['dnscrypt_providers'].any? -%>
 <%# if dnscrypt, listen to those -%>
-<% node['workstation']['dnscrypt_providers'].each do |_ordinal,provider| -%>
-<%   provider.each do |_resolver,port| -%>
+<%   node['workstation']['dnscrypt_providers'].each do |_ordinal,provider| -%>
+<%     provider.each do |_resolver,port| -%>
 server=127.0.0.1#<%= port %>
-<% end -%>
+<%     end -%>
+<%    end -%>
 <% elsif node['workstation']['dns_providers'].any? -%>
 <%# if no dnscrypt, fall back to unencrypted providers -%>
-<% node['workstation']['dns_providers'].each do |_provider,address| -%>
+<%   node['workstation']['dns_providers'].each do |_provider,address| -%>
 server=<%= address %>
-<% end -%>
+<%   end -%>
 <% end -%>
 # invalid TLDs, blackhole it
 address="/internal/0.0.0.0"
