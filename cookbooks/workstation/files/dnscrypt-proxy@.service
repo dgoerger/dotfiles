@@ -1,0 +1,12 @@
+[Unit]
+Description=DNSCrypt client proxy
+Documentation=man:dnscrypt-proxy(8)
+
+[Service]
+NonBlocking=true
+EnvironmentFile=/etc/sysconfig/dnscrypt-proxy.conf
+ExecStart=/usr/sbin/dnscrypt-proxy --resolver-name $RESOLVER_%i --local-address $LISTENER_%i --user $DNSCRYPT_USER --ephemeral-keys
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target
