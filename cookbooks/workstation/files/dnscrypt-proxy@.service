@@ -1,6 +1,8 @@
 [Unit]
 Description=DNSCrypt client proxy
 Documentation=man:dnscrypt-proxy(8)
+After=network.target
+Before=nss-lookup.target
 
 [Service]
 NonBlocking=true
