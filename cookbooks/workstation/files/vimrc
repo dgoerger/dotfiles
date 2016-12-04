@@ -48,8 +48,6 @@ if has("autocmd")
   \ endif
   " don't write swapfile on most commonly used directories for NFS mounts or USB sticks
   autocmd BufNewFile,BufReadPre /media/*,/run/media/*,/mnt/* set directory=~/tmp,/var/tmp,/tmp
-  " line-wrap in mutt
-  au BufRead /tmp/mutt-* set tw=72
   " open EPUB as ZIP - requires `unzip`
   if filereadable(expand('$VIMRUNTIME/plugin/zipPlugin.vim'))
     au BufReadCmd *.epub call zip#Browse(expand("<amatch>"))
@@ -59,3 +57,6 @@ endif
 
 " don't wake up system with blinking cursor
 let &guicursor = &guicursor . ",a:blinkon0"
+
+" security, see rhbz#1398227
+set nomodeline

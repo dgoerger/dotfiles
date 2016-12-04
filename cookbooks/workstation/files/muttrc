@@ -55,7 +55,7 @@ bind index,pager \CN sidebar-next
 bind index,pager \CO sidebar-open
 
 ## compose options
-set editor = 'vim -c "set spell spelllang=en_ca formatoptions+=a"'
+set editor = 'vim -c "set spell spelllang=en_ca formatoptions+=aw textwidth=72"'
 set fast_reply
 set include
 set text_flowed = yes
