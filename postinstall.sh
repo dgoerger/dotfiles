@@ -141,6 +141,8 @@ else
   # optional apps
   if [[ "$RPMFUSION" == "yes" ]]; then
     sudo dnf install -y gstreamer1-libav
+    # needed by Steam
+    sudo dnf install -y libCg.i636 libCg.x86_64
   fi
   if [[ "$GOOGLE_CHROME" == "yes" ]]; then
     sudo dnf install -y https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
