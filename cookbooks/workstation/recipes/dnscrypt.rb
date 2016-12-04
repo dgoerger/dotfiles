@@ -12,18 +12,19 @@ if node['workstation']['dnscrypt_providers'].any? and node['workstation']['dnsma
 
   execute "dnscrypt_killall" do
     # because we're using templates, we have to clean up by killing with a wildcard; a bit gross actually FIXME
-    command 'systemctl daemon-reload && systemctl disable dnscrypt-proxy\* && systemctl stop dnscrypt-proxy\*'
+    command 'systemctl daemon-reload && systemctl stop dnscrypt-proxy* && systemctl disable dnscrypt-proxy*'
     action :nothing
+    ignore_failure true
   end
+  # <!-- brief interlude when DNS might be totally broken
   template '/etc/sysconfig/dnscrypt-proxy.conf' do
     source 'dnscrypt-proxy.conf.erb'
     owner 'root'
     group 'root'
     mode '0444'
     action :create
-    notifies :restart, 'execute[dnscrypt_killall]', :immediately
+    notifies :run, 'execute[dnscrypt_killall]', :immediately
   end
-  # <!-- brief interlude when DNS might be totally broken
   cookbook_file '/etc/systemd/system/dnscrypt-proxy@.service' do
     # set systemd service template
     source 'dnscrypt-proxy@.service'
