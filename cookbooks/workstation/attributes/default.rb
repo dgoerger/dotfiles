@@ -6,11 +6,17 @@ default['workstation']['crypto-policy'] = 'FUTURE'
 # set up dnsmasq as local caching resolver
 default['workstation']['dnsmasq'] = true
 # set up dnscrypt for encrypted lookups - not for corporate networks, probably
-# dnscrypt providers => localhost port to use
 default['workstation']['dnscrypt_providers'] = {
-  'dnscrypt.eu-dk' => '40',
-  'dnscrypt.eu-nl' => '41',
-  'dnscrypt.eu-dk-ipv6' => '42'
+  # dnscrypt provider => localhost port to use
+  'primary' => {
+      'dnscrypt.eu-dk' => '40'
+    },
+  'secondary' => {
+      'dnscrypt.eu-nl' => '41'
+    },
+  'tertiary' => {
+      'dnscrypt.eu-dk-ipv6' => '42'
+    }
   }
 # unencrypted dns providers, use only if 'dnscrypt_providers' is
 default['workstation']['dns_providers'] = {
