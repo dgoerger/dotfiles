@@ -18,7 +18,8 @@ log-queries
 log-facility=/var/log/dnsmasq.log
 <% if node['workstation']['dnscrypt_providers'].any? -%>
 <%# if dnscrypt, listen to those -%>
-<% node['workstation']['dnscrypt_providers'].each do |_provider,port| -%>
+<% node['workstation']['dnscrypt_providers'].each do |_ordinal,provider| -%>
+<%   provider.each do |_resolver,port| -%>
 server=127.0.0.1#<%= port %>
 <% end -%>
 <% elsif node['workstation']['dns_providers'].any? -%>
