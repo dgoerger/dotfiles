@@ -6,7 +6,7 @@
     rotate 4
     sharedscripts
     postrotate
-        /usr/bin/systemctl kill -s HUP dnsmasq.service >/dev/null 2>&1 || true
+        /usr/bin/systemctl restart dnsmasq.service >/dev/null 2>&1 || true
     endscript
 }
 <% end -%>
