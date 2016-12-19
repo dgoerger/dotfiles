@@ -1,74 +1,71 @@
-""" probably important defaults from Fedora default /etc/vimrc
+""" file encodings are important, take care of this first
 if v:lang =~ "utf8$" || v:lang =~ "UTF-8$"
   set fileencodings=ucs-bom,utf-8,latin1
 endif
+
+""" import vim8 defaults
+if filereadable(expand('$VIMRUNTIME/defaults.vim'))
+  source $VIMRUNTIME/defaults.vim
+  let skip_defaults_vim=1   " don't source it again in absence of ~/.vimrc, overwrites /etc
+else                        " if no vim8 defaults, set them here
+  " general usability
+  set nocompatible          " use Vim defaults (much better!)
+  set bs=indent,eol,start   " allow backspacing over everything in insert mode
+  set history=50            " keep 50 lines of command line history
+  set ruler                 " show the cursor position all the time
+  set wildmenu              " tab-completion
+  " search
+  if has('reltime')         " when it's possible to time out,
+    set incsearch           " search/highlight while typing
+  endif
+  if has('autocmd')         " only when compiled with support for autocommands:
+    filetype plugin on      " import default filetype settings (e.g. tw=72 for mail)
+    autocmd BufReadPost *   " when editing a file, jump to the last cursor position
+    \ if line("'\"") > 0 && line ("'\"") <= line("$") |
+    \   exe "normal! g'\"" |
+    \ endif
+  endif
+endif
+
+""" begin Fedora-specific config
 if &term=="xterm"
-  set t_Co=8
+  set t_Co=8                " set terminal colors when TERM=xterm
   set t_Sb=[4%dm
   set t_Sf=[3%dm
 endif
-
-""" import vim8 defaults now instead of in absence of ~/.vimrc so we can
-" override options, see: https://github.com/vim/vim/blob/5162822914372fc916a93f85848c0c82209e7cec/runtime/doc/starting.txt#L1026
-let skip_defaults_vim=1
-if filereadable(expand('$VIMRUNTIME/defaults.vim'))
-  source $VIMRUNTIME/defaults.vim
-endif
-
-""" general usability
-set nocompatible	" use Vim defaults (much better!)
-set bs=indent,eol,start	" allow backspacing over everything in insert mode
-"set backup		" keep a backup file
-set viminfo="NONE"	" don't save search history
-set history=50		" keep 50 lines of command line history
-set ruler		" show the cursor position all the time
-colorscheme elflord	" default colour scheme is unreadable against dark console theme
-
-""" editing assistance
-set autoindent		" enable automatic indentation
-set smartindent
-set wildmenu		" tab-completion
-set wildmode=list:full
-filetype plugin on
-if has('mouse')		" if has mouse,
-  set mouse=i		" permit clicking to a specific point on the line, but only in insert mode - breaks middle-click paste, rhbz#1401410
-endif
-if &t_Co > 2		" if has > 2 colours,
-  syntax on		" enable highlighting
-  set hlsearch
-endif
-
-""" search
-set ignorecase		" ignore case when searching,
-set smartcase		" except when CAPS
-set incsearch		" search/highlight while typing
-set gdefault		" assume /g in sed subcommand
-
-""" only when compiled with support for autocommands
-if has("autocmd")
+if has('autocmd')
   augroup fedora
   autocmd!
-  " when editing a file, jump to the last cursor position
-  autocmd BufReadPost *
-  \ if line("'\"") > 0 && line ("'\"") <= line("$") |
-  \   exe "normal! g'\"" |
-  \ endif
   " don't write swapfile on most commonly used directories for NFS mounts or USB sticks
   autocmd BufNewFile,BufReadPre /media/*,/run/media/*,/mnt/* set directory=~/tmp,/var/tmp,/tmp
-  " open EPUB as ZIP - requires `unzip`
-  if filereadable(expand('$VIMRUNTIME/plugin/zipPlugin.vim'))
-    autocmd BufReadCmd *.epub call zip#Browse(expand("<amatch>"))
-  endif
+  " start with spec file template
+  autocmd BufNewFile *.spec 0r /usr/share/vim/vimfiles/template.spec
   augroup END
 endif
-
+" cscope
+if has('cscope') && filereadable('/usr/bin/cscope')
+  set csprg=/usr/bin/cscope
+  set csto=0
+  set cst
+  set nocsverb
+  " add any database in current directory
+  if filereadable("cscope.out")
+    cs add $PWD/cscope.out
+  " else add database pointed to by environment
+  elseif $CSCOPE_DB != ""
+    cs add $CSCOPE_DB
+  endif
+  set csverb
+endif
+if &t_Co > 2 || has("gui_running")
+  syntax on                 " enable syntax highlighting
+  set hlsearch              " highlight search pattern
+endif
 " don't wake up system with blinking cursor
 let &guicursor = &guicursor . ",a:blinkon0"
 
-" security, see rhbz#1398227
-set nomodeline
 
-""" source site-specific config to override options set in this file
+""" source site-specific config
 if filereadable('/etc/vimrc.local')
   source /etc/vimrc.local
 endif
