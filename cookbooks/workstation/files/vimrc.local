@@ -3,7 +3,7 @@ set nomodeline              " see rhbz#1398227
 
 """ general usability
 set viminfo="NONE"          " don't save search history
-colorscheme elflord         " default colour scheme is unreadable against dark console theme
+colorscheme elflord         " default colorscheme is unreadable on dark console
 
 """ editing assistance
 set autoindent              " enable automatic indentation
