@@ -6,7 +6,7 @@ endif
 """ import vim8 defaults
 if filereadable(expand('$VIMRUNTIME/defaults.vim'))
   source $VIMRUNTIME/defaults.vim
-  let skip_defaults_vim=1   " don't source it again in absence of ~/.vimrc, overwrites /etc
+  let skip_defaults_vim=1   " don't source it again in absence of ~/.vimrc, overrides /etc
 else                        " if no vim8 defaults, set them here
   " general usability
   set nocompatible          " use Vim defaults (much better!)
