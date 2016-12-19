@@ -41,9 +41,6 @@ pref("browser.startup.page", 0);
 pref("privacy.trackingprotection.enabled", true);
 pref("privacy.trackingprotection.pbmode.enabled", true);
 
-//// use Disconnect Strict blocklist (default is somewhat lax)
-pref("urlclassifier.trackingTable", "test-track-simple,base-track-digest256,content-track-digest256");
-
 //// discard third-party cookies
 pref("network.cookie.cookieBehavior", 1);
 
