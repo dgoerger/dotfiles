@@ -1,0 +1,22 @@
+""" security
+set nomodeline              " see rhbz#1398227
+
+""" general usability
+set viminfo="NONE"          " don't save search history
+colorscheme elflord         " default colour scheme is unreadable against dark console theme
+
+""" editing assistance
+set autoindent              " enable automatic indentation
+set smartindent
+
+""" search
+set ignorecase              " ignore case when searching,
+set smartcase               " except when CAPS
+
+""" file format support
+if has('autocmd')
+  " open EPUB as ZIP - requires `unzip`
+  if filereadable(expand('$VIMRUNTIME/plugin/zipPlugin.vim'))
+    autocmd BufReadCmd *.epub call zip#Browse(expand("<amatch>"))
+  endif
+endif

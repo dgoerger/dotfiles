@@ -110,6 +110,13 @@ cookbook_file '/etc/vimrc' do
   mode '0444'
   action :create
 end
+cookbook_file '/etc/vimrc.local' do
+  source 'vimrc.local'
+  owner 'root'
+  group 'root'
+  mode '0444'
+  action :create
+end
 cookbook_file '/etc/gitconfig' do
   source 'gitconfig'
   owner 'root'
