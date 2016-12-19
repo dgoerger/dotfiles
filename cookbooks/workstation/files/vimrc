@@ -1,4 +1,4 @@
-" probably important defaults from Fedora default /etc/vimrc
+""" probably important defaults from Fedora default /etc/vimrc
 if v:lang =~ "utf8$" || v:lang =~ "UTF-8$"
   set fileencodings=ucs-bom,utf-8,latin1
 endif
@@ -6,6 +6,13 @@ if &term=="xterm"
   set t_Co=8
   set t_Sb=[4%dm
   set t_Sf=[3%dm
+endif
+
+""" import vim8 defaults now instead of in absence of ~/.vimrc so we can
+" override options, see: https://github.com/vim/vim/blob/5162822914372fc916a93f85848c0c82209e7cec/runtime/doc/starting.txt#L1026
+let skip_defaults_vim=1
+if filereadable(expand('$VIMRUNTIME/defaults.vim'))
+  source $VIMRUNTIME/defaults.vim
 endif
 
 """ general usability
@@ -24,7 +31,7 @@ set wildmenu		" tab-completion
 set wildmode=list:full
 filetype plugin on
 if has('mouse')		" if has mouse,
-  set mouse=a		" permit clicking to a specific point on the line
+  set mouse=i		" permit clicking to a specific point on the line, but only in insert mode - breaks middle-click paste, rhbz#1401410
 endif
 if &t_Co > 2		" if has > 2 colours,
   syntax on		" enable highlighting
@@ -50,7 +57,7 @@ if has("autocmd")
   autocmd BufNewFile,BufReadPre /media/*,/run/media/*,/mnt/* set directory=~/tmp,/var/tmp,/tmp
   " open EPUB as ZIP - requires `unzip`
   if filereadable(expand('$VIMRUNTIME/plugin/zipPlugin.vim'))
-    au BufReadCmd *.epub call zip#Browse(expand("<amatch>"))
+    autocmd BufReadCmd *.epub call zip#Browse(expand("<amatch>"))
   endif
   augroup END
 endif
@@ -60,3 +67,8 @@ let &guicursor = &guicursor . ",a:blinkon0"
 
 " security, see rhbz#1398227
 set nomodeline
+
+""" source site-specific config to override options set in this file
+if filereadable('/etc/vimrc.local')
+  source /etc/vimrc.local
+endif
