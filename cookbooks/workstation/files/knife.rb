@@ -1,4 +1,4 @@
-# See http://docs.getchef.com/config_rb_knife.html for more information on knife configuration options
+# see: http://docs.getchef.com/config_rb_knife.html
 
 log_level                :info
 log_location             STDOUT
