@@ -3,24 +3,22 @@ if v:lang =~ "utf8$" || v:lang =~ "UTF-8$"
   set fileencodings=ucs-bom,utf-8,latin1
 endif
 
-""" import vim8 defaults
+""" import vim defaults
 if filereadable(expand('$VIMRUNTIME/defaults.vim'))
   source $VIMRUNTIME/defaults.vim
-  let skip_defaults_vim=1   " don't source it again in absence of ~/.vimrc, overrides /etc
-else                        " if no vim8 defaults, set them here
-  " general usability
-  set nocompatible          " use Vim defaults (much better!)
+  let skip_defaults_vim=1   " don't source again in absence of ~/.vimrc
+else                        " if no vim default profile, set here
+  set nocompatible          " use Vim defaults instead of legacy Vi
   set bs=indent,eol,start   " allow backspacing over everything in insert mode
   set history=50            " keep 50 lines of command line history
   set ruler                 " show the cursor position all the time
   set wildmenu              " tab-completion
-  " search
-  if has('reltime')         " when it's possible to time out,
+  if has('reltime')         " when it's possible to time out
     set incsearch           " search/highlight while typing
   endif
-  if has('autocmd')         " only when compiled with support for autocommands:
-    filetype plugin on      " import default filetype settings (e.g. tw=72 for mail)
-    autocmd BufReadPost *   " when editing a file, jump to the last cursor position
+  if has('autocmd')         " only when compiled with support for autocommands
+    filetype plugin on      " import filetype settings (e.g. tw=72 for mail)
+    autocmd BufReadPost *   " when editing, jump to the last cursor position
     \ if line("'\"") > 0 && line ("'\"") <= line("$") |
     \   exe "normal! g'\"" |
     \ endif
@@ -36,8 +34,9 @@ endif
 if has('autocmd')
   augroup fedora
   autocmd!
-  " don't write swapfile on most commonly used directories for NFS mounts or USB sticks
-  autocmd BufNewFile,BufReadPre /media/*,/run/media/*,/mnt/* set directory=~/tmp,/var/tmp,/tmp
+  " don't write swapfile in directories commonly used for NFS and USB mounts
+  autocmd BufNewFile,BufReadPre /media/*,/run/media/*,/mnt/* |
+  \ set directory=~/tmp,/var/tmp,/tmp
   " start with spec file template
   autocmd BufNewFile *.spec 0r /usr/share/vim/vimfiles/template.spec
   augroup END
