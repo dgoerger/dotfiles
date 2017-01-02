@@ -68,3 +68,13 @@ DUPLICITY_OPTIONS="--full-if-older-than ${DUPLICITY_FULL_BACKUP_IF_OLDER_THAN_EL
 
 ### PERFORM BACKUP
 /usr/bin/duplicity ${DUPLICITY_OPTIONS}
+
+### sync to google drive (if defined)
+if [[ -f ${GDRIVE_PATH}/.grive ]]; then
+  chown -R $(whoami):root ${GRIVE_PATH}
+  chmod 0750 ${GRIVE_PATH}
+  cd ${GRIVE_PATH}
+  grive -V >${DUPLICITY_LOG} 2>&1
+else
+  echo "WARNING: not backing up to google drive!" | tee --append ${DUPLICITY_LOG}
+fi
