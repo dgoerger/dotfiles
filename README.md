@@ -81,6 +81,6 @@ If `duplicity` is installed, backup will automatically run according to the foll
 DUPLICITY_BASE="/home/CHANGEME"
 DUPLICITY_DEST="file:///path/to/backup"
 DUPLICITY_INCLUDE="--include=/home/CHANGEME/folder1 --include=/home/CHANGEME/folder2 --exclude=/home/CHANGEME/not_this --exclude=**"
-GDRIVE_PATH="/path/to/local/grive-sync"
+GRIVE_PATH="/path/to/local/grive-sync"
 PASSPHRASE=secret
 ```

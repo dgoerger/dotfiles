@@ -72,7 +72,7 @@ DUPLICITY_OPTIONS="--full-if-older-than ${DUPLICITY_FULL_BACKUP_IF_OLDER_THAN_EL
 ### sync to google drive (if defined)
 if [[ ! -x $(which grive) ]]; then
   echo "Consider installing grive for off-site backup." | tee --append ${DUPLICITY_LOG}
-elif [[ -f ${GDRIVE_PATH}/.grive ]]; then
+elif [[ -f ${GRIVE_PATH}/.grive ]]; then
   chown -R $(whoami):root ${GRIVE_PATH}
   chmod 0750 ${GRIVE_PATH}
   cd ${GRIVE_PATH}
