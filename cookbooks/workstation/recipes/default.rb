@@ -303,7 +303,7 @@ if File.exist?('/usr/bin/duplicity')
   end
   cron 'duplicity-backup' do
     time :daily
-    user :root
+    user 'root'
     command '/usr/local/sbin/duplicity-backup'
   end
 end
