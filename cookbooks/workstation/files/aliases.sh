@@ -41,6 +41,9 @@ alias la='ls -lha --color'
 alias less='less -RF'
 alias ll='ls -lh --color'
 alias ls='ls --color'
+if [[ -f /usr/bin/mpv ]]; then
+  alias dvd='mpv dvd://'
+fi
 if [[ -f /usr/bin/newsbeuter ]]; then
   alias newsbeuter='newsbeuter -q -C /etc/newsbeuter.conf -u ${NEWSBEUTER}'
 fi

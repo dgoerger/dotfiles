@@ -1,5 +1,8 @@
 #!/bin/bash
 
+### files created by this script shouldn't be world-readable (esp logs)
+umask 027
+
 ### quick and dirty security warning
 if [[ $(id -u) -gt 999 ]]; then
   # assume system users (uid < 1000) don't have gui access
@@ -25,7 +28,7 @@ DUPLICITY_ARCHIVE="${HOME}/.cache/duplicity"
 mkdir -p "${DUPLICITY_ARCHIVE}"
 DUPLICITY_TMP="/var/tmp"
 
-### logging - ensure log file is writable
+### ensure log file is writable
 touch ${DUPLICITY_LOG} >/dev/null 2>&1
 if [[ ! -w ${DUPLICITY_LOG} ]]; then
   echo "Please ensure ${DUPLICITY_LOG} exists and is writable by the current user." | tee --append "${HOME}/DUPLICITY_ERROR"
@@ -62,9 +65,10 @@ elif [[ -z ${PASSPHRASE} ]]; then
   echo 'Please set PASSPHRASE environment variable.' | tee --append "${DUPLICITY_LOG}"
   echo 'e.g: PASSPHRASE="secret"' | tee --append "${DUPLICITY_LOG}"
   exit 2
-elif [[ "$(echo "${PASSPHRASE}" | pwqcheck -1 | sed 's/Bad\ passphrase\ (too\ long)/OK/g')" != "OK" ]]; then
+elif [[ "$(echo "${PASSPHRASE}" | pwqcheck -1 min=disabled,64,48,32,32 max=1023)" != "OK" ]]; then
   # gpg2 is OK with long passwords, and if we're backing up to the cloud (recommended), our passphrase should be strong
-  echo 'ERROR: PASSPHRASE is too weak.' | tee --append "${DUPLICITY_LOG}"
+  # TODO: what's gpg2's limit for symmetric encryption passphrases? 1023 seems fine but pwqcheck needs a max value defined and maybe this is too low
+  echo 'ERROR: PASSPHRASE does not meet pwqcheck security requirements. Aborting.' | tee --append "${DUPLICITY_LOG}"
   exit 2
 fi
 
