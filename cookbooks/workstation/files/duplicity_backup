@@ -1,16 +1,17 @@
 #!/bin/bash
 
 ### quick and dirty security warning
-# FIXME: running as root isn't ideal, either
 if [[ $(id -u) -gt 999 ]]; then
   # assume system users (uid < 1000) don't have gui access
-  echo "NOTA BENE: consider running this script as a non-GUI user to avoid ENV compromise via e.g. web browser vulnerability"
+  echo 'NOTA BENE: consider running this script as a non-GUI user to avoid ENV compromise via e.g. web browser vulnerability'
   exit 2
+  # FIXME: running as root isn't ideal.. can we safely grant required read access to a non-root user? probably not...
+  # FIXME: can we source $PASSPHRASE from a file safely, that a normal restricted user doesn't have casual access?
 fi
 
-### dependencies
-if [[ ! -x $(which whoami) ]]; then
-  echo "Please install whoami."
+### dependency check
+if [[ ! -x $(which duplicity) ]]; then
+  echo 'Please install duplicity.'
   exit 2
 fi
 
@@ -20,61 +21,67 @@ DUPLICITY_LOG="/var/log/duplicity.log"
 DUPLICITY_LOG_LEVEL="NOTICE"
 DUPLICITY_VOL_SIZE_IN_MEGABYTES="100"
 # some caching dirs
-DUPLICITY_ARCHIVE="~/.cache/duplicity"
+DUPLICITY_ARCHIVE="${HOME}/.cache/duplicity"
 mkdir -p "${DUPLICITY_ARCHIVE}"
 DUPLICITY_TMP="/var/tmp"
 
 ### logging - ensure log file is writable
 touch ${DUPLICITY_LOG} >/dev/null 2>&1
 if [[ ! -w ${DUPLICITY_LOG} ]]; then
-  echo "Please ensure ${DUPLICITY_LOG} exists and is writable by the current user." | tee --append ~/DUPLICITY_ERROR
-  echo "stderr redirected to ~/DUPLICITY_ERROR ..." | tee --append ~/DUPLICITY_ERROR
+  echo "Please ensure ${DUPLICITY_LOG} exists and is writable by the current user." | tee --append "${HOME}/DUPLICITY_ERROR"
+  echo 'stderr redirected to ~/DUPLICITY_ERROR ...' | tee --append "${HOME}/DUPLICITY_ERROR"
   exit 2
-else
-  chmod 0640 ${DUPLICITY_LOG}
-  chown $(whoami):root ${DUPLICITY_LOG}
+fi
+
+### if destination is local, ensure dir exists and is writable
+if [[ -n ${DUPLICITY_DEST} ]] && [[ "$(echo "${DUPLICITY_DEST}" | cut -c1-4)" == "file" ]]; then
+  mkdir -p "$(echo "${DUPLICITY_DEST}" | cut -c8-)"
+  if [[ ! -w "$(echo "${DUPLICITY_DEST}" | cut -c8-)" ]]; then
+    echo "Unable to write to $(echo "${DUPLICITY_DEST}" | cut -c8-). Aborting."
+    exit 2
+  fi
 fi
 
 ### error out if required ENV variables aren't set
-mkdir -p "${DUPLICITY_DEST}" >/dev/null 2>&1
-if [[ "${DUPLICITY_BASE}" == "" ]]; then
+if [[ -z ${DUPLICITY_BASE} ]]; then
   # base dir to back up
-  echo "Please set DUPLICITY_BASE environment variable!" | tee --append "${DUPLICITY_LOG}"
+  echo 'Please set DUPLICITY_BASE environment variable.' | tee --append "${DUPLICITY_LOG}"
   exit 2
-elif [[ "${DUPLICITY_DEST}" == "" ]]; then
+elif [[ -z ${DUPLICITY_DEST} ]]; then
   # where to save the encrypted backup to
-  echo "Please set DUPLICITY_DEST environment variable!" | tee --append "${DUPLICITY_LOG}"
-  echo -e "e.g: DUPLICITY_DEST=\"file:///usr/local/backups\"" | tee --append "${DUPLICITY_LOG}"
+  echo 'Please set DUPLICITY_DEST environment variable.' | tee --append "${DUPLICITY_LOG}"
+  echo 'e.g: DUPLICITY_DEST="file:///usr/local/backups"' | tee --append "${DUPLICITY_LOG}"
   exit 2
-elif [[ ! -w ${DUPLICITY_DEST} ]]; then
-  echo "Unable to write to ${DUPLICITY_DEST}!" | tee --append "${DUPLICITY_LOG}"
-  exit 2
-elif [[ "${DUPLICITY_INCLUDE}" == "" ]]; then
+elif [[ -z ${DUPLICITY_INCLUDE} ]]; then
   # what to back up - and what to exclude
-  echo "Please set DUPLICITY_INCLUDE environment variable!" | tee --append "${DUPLICITY_LOG}"
-  echo -e "e.g.: DUPLICITY_INCLUDE=\"--include=/path/to/example --exlude=/path/to/example/not_this\"" | tee --append "${DUPLICITY_LOG}"
+  echo 'Please set DUPLICITY_INCLUDE environment variable.' | tee --append "${DUPLICITY_LOG}"
+  echo 'e.g: DUPLICITY_INCLUDE="--include=/path/to/example --exlude=/path/to/example/not_this"' | tee --append "${DUPLICITY_LOG}"
   exit 2
-elif [[ "${PASSPHRASE}" == "" ]]; then
+elif [[ -z ${PASSPHRASE} ]]; then
   # passphrase for gpg encryption
-  echo "Please set PASSPHRASE environment variable!" | tee --append "${DUPLICITY_LOG}"
-  echo -e "e.g: PASSPHRASE=\"secret\"" | tee --append "${DUPLICITY_LOG}"
+  echo 'Please set PASSPHRASE environment variable.' | tee --append "${DUPLICITY_LOG}"
+  echo 'e.g: PASSPHRASE="secret"' | tee --append "${DUPLICITY_LOG}"
   exit 2
-elif [[ "$(echo ${PASSPHRASE} | pwqcheck -1 | sed 's/Bad\ passphrase\ (too\ long)/OK/g')" != "OK" ]]; then
-  echo "ERROR: PASSPHRASE is too weak!" | tee --append "${DUPLICITY_LOG}"
+elif [[ "$(echo "${PASSPHRASE}" | pwqcheck -1 | sed 's/Bad\ passphrase\ (too\ long)/OK/g')" != "OK" ]]; then
+  # gpg2 is OK with long passwords, and if we're backing up to the cloud (recommended), our passphrase should be strong
+  echo 'ERROR: PASSPHRASE is too weak.' | tee --append "${DUPLICITY_LOG}"
   exit 2
 fi
 
 DUPLICITY_OPTIONS="--full-if-older-than ${DUPLICITY_FULL_BACKUP_IF_OLDER_THAN_ELSE_INCREMENTAL_BACKUP} ${DUPLICITY_BASE} ${DUPLICITY_DEST} ${DUPLICITY_INCLUDE} --volsize=${DUPLICITY_VOL_SIZE_IN_MEGABYTES} --verbosity=${DUPLICITY_LOG_LEVEL} --gpg-options=--no-use-agent --archive-dir=${DUPLICITY_ARCHIVE} --tempdir=${DUPLICITY_TMP} --log-file=${DUPLICITY_LOG}"
 
 ### PERFORM BACKUP
-/usr/bin/duplicity ${DUPLICITY_OPTIONS}
+$(which duplicity) ${DUPLICITY_OPTIONS}
 
-### sync to google drive (if defined)
-if [[ ! -x $(which grive) ]]; then
-  echo "Consider installing grive for off-site backup." | tee --append ${DUPLICITY_LOG}
-elif [[ -f ${GRIVE_PATH}/.grive ]]; then
-  cd ${GRIVE_PATH}
-  $(which grive) -V 2>&1 | tee --append ${DUPLICITY_LOG} >/dev/null
-else
-  echo "WARNING: not backing up to google drive! Is grive correctly configured?" | tee --append ${DUPLICITY_LOG}
+### attempt grive remote sync if backup was local
+if [[ "$(echo "${DUPLICITY_DEST}" | cut -c1-4)" == "file" ]]; then
+  if [[ -x $(which grive) ]] && [[ -n ${GRIVE_PATH} ]] && [[ -f ${GRIVE_PATH}/.grive ]] && [[ -n $(echo "${DUPLICITY_DEST}" | cut -c8- | grep -E "^${GRIVE_PATH}") ]]; then
+    # sync to google drive (if defined) AND if $GRIVE_PATH contains $DUPLICITY_DEST
+    cd "${GRIVE_PATH}" || exit
+    $(which grive) -V 2>&1 | tee --append ${DUPLICITY_LOG} >/dev/null
+  else
+    echo 'WARNING: not backing up off-site - backup is LOCAL.' | tee --append ${DUPLICITY_LOG}
+    echo '--> consider an OFF-SITE backup solution such as grive or s3 <--' | tee --append ${DUPLICITY_LOG}
+  fi
+# else - backup is already off-site
 fi
