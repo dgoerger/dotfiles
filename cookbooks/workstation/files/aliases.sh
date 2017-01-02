@@ -22,6 +22,9 @@ alias cal='cal -m'
 if [[ -f /usr/bin/colordiff ]]; then
   alias diff='colordiff'
 fi
+if [[ -f /usr/bin/copr-cli ]]; then
+  alias copr-cli='copr-cli --config ${COPR}'
+fi
 alias forecast='curl -4k https://wttr.in/?m'
 if [[ -f /usr/bin/google-chrome ]]; then
   alias google-chrome-socks='/usr/bin/google-chrome --proxy-server="socks://127.0.0.1:1080"'
