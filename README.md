@@ -38,6 +38,7 @@ After the script finishes, you'll want to
   2. seriously though fork this repo and commit your deltas
   3. as root, `cd /var/chake && rake converge`
   4. copy in secrets, and declare them in `~/.bashrc`
+  5. consider duplicity/grive, and copy in necessary secrets
 
 
 Secrets
@@ -69,3 +70,17 @@ set trash = ''
 `$NEWSBEUTER` is called by `/etc/newsbeuter.conf`, and should point to a file containing feed URLs (consider your reading list private and yours). You may want to `ln -sf $XDG_RUNTIME_DIR ~/.newsbeuter` or something similar so it doesn't create an empty directory in your home folder.
 
 `$KNIFE_PATH` is called by `/etc/chef/knife.rb`, and should point to the certificate used to authenticate to `$CHEF_SERVER` (string).
+
+
+Duplicity
+---------
+
+If `duplicity` is installed, backup will automatically run according to the following environment variables:
+
+```
+DUPLICITY_BASE="/home/CHANGEME"
+DUPLICITY_DEST="file:///path/to/backup"
+DUPLICITY_INCLUDE="--include=/home/CHANGEME/folder1 --include=/home/CHANGEME/folder2 --exclude=/home/CHANGEME/not_this --exclude=**"
+GDRIVE_PATH="/path/to/local/grive-sync"
+PASSPHRASE=secret
+```
