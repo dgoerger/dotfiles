@@ -1,0 +1,70 @@
+#!/bin/bash
+
+### quick and dirty security warning
+# FIXME: running as root isn't ideal, either
+if [[ $(id -u) -gt 999 ]]; then
+  # assume system users (uid < 1000) don't have gui access
+  echo "NOTA BENE: consider running this script as a non-GUI user to avoid ENV compromise via e.g. web browser vulnerability"
+  exit 2
+fi
+
+### dependencies
+if [[ ! -x $(which whoami) ]]; then
+  echo "Please install whoami."
+  exit 2
+fi
+
+### VARIABLES WHICH ARE NOT SET IN ~/.bashrc
+DUPLICITY_FULL_BACKUP_IF_OLDER_THAN_ELSE_INCREMENTAL_BACKUP="1M"
+DUPLICITY_LOG="/var/log/duplicity.log"
+DUPLICITY_LOG_LEVEL="NOTICE"
+DUPLICITY_VOL_SIZE_IN_MEGABYTES="100"
+# some caching dirs
+DUPLICITY_ARCHIVE="~/.cache/duplicity"
+mkdir -p "${DUPLICITY_ARCHIVE}"
+DUPLICITY_TMP="/var/tmp"
+
+### logging - ensure log file is writable
+touch ${DUPLICITY_LOG} >/dev/null 2>&1
+if [[ ! -w ${DUPLICITY_LOG} ]]; then
+  echo "Please ensure ${DUPLICITY_LOG} exists and is writable by the current user." | tee --append ~/DUPLICITY_ERROR
+  echo "stderr redirected to ~/DUPLICITY_ERROR ..." | tee --append ~/DUPLICITY_ERROR
+  exit 2
+else
+  chmod 0640 ${DUPLICITY_LOG}
+  chown $(whoami):root ${DUPLICITY_LOG}
+fi
+
+### error out if required ENV variables aren't set
+mkdir -p "${DUPLICITY_DEST}" >/dev/null 2>&1
+if [[ "${DUPLICITY_BASE}" == "" ]]; then
+  # base dir to back up
+  echo "Please set DUPLICITY_BASE environment variable!" | tee --append "${DUPLICITY_LOG}"
+  exit 2
+elif [[ "${DUPLICITY_DEST}" == "" ]]; then
+  # where to save the encrypted backup to
+  echo "Please set DUPLICITY_DEST environment variable!" | tee --append "${DUPLICITY_LOG}"
+  echo -e "e.g: DUPLICITY_DEST=\"file:///usr/local/backups\"" | tee --append "${DUPLICITY_LOG}"
+  exit 2
+elif [[ ! -w ${DUPLICITY_DEST} ]]; then
+  echo "Unable to write to ${DUPLICITY_DEST}!" | tee --append "${DUPLICITY_LOG}"
+  exit 2
+elif [[ "${DUPLICITY_INCLUDE}" == "" ]]; then
+  # what to back up - and what to exclude
+  echo "Please set DUPLICITY_INCLUDE environment variable!" | tee --append "${DUPLICITY_LOG}"
+  echo -e "e.g.: DUPLICITY_INCLUDE=\"--include=/path/to/example --exlude=/path/to/example/not_this\"" | tee --append "${DUPLICITY_LOG}"
+  exit 2
+elif [[ "${PASSPHRASE}" == "" ]]; then
+  # passphrase for gpg encryption
+  echo "Please set PASSPHRASE environment variable!" | tee --append "${DUPLICITY_LOG}"
+  echo -e "e.g: PASSPHRASE=\"secret\"" | tee --append "${DUPLICITY_LOG}"
+  exit 2
+elif [[ "$(echo ${PASSPHRASE} | pwqcheck -1 | sed 's/Bad\ passphrase\ (too\ long)/OK/g')" != "OK" ]]; then
+  echo "ERROR: PASSPHRASE is too weak!" | tee --append "${DUPLICITY_LOG}"
+  exit 2
+fi
+
+DUPLICITY_OPTIONS="--full-if-older-than ${DUPLICITY_FULL_BACKUP_IF_OLDER_THAN_ELSE_INCREMENTAL_BACKUP} ${DUPLICITY_BASE} ${DUPLICITY_DEST} ${DUPLICITY_INCLUDE} --volsize=${DUPLICITY_VOL_SIZE_IN_MEGABYTES} --verbosity=${DUPLICITY_LOG_LEVEL} --gpg-options=--no-use-agent --archive-dir=${DUPLICITY_ARCHIVE} --tempdir=${DUPLICITY_TMP} --log-file=${DUPLICITY_LOG}"
+
+### PERFORM BACKUP
+/usr/bin/duplicity ${DUPLICITY_OPTIONS}

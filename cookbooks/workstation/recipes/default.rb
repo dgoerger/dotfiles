@@ -291,6 +291,23 @@ cron 'chake-policy-updates' do
   command 'cd /var/chake && git pull && rake converge'
 end
 
+# automatic backup
+if File.exist?('/usr/bin/duplicity')
+  # assume that installation of duplicity implies intent
+  cookbook_file '/usr/local/sbin/duplicity-backup' do
+    source 'duplicity_backup'
+    owner 'root'
+    group 'root'
+    mode '0550'
+    action :create
+  end
+  cron 'duplicity-backup' do
+    time :daily
+    user :root
+    command '/usr/local/sbin/duplicity-backup'
+  end
+end
+
 # dorky DCIM import script - could def be improved
 cookbook_file '/usr/local/bin/photo_import' do
   source 'photo_import.sh'
