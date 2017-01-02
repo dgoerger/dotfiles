@@ -73,10 +73,8 @@ DUPLICITY_OPTIONS="--full-if-older-than ${DUPLICITY_FULL_BACKUP_IF_OLDER_THAN_EL
 if [[ ! -x $(which grive) ]]; then
   echo "Consider installing grive for off-site backup." | tee --append ${DUPLICITY_LOG}
 elif [[ -f ${GRIVE_PATH}/.grive ]]; then
-  chown -R $(whoami):root ${GRIVE_PATH}
-  chmod 0750 ${GRIVE_PATH}
   cd ${GRIVE_PATH}
-  $(which grive) -V >${DUPLICITY_LOG} 2>&1
+  $(which grive) -V 2>&1 | tee --append ${DUPLICITY_LOG} >/dev/null
 else
   echo "WARNING: not backing up to google drive! Is grive correctly configured?" | tee --append ${DUPLICITY_LOG}
 fi
