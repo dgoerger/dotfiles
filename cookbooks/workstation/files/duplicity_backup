@@ -18,6 +18,10 @@ if [[ ! -x $(which duplicity) ]]; then
   exit 2
 fi
 
+### source ENV
+source ${HOME}/.bashrc
+source ${DUPLICITY_SECRETS}
+
 ### VARIABLES WHICH ARE NOT SET IN ~/.bashrc
 DUPLICITY_FULL_BACKUP_IF_OLDER_THAN_ELSE_INCREMENTAL_BACKUP="1M"
 DUPLICITY_LOG="/var/log/duplicity.log"
