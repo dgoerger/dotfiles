@@ -1,15 +1,13 @@
 #!/bin/bash
 
-### files created by this script shouldn't be world-readable (esp logs)
+### files created by this script shouldn't be world-readable
 umask 027
 
 ### quick and dirty security warning
-if [[ $(id -u) -gt 999 ]]; then
-  # assume system users (uid < 1000) don't have gui access
-  echo 'NOTA BENE: consider running this script as a non-GUI user to avoid ENV compromise via e.g. web browser vulnerability'
+if [[ $(id -u) -ge 500 ]]; then
+  # assume system users (uid < 500) don't have gui access
+  echo 'NOTA BENE: Consider running this script as a non-GUI user (uid < 500) to avoid ENV compromise via e.g. web browser vulnerability.'
   exit 2
-  # FIXME: running as root isn't ideal.. can we safely grant required read access to a non-root user? probably not...
-  # FIXME: can we source $PASSPHRASE from a file safely, that a normal restricted user doesn't have casual access?
 fi
 
 ### dependency check
@@ -18,11 +16,23 @@ if [[ ! -x $(which duplicity) ]]; then
   exit 2
 fi
 
-### source ENV
+### source secrets
 source ${HOME}/.bashrc
-source ${DUPLICITY_SECRETS}
+if [[ -n ${DUPLICITY_SECRETS} ]] && [[ -r ${DUPLICITY_SECRETS} ]]; then
+  if [[ -O ${DUPLICITY_SECRETS} ]] && [[ "$(stat --format '%a' ${DUPLICITY_SECRETS} | cut -c2-)" == "00" ]]; then
+    source ${DUPLICITY_SECRETS}
+  else
+    echo "Please restrict permissions on ${DUPLICITY_SECRETS} and consider changing passwords in case the contents of that file have been compromised."
+    exit 2
+  fi
+else
+  echo "Please define environment variable DUPLICITY_SECRETS in ${HOME}/.bashrc."
+  echo 'e.g: DUPLICITY_SECRETS=/path/to/secrets'
+  echo "NOTA BENE: Please ensure /path/to/secrets is owned by $(id -un) and mode 0400 or 0600."
+  exit 2
+fi
 
-### VARIABLES WHICH ARE NOT SET IN ~/.bashrc
+### VARIABLES WHICH ARE NOT IN ENV
 DUPLICITY_FULL_BACKUP_IF_OLDER_THAN_ELSE_INCREMENTAL_BACKUP="1M"
 DUPLICITY_LOG="/var/log/duplicity.log"
 DUPLICITY_LOG_LEVEL="NOTICE"
