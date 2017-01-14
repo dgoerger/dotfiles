@@ -28,7 +28,7 @@ fi
 alias disapproval='echo '\''ಠ_ಠ'\'''
 alias forecast='curl -4k https://wttr.in/?m'
 if [[ -f /usr/bin/google-chrome ]]; then
-  alias google-chrome-socks='/usr/bin/google-chrome --proxy-server="socks://127.0.0.1:1080"'
+  alias google-chrome-socks='/usr/bin/google-chrome --incognito --proxy-server="socks://127.0.0.1:1080"'
 fi
 alias grep='grep --color=always'
 if [[ -f /usr/bin/irssi ]]; then
