@@ -8,7 +8,7 @@ else
 fi
 
 # fetch new hosts blocklist
-curl -Lo /usr/local/src/hosts/dnsblock-src https://github.com/StevenBlack/hosts/raw/master/alternates/gambling-porn/hosts 2>/dev/null
+curl -Lo /usr/local/src/hosts/dnsblock-src https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-porn/hosts 2>/dev/null
 
 # reformat for dnsmasq
 cat /usr/local/src/hosts/dnsblock-src | grep '0.0.0.0' | awk -F" " '{print "address=\"/" $2 "/0.0.0.0\""}' | tee /usr/local/src/hosts/dnsblock >/dev/null
