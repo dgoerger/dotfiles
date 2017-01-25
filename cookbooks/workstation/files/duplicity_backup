@@ -86,6 +86,8 @@ elif [[ "$(echo "${PASSPHRASE}" | pwqcheck -1 min=disabled,64,48,32,32 max=1023)
   exit 2
 fi
 
+echo -e "\n\nStarting backup $(date --iso-8601=seconds)..." | tee --append "${DUPLICITY_LOG}"
+
 DUPLICITY_OPTIONS="--full-if-older-than ${DUPLICITY_FULL_BACKUP_IF_OLDER_THAN_ELSE_INCREMENTAL_BACKUP} ${DUPLICITY_BASE} ${DUPLICITY_DEST} ${DUPLICITY_INCLUDE} --volsize=${DUPLICITY_VOL_SIZE_IN_MEGABYTES} --verbosity=${DUPLICITY_LOG_LEVEL} --gpg-options=--no-use-agent --archive-dir=${DUPLICITY_ARCHIVE} --tempdir=${DUPLICITY_TMP} --log-file=${DUPLICITY_LOG}"
 
 ### PERFORM BACKUP
@@ -96,7 +98,8 @@ if [[ "$(echo "${DUPLICITY_DEST}" | cut -c1-4)" == "file" ]]; then
   if [[ -x $(which grive) ]] && [[ -n ${GRIVE_PATH} ]] && [[ -f ${GRIVE_PATH}/.grive ]] && [[ -n $(echo "${DUPLICITY_DEST}" | cut -c8- | grep -E "^${GRIVE_PATH}") ]]; then
     # sync to google drive (if defined) AND if $GRIVE_PATH contains $DUPLICITY_DEST
     cd "${GRIVE_PATH}" || exit
-    $(which grive) -V 2>&1 | tee --append ${DUPLICITY_LOG} >/dev/null
+    # back up and log - do NOT log that a file has already been synched (unnecessary log growth)
+    $(which grive) -V 2>&1 | grep -v 'already in sync' | tee --append ${DUPLICITY_LOG} >/dev/null
   else
     echo 'WARNING: not backing up off-site - backup is LOCAL.' | tee --append ${DUPLICITY_LOG}
     echo '--> consider an OFF-SITE backup solution such as grive or s3 <--' | tee --append ${DUPLICITY_LOG}
