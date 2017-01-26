@@ -1,8 +1,7 @@
 # ensure the packages we need for what follows are installed
 node['workstation']['packages'].each do |package|
-  yum_package package do
+  dnf_package package do
     action :install
-    allow_downgrade false
   end
 end
 
@@ -211,15 +210,13 @@ cookbook_file '/etc/newsbeuter.conf' do
   mode '0444'
   action :create
 end
-if File.exist?('/etc/chef')
+cookbook_file '/etc/chef/knife.rb' do
   # copy in knife.rb if chefdk is installed
-  cookbook_file '/etc/chef/knife.rb' do
-    source 'knife.rb'
-    owner 'root'
-    group 'root'
-    mode '0444'
-    action :create
-  end
+  source 'knife.rb'
+  owner 'root'
+  group 'root'
+  mode '0444'
+  action :create if File.exist?('/etc/chef')
 end
 link '/etc/systemd/system/rpcbind.service' do
   # disable listening on port 111, takes effect on next reboot
@@ -244,7 +241,7 @@ end
 
 # TeX Live
 node['workstation']['texlive'].each do |pkg|
-  yum_package pkg do
+  dnf_package pkg do
     action :install
   end
 end
@@ -321,7 +318,7 @@ end
 ### only if a graphical install
 if File.exist?('/etc/systemd/system/display-manager.service')
   node['workstation']['graphical_apps'].each do |pkg|
-    yum_package pkg do
+    dnf_package pkg do
       action :install
     end
   end
