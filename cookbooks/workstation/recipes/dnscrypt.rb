@@ -4,9 +4,8 @@ if node['workstation']['dnscrypt_providers'].any? and node['workstation']['dnsma
     command 'useradd -r -d /var/dnscrypt -m -s /sbin/nologin dnscrypt'
     action :nothing
   end
-  yum_package 'dnscrypt-proxy' do
+  dnf_package 'dnscrypt-proxy' do
     action :install
-    allow_downgrade false
     notifies :run, 'execute[dnscrypt_useradd]', :immediately
   end
 
