@@ -210,14 +210,6 @@ cookbook_file '/etc/newsbeuter.conf' do
   mode '0444'
   action :create
 end
-cookbook_file '/etc/chef/knife.rb' do
-  # copy in knife.rb if chefdk is installed
-  source 'knife.rb'
-  owner 'root'
-  group 'root'
-  mode '0444'
-  action :create if File.exist?('/etc/chef')
-end
 link '/etc/systemd/system/rpcbind.service' do
   # disable listening on port 111, takes effect on next reboot
   link_type :symbolic
