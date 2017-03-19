@@ -60,6 +60,9 @@ pref("media.getusermedia.screensharing.enabled", false);
 pref("extensions.pocket.enabled",false);
 pref("extensions.pocket.api","");
 
+//// disable captive portal detection - GNOME provides this
+pref("network.captive-portal-service.enabled", false);
+
 //// disable a href ping
 pref("browser.send_pings", false);
 pref("browser.send_pings.require_same_host", true);
