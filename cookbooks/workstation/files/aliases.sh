@@ -62,7 +62,7 @@ if [[ -f /usr/bin/bsdtar ]]; then
   alias tar='bsdtar'
 fi
 alias tree='tree -N'
-alias view='vim --cmd "let no_plugin_maps = 1" -c "runtime! macros/less.vim" -m -Z'
+alias view='vim --cmd "let no_plugin_maps = 1" -c "runtime! macros/less.vim" -m'
 alias weather='curl -4k https://wttr.in/?m'
 if [[ -f /usr/bin/youtube-dl ]]; then
   alias youtube-dl='youtube-dl -f webm'
