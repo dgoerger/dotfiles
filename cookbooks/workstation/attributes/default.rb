@@ -53,7 +53,7 @@ default['workstation']['packages'] = [
   'hunspell-en',# why isn't en-CA packaged separately?
   'mutt',
   'newsbeuter',
-  'pandoc-static',
+  'pandoc',
   'ranger',
   'unzip',# needed by vim for reading epub
   'youtube-dl',
