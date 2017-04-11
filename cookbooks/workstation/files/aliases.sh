@@ -1,22 +1,22 @@
 # /etc/profile.d/custom_aliases.sh
 
-# more restrictive umask for mortals
+### restrictive umask for mortals
 if [[ $UID -gt 199 ]] && [ "`id -gn`" == "`id -un`" ]; then
-  umask 027
+  umask 077
 fi
 
-# disable history and senseless dotfiles
+### disable history and senseless dotfiles
 export LESSHISTFILE=-
 export HTOPRC=/dev/null
 unset HISTFILE
 
-# set EDITOR
+### set EDITOR
 export EDITOR=vim
 
-# fix ls filename quoting nonsense
+### fix ls filename quoting nonsense
 export QUOTING_STYLE=literal
 
-# user specific aliases and functions
+### user specific aliases and functions
 alias bc='bc -l'
 alias cal='cal -m'
 if [[ -f /usr/bin/copr-cli ]]; then
