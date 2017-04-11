@@ -130,6 +130,13 @@ cookbook_file '/etc/lynx-site.cfg' do
   mode '0444'
   action :create
 end
+cookbook_file '/etc/sudoers.d/umask' do
+  source 'sudoers_umask'
+  owner 'root'
+  group 'root'
+  mode '0440'
+  action :create
+end
 cookbook_file '/etc/tmux.conf' do
   source 'tmux.conf'
   owner 'root'
