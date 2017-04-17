@@ -40,6 +40,9 @@ pref("browser.startup.page", 0);
 //// enable tracking protection
 pref("privacy.trackingprotection.enabled", true);
 pref("privacy.trackingprotection.pbmode.enabled", true);
+// NB: breaks flash, ref moz#1317846
+// see: https://wiki.mozilla.org/Security/Fingerprinting
+pref("privacy.resistFingerprinting", true);
 
 //// discard third-party cookies
 pref("network.cookie.cookieBehavior", 1);
