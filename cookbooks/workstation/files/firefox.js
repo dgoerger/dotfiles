@@ -60,8 +60,8 @@ pref("device.sensors.enabled", false);
 
 //// disable misc nonsense
 pref("media.getusermedia.screensharing.enabled", false);
-pref("extensions.pocket.enabled",false);
-pref("extensions.pocket.api","");
+pref("extensions.pocket.enabled", false);
+pref("extensions.pocket.api", "");
 
 //// disable captive portal detection - GNOME provides this
 pref("network.captive-portal-service.enabled", false);
@@ -72,37 +72,37 @@ pref("browser.send_pings.require_same_host", true);
 pref("beacon.enabled", false);
 
 //// stop the goog
-pref("browser.safebrowsing.enabled",false);
-pref("browser.safebrowsing.downloads.enabled",false);
-pref("browser.safebrowsing.downloads.remote.enabled",false);
-pref("browser.safebrowsing.malware.enabled",false);
-pref("browser.safebrowsing.phishing.enabled",false);
+pref("browser.safebrowsing.enabled", false);
+pref("browser.safebrowsing.downloads.enabled", false);
+pref("browser.safebrowsing.downloads.remote.enabled", false);
+pref("browser.safebrowsing.malware.enabled", false);
+pref("browser.safebrowsing.phishing.enabled", false);
 
 //// duckduckgo as default search
 pref("browser.search.defaultenginename", "data:text/plain,browser.search.defaultenginename=DuckDuckGo");
-pref("browser.search.hiddenOneOffs","Amazon.com,Twitter");
+pref("browser.search.hiddenOneOffs", "Amazon.com,Twitter");
 
 //// disable health report
-pref("datareporting.healthreport.service.enabled",false);
-pref("datareporting.healthreport.uploadEnabled",false);
-pref("datareporting.policy.dataSubmissionEnabled",false);
-pref("datareporting.policy.dataSubmissionEnabled.v2",false);
-pref("toolkit.telemetry.enabled",false);
+pref("datareporting.healthreport.service.enabled", false);
+pref("datareporting.healthreport.uploadEnabled", false);
+pref("datareporting.policy.dataSubmissionEnabled", false);
+pref("datareporting.policy.dataSubmissionEnabled.v2", false);
+pref("toolkit.telemetry.enabled", false);
 
 //// disable media plugins
-pref("media.eme.enabled",false);
-pref("media.gmp-provider.enabled",false);
-pref("media.gmp-eme-adobe.enabled",false);
-pref("media.gmp-gmpopenh264.enabled",false);
-pref("media.gmp-gmpopenh264.provider.enabled",false);
+pref("media.eme.enabled", false);
+pref("media.gmp-provider.enabled", false);
+pref("media.gmp-eme-adobe.enabled", false);
+pref("media.gmp-gmpopenh264.enabled", false);
+pref("media.gmp-gmpopenh264.provider.enabled", false);
 pref("media.gmp-manager.url", "");
 pref("plugins.notifyMissingFlash", false);
 
 //// disable Hello
-pref("loop.enabled",false);
+pref("loop.enabled", false);
 
 //// disable search suggestions
-pref("browser.search.suggest.enabled",false);
+pref("browser.search.suggest.enabled", false);
 
 //// disable Firefox Heartbeat Rating Widget
 pref("browser.selfsupport.url", "");
@@ -111,7 +111,7 @@ pref("browser.selfsupport.url", "");
 pref("browser.formfill.enable", false);
 
 //// disable password manager
-pref("signon.rememberSignons",false);
+pref("signon.rememberSignons", false);
 
 //// disable referrer for cross-site requests
 pref("network.http.referer.XOriginPolicy", 1);
@@ -135,34 +135,34 @@ pref("webgl.disabled", true);
 
 //// block non-perfect forward secrecy legacy ciphers
 pref("security.tls.version.min", 3);
-pref("security.ssl3.rsa_aes_128_sha",false);
-pref("security.ssl3.rsa_aes_256_sha",false);
-pref("security.ssl3.rsa_des_ede3_sha",false);
-pref("security.ssl3.rsa_rc4_128_md5",false);
-pref("security.ssl3.rsa_rc4_128_sha",false);
-pref("security.ssl3.dhe_rsa_aes_128_sha",false);
-pref("security.ssl3.dhe_rsa_aes_256_sha",false);
+pref("security.ssl3.rsa_aes_128_sha", false);
+pref("security.ssl3.rsa_aes_256_sha", false);
+pref("security.ssl3.rsa_des_ede3_sha", false);
+pref("security.ssl3.rsa_rc4_128_md5", false);
+pref("security.ssl3.rsa_rc4_128_sha", false);
+pref("security.ssl3.dhe_rsa_aes_128_sha", false);
+pref("security.ssl3.dhe_rsa_aes_256_sha", false);
 
 //// useful for socks5
-pref("network.proxy.socks","localhost");
-pref("network.proxy.socks_port",1080);
-pref("network.proxy.socks_remote_dns",true);
+pref("network.proxy.socks", "localhost");
+pref("network.proxy.socks_port", 1080);
+pref("network.proxy.socks_remote_dns", true);
 
 //// block webrtc IP leak: https://ipleak.net/#webrtcleak
-pref("media.peerconnection.enabled",false);
+pref("media.peerconnection.enabled", false);
 pref("media.peerconnection.use_document_iceservers", false);
 pref("media.navigator.enabled", false);
 pref("media.getusermedia.screensharing.enabled", false);
 pref("media.getusermedia.screensharing.allowed_domains", "");
 
 //// don't leak text selection and copy/paste
-pref("dom.event.clipboardevents.enabled",false);
+pref("dom.event.clipboardevents.enabled", false);
 
 //// don't try to "fix up" url typos -> localhost means localhost not www.localhost.com
-pref("browser.fixup.alternate.enabled",false);
+pref("browser.fixup.alternate.enabled", false);
 
 //// display punycode
 pref("network.IDN_show_punycode", true);
 
 //// private browsing mode by default
-pref("browser.privatebrowsing.autostart",true);
+pref("browser.privatebrowsing.autostart", true);
