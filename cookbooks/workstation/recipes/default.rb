@@ -242,7 +242,7 @@ end
 node['workstation']['texlive'].each do |pkg|
   dnf_package pkg do
     action :install
-    only_if node['workstation']['latex']
+    only_if { node['workstation']['latex'] }
   end
 end
 

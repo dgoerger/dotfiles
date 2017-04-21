@@ -84,6 +84,5 @@ default['workstation']['graphical_apps'] = [
   'gedit-plugin-wordcompletion',
   'gnome-shell-extension-alternate-tab',
   'gnome-terminal-nautilus',
-  'gstreamer1-plugins-bad-free',
   'keepassx'
   ]
