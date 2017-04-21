@@ -151,6 +151,9 @@ else
     sudo dnf copr enable mosquito/atom -y
     sudo dnf install -y atom
   fi
+  if [[ "$RDP_CLIENT" == "yes" ]]; then
+    sudo dnf install -y remmina
+  fi
 fi
 
 ### security ###
@@ -161,7 +164,7 @@ sudo chattr +i /etc/firewalld/firewalld.conf
 sudo hostnamectl set-hostname $FQDN
 
 ### chake it
-sudo dnf install -y git-core rubygem-chake yum $(curl 'https://omnitruck.chef.io/stable/chef/metadata?p=el&pv=7&m=x86_64' 2>/dev/null | grep -E "^url" | awk -F" " '{print $2}')
+sudo dnf install -y git-core rubygem-chake $(curl 'https://omnitruck.chef.io/stable/chef/metadata?v=12&p=el&pv=7&m=x86_64' 2>/dev/null | grep -E "^url" | awk -F" " '{print $2}')
 sudo git clone https://github.com/${CHAKE_POLICY_REPO}.git /var/chake --depth=1
 sudo chmod 0750 /var/chake
 echo -e "local://${FQDN}:\n  run_list:\n      - recipe[workstation]" | sudo tee /var/chake/nodes.yaml
