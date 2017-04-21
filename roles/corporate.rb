@@ -6,6 +6,7 @@ run_list 'recipe[workstation::default]'
 override_attributes(
   'workstation' => {
     'corporate' => true,
-    'crypto-policy' => 'DEFAULT'
+    'crypto-policy' => 'DEFAULT',
+    'latex' => false
   }
 )

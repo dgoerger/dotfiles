@@ -72,8 +72,10 @@ default['workstation']['texlive'] = [
   'texlive-collection-luatex',
   'texlive-collection-latexrecommended',
   'texlive-collection-langenglish',
-  'texlive-collection-mathextra'
+  'texlive-collection-mathextra',
+  'latexila'
   ]
+default['workstation']['latex'] = true
 # only install these if there's a graphical login manager enabled in systemd - assumes GNOME
 default['workstation']['graphical_apps'] = [
   'firefox',
@@ -81,7 +83,7 @@ default['workstation']['graphical_apps'] = [
   'gedit-plugin-multiedit',
   'gedit-plugin-wordcompletion',
   'gnome-shell-extension-alternate-tab',
+  'gnome-terminal-nautilus',
   'gstreamer1-plugins-bad-free',
-  'keepassx',
-  'latexila'
+  'keepassx'
   ]
