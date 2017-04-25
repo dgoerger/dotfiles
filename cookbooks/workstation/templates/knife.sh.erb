@@ -3,7 +3,7 @@
 # so we can use a system-wide knife.rb.
 
 if [[ -x $(which --skip-alias knife) ]] && [[ -r <%= node['workstation']['knife_conf'] -%> ]]; then
-  $(which --skip-alias knife) $@ -c <%= node['workstation']['knife_conf'] -%>
+  $(which --skip-alias knife) $@ -c <%= node['workstation']['knife_conf'] %>
 else
   echo knife: command not found...
   exit 1
