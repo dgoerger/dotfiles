@@ -253,7 +253,7 @@ if File.exist?('/usr/bin/knife')
     mode '0444'
     action :create
   end
-  template '/usr/local/sbin/knife' do
+  template '/usr/local/bin/knife' do
     source 'knife.sh.erb'
     owner 'root'
     group 'root'
