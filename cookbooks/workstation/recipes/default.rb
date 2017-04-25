@@ -238,6 +238,30 @@ template '/etc/logrotate.d/chake' do
   action :create
 end
 
+# Chef
+if File.exist?('/usr/bin/knife')
+  directory '/etc/chef' do
+    owner 'root'
+    group 'root'
+    mode '0755'
+    action :create
+  end
+  cookbook_file node['workstation']['knife_conf'] do
+    source 'knife.rb'
+    owner 'root'
+    group 'root'
+    mode '0444'
+    action :create
+  end
+  template '/usr/local/sbin/knife' do
+    source 'knife.sh.erb'
+    owner 'root'
+    group 'root'
+    mode '0555'
+    action :create
+  end
+end
+
 # TeX Live
 node['workstation']['texlive'].each do |pkg|
   dnf_package pkg do
@@ -259,7 +283,7 @@ cookbook_file '/usr/local/sbin/dnf-patch-everything' do
   source 'dnf-patch-everything'
   owner 'root'
   group 'root'
-  mode '0744'
+  mode '0711'
   action :create
 end
 cron 'dnf-patch-everything' do
@@ -281,7 +305,7 @@ if File.exist?('/usr/bin/duplicity')
     source 'duplicity_backup'
     owner 'root'
     group 'root'
-    mode '0550'
+    mode '0551'
     action :create
   end
   cron 'duplicity-backup' do
@@ -292,7 +316,7 @@ if File.exist?('/usr/bin/duplicity')
 end
 
 # dorky DCIM import script - could def be improved
-cookbook_file '/usr/local/bin/photo_import' do
+cookbook_file '/usr/local/sbin/photo_import' do
   source 'photo_import.sh'
   owner 'root'
   group 'root'

@@ -48,7 +48,7 @@ cookbook_file '/usr/local/sbin/dnsblock_updater' do
   notifies :run, 'execute[dnsblock_initialize]', :delayed
 end
 cron 'dnsblock_update' do
-  time :weekly
+  time :daily
   user 'root'
   command '/usr/local/sbin/dnsblock_updater'
   action :create

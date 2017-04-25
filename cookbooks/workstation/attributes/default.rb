@@ -86,3 +86,12 @@ default['workstation']['graphical_apps'] = [
   'gnome-terminal-nautilus',
   'keepassx'
   ]
+default['workstation']['jack_packages'] = [
+  'jack-audio-connection-kit',
+  'jack-audio-connection-kit-dbus',
+  'pulseaudio-module-jack'
+  ]
+
+
+### CHEF ###
+default['workstation']['knife_conf'] = '/etc/chef/knife.rb'
