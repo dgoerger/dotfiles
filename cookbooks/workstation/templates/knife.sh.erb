@@ -1,0 +1,10 @@
+#!/bin/bash
+# Workaround for rubygem poor alias expansion in vanilla knife,
+# so we can use a system-wide knife.rb.
+
+if [[ -x $(which --skip-alias knife) ]] && [[ -r <%= node['workstation']['knife_conf'] -%> ]]; then
+  $(which --skip-alias knife) $@ -c <%= node['workstation']['knife_conf'] -%>
+else
+  echo knife: command not found...
+  exit 1
+fi
