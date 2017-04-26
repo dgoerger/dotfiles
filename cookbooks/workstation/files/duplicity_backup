@@ -53,9 +53,15 @@ fi
 
 ### if destination is local, ensure dir exists and is writable
 if [[ -n ${DUPLICITY_DEST} ]] && [[ "$(echo "${DUPLICITY_DEST}" | cut -c1-4)" == "file" ]]; then
-  mkdir -p "$(echo "${DUPLICITY_DEST}" | cut -c8-)"
-  if [[ ! -w "$(echo "${DUPLICITY_DEST}" | cut -c8-)" ]]; then
-    echo "Unable to write to $(echo "${DUPLICITY_DEST}" | cut -c8-). Aborting."
+  if [[ -z "$(rpm -qf $(echo ${DUPLICITY_DEST} 2>&1 | cut -c8-) | grep -v ' is not owned by any package')" ]]; then
+    # ^ TODO support non-rpm distributions + macOS
+    mkdir -p "$(echo "${DUPLICITY_DEST}" | cut -c8-)"
+    if [[ ! -w "$(echo "${DUPLICITY_DEST}" | cut -c8-)" ]]; then
+      echo "Unable to write to $(echo "${DUPLICITY_DEST}" | cut -c8-). Aborting." | tee --append "${DUPLICITY_LOG}"
+      exit 2
+    fi
+  else
+    echo "Refusing to back up to an rpm-owned directory. Aborting." | tee --append "${DUPLICITY_LOG}"
     exit 2
   fi
 fi
