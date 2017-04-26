@@ -34,6 +34,7 @@ fi
 
 ### VARIABLES WHICH ARE NOT IN ENV
 DUPLICITY_FULL_BACKUP_IF_OLDER_THAN_ELSE_INCREMENTAL_BACKUP="1M"
+DUPLICITY_RETAIN_X_FULL_BACKUPS='2'
 DUPLICITY_LOG="/var/log/duplicity.log"
 DUPLICITY_LOG_LEVEL="NOTICE"
 DUPLICITY_VOL_SIZE_IN_MEGABYTES="100"
@@ -90,11 +91,30 @@ echo -e "\n\nStarting backup $(date --iso-8601=seconds)..." | tee --append "${DU
 
 DUPLICITY_OPTIONS="--full-if-older-than ${DUPLICITY_FULL_BACKUP_IF_OLDER_THAN_ELSE_INCREMENTAL_BACKUP} ${DUPLICITY_BASE} ${DUPLICITY_DEST} ${DUPLICITY_INCLUDE} --volsize=${DUPLICITY_VOL_SIZE_IN_MEGABYTES} --verbosity=${DUPLICITY_LOG_LEVEL} --gpg-options=--no-use-agent --archive-dir=${DUPLICITY_ARCHIVE} --tempdir=${DUPLICITY_TMP} --log-file=${DUPLICITY_LOG}"
 
+### PURGE EXPIRED LOCAL COPIES
+if [[ "$(echo ${DUPLICITY_FULL_BACKUP_IF_OLDER_THAN_ELSE_INCREMENTAL_BACKUP} | sed 's/[0-9]//')" == "M" ]]; then
+  # assume we're doing monthly full backups
+  retention_period=$(( $(($(echo ${DUPLICITY_FULL_BACKUP_IF_OLDER_THAN_ELSE_INCREMENTAL_BACKUP} | grep --color=none -o '[0-9]*') * ${DUPLICITY_RETAIN_X_FULL_BACKUPS})) * 31 )) 
+else
+  # else assume X days is OK..?
+  retention_period=180
+fi
+find "$(echo "${DUPLICITY_DEST}" | cut -c8-)" -mtime +${retention_period} -type f -delete
+
 ### PERFORM BACKUP
 $(which duplicity) ${DUPLICITY_OPTIONS}
 
 ### attempt grive remote sync if backup was local
 if [[ "$(echo "${DUPLICITY_DEST}" | cut -c1-4)" == "file" ]]; then
+  if [[ "$(echo ${DUPLICITY_FULL_BACKUP_IF_OLDER_THAN_ELSE_INCREMENTAL_BACKUP} | sed 's/[0-9]//')" == "M" ]]; then
+    # assume we're doing monthly full backups
+    retention_period=$(( $(($(echo ${DUPLICITY_FULL_BACKUP_IF_OLDER_THAN_ELSE_INCREMENTAL_BACKUP} | grep --color=none -o '[0-9]*') * ${DUPLICITY_RETAIN_X_FULL_BACKUPS})) * 31 )) 
+  else
+    # else assume X days is OK..?
+    retention_period=180
+  fi
+  # purge expired local copies
+  find "$(echo "${DUPLICITY_DEST}" | cut -c8-)" -mtime +${retention_period} -type f -delete
   if [[ -x $(which grive) ]] && [[ -n ${GRIVE_PATH} ]] && [[ -f ${GRIVE_PATH}/.grive ]] && [[ -n $(echo "${DUPLICITY_DEST}" | cut -c8- | grep -E "^${GRIVE_PATH}") ]]; then
     # sync to google drive (if defined) AND if $GRIVE_PATH contains $DUPLICITY_DEST
     cd "${GRIVE_PATH}" || exit
