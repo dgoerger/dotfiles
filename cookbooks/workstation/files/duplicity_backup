@@ -125,7 +125,7 @@ if [[ "$(echo "${DUPLICITY_DEST}" | cut -c1-4)" == "file" ]]; then
     # sync to google drive (if defined) AND if $GRIVE_PATH contains $DUPLICITY_DEST
     cd "${GRIVE_PATH}" || exit
     # back up and log - do NOT log that a file has already been synched (unnecessary log growth)
-    $(which grive) -V 2>&1 | grep -v 'already in sync' | tee --append ${DUPLICITY_LOG} >/dev/null
+    $(which grive) --upload-only -V 2>&1 | grep -v 'already in sync' | tee --append ${DUPLICITY_LOG} >/dev/null
   else
     echo 'WARNING: not backing up off-site - backup is LOCAL.' | tee --append ${DUPLICITY_LOG}
     echo '--> consider an OFF-SITE backup solution such as grive or s3 <--' | tee --append ${DUPLICITY_LOG}
