@@ -45,9 +45,6 @@ alias ls='ls --color'
 if [[ -x /usr/bin/mpv ]]; then
   alias dvd='mpv dvd://'
 fi
-if [[ -x /usr/bin/newsbeuter ]]; then
-  alias newsbeuter='newsbeuter -q -C /etc/newsbeuter.conf -u ${NEWSBEUTER}'
-fi
 if [[ -x /usr/bin/nmap ]]; then
   alias nmap='nmap --system-dns'
 fi
