@@ -1,21 +1,24 @@
 #!/bin/bash
 
-# back up old working copies
-if [[ -f /usr/local/src/hosts/dnsblock ]]; then
-  mv /usr/local/src/hosts/dnsblock /usr/local/src/hosts/dnsblock-old
-else
-  mkdir -p /usr/local/src/hosts
+NAME=dnsblock
+TMP=/var/tmp/
+SRC=${NAME}.src
+UPSTREAM_HOSTS_FILE='https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-porn/hosts'
+
+# only proceed if dnsmasq is installed && we can fetch from upstream
+if systemctl status dnsmasq >/dev/null 2>&1; then
+  if curl -Lo ${TMP}/${SRC} ${UPSTREAM_HOSTS_FILE} 2>/dev/null; then
+    # reformat for dnsmasq
+    echo "# ipv4" | tee ${TMP}/${NAME} >/dev/null 2>&1
+    awk '$1 == "0.0.0.0" {print "address=\"/" $2 "/0.0.0.0\""}' ${TMP}/${SRC} | tee --append ${TMP}/${NAME} >/dev/null 2>&1
+    echo "# ipv6" | tee --append ${TMP}/${NAME} >/dev/null 2>&1
+    awk '$1 == "0.0.0.0" {print "address=\"/" $2 "/::\""}' ${TMP}/${SRC} | tee --append ${TMP}/${NAME} >/dev/null 2>&1
+
+    # copy in the new dnsblock policy
+    cp ${TMP}/${NAME} /etc/dnsmasq.d/${NAME}.conf
+    cp ${TMP}/${NAME} /etc/NetworkManager/dnsmasq.d/${NAME}.conf
+
+    # load new blocklist
+    systemctl restart dnsmasq
+  fi
 fi
-
-# fetch new hosts blocklist
-curl -Lo /usr/local/src/hosts/dnsblock-src https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-porn/hosts 2>/dev/null
-
-# reformat for dnsmasq
-cat /usr/local/src/hosts/dnsblock-src | grep '0.0.0.0' | awk -F" " '{print "address=\"/" $2 "/0.0.0.0\""}' | tee /usr/local/src/hosts/dnsblock >/dev/null
-echo "# ipv6" | tee --append /usr/local/src/hosts/dnsblock >/dev/null
-cat /usr/local/src/hosts/dnsblock-src | grep '0.0.0.0' | awk -F" " '{print "address=\"/" $2 "/::\""}' | tee --append /usr/local/src/hosts/dnsblock >/dev/null
-
-# copy in the new dnsblock policy
-cp -p /usr/local/src/hosts/dnsblock /etc/dnsmasq.d/dnsblock.conf
-cp -p /usr/local/src/hosts/dnsblock /etc/NetworkManager/dnsmasq.d/dnsblock.conf
-systemctl restart dnsmasq
