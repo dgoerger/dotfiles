@@ -27,9 +27,6 @@ if [[ -x /usr/bin/colordiff ]]; then
 fi
 alias disapproval='echo '\''ಠ_ಠ'\'''
 alias forecast='curl -4k https://wttr.in/?m'
-if [[ -x /usr/bin/google-chrome ]]; then
-  alias google-chrome-socks='/usr/bin/google-chrome --incognito --proxy-server="socks://127.0.0.1:1080"'
-fi
 alias grep='grep --color=always'
 if [[ -x /usr/bin/irssi ]]; then
   alias irssi='irssi --config=/dev/null'
