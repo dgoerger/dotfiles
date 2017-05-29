@@ -63,12 +63,12 @@ choco install -y notepadplusplus sdelete
 #choco install -y curl dnscrypt-proxy git miktex.install nmap openssh pandoc vim
 
 ## install Windows Updates powershell module
-Install-Module PSWindowsUpdate
-Get-Command -module PSWindowsUpdate
+Install-Module PSWindowsUpdate -AcceptAll
+Get-Command -module PSWindowsUpdate -AcceptAll
 
 ## let Windows Update install updates for other Microsoft software
 # ServiceID verification: https://msdn.microsoft.com/en-us/library/windows/desktop/aa826676(v=vs.85).aspx
-Add-WUServiceManager -ServiceID 7971f918-a847-4430-9279-4a52d1efe18d
+Add-WUServiceManager -ServiceID 7971f918-a847-4430-9279-4a52d1efe18d -AcceptAll
 
 ## fetch all available updates and reboot if necessary
 Get-WUInstall -MicrosoftUpdate -AcceptAll -AutoReboot
