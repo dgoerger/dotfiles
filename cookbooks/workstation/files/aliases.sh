@@ -16,6 +16,11 @@ export EDITOR=vim
 ### fix ls filename quoting nonsense
 export QUOTING_STYLE=literal
 
+### set system-wide python3 prefs
+if [[ -r /usr/local/share/python3_startup.py ]]; then
+  export PYTHONSTARTUP=/usr/local/share/python3_startup.py
+fi
+
 ### user specific aliases and functions
 alias bc='bc -l'
 alias cal='cal -m'

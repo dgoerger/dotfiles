@@ -237,6 +237,14 @@ template '/etc/logrotate.d/chake' do
   mode '0444'
   action :create
 end
+file '/usr/local/share/python3_startup.py' do
+  # set system-wide python3 prefs
+  source 'python3_startup.py'
+  owner 'root'
+  group 'root'
+  mode '0444'
+  action :create
+end
 
 # Chef
 if File.exist?('/usr/bin/knife')
