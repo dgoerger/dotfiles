@@ -237,7 +237,7 @@ template '/etc/logrotate.d/chake' do
   mode '0444'
   action :create
 end
-file '/usr/local/share/python3_startup.py' do
+cookbook_file '/usr/local/share/python3_startup.py' do
   # set system-wide python3 prefs
   source 'python3_startup.py'
   owner 'root'
