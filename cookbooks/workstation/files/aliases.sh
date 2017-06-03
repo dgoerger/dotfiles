@@ -34,11 +34,11 @@ alias disapprove='echo '\''ಠ_ಠ'\'''
 if [[ -x /usr/bin/kpcli ]]; then
   alias kpcli='kpcli --histfile=/dev/null --readonly'
 fi
-alias l='ls -lh'
-alias la='ls -lha'
+alias l='ls -lh --color=auto'
+alias la='ls -lha --color=auto'
 alias less='less -RF'
-alias ll='ls -lh'
-alias ls='ls'
+alias ll='ls -lh --color=auto'
+alias ls='ls --color=auto'
 if [[ -x /usr/bin/mpv ]]; then
   alias dvd='mpv dvd://'
 fi
