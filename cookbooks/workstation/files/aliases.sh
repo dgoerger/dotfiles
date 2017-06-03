@@ -24,26 +24,21 @@ fi
 ### user specific aliases and functions
 alias bc='bc -l'
 alias cal='cal -m'
-if [[ -x /usr/bin/copr-cli ]]; then
+if [[ -x /usr/bin/copr-cli ]] && [[ -n ${COPR} ]]; then
   alias copr-cli='copr-cli --config ${COPR}'
 fi
 if [[ -x /usr/bin/colordiff ]]; then
   alias diff='colordiff'
 fi
-alias disapproval='echo '\''ಠ_ಠ'\'''
-alias forecast='curl -4k https://wttr.in/?m'
-alias grep='grep --color=always'
-if [[ -x /usr/bin/irssi ]]; then
-  alias irssi='irssi --config=/dev/null'
-fi
+alias disapprove='echo '\''ಠ_ಠ'\'''
 if [[ -x /usr/bin/kpcli ]]; then
   alias kpcli='kpcli --histfile=/dev/null --readonly'
 fi
-alias l='ls -lh --color'
-alias la='ls -lha --color'
+alias l='ls -lh'
+alias la='ls -lha'
 alias less='less -RF'
-alias ll='ls -lh --color'
-alias ls='ls --color'
+alias ll='ls -lh'
+alias ls='ls'
 if [[ -x /usr/bin/mpv ]]; then
   alias dvd='mpv dvd://'
 fi
