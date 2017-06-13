@@ -217,11 +217,9 @@ cookbook_file '/etc/newsbeuter.conf' do
   mode '0444'
   action :create
 end
-link '/etc/systemd/system/rpcbind.service' do
-  # disable listening on port 111, takes effect on next reboot
-  link_type :symbolic
-  to '/dev/null'
-  action :create
+service 'rpcbind.socket' do
+  # why is this listening by default..?
+  action [ :stop, :disable ]
 end
 file '/etc/cron.allow' do
   content 'root'
