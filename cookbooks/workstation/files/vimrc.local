@@ -5,9 +5,24 @@ set nomodeline              " see rhbz#1398227
 set viminfo="NONE"          " don't save search history
 colorscheme elflord         " default colorscheme is unreadable on dark console
 
-""" editing assistance
+""" indentation schema
 set autoindent              " enable automatic indentation
-set smartindent
+" set default indentation scheme
+filetype plugin indent on   " indent based on filetype
+set tabstop=2
+set shiftwidth=2
+set expandtab               " insert spaces instead of tab
+" set language-specific indentation schema
+if has("autocmd")
+  " use real tabs in Makefiles
+  autocmd FileType make setlocal tabstop=8 shiftwidth=8 softtabstop=0 noexpandtab
+  " indentation is two spaces in Ruby
+  autocmd FileType ruby setlocal tabstop=2 shiftwidth=2 expandtab
+  " indentation for shell scripts
+  autocmd FileType sh setlocal tabstop=2 shiftwidth=2 expandtab
+  " indentation is four spaces in python - also set by python.vim
+  autocmd FileType python setlocal tabstop=4 shiftwidth=4 expandtab
+endif
 
 """ search
 set ignorecase              " ignore case when searching,
