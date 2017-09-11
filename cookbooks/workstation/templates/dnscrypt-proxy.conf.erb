@@ -1,8 +1,0 @@
-DNSCRYPT_USER=dnscrypt
-<% node['workstation']['dnscrypt_providers'].each do |ordinal,provider| -%>
-<%   provider.each do |resolver,port| -%>
-
-RESOLVER_<%= ordinal %>=<%= resolver %>
-LISTENER_<%= ordinal %>=127.0.0.1:<%= port %>
-<%   end -%>
-<% end -%>
