@@ -2,9 +2,8 @@
 //////// Mozilla User Preferences ////////
 //////////////////////////////////////////
 ////                                  ////
-////  place at /usr/lib64/firefox/    ////
-////            browser/defaults/     ////
-////            preferences/user.js   ////
+////     /etc/firefox/pref/user.js    ////
+////                                  ////
 ////  (applies to new profiles only)  ////
 ////                                  ////
 //////////////////////////////////////////
@@ -40,7 +39,7 @@ pref("browser.startup.page", 0);
 //// enable tracking protection
 pref("privacy.trackingprotection.enabled", true);
 pref("privacy.trackingprotection.pbmode.enabled", true);
-// NB: breaks flash, ref moz#1317846
+// NB: breaks flash, ref moz#1317846 - no flash on linux anyway
 // see: https://wiki.mozilla.org/Security/Fingerprinting
 pref("privacy.resistFingerprinting", true);
 
@@ -53,6 +52,10 @@ pref("geo.wifi.uri", "");
 pref("browser.search.geoSpecificDefaults", true);
 pref("browser.search.geoSpecificDefaults.url", "");
 pref("browser.search.geoip.url", "");
+
+//// disable address/search bar "one-off" custom searches
+pref("browser.urlbar.oneOffSearches", false);
+pref("browser.urlbar.suggest.searches", false);
 
 //// why would anyone need access to these
 pref("dom.battery.enabled", false);
@@ -67,6 +70,9 @@ pref("browser.download.manager.addToRecentDocs", false);
 
 //// disable captive portal detection - GNOME provides this
 pref("network.captive-portal-service.enabled", false);
+
+//// backspace goes back a page
+pref("browser.backspace_action", 0);
 
 //// disable a href ping
 pref("browser.send_pings", false);

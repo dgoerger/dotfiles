@@ -1,3 +1,9 @@
+""" source global defaults - as of 8.0
+if filereadable(expand('$VIMRUNTIME/defaults.vim'))
+  source $VIMRUNTIME/defaults.vim
+  let skip_defaults_vim=1   " don't source again in absence of ~/.vimrc
+endif
+
 """ security
 set nomodeline              " see rhbz#1398227
 
@@ -14,19 +20,25 @@ set shiftwidth=2
 set expandtab               " insert spaces instead of tab
 " set language-specific indentation schema
 if has("autocmd")
-  " use real tabs in Makefiles
+  " use real tabs in makefiles
   autocmd FileType make setlocal tabstop=8 shiftwidth=8 softtabstop=0 noexpandtab
-  " indentation is two spaces in Ruby
+  " indentation is four spaces in python
+  autocmd FileType python setlocal tabstop=4 shiftwidth=4 expandtab
+  " indentation is two spaces in ruby
   autocmd FileType ruby setlocal tabstop=2 shiftwidth=2 expandtab
   " indentation for shell scripts
   autocmd FileType sh setlocal tabstop=2 shiftwidth=2 expandtab
-  " indentation is four spaces in python - also set by python.vim
-  autocmd FileType python setlocal tabstop=4 shiftwidth=4 expandtab
 endif
 
 """ search
 set ignorecase              " ignore case when searching,
 set smartcase               " except when CAPS
+
+""" relocate swapfiles to not live on removable media
+if has ('autocmd')
+  autocmd BufNewFile,BufReadPre /media/*,/run/media/*,/mnt/* |
+  \ set directory=~/tmp,/var/tmp,/tmp
+endif
 
 """ file format support
 if has('autocmd')

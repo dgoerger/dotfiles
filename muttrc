@@ -1,0 +1,88 @@
+# .muttrc
+
+### headers
+ignore *
+unignore from: subject to cc date x-mailer x-url user-agent
+hdr_order date from to cc subject
+
+### colours
+color hdrdefault red default
+color quoted brightblue default
+color signature red default
+color indicator brightyellow red
+color error brightred default
+color status yellow blue
+color tree magenta default
+color tilde magenta default
+color message brightcyan default
+color markers brightcyan default
+color attachment brightmagenta default
+color search default green
+color header brightred default ^(From|Subject):
+color body magenta default "(ftp|http|https)://[^ ]+"
+color body magenta default [-a-z_0-9.]+@[-a-z_0-9.]+
+color underline brightgreen default
+mono quoted bold
+
+### general
+alternative_order text/plain text/html
+attachments +A */.*
+attachments -A text/x-vcard application/pgp.*
+attachments -A application/x-pkcs7-.*
+attachments +I text/plain
+attachments -A message/external-body
+attachments -I message/external-body
+auto_view text/html
+bind generic,alias,attach,browser,editor,index,compose,pager,pgp,postpone ':' noop
+folder-hook . "exec collapse-all"
+mime_lookup application/octet-stream
+set date_format = "%Y/%m/%d"
+set delete = 'yes'
+set editor = 'vim -c "set spell spelllang=en_ca formatoptions+=aw textwidth=72"'
+set fast_reply
+set forward_format = '%s'
+set imap_keepalive = 300
+set include
+set index_format = "%2C | %Z [%d] %-25.25F (%-4.4c) %s"
+set mark_old = no
+set markers = no
+set pager_context = 10
+set pager_index_lines = 10
+set pager_stop
+set read_inc = 5000
+set send_charset = "utf-8"
+set sleep_time = 0
+set smart_wrap
+set sort = 'threads'
+set sort_aux = 'reverse-last-date-received'
+set sort_browser = 'date'
+set ssl_force_tls = yes
+set ssl_starttls = yes
+set text_flowed = yes
+set timeout = 600
+set uncollapse_jump
+set wrap = 80
+
+### custom
+# example config, recommended encrypt with GPG, e.g. using passphrase `gpg2 --symmetric`
+## whoami
+#set from = 'ebony.way@example.com'
+#set realname = 'Ebony Dark'ness Dementia Raven Way'
+## server connection
+#set imap_user='ebony.way@example.com'
+#set smtp_authenticators = 'login'
+#set smtp_url = 'smtps://ebony.way@example.com@smtp.example.com:465/'
+## passwords
+#set imap_pass='STOPFLAMMINGDASTORYPREPZOK'
+#set smtp_pass='STOPFLAMMINGDASTORYPREPZOK'
+## subscribe to LOCAL folders
+#set folder = '/var/mail/ebony'
+#set spoolfile = '/var/mail/ebony'
+## subscribe to REMOTE folders
+#set folder = 'imaps://imap.example.com:993/'
+#set spoolfile = '+INBOX'
+#set postponed = '+Drafts'
+## set record to '' for gmail and when otherwise automatically saved to Sent by server
+#set record = '+Archive'
+#set trash = '+Archive'
+source "gpg2 -dq ${MUTTRC} 2>/dev/null|"
