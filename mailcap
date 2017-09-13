@@ -8,10 +8,10 @@ application/postscript ; /usr/bin/xdg-open %s
 
 #text/html; /usr/bin/xdg-open %s ; copiousoutput
 
-### Begin custom config for mutt ###
+### Begin custom config for mutt et al ###
 # html
 text/html; lynx -vikeys -force_empty_hrefless_a -enable_scrollback -dump %s; nametemplate=%s.html; copiousoutput
-# doc - does anyone still use this?
+# doc
 application/msword; pandoc -s %s -t markdown; copiousoutput
 # docx
 application/vnd.openxmlformats-officedocument.wordprocessingml.document; pandoc -s %s -t markdown; copiousoutput

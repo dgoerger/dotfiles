@@ -1,49 +1,66 @@
 #!/bin/bash
 
 ##### CHANGEME #####
-# upstream repo
-CHAKE_POLICY_REPO='dgoerger/dotfiles'
 # graphics or headless
 GRAPHICAL_INTERFACE=yes
 # fqdn hostname
-FQDN=gelos
+FQDN=gelos.change.me
 # gpu - supports 'intel' or 'nvidia'
 GPU=intel
 # don't use powertop if usb peripherals start giving you trouble
-POWERTOP=yes
+POWERTOP=no
 # do we need an RDP client
 RDP_CLIENT=no
 # enable rpmfusion.org ?
 RPMFUSION=no
+# enable Negativo17 ?
+NEGATIVO17=no
 # https://atom.io ?
 ATOM_EDITOR=no
 # use Google's official version of Chrome ?
 GOOGLE_CHROME=no
+# install Steam ?
+STEAM_CLIENT=no
+
+
+### usage
+function usage () {
+  echo -e "\
+A Fedora Workstation x86_64 postinstall script.\n\
+\n\
+Usage:\n\
+\n\
+  $ # customize the CHANGEME section\n\
+  $ vi postinstall.sh\n\
+  $ # run the script\n\
+  $ sh postinstall.sh\n"
+}
 
 
 ### bomb out if we're doing it wrong
-if [[ "$(uname -m)" != "x86_64" ]]; then
-  echo "ERROR! This script is only compatible with x86_64."
+if [[ -z $(uname -r | grep "\.fc..\.x86_64") ]]; then
+  usage
   exit 1
 fi
-if [[ "$(id -u)" == "0" ]]; then
-  echo "DON'T RUN AS ROOT! DID YOU READ THE SCRIPT BEFORE EXECUTING??"
+if [[ -n "$(sudo bootctl status 2>/dev/null | grep 'Secure Boot: enabled')" ]] && [[ "${GPU}" == 'nvidia' ]]; then
+  echo "!! WARNING: Secure Boot detected !!"
+  echo "- This script will NOT re-sign your kernel. Aborting."
+  echo "  Please disable Secure Boot before proceeding."
   exit 1
-fi
-
+if
 
 ### confirm selections
 echo ""
 echo "You're about to configure this machine with the following parameters:"
-echo "  - Using policy from: https://github.com/${CHAKE_POLICY_REPO}"
 echo "  - Graphical interface? ${GRAPHICAL_INTERFACE}"
 echo "    - Atom text editor: ${ATOM_EDITOR}"
 echo "    - Google Chrome: ${GOOGLE_CHROME}"
 echo "    - RDP client: ${RDP_CLIENT}"
+echo "    - Steam client: ${STEAM_CLIENT}"
 echo "  - Hostname/FQDN: ${FQDN}"
-echo "  - GPU type (this script will NOT re-sign your kernel; careful of Secure Boot): ${GPU}"
-# TODO we should probably sign out-of-band kernel modules
+echo "  - GPU type: ${GPU}"
 echo "  - Enable RPMFUSION repos? ${RPMFUSION}"
+echo "  - Enable Negativo17 repos (auto-enabled if gpu == nvidia)? ${NEGATIVO17}"
 echo ""
 echo "Proceed? (y/N)"
 read yesno
@@ -64,13 +81,13 @@ if [[ "$RPMFUSION" == "yes" ]]; then
   fedora_version=$(uname -r | awk -F"." '{print $(NF-1)}' | grep -E "^fc" | awk -F"fc" '{print $2}')
   sudo dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-${fedora_version}.noarch.rpm
   sudo dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-nonfree-release-${fedora_version}.noarch.rpm
-  if [[ "${GPU}" == "nvidia" ]]; then
-    sudo dnf config-manager --add-repo=http://negativo17.org/repos/fedora-multimedia.repo
-  fi
+fi
+if [[ "${NEGATIVO17}" == "yes" ]] || [[ "${GPU}" == "nvidia" ]]; then
+  sudo dnf config-manager --add-repo=https://negativo17.org/repos/fedora-multimedia.repo
 fi
 
 ########################
-## Remove unnecessary ##
+## Remove extraneous  ##
 ########################
 # hardware
 sudo dnf remove -y atmel-firmware foomatic* fprintd glusterfs* gnome-boxes \
@@ -110,19 +127,13 @@ sudo rkhunter --propupd
 ### Hardware support ###
 ########################
 ## graphics
-if [[ "$RPMFUSION" == "yes" ]]; then
-  if [[ "$GPU" == "intel" ]]; then
+if [[ "$RPMFUSION" == "yes" ]] && [[ "$GPU" == "intel" ]]; then
     sudo dnf install -y libva-intel-driver
-  elif [[ "$GPU" == "nvidia" ]]; then
-    sudo dnf install -y nvidia-driver kernel-devel dkms-nvidia nvidia-driver-cuda cuda nvidia-xconfig
-    sudo nvidia-xconfig
-    sudo systemctl enable dkms
-    sudo dkms autoinstall
-    if [[ -f /usr/lib64/xorg/modules/extensions/libglx.so ]]; then
-      # TODO: more elegant solution... notably needs to be re-done after every xorg update
-      sudo ln -sf /usr/lib64/nvidia/xorg/libglx.so /usr/lib64/xorg/modules/extensions/libglx.so
-    fi
-  fi
+elif [[ "$GPU" == "nvidia" ]]; then
+  sudo dnf install -y nvidia-driver kernel-devel dkms-nvidia nvidia-driver-cuda cuda nvidia-xconfig
+  sudo nvidia-xconfig
+  sudo systemctl enable dkms
+  sudo dkms autoinstall
 fi
 ## broken lenovo wifi driver
 echo "blacklist ideapad_laptop" | sudo tee /etc/modprobe.d/lenovo_wifi.conf
@@ -141,8 +152,9 @@ else
   # optional apps
   if [[ "$RPMFUSION" == "yes" ]]; then
     sudo dnf install -y gstreamer1-libav
-    # needed by Steam
-    sudo dnf install -y libCg.i636 libCg.x86_64
+    if [[ "$STEAM_CLIENT" == "yes" ]]; then
+      sudo dnf install -y steam libCg.i636 libCg.x86_64
+    fi
   fi
   if [[ "$GOOGLE_CHROME" == "yes" ]]; then
     sudo dnf install -y https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
@@ -158,33 +170,16 @@ fi
 
 ### security ###
 sudo firewall-cmd --lockdown-on
-sudo chattr +i /etc/firewalld/firewalld.conf
 
 ### hostname
 sudo hostnamectl set-hostname $FQDN
 
-### chake it
-sudo dnf install -y git-core rubygem-chake $(curl 'https://omnitruck.chef.io/stable/chef/metadata?v=12&p=el&pv=7&m=x86_64' 2>/dev/null | grep -E "^url" | awk -F" " '{print $2}')
-sudo git clone https://github.com/${CHAKE_POLICY_REPO}.git /var/chake --depth=1
-sudo chmod 0750 /var/chake
-echo -e "local://${FQDN}:\n  run_list:\n      - recipe[workstation]" | sudo tee /var/chake/nodes.yaml
-
 ########################
-## First-user Cleanup ##
+##  First-user Setup  ##
 ########################
-## set some rc's
-curl -Lo $HOME/.profile https://github.com/${CHAKE_POLICY_REPO}/raw/master/cookbooks/workstation/files/profile
-curl -Lo $HOME/.bashrc https://github.com/${CHAKE_POLICY_REPO}/raw/master/cookbooks/workstation/files/bashrc
-rm $HOME/.bash_logout
-rm $HOME/.bash_profile
 # set some ~/.ssh perms so we don't have to deal with it later
-mkdir -p $HOME/.ssh
-chmod 700 $HOME/.ssh
+mkdir -p -m0700 $HOME/.ssh
 touch $HOME/.ssh/authorized_keys
 chmod 600 $HOME/.ssh/authorized_keys
 touch $HOME/.ssh/config
 chmod 600 $HOME/.ssh/config
-## why does this exist
-rm -rf $HOME/.pki
-ln -s /dev/null $HOME/.pki
-ln -s ${XDG_RUNTIME_DIR} $HOME/.newsbeuter

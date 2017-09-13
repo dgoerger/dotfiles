@@ -1,4 +1,4 @@
-# ~/.bashrc
+# .bashrc
 
 # source global definitions
 if [[ -f /etc/bashrc ]]; then
@@ -26,4 +26,4 @@ export PS1='\[\e[1;32m\]\h\[\e[0m\]\[\e[1;30m\]\\\>\[\e[0m\] '
 #stty erase '^?' echoe
 
 # mail
-export MUTTRC=${path_to_mutt_gpg}
+#export MUTTRC=${path_to_mutt_gpg}
