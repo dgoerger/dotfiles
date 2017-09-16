@@ -56,6 +56,7 @@ pref("browser.search.geoip.url", "");
 //// disable address/search bar "one-off" custom searches
 pref("browser.urlbar.oneOffSearches", false);
 pref("browser.urlbar.suggest.searches", false);
+pref("browser.urlbar.searchSuggestionsChoice", false);
 
 //// why would anyone need access to these
 pref("dom.battery.enabled", false);
@@ -98,6 +99,7 @@ pref("datareporting.policy.dataSubmissionEnabled.v2", false);
 pref("toolkit.telemetry.enabled", false);
 
 //// disable media plugins
+pref("media.eme.apiVisible", false);
 pref("media.eme.enabled", false);
 pref("media.gmp-provider.enabled", false);
 pref("media.gmp-eme-adobe.enabled", false);
