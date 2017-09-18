@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 UPSTREAM_HOSTS_FILE='https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-porn/hosts'
 
@@ -9,14 +9,17 @@ NETWORKMANAGER_DIR='/etc/NetworkManager/dnsmasq.d'
 NETWORKMANAGER_BLOCKLIST_FILE="${NETWORKMANAGER_DIR}/blocklist.conf"
 DNSMASQ_DIR='/etc/dnsmasq.d'
 DNSMASQ_BLOCKLIST_FILE="${DNSMASQ_DIR}/blocklist.conf"
+UNBOUND_DIR='/var/unbound/etc'
+UNBOUND_BLOCKLIST_FILE="${UNBOUND_DIR}/blocklist.conf"
 TMP='/var/tmp'
 SRC="${TMP}/hostfile.src"
 TMP_RPZ="${TMP}/rpz"
 TMP_DNSMASQ="${TMP}/dnsmasq"
+TMP_UNBOUND="${TMP}/unbound"
 
 
 ## functions
-function build_for_isc_bind () {
+build_for_isc_bind() {
   # build BIND9 RPZ zone file
   echo '$TTL 3H' | tee ${TMP_RPZ} >/dev/null 2>&1
   echo '@                       SOA LOCALHOST. blocked (1 1h 15m 30d 2h)' | tee --append ${TMP_RPZ} >/dev/null 2>&1
@@ -44,7 +47,22 @@ function build_for_isc_bind () {
   fi
 }
 
-function build_for_dnsmasq () {
+build_for_unbound() {
+  awk '$1 == "0.0.0.0" {print "local-zone: \""$2"\" static"}' ${SRC} | tee ${TMP_UNBOUND} >/dev/null 2>&1
+  if [[ -f ${UNBOUND_BLOCKLIST_FILE} ]]; then
+    cp -p ${UNBOUND_BLOCKLIST_FILE} ${UNBOUND_BLOCKLIST_FILE}.bak
+  fi
+  cp ${TMP_UNBOUND} ${UNBOUND_BLOCKLIST_FILE}
+  chown root:_unbound ${UNBOUND_BLOCKLIST_FILE}
+  chmod 0444 ${UNBOUND_BLOCKLIST_FILE}
+  if /usr/sbin/unbound-checkconf >/dev/null 2>&1; then
+    /etc/rc.d/unbound restart
+  elif [[ -f ${UNBOUND_BLOCKLIST_FILE}.bak ]]; then
+    mv ${UNBOUND_BLOCKLIST_FILE}.bak ${UNBOUND_BLOCKLIST_FILE}
+  fi
+}
+
+build_for_dnsmasq() {
   # build for dnsmasq
   echo "# ipv4" | tee ${TMP_DNSMASQ} >/dev/null 2>&1
   awk '$1 == "0.0.0.0" {print "address=\"/" $2 "/0.0.0.0\""}' ${SRC} | tee --append ${TMP_DNSMASQ} >/dev/null 2>&1
@@ -56,7 +74,9 @@ function build_for_dnsmasq () {
 ## main
 if curl -Lo ${SRC} ${UPSTREAM_HOSTS_FILE} 2>/dev/null; then
   # ISC BIND9
-  if systemctl status named >/dev/null 2>&1; then
+  if pgrep unbound >/dev/null 2>&1; then
+    build_for_unbound
+  elif systemctl status named >/dev/null 2>&1; then
     build_for_isc_bind
   # NetworkManager's built-in support for dnsmasq
   elif systemctl status NetworkManager >/dev/null 2>&1; then
