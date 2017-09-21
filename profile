@@ -1,8 +1,12 @@
 # .profile
 
-if [[ "${SHELL}" == "/bin/bash" ]] && [[ -f ${HOME}/.bashrc ]]; then
+if [[ "${SHELL}" == "/bin/bash" ]]; then
   # source env and aliases
-  . ${HOME}/.bashrc
+  if [[ -f ${HOME}/.bashrc ]]; then
+    . ${HOME}/.bashrc
+  elif [[ -f /etc/bashrc ]]; then
+    . /etc/bashrc
+  fi
 else
   # env
   export GIT_AUTHOR_EMAIL="$(getent passwd $LOGNAME | cut -d: -f1)@users.noreply.github.com"
@@ -17,6 +21,8 @@ else
   export LESSHISTFILE=-
   export LYNX_CFG=${HOME}/.lynxrc
   #export MUTTRC=${path_to_mutt_gpg}
+  export PS1="$(printf \\r)$(tput bold)$(tput setaf $(echo ${RANDOM}%8 | /usr/bin/bc))$(hostname -s)$(tput setaf 0)\\>$(tput sgr0) "
+  #export TZ='US/Eastern'
   export VISUAL=vim
 
   # aliases
@@ -29,6 +35,7 @@ else
   alias tree='tree -a'
   alias vi=vim
   alias view='vim --cmd "let no_plugin_maps = 1" -c "runtime! macros/less.vim" -m -n'
+  alias weather='curl -4k https://wttr.in/?m'
 
   # fixes
   #stty erase '^?' echoe

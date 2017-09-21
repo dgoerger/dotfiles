@@ -60,7 +60,12 @@ choco install -y notepadplusplus sdelete
 
 ## optional packages to consider
 #choco install -y atom calibre ccleaner firefox gimp github googlechrome keepassx libreoffice sumatrapdf.install vlc winscp zotero
-#choco install -y curl dnscrypt-proxy git miktex.install nmap openssh pandoc vim
+#choco install -y git miktex.install nmap openssh pandoc vim
+
+## QEMU
+choco install -y curl
+curl.exe -LkO https://www.spice-space.org/download/windows/spice-guest-tools/spice-guest-tools-latest.exe
+.\spice-guest-tools-latest.exe
 
 ## install Windows Updates powershell module
 Install-Module PSWindowsUpdate -AcceptAll
