@@ -124,7 +124,9 @@ pref("browser.formfill.enable", false);
 pref("signon.rememberSignons", false);
 
 //// disable referrer for cross-site requests
+// NB: XOriginPolicy=1 seems to break Atlassian.net login..?
 pref("network.http.referer.XOriginPolicy", 1);
+pref("network.http.referer.XOriginTrimmingPolicy", 2);
 
 //// disable prefetching
 pref("network.prefetch-next", false);
