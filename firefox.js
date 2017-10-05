@@ -62,6 +62,9 @@ pref("browser.urlbar.searchSuggestionsChoice", false);
 pref("dom.battery.enabled", false);
 pref("device.sensors.enabled", false);
 
+//// disable GSSAPI integration - doesn't work under firejail
+pref("network.negotiate-auth.trusted-uris", '');
+
 //// disable misc nonsense
 pref("media.getusermedia.screensharing.enabled", false);
 pref("extensions.pocket.enabled", false);
