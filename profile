@@ -21,7 +21,9 @@ else
   export LESSHISTFILE=-
   export LYNX_CFG=${HOME}/.lynxrc
   #export MUTTRC=${path_to_mutt_gpg}
-  export PS1="$(printf \\r)$(tput bold)$(tput setaf $(echo ${RANDOM}%8 | /usr/bin/bc))$(hostname -s)$(tput setaf 0)\\>$(tput sgr0) "
+## randomized colour prompt
+#  export PS1="$(printf \\r)$(tput bold)$(tput setaf $(echo ${RANDOM}%8 | /usr/bin/bc))$(hostname -s)$(tput setaf 0)\\>$(tput sgr0) "
+  export PS1='$ '
   #export TZ='US/Eastern'
   export VISUAL=vim
 
