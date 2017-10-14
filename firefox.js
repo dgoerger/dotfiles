@@ -16,6 +16,7 @@ pref("browser.newtab.preload", false);
 pref("browser.newtabpage.enhanced", false);
 pref("browser.newtabpage.directory.ping", "");
 pref("browser.newtabpage.directory.source", "");
+pref("browser.newtabpage.activity-stream.enabled", false);
 
 //// set DONOTTRACK header
 pref("privacy.donottrackheader.enabled", true);
