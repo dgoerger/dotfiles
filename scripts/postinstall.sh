@@ -47,7 +47,7 @@ if [[ -n "$(sudo bootctl status 2>/dev/null | grep 'Secure Boot: enabled')" ]] &
   echo "- This script will NOT re-sign your kernel. Aborting."
   echo "  Please disable Secure Boot before proceeding."
   exit 1
-if
+fi
 
 ### confirm selections
 echo ""
