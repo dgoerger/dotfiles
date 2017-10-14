@@ -4,7 +4,6 @@
 #Ciphers +aes256-ctr
 
 Host *
-  Protocol 2
   ControlMaster auto
   ControlPath ~/.ssh/%r@%h:%p
   ServerAliveInterval 5

@@ -63,6 +63,9 @@ pref("browser.urlbar.searchSuggestionsChoice", false);
 pref("dom.battery.enabled", false);
 pref("device.sensors.enabled", false);
 
+//// disable GSSAPI integration - doesn't work under firejail
+pref("network.negotiate-auth.trusted-uris", '');
+
 //// disable misc nonsense
 pref("media.getusermedia.screensharing.enabled", false);
 pref("extensions.pocket.enabled", false);
@@ -125,7 +128,9 @@ pref("browser.formfill.enable", false);
 pref("signon.rememberSignons", false);
 
 //// disable referrer for cross-site requests
+// NB: XOriginPolicy=1 seems to break Atlassian.net login..?
 pref("network.http.referer.XOriginPolicy", 1);
+pref("network.http.referer.XOriginTrimmingPolicy", 2);
 
 //// disable prefetching
 pref("network.prefetch-next", false);
