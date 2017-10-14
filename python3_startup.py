@@ -1,6 +1,6 @@
 #!/bin/python3
 # source: https://unix.stackexchange.com/a/261017
-# usage: source with ENV var 'PYTHONSTARTUP=/path/to/this/file.py'
+# export PYTHONSTARTUP=/usr/local/lib/python3_startup.py
 
 import sys
 # disable history (...but also auto-completion :/ )
