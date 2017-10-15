@@ -24,6 +24,7 @@ else
 ## randomized colour prompt
 #  export PS1="$(printf \\r)$(tput bold)$(tput setaf $(echo ${RANDOM}%8 | /usr/bin/bc))$(hostname -s)$(tput setaf 0)\\>$(tput sgr0) "
   export PS1='$ '
+  #export PYTHONSTARTUP=/usr/local/lib/python3_startup.py
   #export TZ='US/Eastern'
   export VISUAL=vim
 
@@ -43,7 +44,7 @@ else
   #stty erase '^?' echoe
   set -o emacs
   umask 077
-  if [[ "${TERM}" == "screen-256color" ]] || [[ -n "${TMUX}" ]]; then
+  if [[ "${TERM}" == "screen" ]] || [[ -n "${TMUX}" ]]; then
     # tmux window name
     printf '\033k%s@%s\033\\' "${USER}" "${HOSTNAME}"
   fi
