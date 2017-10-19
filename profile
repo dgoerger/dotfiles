@@ -34,16 +34,26 @@ else
   # aliases
   alias bc='bc -l'
   alias cal='cal -m'
-  alias fetch='fetchmail --silent'
-  alias kpcli='kpcli --histfile=/dev/null --readonly'
+  if [[ -x "$(which fetchmail)" ]]; then
+    alias fetch='fetchmail --silent'
+  fi
+  if [[ -x "$(which kpcli)" ]]; then
+    alias kpcli='kpcli --histfile=/dev/null --readonly'
+  fi
   alias l='ls -lh'
   alias la='ls -lha'
   alias less='less -R'
   alias ll='ls -lh'
-  alias tree='tree -a'
-  alias vi=vim
-  alias view='vim --cmd "let no_plugin_maps = 1" -c "runtime! macros/less.vim" -m -n'
-  alias weather='curl -4k https://wttr.in/?m'
+  if [[ -x "$(which tree)" ]]; then
+    alias tree='tree -a'
+  fi
+  if [[ -x "$(which vim)" ]]; then
+    alias vi=vim
+    alias view='vim --cmd "let no_plugin_maps = 1" -c "runtime! macros/less.vim" -m -n'
+  fi
+  if [[ -x "$(which curl)" ]]; then
+    alias weather='curl -4k https://wttr.in/?m'
+  fi
 
   # fixes
   #stty erase '^?' echoe
