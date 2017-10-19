@@ -87,9 +87,12 @@ else
     set -A complete_pkg_info -- $PKG_LIST
     set -A complete_rcctl_1 -- disable enable get ls order set
     set -A complete_rcctl_2 -- $(ls /etc/rc.d)
+    set -A complete_rsync_2 -- $(awk '{split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
+    set -A complete_rsync_3 -- $(awk '{split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
     set -A complete_signify_1 -- -C -G -S -V
     set -A complete_signify_2 -- -q -p -x -c -m -t -z
     set -A complete_signify_3 -- -p -x -c -m -t -z
-    set -A complete_ssh -- $(awk '{split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
+    set -A complete_scp_1 -- $(awk '{split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
+    set -A complete_ssh_1 -- $(awk '{split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
   fi
 fi
