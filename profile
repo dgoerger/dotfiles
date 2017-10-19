@@ -24,13 +24,18 @@ else
 ## randomized colour prompt
 #  export PS1="$(printf \\r)$(tput bold)$(tput setaf $(echo ${RANDOM}%8 | /usr/bin/bc))$(hostname -s)$(tput setaf 0)\\>$(tput sgr0) "
   export PS1='$ '
-  #export PYTHONSTARTUP=/usr/local/lib/python3_startup.py
-  #export TZ='US/Eastern'
+  if [[ -r /usr/local/lib/python3_startup.py ]]; then
+    export PYTHONSTARTUP=/usr/local/lib/python3_startup.py
+  fi
+  export SSH_AUTH_SOCK="${HOME}/.ssh/${USER}.socket"
+  export TZ='US/Eastern'
   export VISUAL=vim
 
   # aliases
   alias bc='bc -l'
   alias cal='cal -m'
+  alias fetch='fetchmail --silent'
+  alias kpcli='kpcli --histfile=/dev/null --readonly'
   alias l='ls -lh'
   alias la='ls -lha'
   alias less='less -R'
@@ -47,5 +52,8 @@ else
   if [[ "${TERM}" == "screen" ]] || [[ -n "${TMUX}" ]]; then
     # tmux window name
     printf '\033k%s@%s\033\\' "${USER}" "${HOSTNAME}"
+  fi
+  if [[ ! -S "${SSH_AUTH_SOCK}" ]]; then
+    eval $(ssh-agent -s -a ${SSH_AUTH_SOCK} >/dev/null)
   fi
 fi
