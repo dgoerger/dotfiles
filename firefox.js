@@ -72,6 +72,7 @@ pref("extensions.pocket.enabled", false);
 pref("extensions.pocket.api", "");
 pref("browser.bookmarks.showRecentlyBookmarked", false);
 pref("browser.download.manager.addToRecentDocs", false);
+pref("extensions.screenshots.disabled", true);
 
 //// disable captive portal detection - GNOME provides this
 pref("network.captive-portal-service.enabled", false);
