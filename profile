@@ -55,5 +55,10 @@ else
   fi
   if [[ ! -S "${SSH_AUTH_SOCK}" ]]; then
     eval $(ssh-agent -s -a ${SSH_AUTH_SOCK} >/dev/null)
+  elif ! $(pgrep -U ${USER} ssh-agent >/dev/null); then
+    if [[ -S "${SSH_AUTH_SOCK}" ]]; then
+      rm "${SSH_AUTH_SOCK}"
+      eval $(ssh-agent -s -a ${SSH_AUTH_SOCK} >/dev/null)
+    fi
   fi
 fi
