@@ -1,0 +1,42 @@
+### OpenBSD 6.2
+# Linode guide:
+# https://www.linode.com/docs/tools-reference/custom-kernels-distros/install-a-custom-distribution-on-a-linode/#install-a-custom-distribution
+# installer disk: 400MB
+
+echo "Have you added your pubkey to ~/.ssh/authorized_keys ? (y/N)"
+read yesno
+if [[ "${yesno}" != 'yes' ]] || [[ "${yesno}" != 'y' ]] || [[ "${yesno}" != 'Y' ]]; then
+  echo "please don't lock yourself out kthx"
+  exit 1
+fi
+if [[ "$(id -u)" != '0' ]]; then
+  echo "please become root"
+  exit 2
+fi
+echo "Please enter DNS domain search domain base:"
+read dnsbase
+
+sed -i 's/\#PasswordAuthentication\ yes/PasswordAuthentication\ no/' /etc/ssh/sshd_config
+/etc/rc.d/sshd restart
+# vi /etc/installurl, select from https://www.openbsd.org/ftp.html#http
+sed -i 's/ffs\ rw/ffs\ rw\,softdep\,noatime/g' /etc/fstab
+reboot
+pkg_add colordiff curl emacs-25.3-no_x11 fetchmail git kpcli less lynx mosh mutt-1.9.1v3-sasl ncdu nmap pstree rsync tree vim-8.0.0987p0-no_x11
+curl -Lo /usr/local/sbin/pomodoro https://raw.githubusercontent.com/dgoerger/dotfiles/master/scripts/pomodoro.sh
+chmod 0555 /usr/local/sbin/pomodoro
+echo -e '\n## CUSTOM\n@weekly /usr/local/sbin/dnsblock\n@daily /usr/sbin/pkg_add -Uu' | tee --append /var/cron/tabs/root
+
+# unbound
+curl -Lo /var/unbound/etc/named.cache https://www.internic.net/domain/named.cache
+unbound-anchor -a /var/unbound/db/root.key
+curl -Lo /var/unbound/etc/unbound.conf https://raw.githubusercontent.com/dgoerger/dotfiles/master/unbound.conf
+curl -Lo /usr/local/sbin/dnsblock https://raw.githubusercontent.com/dgoerger/dotfiles/master/scripts/dnsblock.sh
+chmod 0544 /usr/local/sbin/dnsblock
+echo 'unbound_flags=' | tee --append /etc/rc.conf.local
+echo 'sndiod_flags=NO' | tee --append /etc/rc.conf.local
+mkdir -p /usr/local/etc
+touch /usr/local/etc/blocklist.conf
+/etc/rc.d/unbound start
+sh /usr/local/sbin/dnsblock
+echo -e "interface \"em0\" {\n  supersede domain-name \"${dnsbase}\";\n  supersede domain-name-servers 127.0.0.1;\n  request subnet-mask, broadcast-address, time-offset, routers;\n  require subnet-mask;\n}" | tee /etc/dhclient.conf
+sh /etc/netstart
