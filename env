@@ -35,21 +35,21 @@ export VISUAL=vim
 # aliases
 alias bc='bc -l'
 alias cal='cal -m'
-if [[ -x "$(which colordiff)" ]]; then
+if [[ -x "$(which colordiff 2>/dev/null)" ]]; then
   alias diff='colordiff'
 fi
-if [[ -x "$(which fetchmail)" ]]; then
+if [[ -x "$(which fetchmail 2>/dev/null)" ]]; then
   alias fetch='fetchmail --silent'
 fi
-if [[ -x "$(which kpcli)" ]]; then
+if [[ -x "$(which kpcli 2>/dev/null)" ]]; then
   alias kpcli='kpcli --histfile=/dev/null --readonly'
 fi
 alias less='less -R'
-if [[ -x "$(which vim)" ]]; then
+if [[ -x "$(which vim 2>/dev/null)" ]]; then
   alias vi=vim
   alias view='vim --cmd "let no_plugin_maps = 1" -c "runtime! macros/less.vim" -m -n'
 fi
-if [[ -x "$(which curl)" ]]; then
+if [[ -x "$(which curl 2>/dev/null)" ]]; then
   alias weather='curl -4k https://wttr.in/?m'
 fi
 
@@ -90,7 +90,7 @@ if [[ "$(uname)" == "Linux" ]]; then
   alias listening='netstat -antl | grep -E "Proto|LISTEN "'
   alias ll='ls -lh --color=auto'
   alias ls='ls --color=auto'
-  if [[ -x "$(which --skip-alias tree)" ]]; then
+  if [[ -x "$(which --skip-alias tree 2>/dev/null)" ]]; then
     alias tree='tree -N'
   fi
 fi
@@ -103,7 +103,7 @@ if [[ "$(uname)" == "OpenBSD" ]] && [[ "${SHELL}" == '/bin/ksh' ]]; then
   alias la='ls -lha'
   alias listening='netstat -an | grep -E "Proto|LISTEN"'
   alias ll='ls -lh'
-  if [[ -x "$(which tree)" ]]; then
+  if [[ -x "$(which tree 2>/dev/null)" ]]; then
     alias tree='tree -a'
   fi
 
