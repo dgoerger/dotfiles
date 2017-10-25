@@ -8,7 +8,6 @@ fi
 
 ## global
 # terminal settings
-set -o emacs
 #stty erase '^?' echoe
 umask 077
 
@@ -17,6 +16,7 @@ export GIT_AUTHOR_EMAIL="$(getent passwd $LOGNAME | cut -d: -f1)@users.noreply.g
 export GIT_AUTHOR_NAME="$(getent passwd $LOGNAME | cut -d: -f5 | cut -d, -f1)"
 export GIT_COMMITTER_EMAIL=$GIT_AUTHOR_EMAIL
 export GIT_COMMITTER_NAME=$GIT_AUTHOR_NAME
+export HISTCONTROL=ignoredups
 export HISTFILE=${HOME}/.history
 export HISTSIZE=20736
 export HOSTNAME=$(hostname -s)
@@ -54,7 +54,7 @@ if [[ -x "$(which curl 2>/dev/null)" ]]; then
 fi
 
 # emoji
-alias disapproval='echo '\''ಠ_ಠ'\'''
+alias disapprove='echo '\''ಠ_ಠ'\'''
 alias shrug='echo '\''¯\_(ツ)_/¯'\'''
 alias table-flip='echo '\''(╯°□°）╯︵ ┻━┻'\'''
 
@@ -66,6 +66,7 @@ if [[ -z ${SSH_AUTH_SOCK} ]] || [[ -n $(echo ${SSH_AUTH_SOCK} | grep -E "^/run/u
     eval $(ssh-agent -s -a ${SSH_AUTH_SOCK} >/dev/null)
   elif ! $(pgrep -U ${USER} ssh-agent >/dev/null); then
     if [[ -S "${SSH_AUTH_SOCK}" ]]; then
+      # if proc isn't running but the socket exists, remove and restart
       rm "${SSH_AUTH_SOCK}"
       eval $(ssh-agent -s -a ${SSH_AUTH_SOCK} >/dev/null)
     fi
@@ -83,6 +84,7 @@ fi
 if [[ "$(uname)" == "Linux" ]]; then
   # env
   export QUOTING_STYLE=literal
+  unset LS_COLORS
 
   # aliases
   alias l='ls -lh --color=auto'
@@ -98,14 +100,14 @@ fi
 
 ## OpenBSD
 if [[ "$(uname)" == "OpenBSD" ]] && [[ "${SHELL}" == '/bin/ksh' ]]; then
+  # options
+  set -o emacs
+
   # aliases
   alias l='ls -lh'
   alias la='ls -lha'
   alias listening='netstat -an | grep -E "Proto|LISTEN"'
   alias ll='ls -lh'
-  if [[ -x "$(which tree 2>/dev/null)" ]]; then
-    alias tree='tree -a'
-  fi
 
   # tab completions
   export PKG_LIST=$(ls -1 /var/db/pkg)
