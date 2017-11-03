@@ -7,8 +7,6 @@ GRAPHICAL_INTERFACE=yes
 FQDN=gelos.change.me
 # gpu - supports 'intel' or 'nvidia'
 GPU=intel
-# don't use powertop if usb peripherals start giving you trouble
-POWERTOP=no
 # do we need an RDP client
 RDP_CLIENT=no
 # enable rpmfusion.org ?
@@ -38,7 +36,7 @@ Usage:\n\
 
 
 ### bomb out if we're doing it wrong
-if [[ -z $(uname -r | grep "\.fc..\.x86_64") ]]; then
+if [[ "$(uname -m)" != "x86_64" ]]; then
   usage
   exit 1
 fi
@@ -63,10 +61,8 @@ echo "  - Enable RPMFUSION repos? ${RPMFUSION}"
 echo "  - Enable Negativo17 repos (auto-enabled if gpu == nvidia)? ${NEGATIVO17}"
 echo ""
 echo "Proceed? (y/N)"
-read yesno
-if [[ "${yesno}" == "y" ]] || [[ "${yesno}" == "Y" ]] || [[ "${yesno}" == "yes" ]]; then
-  continue
-else
+read -r yesno
+if [[ "${yesno}" != "y" ]] && [[ "${yesno}" != "Y" ]] && [[ "${yesno}" != "yes" ]]; then
   echo ""
   echo "No action taken."
   echo ""
@@ -79,8 +75,8 @@ fi
 ########################
 if [[ "$RPMFUSION" == "yes" ]]; then
   fedora_version=$(uname -r | awk -F"." '{print $(NF-1)}' | grep -E "^fc" | awk -F"fc" '{print $2}')
-  sudo dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-${fedora_version}.noarch.rpm
-  sudo dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-nonfree-release-${fedora_version}.noarch.rpm
+  sudo dnf install -y "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-${fedora_version}.noarch.rpm"
+  sudo dnf install -y "https://download1.rpmfusion.org/free/fedora/rpmfusion-nonfree-release-${fedora_version}.noarch.rpm"
 fi
 if [[ "${NEGATIVO17}" == "yes" ]] || [[ "${GPU}" == "nvidia" ]]; then
   sudo dnf config-manager --add-repo=https://negativo17.org/repos/fedora-multimedia.repo
@@ -172,14 +168,15 @@ fi
 sudo firewall-cmd --lockdown-on
 
 ### hostname
-sudo hostnamectl set-hostname $FQDN
+sudo hostnamectl set-hostname "${FQDN}"
 
 ########################
 ##  First-user Setup  ##
 ########################
 # set some ~/.ssh perms so we don't have to deal with it later
-mkdir -p -m0700 $HOME/.ssh
-touch $HOME/.ssh/authorized_keys
-chmod 600 $HOME/.ssh/authorized_keys
-touch $HOME/.ssh/config
-chmod 600 $HOME/.ssh/config
+mkdir -p "$HOME/.ssh"
+chmod 0700 "$HOME/.ssh"
+touch "$HOME/.ssh/authorized_keys"
+chmod 600 "$HOME/.ssh/authorized_keys"
+touch "$HOME/.ssh/config"
+chmod 600 "$HOME/.ssh/config"

@@ -24,10 +24,11 @@ if [[ "${1}" == "-h" || "${1}" == "--help" || "${1}" == "--usage" ]]; then
   echo "  sh script"
   echo ""
   echo "The script will search recursively for"
-  echo "filetypes: $(echo ${FILETYPES} | sed 's/\ /\,\ /g')"
+#  echo "filetypes: $(echo ${FILETYPES} | sed 's/\ /\,\ /g')"
+  echo "filetypes: ${FILETYPES//\ /\,\ /g}"
   echo "in the current directory, and copy files"
   echo "containing valid EXIF data to:"
-  echo "$(echo ${MOVETO})\$YYYY/\$MM/\$DD"
+  echo "${MOVETO}\$YYYY/\$MM/\$DD"
   echo ""
   exit
 fi
@@ -42,17 +43,17 @@ fi
 # SKIP IF NOT CALLED BY SELF
 if [[ "${1}" == "doAction" && "${2}" != "" ]]; then
   # fetch EXIF data
-  DATETIME=`exif -t 'DateTime' -m ${2} 2>/dev/null | awk -F" " '{print $1}' | sed 's/\:/\//g' | sort -u`
+  DATETIME=$(exif -t 'DateTime' -m "${2}" 2>/dev/null | awk -F" " '{print $1}' | sed 's/\:/\//g' | sort -u)
   if [[ "${DATETIME}" == "" ]]; then
-    echo "${2}: Abort! DateTime not found" | tee --append ${MOVETO}/$(date +%Y%m%d-%H%M)_import_failure.log
+    echo "${2}: Abort! DateTime not found" | tee --append "${MOVETO}/$(date +%Y%m%d-%H%M)_import_failure.log"
     exit 1;
   fi;
-  if [[ "`echo ${DATETIME} | wc -l`" != "1" ]]; then
-    echo "${2}: Abort! File has more than one DateTime declaration" | tee --append ${MOVETO}/$(date +%Y%m%d-%H%M)_import_failure.log
+  if [[ "$(echo "${DATETIME}" | wc -l)" != "1" ]]; then
+    echo "${2}: Abort! File has more than one DateTime declaration" | tee --append "${MOVETO}/$(date +%Y%m%d-%H%M)_import_failure.log"
     exit 1;
   fi
   # lowercase filename and use the current extension as-is
-  FILENAME=`echo ${2} | awk -F"/" '{print $NF}' | tr '[:upper:]' '[:lower:]'`
+  FILENAME=$(echo "${2}" | awk -F"/" '{print $NF}' | tr '[:upper:]' '[:lower:]')
   # copy is safer than move
   mkdir -p "${MOVETO}/${DATETIME}" && cp -np "${2}" "${MOVETO}/${DATETIME}/${FILENAME}"
   echo ": success!"
@@ -64,7 +65,7 @@ fi;
 ##############################################
 for x in ${FILETYPES}; do
   # check for exif command
-  EXIF=`which exif`
+  EXIF=$(which exif)
   if [ "${EXIF}" == "" ]; then
     echo "Abort! The 'exif' command is missing or unavailable"
     exit 1
@@ -74,5 +75,5 @@ for x in ${FILETYPES}; do
 done
 
 # clean up empty dirs and dbs
-find ${MOVETO} -name "Thumbs.db" -delete
-find ${MOVETO} -empty -delete
+find "${MOVETO}" -name "Thumbs.db" -delete
+find "${MOVETO}" -empty -delete
