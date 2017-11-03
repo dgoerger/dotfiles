@@ -1,10 +1,12 @@
+#!/bin/ksh
+
 ### OpenBSD 6.2
 # Linode guide:
 # https://www.linode.com/docs/tools-reference/custom-kernels-distros/install-a-custom-distribution-on-a-linode/#install-a-custom-distribution
 # installer disk: 400MB
 
 echo "Have you added your pubkey to ~/.ssh/authorized_keys ? (y/N)"
-read yesno
+read -r yesno
 if [[ "${yesno}" != 'yes' ]] || [[ "${yesno}" != 'y' ]] || [[ "${yesno}" != 'Y' ]]; then
   echo "please don't lock yourself out kthx"
   exit 1
@@ -14,11 +16,16 @@ if [[ "$(id -u)" != '0' ]]; then
   exit 2
 fi
 echo "Please enter DNS domain search domain base:"
-read dnsbase
+read -r dnsbase
 
 sed -i 's/\#PasswordAuthentication\ yes/PasswordAuthentication\ no/' /etc/ssh/sshd_config
+sed -i 's/\#ChallengeResponseAuthentication\ yes/ChallengeResponseAuthentication\ no/' /etc/ssh/sshd_config
 /etc/rc.d/sshd restart
-# vi /etc/installurl, select from https://www.openbsd.org/ftp.html#http
+
+echo "Please enter an installurl, selected from https://www.openbsd.org/ftp.html#http"
+read -r installurl
+echo "${installurl}" | tee /etc/installurl
+
 sed -i 's/ffs\ rw/ffs\ rw\,softdep\,noatime/g' /etc/fstab
 reboot
 pkg_add colordiff curl emacs-25.3-no_x11 fetchmail git kpcli less lynx mosh mutt-1.9.1v3-sasl ncdu nmap pstree rsync tree vim-8.0.0987p0-no_x11
