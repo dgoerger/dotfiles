@@ -2,6 +2,10 @@
 
 UPSTREAM_HOSTS_FILE='https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-porn/hosts'
 
+# crontab doesn't necessarily have a full path
+PATH=${PATH}:/usr/local/bin:/usr/local/sbin
+export PATH
+
 TMP='/tmp/unbound'
 SRC='/tmp/hostfile.src'
 CONF_DIR='/usr/local/etc'
