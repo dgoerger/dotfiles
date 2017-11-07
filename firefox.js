@@ -40,8 +40,7 @@ pref("browser.startup.page", 0);
 //// enable tracking protection
 pref("privacy.trackingprotection.enabled", true);
 pref("privacy.trackingprotection.pbmode.enabled", true);
-// NB: breaks flash, ref moz#1317846 - no flash on linux anyway
-// see: https://wiki.mozilla.org/Security/Fingerprinting
+// ref: https://wiki.mozilla.org/Security/Fingerprinting
 pref("privacy.resistFingerprinting", true);
 
 //// discard third-party cookies
@@ -73,6 +72,10 @@ pref("extensions.pocket.api", "");
 pref("browser.bookmarks.showRecentlyBookmarked", false);
 pref("browser.download.manager.addToRecentDocs", false);
 pref("extensions.screenshots.disabled", true);
+pref("browser.onboarding.enabled", false);
+pref("media.autoplay.enabled", false);
+pref("dom.serviceWorkers.enabled", false);
+pref("offline-apps.allow_by_default", false);
 
 //// disable captive portal detection - GNOME provides this
 pref("network.captive-portal-service.enabled", false);
@@ -108,6 +111,7 @@ pref("media.eme.apiVisible", false);
 pref("media.eme.enabled", false);
 pref("media.gmp-provider.enabled", false);
 pref("media.gmp-eme-adobe.enabled", false);
+pref("media.gmp-widevinecdm.enabled", false);
 pref("media.gmp-gmpopenh264.enabled", false);
 pref("media.gmp-gmpopenh264.provider.enabled", false);
 pref("media.gmp-manager.url", "");
@@ -121,6 +125,9 @@ pref("browser.search.suggest.enabled", false);
 
 //// disable Firefox Heartbeat Rating Widget
 pref("browser.selfsupport.url", "");
+// ref: https://wiki.mozilla.org/Firefox/Shield
+pref("extensions.shield-recipe-client.enabled", false);
+pref("extensions.shield-recipe-client.api_url", "");
 
 //// disable formfill
 pref("browser.formfill.enable", false);
@@ -129,14 +136,18 @@ pref("browser.formfill.enable", false);
 pref("signon.rememberSignons", false);
 
 //// disable referrer for cross-site requests
+// ref: https://wiki.mozilla.org/Security/Referrer
 // NB: XOriginPolicy=1 seems to break Atlassian.net login..?
 pref("network.http.referer.XOriginPolicy", 1);
 pref("network.http.referer.XOriginTrimmingPolicy", 2);
+pref("network.http.referer.userControlPolicy", 2);
 
 //// disable prefetching
 pref("network.prefetch-next", false);
 pref("network.dns.disablePrefetch", true);
 pref("network.dns.disablePrefetchFromHTTPS", true);
+pref("network.http.speculative-parallel-limit", 0);
+pref("network.predictor.enabled", false);
 pref("network.http.speculative-parallel-limit", 0);
 
 //// security
@@ -149,6 +160,12 @@ pref("security.cert_pinning.enforcement_level", 2);
 pref("security.ssl.treat_unsafe_negotiation_as_broken", true);
 pref("security.insecure_password.ui.enabled", true);
 pref("webgl.disabled", true);
+pref("webgl.enable-webgl2", false);
+
+//// try to upgrade http -> https using hsts
+// ref: https://bugzilla.mozilla.org/show_bug.cgi?id=1246540#c145
+pref("security.mixed_content.use_hsts", true);
+pref("security.mixed_content.send_hsts_priming", false);
 
 //// block non-perfect forward secrecy legacy ciphers
 pref("security.tls.version.min", 3);
@@ -166,14 +183,22 @@ pref("network.proxy.socks_port", 1080);
 pref("network.proxy.socks_remote_dns", true);
 
 //// block webrtc IP leak: https://ipleak.net/#webrtcleak
+// ref: https://wiki.mozilla.org/Media/WebRTC/Privacy
 pref("media.peerconnection.enabled", false);
 pref("media.peerconnection.use_document_iceservers", false);
+pref("media.peerconnection.ice.no_host", true);
 pref("media.navigator.enabled", false);
 pref("media.getusermedia.screensharing.enabled", false);
 pref("media.getusermedia.screensharing.allowed_domains", "");
+pref("media.navigator.enabled", false);
+
+//// block leak of intermediate cached certs
+// ref: https://bugzilla.mozilla.org/show_bug.cgi?id=1334485#c18
+pref("security.nocertdb", true);
 
 //// don't leak text selection and copy/paste
 pref("dom.event.clipboardevents.enabled", false);
+pref("dom.allow_cut_copy", false);
 
 //// don't try to "fix up" url typos -> localhost means localhost not www.localhost.com
 pref("browser.fixup.alternate.enabled", false);
