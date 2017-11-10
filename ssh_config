@@ -2,6 +2,8 @@
 
 # commonly needed for legacy hosts
 #Ciphers +aes256-ctr
+#KexAlgorithms +diffie-hellman-group14-sha1
+#MACs +hmac-sha1
 
 Host *
   ControlMaster auto
