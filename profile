@@ -47,8 +47,11 @@ fi
 if [[ -x "$(which kpcli 2>/dev/null)" ]]; then
   alias kpcli='kpcli --histfile=/dev/null --readonly'
 fi
+alias l='ls -lh'
+alias la='ls -lha'
 alias less='less -R'
 alias listening='netstat -an | less'
+alias ll='ls -lh'
 if [[ -x "$(which vim 2>/dev/null)" ]]; then
   alias vi=vim
   alias view='vim --cmd "let no_plugin_maps = 1" -c "runtime! macros/less.vim" -m -n'
@@ -64,32 +67,36 @@ alias table_flip='echo '\''(╯°□°）╯︵ ┻━┻'\'''
 
 
 ## daemons
-# gpg-agent
-if [[ -z "$(pgrep -U ${USER} gpg-agent)" ]]; then
-  # if not running but socket exists, delete
-  if [[ -S "${HOME}/.gnupg/S.gpg-agent" ]]; then
-    rm "${HOME}/.gnupg/S.gpg-agent"
-  elif [[ -S "${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent" ]]; then
-    rm "${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent"
-  elif [[ ! -d "${HOME}/.gnupg" ]]; then
-    mkdir -m0700 -p "${HOME}/.gnupg"
-  fi
-  if [[ -x "$(which gpg-agent 2>/dev/null)" ]]; then
-    eval $(gpg-agent --daemon --quiet 2>/dev/null)
-  fi
-fi
+if [[ "$(uname)" != 'NetBSD' ]]; then
+  # pgrep coredumps on sdf.org..?
 
-# ssh-agent
-if [[ -z ${SSH_AUTH_SOCK} ]] || [[ -n $(echo ${SSH_AUTH_SOCK} | grep -E "^/run/user/$(id -u)/keyring/ssh$") ]]; then
-  # if ssh-agent isn't running OR GNOME Keyring controls the socket
-  export SSH_AUTH_SOCK="${HOME}/.ssh/${USER}.socket"
-  if [[ ! -S "${SSH_AUTH_SOCK}" ]]; then
-    eval $(ssh-agent -s -a ${SSH_AUTH_SOCK} >/dev/null)
-  elif ! $(pgrep -U ${USER} ssh-agent >/dev/null); then
-    if [[ -S "${SSH_AUTH_SOCK}" ]]; then
-      # if proc isn't running but the socket exists, remove and restart
-      rm "${SSH_AUTH_SOCK}"
+  # gpg-agent
+  if [[ -z "$(pgrep -U ${USER} gpg-agent)" ]]; then
+    # if not running but socket exists, delete
+    if [[ -S "${HOME}/.gnupg/S.gpg-agent" ]]; then
+      rm "${HOME}/.gnupg/S.gpg-agent"
+    elif [[ -S "${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent" ]]; then
+      rm "${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent"
+    elif [[ ! -d "${HOME}/.gnupg" ]]; then
+      mkdir -m0700 -p "${HOME}/.gnupg"
+    fi
+    if [[ -x "$(which gpg-agent 2>/dev/null)" ]]; then
+      eval $(gpg-agent --daemon --quiet 2>/dev/null)
+    fi
+  fi
+
+  # ssh-agent
+  if [[ -z ${SSH_AUTH_SOCK} ]] || [[ -n $(echo ${SSH_AUTH_SOCK} | grep -E "^/run/user/$(id -u)/keyring/ssh$") ]]; then
+    # if ssh-agent isn't running OR GNOME Keyring controls the socket
+    export SSH_AUTH_SOCK="${HOME}/.ssh/${USER}.socket"
+    if [[ ! -S "${SSH_AUTH_SOCK}" ]]; then
       eval $(ssh-agent -s -a ${SSH_AUTH_SOCK} >/dev/null)
+    elif ! $(pgrep -U ${USER} ssh-agent >/dev/null); then
+      if [[ -S "${SSH_AUTH_SOCK}" ]]; then
+        # if proc isn't running but the socket exists, remove and restart
+        rm "${SSH_AUTH_SOCK}"
+        eval $(ssh-agent -s -a ${SSH_AUTH_SOCK} >/dev/null)
+      fi
     fi
   fi
 fi
@@ -118,20 +125,22 @@ if [[ "$(uname)" == "Linux" ]]; then
   fi
 fi
 
+## NetBSD
+if [[ "$(uname)" == "NetBSD" ]]; then
+  # env
+  PAGER=less
+
+  # aliases
+  cal='cal -europe -nocolor'
+fi
 
 ## OpenBSD
 if [[ "$(uname)" == "OpenBSD" ]] && [[ "${SHELL}" == '/bin/ksh' ]]; then
-  # options
-  set -o emacs
-
   # aliases
   if [[ -x "$(which cabal 2>/dev/null)" ]] && [[ -d /usr/local/cabal/build ]] && [[ -w /usr/local/cabal/build ]]; then
     # ref: https://deftly.net/posts/2017-10-12-using-cabal-on-openbsd.html
     alias cabal='env TMPDIR=/usr/local/cabal/build/ cabal'
   fi
-  alias l='ls -lh'
-  alias la='ls -lha'
-  alias ll='ls -lh'
 
   # tab completions
   export PKG_LIST=$(ls -1 /var/db/pkg)
@@ -157,6 +166,7 @@ if [[ "$(uname)" == "OpenBSD" ]] && [[ "${SHELL}" == '/bin/ksh' ]]; then
 fi
 
 ### source profile-local files
+set -o emacs
 if [[ -r "${HOME}/.profile.local" ]]; then
   . ${HOME}/.profile.local
 fi
