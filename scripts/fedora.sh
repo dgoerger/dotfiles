@@ -4,7 +4,7 @@
 # graphics or headless
 GRAPHICAL_INTERFACE=yes
 # fqdn hostname
-FQDN=gelos.change.me
+FQDN=host.change.me
 # gpu - supports 'intel' or 'nvidia'
 GPU=intel
 # do we need an RDP client
@@ -40,11 +40,13 @@ if [[ "$(uname -m)" != "x86_64" ]]; then
   usage
   exit 1
 fi
-if [[ -n "$(sudo bootctl status 2>/dev/null | grep 'Secure Boot: enabled')" ]] && [[ "${GPU}" == 'nvidia' ]]; then
-  echo "!! WARNING: Secure Boot detected !!"
-  echo "- This script will NOT re-sign your kernel. Aborting."
-  echo "  Please disable Secure Boot before proceeding."
-  exit 1
+if sudo bootctl status 2>/dev/null | grep -q 'Secure Boot: enabled'; then
+  if [[ "${GPU}" == 'nvidia' ]]; then
+    echo "!! WARNING: Secure Boot detected !!"
+    echo "- This script will NOT re-sign your kernel. Aborting."
+    echo "  Please disable Secure Boot before proceeding."
+    exit 1
+  fi
 fi
 
 ### confirm selections
