@@ -42,6 +42,8 @@ pref("privacy.trackingprotection.enabled", true);
 pref("privacy.trackingprotection.pbmode.enabled", true);
 // ref: https://wiki.mozilla.org/Security/Fingerprinting
 pref("privacy.resistFingerprinting", true);
+// ref: https://wiki.mozilla.org/Security/FirstPartyIsolation
+pref("privacy.firstparty.isolate", true);
 
 //// discard third-party cookies
 pref("network.cookie.cookieBehavior", 1);
