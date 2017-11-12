@@ -14,7 +14,7 @@ releases of
   2. OpenBSD
   3. NetBSD
 
-Windows 10 compatibility is best-effort.
+macOS compatibility is untested. Windows 10 compatibility is best-effort.
 
 
 Testing
