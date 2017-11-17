@@ -112,6 +112,9 @@ rhythmbox shotwell transmission-*
 # remove the fullscreen pinentry dialogue for gpg2, i.e. default to cli prompt
 sudo dnf remove -y pinentry-gnome3
 
+# disable avahi - we aren't running any public Zeroconf services locally
+sudo systemctl disable --now avahi-daemon.service
+
 # clean up and patch
 sudo dnf autoremove -y
 sudo dnf upgrade -y
