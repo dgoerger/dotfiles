@@ -49,6 +49,9 @@
         }
     },
     "enable_do_not_track": true,
+    "local_discovery": {
+      "notifications_enabled": false
+    },
     "first_run_tabs": [
         "https://start.fedoraproject.org"
     ],
