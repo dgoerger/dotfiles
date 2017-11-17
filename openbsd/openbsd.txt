@@ -29,7 +29,7 @@ echo "${installurl}" | tee /etc/installurl
 sed -i 's/ffs\ rw/ffs\ rw\,softdep\,noatime/g' /etc/fstab
 #reboot
 
-pkg_add calcurse colordiff curl emacs-25.3-no_x11 fetchmail ghc git gnupg-2.1.23 kpcli lynx mosh mutt-1.9.1v3-gpgme-sasl ncdu nmap pstree python-3.6.2 rsync tree vim-8.0.0987p0-no_x11
+pkg_add calcurse colordiff curl dnscrypt-proxy emacs-25.3-no_x11 fetchmail ghc git gnupg kpcli lynx mosh mutt-1.9.1v3-gpgme-sasl ncdu nmap pstree python-3.6.2 rsync tree vim-8.0.0987p0-no_x11
 curl -Lo /usr/local/sbin/pomodoro https://raw.githubusercontent.com/dgoerger/dotfiles/master/scripts/pomodoro.sh
 curl -Lo /usr/local/sbin/update_pf https://raw.githubusercontent.com/dgoerger/dotfiles/master/scripts/update_pf.sh
 chmod 0555 /usr/local/sbin/pomodoro
