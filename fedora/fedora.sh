@@ -115,6 +115,9 @@ sudo dnf remove -y pinentry-gnome3
 # disable avahi - we aren't running any public Zeroconf services locally
 sudo systemctl disable --now avahi-daemon.service
 
+# disable modemmanager
+sudo systemctl disable --now ModemManager
+
 # clean up and patch
 sudo dnf autoremove -y
 sudo dnf upgrade -y
@@ -174,6 +177,11 @@ sudo firewall-cmd --lockdown-on
 
 ### hostname
 sudo hostnamectl set-hostname "${FQDN}"
+
+### dns
+sudo dnf install -y dnssec-trigger
+sudo curl -Lo /etc/NetworkManager/NetworkManager.conf https://raw.githubusercontent.com/dgoerger/dotfiles/master/fedora/NetworkManager.conf
+sudo systemctl enable --now dnssec-triggerd.service
 
 ########################
 ##  First-user Setup  ##
