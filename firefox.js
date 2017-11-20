@@ -69,6 +69,7 @@ pref("network.negotiate-auth.trusted-uris", '');
 
 //// disable misc nonsense
 pref("media.getusermedia.screensharing.enabled", false);
+pref("media.getusermedia.screensharing.allowed_domains", "");
 pref("extensions.pocket.enabled", false);
 pref("extensions.pocket.api", "");
 pref("browser.bookmarks.showRecentlyBookmarked", false);
@@ -150,7 +151,6 @@ pref("network.dns.disablePrefetch", true);
 pref("network.dns.disablePrefetchFromHTTPS", true);
 pref("network.http.speculative-parallel-limit", 0);
 pref("network.predictor.enabled", false);
-pref("network.http.speculative-parallel-limit", 0);
 
 //// security
 pref("security.mixed_content.block_active_content", true);
@@ -189,9 +189,6 @@ pref("network.proxy.socks_remote_dns", true);
 pref("media.peerconnection.enabled", false);
 pref("media.peerconnection.use_document_iceservers", false);
 pref("media.peerconnection.ice.no_host", true);
-pref("media.navigator.enabled", false);
-pref("media.getusermedia.screensharing.enabled", false);
-pref("media.getusermedia.screensharing.allowed_domains", "");
 pref("media.navigator.enabled", false);
 
 //// block leak of intermediate cached certs
