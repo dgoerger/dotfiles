@@ -97,6 +97,8 @@ pref("browser.safebrowsing.downloads.enabled", false);
 pref("browser.safebrowsing.downloads.remote.enabled", false);
 pref("browser.safebrowsing.malware.enabled", false);
 pref("browser.safebrowsing.phishing.enabled", false);
+// ref: https://www.ghacks.net/2017/07/13/privacy-blunder-firefox-getaddons-page-google-analytics
+pref("extensions.webservice.discoverURL", '');
 
 //// duckduckgo as default search
 pref("browser.search.defaultenginename", "data:text/plain,browser.search.defaultenginename=DuckDuckGo");
