@@ -43,6 +43,7 @@ pref("privacy.trackingprotection.pbmode.enabled", true);
 // ref: https://wiki.mozilla.org/Security/Fingerprinting
 pref("privacy.resistFingerprinting", true);
 // ref: https://wiki.mozilla.org/Security/FirstPartyIsolation
+// NB: appears to break Atlassian login
 pref("privacy.firstparty.isolate", true);
 
 //// discard third-party cookies
@@ -66,6 +67,9 @@ pref("device.sensors.enabled", false);
 
 //// disable GSSAPI integration - doesn't work under firejail
 pref("network.negotiate-auth.trusted-uris", '');
+
+//// enable U2F support rhbz#1513968
+pref("security.webauth.u2f", true);
 
 //// disable misc nonsense
 pref("media.getusermedia.screensharing.enabled", false);
