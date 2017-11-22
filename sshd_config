@@ -1,0 +1,24 @@
+#	$OpenBSD: sshd_config,v 1.101 2017/03/14 07:19:07 djm Exp $
+
+# This is the sshd server system-wide configuration file.  See
+# sshd_config(5) for more information.
+
+## Authentication
+PermitRootLogin no
+PubkeyAuthentication yes
+PasswordAuthentication yes
+AuthenticationMethods publickey,password
+AuthorizedKeysFile	.ssh/authorized_keys
+PermitEmptyPasswords no
+ChallengeResponseAuthentication no
+MaxAuthTries 3
+HostKeyAlgorithms ssh-ed25519,ssh-rsa
+# Linux-only
+#UsePAM yes
+
+# env
+AcceptEnv LANG LC_ALL TZ
+
+## override default of no subsystems
+#link /usr/libexec/sftp-server /usr/libexec/openssh/sftp-server on Linux
+Subsystem	sftp /usr/libexec/sftp-server
