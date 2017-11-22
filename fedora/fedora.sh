@@ -183,6 +183,9 @@ sudo dnf install -y dnssec-trigger
 sudo curl -Lo /etc/NetworkManager/NetworkManager.conf https://raw.githubusercontent.com/dgoerger/dotfiles/master/fedora/NetworkManager.conf
 sudo systemctl enable --now dnssec-triggerd.service
 
+### harmonize bsd/linux
+sudo ln -s /usr/libexec/openssh/sftp-server /usr/libexec/sftp-server
+
 ########################
 ##  First-user Setup  ##
 ########################
