@@ -116,6 +116,7 @@ if [[ "$(uname)" == "Linux" ]]; then
   unset LS_COLORS
 
   # aliases
+  alias doas='/usr/bin/sudo' #mostly-compatible
   alias l='ls -lh --color=auto'
   alias la='ls -lha --color=auto'
   alias ll='ls -lh --color=auto'
