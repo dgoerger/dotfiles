@@ -34,6 +34,9 @@ pref("browser.cache.disk.enable", false);
 pref("browser.cache.disk_cache_ssl", false);
 pref("browser.cache.offline.enable", false);
 
+//// resolves OpenBSD OOM error
+pref("javascript.options.asmjs", false);
+
 //// by default open to blank page
 pref("browser.startup.page", 0);
 
@@ -169,6 +172,7 @@ pref("security.ssl.treat_unsafe_negotiation_as_broken", true);
 pref("security.insecure_password.ui.enabled", true);
 pref("webgl.disabled", true);
 pref("webgl.enable-webgl2", false);
+pref("security.data_uri.block_toplevel_data_uri_navigations", true);
 
 //// try to upgrade http -> https using hsts
 // ref: https://bugzilla.mozilla.org/show_bug.cgi?id=1246540#c145
