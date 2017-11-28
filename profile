@@ -50,7 +50,7 @@ fi
 alias l='ls -lh'
 alias la='ls -lha'
 alias less='less -R'
-alias listening='netstat -an | less'
+alias listening='fstat -n | grep internet'
 alias ll='ls -lh'
 if [[ -x "$(which vim 2>/dev/null)" ]]; then
   alias vi=vim
@@ -119,6 +119,8 @@ if [[ "$(uname)" == "Linux" ]]; then
   alias doas='/usr/bin/sudo' #mostly-compatible
   alias l='ls -lh --color=auto'
   alias la='ls -lha --color=auto'
+  # linux doesn't have fstat, but does have a pretty good netstat
+  alias listening='netstat -launt'
   alias ll='ls -lh --color=auto'
   alias ls='ls --color=auto'
   if [[ -x "$(which --skip-alias tree 2>/dev/null)" ]]; then
