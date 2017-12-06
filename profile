@@ -7,6 +7,20 @@ if [[ "${SHELL}" == "/bin/bash" ]] && [[ -r /etc/bashrc ]]; then
   . /etc/bashrc
 fi
 
+# detect git branch (if any)
+_git_branch() {
+  _br="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
+  if [ -n "${_br}" ]; then
+    if [ "${_br}" = 'master' ]; then
+      # alert with RED when operating on `master`
+      printf "[\033[1;31m${_br}\033[m]"
+    else
+      # else print branch name in GREEN
+      printf "[\033[1;32m${_br}\033[m]"
+    fi
+  fi
+}
+
 # terminal settings
 #stty erase '^?' echoe
 umask 077
@@ -27,7 +41,7 @@ export LESSSECURE=1
 export LESSHISTFILE=-
 export LYNX_CFG=${HOME}/.lynxrc
 #export MUTTRC=${path_to_mutt_gpg}
-export PS1='$ '
+export PS1='$(_git_branch)$ '
 if [[ -r /usr/local/lib/python3_startup.py ]]; then
   export PYTHONSTARTUP=/usr/local/lib/python3_startup.py
 fi
