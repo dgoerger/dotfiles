@@ -10,13 +10,14 @@ fi
 # detect git branch (if any)
 _git_branch() {
   _br="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
-  if [ -n "${_br}" ]; then
+  _project="$(git rev-parse --show-toplevel 2>/dev/null | awk -F'/' '{print $NF}')"
+  if [ -n "${_br}" ] && [ -n "${_project}" ]; then
     if [ "${_br}" = 'master' ]; then
       # alert with RED when operating on `master`
-      printf "[\033[1;31m${_br}\033[m]"
+      printf "[\033[1;34m%s\033[m@\033[1;31m%s\033[m]" "${_project}" "${_br}"
     else
       # else print branch name in GREEN
-      printf "[\033[1;32m${_br}\033[m]"
+      printf "[\033[1;34m%s\033[m@\033[1;32m%s\033[m]" "${_project}" "${_br}"
     fi
   fi
 }
