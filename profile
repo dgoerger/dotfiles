@@ -62,11 +62,11 @@ fi
 if [[ -x "$(which kpcli 2>/dev/null)" ]]; then
   alias kpcli='kpcli --histfile=/dev/null --readonly'
 fi
-alias l='ls -lh'
-alias la='ls -lha'
+alias l='ls -lhF'
+alias la='ls -lhFa'
 alias less='less -R'
 alias listening='fstat -n | grep internet'
-alias ll='ls -lh'
+alias ll='ls -lhF'
 if [[ -x "$(which vim 2>/dev/null)" ]]; then
   alias vi=vim
   alias view='vim --cmd "let no_plugin_maps = 1" -c "runtime! macros/less.vim" -m -n'
@@ -126,12 +126,12 @@ if [[ "$(uname)" == "Linux" ]]; then
 
   # aliases
   alias doas='/usr/bin/sudo' #mostly-compatible
-  alias l='ls -lh --color=auto'
-  alias la='ls -lha --color=auto'
+  alias l='ls -lhF --color=auto'
+  alias la='ls -lhFa --color=auto'
   # linux doesn't have fstat, but does have a pretty good netstat
   alias listening='netstat -launt'
-  alias ll='ls -lh --color=auto'
-  alias ls='ls --color=auto'
+  alias ll='ls -lhF --color=auto'
+  alias ls='ls -F --color=auto'
   if [[ -x "$(which --skip-alias tree 2>/dev/null)" ]]; then
     alias tree='tree -N'
   fi
