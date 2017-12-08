@@ -28,10 +28,10 @@ umask 077
 
 
 ## environment variables
-export GIT_AUTHOR_EMAIL="$(getent passwd $LOGNAME | cut -d: -f1)@users.noreply.github.com"
-export GIT_AUTHOR_NAME="$(getent passwd $LOGNAME | cut -d: -f5 | cut -d, -f1)"
-export GIT_COMMITTER_EMAIL=$GIT_AUTHOR_EMAIL
-export GIT_COMMITTER_NAME=$GIT_AUTHOR_NAME
+export GIT_AUTHOR_EMAIL="$(getent passwd ${LOGNAME} | cut -d: -f1)@users.noreply.github.com"
+export GIT_AUTHOR_NAME="$(getent passwd ${LOGNAME} | cut -d: -f5 | cut -d, -f1)"
+export GIT_COMMITTER_EMAIL=${GIT_AUTHOR_EMAIL}
+export GIT_COMMITTER_NAME=${GIT_AUTHOR_NAME}
 export HISTCONTROL=ignoredups
 export HISTFILE=${HOME}/.history
 export HISTSIZE=20736
@@ -86,7 +86,7 @@ if [[ "$(uname)" != 'NetBSD' ]]; then
   # pgrep coredumps on sdf.org..?
 
   # gpg-agent
-  if [[ -z "$(pgrep -U ${USER} gpg-agent)" ]]; then
+  if [[ -z "$(pgrep -U "${USER}" gpg-agent)" ]]; then
     # if not running but socket exists, delete
     if [[ -S "${HOME}/.gnupg/S.gpg-agent" ]]; then
       rm "${HOME}/.gnupg/S.gpg-agent"
@@ -105,21 +105,15 @@ if [[ "$(uname)" != 'NetBSD' ]]; then
     # if ssh-agent isn't running OR GNOME Keyring controls the socket
     export SSH_AUTH_SOCK="${HOME}/.ssh/${USER}.socket"
     if [[ ! -S "${SSH_AUTH_SOCK}" ]]; then
-      eval $(ssh-agent -s -a ${SSH_AUTH_SOCK} >/dev/null)
-    elif ! $(pgrep -U ${USER} ssh-agent >/dev/null); then
+      eval $(ssh-agent -s -a "${SSH_AUTH_SOCK}" >/dev/null)
+    elif ! pgrep -U "${USER}" ssh-agent >/dev/null; then
       if [[ -S "${SSH_AUTH_SOCK}" ]]; then
         # if proc isn't running but the socket exists, remove and restart
         rm "${SSH_AUTH_SOCK}"
-        eval $(ssh-agent -s -a ${SSH_AUTH_SOCK} >/dev/null)
+        eval $(ssh-agent -s -a "${SSH_AUTH_SOCK}" >/dev/null)
       fi
     fi
   fi
-fi
-
-# tmux
-if [[ "${TERM}" == "screen" ]] || [[ -n "${TMUX}" ]]; then
-  # set tmux window name
-  printf '\033k%s@%s\033\\' "${USER}" "${HOSTNAME}"
 fi
 
 
@@ -146,10 +140,10 @@ fi
 ## NetBSD
 if [[ "$(uname)" == "NetBSD" ]]; then
   # env
-  PAGER=less
+  export PAGER=less
 
   # aliases
-  cal='cal -europe -nocolor'
+  alias cal='cal -europe -nocolor'
 fi
 
 ## OpenBSD
@@ -161,7 +155,6 @@ if [[ "$(uname)" == "OpenBSD" ]] && [[ "${SHELL}" == '/bin/ksh' ]]; then
   fi
 
   # tab completions
-  export PKG_LIST=$(ls -1 /var/db/pkg)
   set -A complete_git_1 -- add bisect blame checkout clone commit diff log mv pull push rebase reset revert rm stash status submodule
   set -A complete_gpg2 -- --refresh --receive-keys --armor --clearsign --sign --list-key --decrypt --verify --detach-sig
   set -A complete_ifconfig_1 -- $(ifconfig | awk -F':' '/^[a-z]/ {print $1}')
@@ -170,8 +163,6 @@ if [[ "$(uname)" == "OpenBSD" ]] && [[ "${SHELL}" == '/bin/ksh' ]]; then
   set -A complete_mosh_2 -- --
   set -A complete_mosh_3 -- tmux
   set -A complete_mosh_4 -- attach
-  set -A complete_pkg_delete -- ${PKG_LIST}
-  set -A complete_pkg_info -- ${PKG_LIST}
   set -A complete_rcctl_1 -- disable enable get ls order set
   set -A complete_rcctl_2 -- $(ls /etc/rc.d)
   set -A complete_rsync_1 -- -rltHhPv
@@ -189,5 +180,5 @@ fi
 ### source profile-local files
 set -o emacs
 if [[ -r "${HOME}/.profile.local" ]]; then
-  . ${HOME}/.profile.local
+  . "${HOME}/.profile.local"
 fi
