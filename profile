@@ -8,17 +8,20 @@ if [[ "${SHELL}" == "/bin/bash" ]] && [[ -r /etc/bashrc ]]; then
 fi
 
 # detect git branch (if any)
-_git_branch() {
-  _br="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
-  _project="$(git rev-parse --show-toplevel 2>/dev/null | awk -F'/' '{print $NF}')"
-  if [ -n "${_br}" ] && [ -n "${_project}" ]; then
-    if [ "${_br}" = 'master' ]; then
+_ps1() {
+  _gitbr="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
+  _gitproject="$(git rev-parse --show-toplevel 2>/dev/null | awk -F'/' '{print $NF}')"
+  if [ -n "${_gitbr}" ] && [ -n "${_gitproject}" ]; then
+    if [ "${_gitbr}" = 'master' ]; then
       # alert with RED when operating on `master`
-      printf "[\033[1;34m%s\033[m@\033[1;31m%s\033[m]" "${_project}" "${_br}"
+      printf "[\033[1;34m%s\033[m@\033[1;31m%s\033[m]" "${_gitproject}" "${_gitbr}"
     else
       # else print branch name in GREEN
-      printf "[\033[1;34m%s\033[m@\033[1;32m%s\033[m]" "${_project}" "${_br}"
+      printf "[\033[1;34m%s\033[m@\033[1;32m%s\033[m]" "${_gitproject}" "${_gitbr}"
     fi
+  else
+    # else print hostname
+    printf "%s" "$(hostname -s)"
   fi
 }
 
@@ -42,7 +45,7 @@ export LESSSECURE=1
 export LESSHISTFILE=-
 export LYNX_CFG=${HOME}/.lynxrc
 #export MUTTRC=${path_to_mutt_gpg}
-export PS1='$(_git_branch)$ '
+export PS1='$(_ps1)$ '
 if [[ -r /usr/local/lib/python3_startup.py ]]; then
   export PYTHONSTARTUP=/usr/local/lib/python3_startup.py
 fi
