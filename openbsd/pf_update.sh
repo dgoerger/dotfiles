@@ -38,13 +38,18 @@ else
   echo 'Please verify the Emerging Threats upstream download URL and that cURL is installed.' | mail -s 'pf: failed to download ET droplist' root
 fi
 
-## scan for bruteforcers in /var/log/authlog AND BLOCK
+## scour ssh logs for bruteforcers AND BLOCK
 # TODO ipv6
 # block anyone trying to auth to system accounts
 awk '/^[1-9].*[0-9]$/ /Disconnecting authenticating user (root|daemon|operator|bin|build|sshd|www|nobody|_).*Too many authentication failures/ {print $10}' /var/log/authlog | sort -u | while read -r ip; do
-  pfctl -t bruteforce -T add "${ip}"
+  pfctl -t bruteforce -T add "${ip}" >/dev/null 2>&1
 done
 # block IPs with repeated invalid username login attempts (n>2)
 awk '/^[1-9].*[0-9]$/ /Disconnecting invalid user.*Too many authentication failures/ {print $10}' /var/log/authlog | sort | uniq -c | awk '$1 > 2 {print $2}' | while read -r ip; do
-  pfctl -t bruteforce -T add "${ip}"
+  pfctl -t bruteforce -T add "${ip}" >/dev/null 2>&1
+done
+
+## scan for obvious spammers and mxsploiters AND BLOCK
+awk '/smtp event=failed-command.*command="AUTH LOGIN"/ {gsub ("address=","",$9); print $9}' /var/log/maillog | sort -u | while read -r ip; do
+  pfctl -t bruteforce -T add "${ip}" >/dev/null 2>&1
 done
