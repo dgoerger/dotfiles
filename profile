@@ -56,13 +56,13 @@ export VISUAL=vi
 ## aliases
 alias bc='bc -l'
 alias cal='cal -m'
-if [[ -x "$(which colordiff 2>/dev/null)" ]]; then
+if [[ -x "$(/usr/bin/which colordiff 2>/dev/null)" ]]; then
   alias diff='colordiff'
 fi
-if [[ -x "$(which fetchmail 2>/dev/null)" ]]; then
+if [[ -x "$(/usr/bin/which fetchmail 2>/dev/null)" ]]; then
   alias fetch='fetchmail --silent'
 fi
-if [[ -x "$(which kpcli 2>/dev/null)" ]]; then
+if [[ -x "$(/usr/bin/which kpcli 2>/dev/null)" ]]; then
   alias kpcli='kpcli --histfile=/dev/null --readonly'
 fi
 alias l='ls -lhF'
@@ -70,16 +70,16 @@ alias la='ls -lhFa'
 alias less='less -R'
 alias listening='fstat -n | grep internet'
 alias ll='ls -lhF'
-if [[ -x "$(which nvim 2>/dev/null)" ]]; then
+if [[ -x "$(/usr/bin/which nvim 2>/dev/null)" ]]; then
   # prefer neovim > vim if available
   alias vi='nvim -u ${HOME}/.vimrc'
   alias view='nvim -u ${HOME}/.vimrc --cmd "let no_plugin_maps = 1" -c "runtime! macros/less.vim" -m -n'
   alias vim='nvim -u ${HOME}/.vimrc'
-elif [[ -x "$(which vim 2>/dev/null)" ]]; then
+elif [[ -x "$(/usr/bin/which vim 2>/dev/null)" ]]; then
   alias vi=vim
   alias view='vim --cmd "let no_plugin_maps = 1" -c "runtime! macros/less.vim" -m -n'
 fi
-if [[ -x "$(which curl 2>/dev/null)" ]]; then
+if [[ -x "$(/usr/bin/which curl 2>/dev/null)" ]]; then
   alias weather='curl -4k https://wttr.in/?m'
 fi
 
@@ -103,7 +103,7 @@ if [[ "$(uname)" != 'NetBSD' ]]; then
     elif [[ ! -d "${HOME}/.gnupg" ]]; then
       mkdir -m0700 -p "${HOME}/.gnupg"
     fi
-    if [[ -x "$(which gpg-agent 2>/dev/null)" ]]; then
+    if [[ -x "$(/usr/bin/which gpg-agent 2>/dev/null)" ]]; then
       eval $(gpg-agent --daemon --quiet 2>/dev/null)
     fi
   fi
@@ -140,7 +140,7 @@ if [[ "$(uname)" == "Linux" ]]; then
   alias listening='netstat -launt'
   alias ll='ls -lhF --color=auto'
   alias ls='ls -F --color=auto'
-  if [[ -x "$(which --skip-alias tree 2>/dev/null)" ]]; then
+  if [[ -x "$(/usr/bin/which tree 2>/dev/null)" ]]; then
     alias tree='tree -N'
   fi
 fi
