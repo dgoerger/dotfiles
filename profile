@@ -50,7 +50,7 @@ if [[ -r /usr/local/lib/python3_startup.py ]]; then
   export PYTHONSTARTUP=/usr/local/lib/python3_startup.py
 fi
 export TZ='US/Eastern'
-export VISUAL=vim
+export VISUAL=vi
 
 
 ## aliases
@@ -70,7 +70,12 @@ alias la='ls -lhFa'
 alias less='less -R'
 alias listening='fstat -n | grep internet'
 alias ll='ls -lhF'
-if [[ -x "$(which vim 2>/dev/null)" ]]; then
+if [[ -x "$(which nvim 2>/dev/null)" ]]; then
+  # prefer neovim > vim if available
+  alias vi='nvim -u ${HOME}/.vimrc'
+  alias view='nvim -u ${HOME}/.vimrc --cmd "let no_plugin_maps = 1" -c "runtime! macros/less.vim" -m -n'
+  alias vim='nvim -u ${HOME}/.vimrc'
+elif [[ -x "$(which vim 2>/dev/null)" ]]; then
   alias vi=vim
   alias view='vim --cmd "let no_plugin_maps = 1" -c "runtime! macros/less.vim" -m -n'
 fi
