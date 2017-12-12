@@ -13,8 +13,6 @@ RDP_CLIENT=no
 RPMFUSION=no
 # enable Negativo17 ?
 NEGATIVO17=no
-# https://atom.io ?
-ATOM_EDITOR=no
 # use Google's official version of Chrome ?
 GOOGLE_CHROME=no
 # install Steam ?
@@ -148,8 +146,7 @@ echo "blacklist ideapad_laptop" | sudo tee /etc/modprobe.d/lenovo_wifi.conf
 if [[ "$GRAPHICAL_INTERFACE" != "yes" ]]; then
   ## if there's no graphical interface, assume access is via ssh
   sudo firewall-cmd --set-default-zone=dmz
-  sudo systemctl enable sshd
-  sudo systemctl start sshd
+  sudo systemctl enable --now sshd
 else
   ## firewall policy
   sudo firewall-cmd --set-default-zone=drop
@@ -162,10 +159,6 @@ else
   fi
   if [[ "$GOOGLE_CHROME" == "yes" ]]; then
     sudo dnf install -y https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
-  fi
-  if [[ "$ATOM_EDITOR" == "yes" ]]; then
-    sudo dnf copr enable mosquito/atom -y
-    sudo dnf install -y atom
   fi
   if [[ "$RDP_CLIENT" == "yes" ]]; then
     sudo dnf install -y remmina
@@ -184,7 +177,7 @@ sudo curl -Lo /etc/NetworkManager/NetworkManager.conf https://raw.githubusercont
 sudo systemctl enable --now dnssec-triggerd.service
 
 ### harmonize bsd/linux
-sudo ln -s /usr/libexec/openssh/sftp-server /usr/libexec/sftp-server
+sudo ln /usr/libexec/openssh/sftp-server /usr/libexec/sftp-server
 
 ########################
 ##  First-user Setup  ##
