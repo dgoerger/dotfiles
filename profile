@@ -2,11 +2,6 @@
 
 ### all operating systems and shells
 ## prelude
-# source system files first in case we override things here
-if [[ "${SHELL}" == "/bin/bash" ]] && [[ -r /etc/bashrc ]]; then
-  . /etc/bashrc
-fi
-
 # detect git branch (if any)
 _ps1() {
   _gitbr="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
