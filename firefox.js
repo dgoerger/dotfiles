@@ -173,6 +173,7 @@ pref("security.insecure_password.ui.enabled", true);
 pref("webgl.disabled", true);
 pref("webgl.enable-webgl2", false);
 pref("security.data_uri.block_toplevel_data_uri_navigations", true);
+pref("security.insecure_connection_icon.enabled", true);
 
 //// try to upgrade http -> https using hsts
 // ref: https://bugzilla.mozilla.org/show_bug.cgi?id=1246540#c145
