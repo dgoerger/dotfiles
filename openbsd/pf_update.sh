@@ -19,7 +19,7 @@ if [ ! -f "${PF_MAIN}" ] || [ ! -x "$(which pfctl 2>/dev/null)" ]; then
 fi
 
 # fetch updated ruleset
-if /usr/local/bin/curl -Lo "${TMP_FILE}" "${SOURCE}" 2>/dev/null; then
+if ftp -VMo "${TMP_FILE}" "${SOURCE}" 2>/dev/null; then
   if pfctl -nf "${TMP_FILE}" 2>/dev/null; then
     mkdir -p "${PF_CONF_DIR}"
     if [ -f "${PF_DROP_CONF}" ]; then
@@ -35,7 +35,7 @@ if /usr/local/bin/curl -Lo "${TMP_FILE}" "${SOURCE}" 2>/dev/null; then
     echo 'Please verify the Emerging Threats upstream download URL.' | mail -s 'pf: failed to verify ET droplist' root
   fi
 else
-  echo 'Please verify the Emerging Threats upstream download URL and that cURL is installed.' | mail -s 'pf: failed to download ET droplist' root
+  echo 'Please verify the Emerging Threats upstream download URL.' | mail -s 'pf: failed to download ET droplist' root
 fi
 
 ## scour ssh logs for bruteforcers AND BLOCK
