@@ -10,6 +10,7 @@ set nomodeline              " see rhbz#1398227
 """ general usability
 set viminfo="NONE"          " don't save search history
 colorscheme elflord         " default colorscheme is unreadable on dark console
+set mouse=i                 " enable the mouse in Insert mode
 
 """ indentation schema
 set autoindent              " enable automatic indentation
