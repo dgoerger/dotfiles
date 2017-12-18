@@ -2,18 +2,25 @@
 
 UPSTREAM_HOSTS_FILE='https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-porn/hosts'
 
-# crontab doesn't necessarily have a full path - BSD cURL is in ports!
-PATH=${PATH}:/usr/local/bin:/usr/local/sbin
-export PATH
-
 TMP='/tmp/unbound'
 SRC='/tmp/hostfile.src'
 CONF_DIR='/usr/local/etc'
 BLOCKLIST_FILE="${CONF_DIR}/blocklist.conf"
 
+if [ "$(uname)" = 'OpenBSD' ]; then
+  # cURL is in ports - presence is likely but not guaranteed
+  binary='/usr/bin/ftp -VMo'
+elif [ -x "$(/usr/bin/which curl 2>/dev/null)" ]; then
+  # fallback to cURL if found
+  binary='curl -sLo'
+else
+  # else exit
+  echo 'ERROR: please ensure cURL is installed and in the PATH.'
+  exit 1
+fi
 
 # first verify we can reach upstream
-if curl -Lo "${SRC}" "${UPSTREAM_HOSTS_FILE}" 2>/dev/null; then
+if "${binary}" "${SRC}" "${UPSTREAM_HOSTS_FILE}" 2>/dev/null; then
   if pgrep unbound >/dev/null 2>&1; then
     # build for unbound
     awk '$1 == "0.0.0.0" {print "local-zone: \""$2"\" always_nxdomain"}' ${SRC} | tee ${TMP} >/dev/null 2>&1
@@ -33,10 +40,6 @@ if curl -Lo "${SRC}" "${UPSTREAM_HOSTS_FILE}" 2>/dev/null; then
       if [ -f /etc/rc.d/unbound ]; then
         /etc/rc.d/unbound restart 2>/dev/null
       # Linux with systemd
-      elif systemctl is-enabled dnssec-triggerd; then
-        # if Unbound is started by dnssec-triggerd, we have to do this dance (F27)
-        pkill unbound
-        systemctl restart dnssec-triggerd 2>/dev/null
       elif systemctl is-enabled unbound; then
         systemctl restart unbound 2>/dev/null
       fi
