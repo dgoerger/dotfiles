@@ -67,12 +67,12 @@ alias listening='fstat -n | grep internet'
 alias ll='ls -lhF'
 if [[ -x "$(/usr/bin/which nvim 2>/dev/null)" ]]; then
   # prefer neovim > vim if available
-  alias vi='nvim -u ${HOME}/.vimrc'
-  alias view='nvim -u ${HOME}/.vimrc --cmd "let no_plugin_maps = 1" -c "runtime! macros/less.vim" -m -n'
-  alias vim='nvim -u ${HOME}/.vimrc'
+  alias vi='nvim -u ${HOME}/.vimrc -i NONE'
+  alias view='nvim -u ${HOME}/.vimrc -i NONE --cmd "let no_plugin_maps = 1" -c "runtime! macros/less.vim" -m -M -R -n'
+  alias vim='nvim -u ${HOME}/.vimrc -i NONE'
 elif [[ -x "$(/usr/bin/which vim 2>/dev/null)" ]]; then
   alias vi=vim
-  alias view='vim --cmd "let no_plugin_maps = 1" -c "runtime! macros/less.vim" -m -n'
+  alias view='vim --cmd "let no_plugin_maps = 1" -c "runtime! macros/less.vim" -m -M -R -n'
 fi
 if [[ -x "$(/usr/bin/which curl 2>/dev/null)" ]]; then
   alias weather='curl -4k https://wttr.in/?m'
@@ -84,8 +84,15 @@ alias shrug='echo '\''¯\_(ツ)_/¯'\'''
 alias table_flip='echo '\''(╯°□°）╯︵ ┻━┻'\'''
 
 
-## daemons
-if [[ "$(uname)" != 'NetBSD' ]]; then
+## daemons and shell-specific features
+if [[ "$(uname)" == 'NetBSD' ]]; then
+  # env
+  export PAGER=less
+
+  # aliases
+  alias cal='cal -europe -nocolor'
+
+else
   # pgrep coredumps on sdf.org..?
 
   # gpg-agent
@@ -117,10 +124,50 @@ if [[ "$(uname)" != 'NetBSD' ]]; then
       fi
     fi
   fi
+
+  # OpenBSD ksh tab-completion
+  if [[ "${0}" == '-ksh' ]]; then
+    # NB: NetBSD ksh does NOT support `set -A complete_`
+    if echo "${KSH_VERSION}" | grep -q 'PD KSH'; then
+      # aliases
+      if [[ -x "$(which cabal 2>/dev/null)" ]] && [[ -d /usr/local/cabal/build ]] && [[ -w /usr/local/cabal/build ]]; then
+        # ref: https://deftly.net/posts/2017-10-12-using-cabal-on-openbsd.html
+        alias cabal='env TMPDIR=/usr/local/cabal/build/ cabal'
+      fi
+
+      # tab completions
+      set -A complete_dig_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
+      set -A complete_git_1 -- add bisect blame checkout clone commit diff log mv pull push rebase reset revert rm stash status submodule
+      set -A complete_gpg2 -- --refresh --receive-keys --armor --clearsign --sign --list-key --decrypt --verify --detach-sig
+      set -A complete_host_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
+      set -A complete_ifconfig_1 -- $(ifconfig | awk -F':' '/^[a-z]/ {print $1}')
+      set -A complete_kill_1 -- -9 -HUP -INFO -KILL -TERM
+      set -A complete_mosh_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
+      set -A complete_mosh_2 -- --
+      set -A complete_mosh_3 -- tmux
+      set -A complete_mosh_4 -- attach
+      set -A complete_nmap_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
+      set -A complete_ping_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
+      set -A complete_rcctl_1 -- disable enable get ls order set
+      set -A complete_rcctl_2 -- $(ls /etc/rc.d)
+      set -A complete_rsync_1 -- -rltHhPv
+      set -A complete_rsync_2 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1] ":"}' ~/.ssh/known_hosts)
+      set -A complete_rsync_3 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1] ":"}' ~/.ssh/known_hosts)
+      set -A complete_signify_1 -- -C -G -S -V
+      set -A complete_signify_2 -- -q -p -x -c -m -t -z
+      set -A complete_signify_3 -- -p -x -c -m -t -z
+      set -A complete_scp_1 -- -3 -4 -6 -p -r
+      set -A complete_scp_2 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1] ":"}' ~/.ssh/known_hosts)
+      set -A complete_scp_3 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1] ":"}' ~/.ssh/known_hosts)
+      set -A complete_ssh_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
+      set -A complete_telnet_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
+      set -A complete_traceroute_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
+    fi
+  fi
 fi
 
 
-### specifics
+### OS-specific
 ## Linux
 if [[ "$(uname)" == "Linux" ]]; then
   # env
@@ -140,45 +187,6 @@ if [[ "$(uname)" == "Linux" ]]; then
   fi
 fi
 
-## NetBSD
-if [[ "$(uname)" == "NetBSD" ]]; then
-  # env
-  export PAGER=less
-
-  # aliases
-  alias cal='cal -europe -nocolor'
-fi
-
-## OpenBSD
-if [[ "$(uname)" == "OpenBSD" ]] && [[ "${SHELL}" == '/bin/ksh' ]]; then
-  # aliases
-  if [[ -x "$(which cabal 2>/dev/null)" ]] && [[ -d /usr/local/cabal/build ]] && [[ -w /usr/local/cabal/build ]]; then
-    # ref: https://deftly.net/posts/2017-10-12-using-cabal-on-openbsd.html
-    alias cabal='env TMPDIR=/usr/local/cabal/build/ cabal'
-  fi
-
-  # tab completions
-  set -A complete_git_1 -- add bisect blame checkout clone commit diff log mv pull push rebase reset revert rm stash status submodule
-  set -A complete_gpg2 -- --refresh --receive-keys --armor --clearsign --sign --list-key --decrypt --verify --detach-sig
-  set -A complete_ifconfig_1 -- $(ifconfig | awk -F':' '/^[a-z]/ {print $1}')
-  set -A complete_kill_1 -- -9 -HUP -INFO -KILL -TERM
-  set -A complete_mosh_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
-  set -A complete_mosh_2 -- --
-  set -A complete_mosh_3 -- tmux
-  set -A complete_mosh_4 -- attach
-  set -A complete_rcctl_1 -- disable enable get ls order set
-  set -A complete_rcctl_2 -- $(ls /etc/rc.d)
-  set -A complete_rsync_1 -- -rltHhPv
-  set -A complete_rsync_2 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1] ":"}' ~/.ssh/known_hosts)
-  set -A complete_rsync_3 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1] ":"}' ~/.ssh/known_hosts)
-  set -A complete_signify_1 -- -C -G -S -V
-  set -A complete_signify_2 -- -q -p -x -c -m -t -z
-  set -A complete_signify_3 -- -p -x -c -m -t -z
-  set -A complete_scp_1 -- -3 -4 -6 -p -r
-  set -A complete_scp_2 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1] ":"}' ~/.ssh/known_hosts)
-  set -A complete_scp_3 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1] ":"}' ~/.ssh/known_hosts)
-  set -A complete_ssh_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
-fi
 
 ### source profile-local files
 set -o emacs
