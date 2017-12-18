@@ -48,6 +48,10 @@ done
 awk '/^[1-9].*[0-9]$/ /Disconnecting invalid user.*Too many authentication failures/ {print $10}' /var/log/authlog | sort | uniq -c | awk '$1 > 2 {print $2}' | while read -r ip; do
   pfctl -t bruteforce -T add "${ip}" >/dev/null 2>&1
 done
+# block ssh port scanners who don't even try to log in
+awk '/sshd.*Connection closed by [1-9].*\[preauth\]/ {print $9}' /var/log/authlog | sort | uniq -c | awk '$1 > 2 {print $2}' | while read -r ip; do
+  pfctl -t bruteforce -T add "${ip}" >/dev/null 2>&1
+done
 
 ## scan for obvious spammers and mxsploiters AND BLOCK
 awk '/smtp event=failed-command.*command="AUTH LOGIN"/ {gsub ("address=","",$9); print $9}' /var/log/maillog | sort -u | while read -r ip; do
