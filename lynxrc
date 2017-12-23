@@ -2,7 +2,8 @@
 
 # homepage
 STARTFILE:https://www.duckduckgo.com/lite/
-DEFAULT_INDEX_FILE:https://www.duckduckgo.com/lite/
+DEFAULT_BOOKMARK_FILE:./.ssh/bookmarks.html
+DEFAULT_INDEX_FILE:./.ssh/bookmarks.html
 
 # colours
 COLOR:0:black:white
@@ -15,7 +16,7 @@ COLOR:6:red:white
 COLOR:6:brightred:black
 COLOR:7:magenta:cyan
 
-# enable mouse
+# sane defaults
 ACCEPT_ALL_COOKIES:TRUE
 CHARACTER_SET:utf-8
 CONNECT_TIMEOUT:10
@@ -32,3 +33,19 @@ SET_COOKIES:TRUE
 TEXTFIELDS_NEED_ACTIVATION:TRUE
 USE_MOUSE:TRUE
 VI_KEYS_ALWAYS_ON:TRUE
+
+# proxy
+cso_proxy:http://127.0.0.1:1080
+finger_proxy:http://127.0.0.1:1080
+ftp_proxy:http://127.0.0.1:1080
+gopher_proxy:http://127.0.0.1:1080
+http_proxy:http://127.0.0.1:1080
+https_proxy:http://127.0.0.1:1080
+news_proxy:http://127.0.0.1:1080
+newspost_proxy:http://127.0.0.1:1080
+newsreply_proxy:http://127.0.0.1:1080
+nntp_proxy:http://127.0.0.1:1080
+snews_proxy:http://127.0.0.1:1080
+snewspost_proxy:http://127.0.0.1:1080
+snewsreply_proxy:http://127.0.0.1:1080
+wais_proxy:http://127.0.0.1:1080
