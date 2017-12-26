@@ -116,7 +116,7 @@ else
     export SSH_AUTH_SOCK="${HOME}/.ssh/${USER}.socket"
     if [[ ! -S "${SSH_AUTH_SOCK}" ]]; then
       eval $(ssh-agent -s -a "${SSH_AUTH_SOCK}" >/dev/null)
-    elif ! pgrep -U "${USER}" ssh-agent >/dev/null; then
+    elif ! pgrep -U "${USER}" -f "ssh-agent -s -a ${SSH_AUTH_SOCK}" >/dev/null; then
       if [[ -S "${SSH_AUTH_SOCK}" ]]; then
         # if proc isn't running but the socket exists, remove and restart
         rm "${SSH_AUTH_SOCK}"
