@@ -26,10 +26,13 @@ umask 077
 
 
 ## environment variables
+export BROWSER=lynx
 export GIT_AUTHOR_EMAIL="$(getent passwd ${LOGNAME} | cut -d: -f1)@users.noreply.github.com"
 export GIT_AUTHOR_NAME="$(getent passwd ${LOGNAME} | cut -d: -f5 | cut -d, -f1)"
 export GIT_COMMITTER_EMAIL=${GIT_AUTHOR_EMAIL}
 export GIT_COMMITTER_NAME=${GIT_AUTHOR_NAME}
+#export GITHUB_HOST=if.not.github.com #for `hub`
+#export GITHUB_TOKEN= #for `hub`
 export HISTCONTROL=ignoredups
 export HISTFILE=${HOME}/.history
 export HISTSIZE=20736
