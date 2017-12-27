@@ -113,7 +113,7 @@ else
   # ssh-agent
   if [[ -z ${SSH_AUTH_SOCK} ]] || [[ -n $(echo ${SSH_AUTH_SOCK} | grep -E "^/run/user/$(id -u)/keyring/ssh$") ]]; then
     # if ssh-agent isn't running OR GNOME Keyring controls the socket
-    export SSH_AUTH_SOCK="${HOME}/.ssh/${USER}.socket"
+    export SSH_AUTH_SOCK="${HOME}/.ssh/${USER}@${HOSTNAME}.socket"
     if [[ ! -S "${SSH_AUTH_SOCK}" ]]; then
       eval $(ssh-agent -s -a "${SSH_AUTH_SOCK}" >/dev/null)
     elif ! pgrep -U "${USER}" -f "ssh-agent -s -a ${SSH_AUTH_SOCK}" >/dev/null; then
