@@ -161,6 +161,8 @@ else
       set -A complete_scp_3 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1] ":"}' ~/.ssh/known_hosts)
       set -A complete_ssh_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
       set -A complete_telnet_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
+      set -A complete_toot_1 -- block curses follow mute post timeline unblock unfollow unmute upload whoami whois
+      set -A complete_toot_2 -- --help
       set -A complete_traceroute_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
     fi
   fi
