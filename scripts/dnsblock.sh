@@ -6,21 +6,18 @@ TMP='/tmp/unbound'
 SRC='/tmp/hostfile.src'
 CONF_DIR='/usr/local/etc'
 BLOCKLIST_FILE="${CONF_DIR}/blocklist.conf"
+PRIVOXY_TMP='/tmp/privoxy'
+PRIVOXY_CONF='/etc/privoxy/dnsblock.action'
 
-if [ "$(uname)" = 'OpenBSD' ]; then
-  # cURL is in ports - presence is likely but not guaranteed
-  binary='/usr/bin/ftp -VMo'
-elif [ -x "$(/usr/bin/which curl 2>/dev/null)" ]; then
-  # fallback to cURL if found
-  binary='curl -sLo'
-else
-  # else exit
-  echo 'ERROR: please ensure cURL is installed and in the PATH.'
-  exit 1
-fi
+case "$(uname)" in
+  OpenBSD) FETCHER='/usr/bin/ftp -VMo' ;;
+  Linux) FETCHER='/usr/bin/curl -sLo' ;;
+  NetBSD) FETCHER='/usr/bin/ftp -o' ;;
+  *) echo 'ERROR: Unsupported OS' && exit 1 ;;
+esac
 
 # first verify we can reach upstream
-if "${binary}" "${SRC}" "${UPSTREAM_HOSTS_FILE}" 2>/dev/null; then
+if ${FETCHER} ${SRC} ${UPSTREAM_HOSTS_FILE} 2>/dev/null; then
   if pgrep unbound >/dev/null 2>&1; then
     # build for unbound
     awk '$1 == "0.0.0.0" {print "local-zone: \""$2"\" always_nxdomain"}' ${SRC} | tee ${TMP} >/dev/null 2>&1
@@ -38,13 +35,29 @@ if "${binary}" "${SRC}" "${UPSTREAM_HOSTS_FILE}" 2>/dev/null; then
     if /usr/sbin/unbound-checkconf >/dev/null 2>&1; then
       # BSD
       if [ -f /etc/rc.d/unbound ]; then
-        /etc/rc.d/unbound restart 2>/dev/null
+        rcctl restart unbound >/dev/null 2>&1
       # Linux with systemd
       elif systemctl is-enabled unbound; then
-        systemctl restart unbound 2>/dev/null
+        systemctl restart unbound >/dev/null 2>&1
       fi
     elif [ -f "${BLOCKLIST_FILE}.bak" ]; then
       mv "${BLOCKLIST_FILE}.bak" "${BLOCKLIST_FILE}"
+    fi
+    if [ -d /etc/privoxy ]; then
+      # generate a Privoxy blocklist while we're at it
+      echo '{ +block{dnsblock} }' | tee "${PRIVOXY_TMP}" >/dev/null 2>&1
+      awk '$1 == "0.0.0.0" {print $2}' "${SRC}" | tee -a "${PRIVOXY_TMP}" >/dev/null 2>&1
+      if privoxy --config-test --chroot /etc/privoxy >/dev/null 2>&1; then
+        if [ -f "${PRIVOXY_CONF}" ]; then
+          cp -p "${PRIVOXY_CONF}" "${PRIVOXY_CONF}.bak"
+        fi
+        mv "${PRIVOXY_TMP}" "${PRIVOXY_CONF}"
+        if [ -f /etc/rc.d/privoxy ]; then
+          rcctl restart privoxy >/dev/null 2>&1
+        elif systemctl is-enabled privoxy; then
+          systemctl restart privoxy >/dev/null 2>&1
+        fi
+      fi
     fi
     rm "${TMP}" "${SRC}"
   else
@@ -52,6 +65,6 @@ if "${binary}" "${SRC}" "${UPSTREAM_HOSTS_FILE}" 2>/dev/null; then
     exit 1
   fi
 else
-  echo 'ERROR: Upstream blocklist unreachable OR cURL binary not in PATH.'
+  echo "ERROR: Upstream blocklist is unreachable via ${FETCHER}."
   exit 1
 fi
