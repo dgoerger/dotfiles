@@ -8,6 +8,10 @@
     "autofill": {
         "enabled": false
     },
+    "browser": {
+      "check_default_browser": false,
+      "default_browser_setting_enabled": false
+    },
     "custom_handlers": {
         "enabled": false
     },
@@ -48,7 +52,14 @@
             "usage_count": 0
         }
     },
+    "distribution": {
+      "suppress_first_run_bubble": true,
+      "suppress_first_run_default_browser_prompt": true
+    },
     "enable_do_not_track": true,
+    "incognito": {
+      "mode_availability": 2
+    },
     "local_discovery": {
       "notifications_enabled": false
     },
@@ -60,11 +71,18 @@
     "plugins": {
         "always_open_pdf_externally": true
     },
+    "profile": {
+      "ephemeral_mode": true
+    },
     "safebrowsing": {
         "enabled": false
     },
     "search": {
         "suggest_enabled": false
+    },
+    "sync_promo": {
+      "show_on_first_run_allowed" : false,
+      "show_ntp_bubble": false
     },
     "translate": {
         "enabled": false
