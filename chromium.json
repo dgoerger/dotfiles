@@ -8,10 +8,6 @@
     "autofill": {
         "enabled": false
     },
-    "browser": {
-      "check_default_browser": false,
-      "default_browser_setting_enabled": false
-    },
     "custom_handlers": {
         "enabled": false
     },
