@@ -5,17 +5,6 @@ STARTFILE:https://www.duckduckgo.com/lite/
 DEFAULT_BOOKMARK_FILE:./.ssh/bookmarks.html
 DEFAULT_INDEX_FILE:./.ssh/bookmarks.html
 
-# colours
-COLOR:0:black:white
-COLOR:1:blue:white
-COLOR:2:yellow:blue
-COLOR:3:green:white
-COLOR:4:magenta:white
-COLOR:5:blue:white
-COLOR:6:red:white
-COLOR:6:brightred:black
-COLOR:7:magenta:cyan
-
 # sane defaults
 ACCEPT_ALL_COOKIES:TRUE
 CHARACTER_SET:utf-8
@@ -28,7 +17,6 @@ FORCE_EMPTY_HREFLESS_A:TRUE
 LOCALE_CHARSET:TRUE
 NO_PAUSE:TRUE
 NO_REFERER_HEADER:TRUE
-PRETTYSRC:TRUE
 SET_COOKIES:TRUE
 TEXTFIELDS_NEED_ACTIVATION:TRUE
 USE_MOUSE:TRUE
