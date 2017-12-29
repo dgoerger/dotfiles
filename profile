@@ -47,6 +47,9 @@ export PS1='$(_ps1)$ '
 if [[ -r /usr/local/lib/python3_startup.py ]]; then
   export PYTHONSTARTUP=/usr/local/lib/python3_startup.py
 fi
+if [[ -x "$(/usr/bin/which surfraw)" ]]; then
+  export SURFRAW_text_browser=${BROWSER}
+fi
 export TZ='US/Eastern'
 export VISUAL=vi
 
