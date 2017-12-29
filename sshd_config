@@ -21,4 +21,4 @@ AcceptEnv LANG LC_ALL TZ
 
 ## override default of no subsystems
 #link /usr/libexec/sftp-server /usr/libexec/openssh/sftp-server on Linux
-Subsystem	sftp /usr/libexec/sftp-server
+Subsystem sftp /usr/libexec/sftp-server
