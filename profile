@@ -47,7 +47,7 @@ export PS1='$(_ps1)$ '
 if [[ -r /usr/local/lib/python3_startup.py ]]; then
   export PYTHONSTARTUP=/usr/local/lib/python3_startup.py
 fi
-if [[ -x "$(/usr/bin/which surfraw)" ]]; then
+if [[ -x "$(/usr/bin/which surfraw 2>/dev/null)" ]]; then
   export SURFRAW_text_browser=${BROWSER}
 fi
 export TZ='US/Eastern'
@@ -91,15 +91,8 @@ alias table_flip='echo '\''(╯°□°）╯︵ ┻━┻'\'''
 
 
 ## daemons and shell-specific features
-if [[ "$(uname)" == 'NetBSD' ]]; then
-  # env
-  export PAGER=less
-
-  # aliases
-  alias cal='cal -europe -nocolor'
-
-else
-  # pgrep coredumps on sdf.org..?
+if [[ "$(uname -n)" != 'sdf' ]]; then
+  # pgrep coredumps on sdf.org
 
   # gpg-agent
   if [[ -z "$(pgrep -U "${USER}" gpg-agent)" ]]; then
@@ -119,6 +112,7 @@ else
   # ssh-agent
   if [[ -z ${SSH_AUTH_SOCK} ]] || [[ -n $(echo ${SSH_AUTH_SOCK} | grep -E "^/run/user/$(id -u)/keyring/ssh$") ]]; then
     # if ssh-agent isn't running OR GNOME Keyring controls the socket
+    # NB: include hostname so as to not clobber on NFS/shared $HOME
     export SSH_AUTH_SOCK="${HOME}/.ssh/${USER}@${HOSTNAME}.socket"
     if [[ ! -S "${SSH_AUTH_SOCK}" ]]; then
       eval $(ssh-agent -s -a "${SSH_AUTH_SOCK}" >/dev/null)
@@ -138,7 +132,10 @@ else
       # aliases
       if [[ -x "$(which cabal 2>/dev/null)" ]] && [[ -d /usr/local/cabal/build ]] && [[ -w /usr/local/cabal/build ]]; then
         # ref: https://deftly.net/posts/2017-10-12-using-cabal-on-openbsd.html
+        ln -sf /usr/local/cabal ${HOME}/.cabal
         alias cabal='env TMPDIR=/usr/local/cabal/build/ cabal'
+        # alias the pandoc relocatable-binary build command for easy reference
+        alias pandoc_rebuild='cabal update && cabal install pandoc -fembed_data_files -fhttps'
       fi
 
       # tab completions
@@ -165,6 +162,8 @@ else
       set -A complete_scp_1 -- -3 -4 -6 -p -r
       set -A complete_scp_2 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1] ":"}' ~/.ssh/known_hosts)
       set -A complete_scp_3 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1] ":"}' ~/.ssh/known_hosts)
+      set -A complete_surfraw_1 -- $(ls /usr/local/lib/surfraw)
+      set -A complete_surfraw_2 -- -local-help
       set -A complete_ssh_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
       set -A complete_telnet_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
       set -A complete_toot_1 -- block curses follow mute post timeline unblock unfollow unmute upload whoami whois
@@ -176,7 +175,6 @@ fi
 
 
 ### OS-specific
-## Linux
 if [[ "$(uname)" == "Linux" ]]; then
   # env
   export QUOTING_STYLE=literal
