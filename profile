@@ -145,6 +145,11 @@ if [[ "$(uname -n)" != 'sdf' ]]; then
       set -A complete_host_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
       set -A complete_ifconfig_1 -- $(ifconfig | awk -F':' '/^[a-z]/ {print $1}')
       set -A complete_kill_1 -- -9 -HUP -INFO -KILL -TERM
+      set -A complete_kpcli_1 -- --kdb
+      set -A complete_man_1 -- $(ls /usr/share/man/man{1,2,3,4,5,6,7,8,9}/ /usr/local/man/man{1,2,3,3f,3p,4,5,6,7,8,9}/ | grep -Ev "(^|:)$" | awk -F'\.' '/[A-Z].*[A-Z]/i {print $1}' | sort -u)
+      if pgrep sndio 2>/dev/null; then
+        set -A complete_mixerctl_1 -- $(mixerctl | cut -d= -f 1)
+      fi
       set -A complete_mosh_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
       set -A complete_mosh_2 -- --
       set -A complete_mosh_3 -- tmux
