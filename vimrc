@@ -23,6 +23,9 @@ set expandtab               " insert spaces instead of tab
 if has("autocmd")
   " use real tabs in makefiles
   autocmd FileType make setlocal tabstop=8 shiftwidth=8 softtabstop=0 noexpandtab
+  " indentation is tab/width=8,4 in C's KNF style
+  autocmd FileType c setlocal tabstop=8 shiftwidth=8 softtabstop=4 noexpandtab
+  autocmd FileType cpp setlocal tabstop=8 shiftwidth=8 softtabstop=4 noexpandtab
   " indentation is four spaces in python
   autocmd FileType python setlocal tabstop=4 shiftwidth=4 expandtab
   " indentation is two spaces in ruby
