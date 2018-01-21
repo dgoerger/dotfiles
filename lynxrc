@@ -1,7 +1,7 @@
 # .lynxrc
 
 # homepage
-STARTFILE:https://www.duckduckgo.com/lite/
+STARTFILE:./.ssh/bookmarks.html
 DEFAULT_BOOKMARK_FILE:./.ssh/bookmarks.html
 DEFAULT_INDEX_FILE:./.ssh/bookmarks.html
 
@@ -15,6 +15,7 @@ EMACS_KEYS_ALWAYS_ON:FALSE
 ENABLE_SCROLLBACK:TRUE
 FORCE_EMPTY_HREFLESS_A:TRUE
 LOCALE_CHARSET:TRUE
+MAKE_PSEUDO_ALTS_FOR_INLINES:FALSE
 NO_PAUSE:TRUE
 NO_REFERER_HEADER:TRUE
 SET_COOKIES:TRUE
@@ -23,17 +24,7 @@ USE_MOUSE:TRUE
 VI_KEYS_ALWAYS_ON:TRUE
 
 # proxy
-cso_proxy:http://127.0.0.1:1080
-finger_proxy:http://127.0.0.1:1080
 ftp_proxy:http://127.0.0.1:1080
 gopher_proxy:http://127.0.0.1:1080
 http_proxy:http://127.0.0.1:1080
 https_proxy:http://127.0.0.1:1080
-news_proxy:http://127.0.0.1:1080
-newspost_proxy:http://127.0.0.1:1080
-newsreply_proxy:http://127.0.0.1:1080
-nntp_proxy:http://127.0.0.1:1080
-snews_proxy:http://127.0.0.1:1080
-snewspost_proxy:http://127.0.0.1:1080
-snewsreply_proxy:http://127.0.0.1:1080
-wais_proxy:http://127.0.0.1:1080
