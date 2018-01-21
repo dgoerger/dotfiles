@@ -104,6 +104,9 @@ pref("browser.safebrowsing.downloads.enabled", false);
 pref("browser.safebrowsing.downloads.remote.enabled", false);
 pref("browser.safebrowsing.malware.enabled", false);
 pref("browser.safebrowsing.phishing.enabled", false);
+// ref: https://bugzilla.redhat.com/show_bug.cgi?id=1507967
+pref("browser.safebrowsing.provider.mozilla.updateURL", '');
+pref("browser.safebrowsing.provider.mozilla.gethashURL", '');
 // ref: https://www.ghacks.net/2017/07/13/privacy-blunder-firefox-getaddons-page-google-analytics
 pref("extensions.webservice.discoverURL", '');
 
