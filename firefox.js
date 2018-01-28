@@ -48,6 +48,8 @@ pref("privacy.resistFingerprinting", true);
 // ref: https://wiki.mozilla.org/Security/FirstPartyIsolation
 // NB: appears to break Atlassian login
 pref("privacy.firstparty.isolate", true);
+// disables "a MediaStream capturing in real-time the surface of an HTMLCanvasElement"
+pref("canvas.capturestream.enabled", false);
 
 //// discard third-party cookies
 pref("network.cookie.cookieBehavior", 1);
