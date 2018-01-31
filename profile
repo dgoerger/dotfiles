@@ -187,6 +187,10 @@ if [[ "$(uname)" == "Linux" ]]; then
 
   # aliases
   alias doas='/usr/bin/sudo' #mostly-compatible
+  if [[ -x "$(/usr/bin/which tnftp 2>/dev/null)" ]]; then
+    # BSD ftp has support for wget-like functionality
+    alias ftp=tnftp
+  fi
   alias l='ls -lhF --color=auto'
   alias la='ls -lhFa --color=auto'
   # linux doesn't have fstat, but does have a pretty good netstat
