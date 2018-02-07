@@ -88,6 +88,7 @@ fi
 alias disapprove='echo '\''ಠ_ಠ'\'''
 alias shrug='echo '\''¯\_(ツ)_/¯'\'''
 alias table_flip='echo '\''(╯°□°）╯︵ ┻━┻'\'''
+alias woohoo='echo \\\(ˆ˚ˆ\)/'
 
 
 ## daemons and shell-specific features
