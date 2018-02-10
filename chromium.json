@@ -67,9 +67,6 @@
     "plugins": {
         "always_open_pdf_externally": true
     },
-    "profile": {
-      "ephemeral_mode": true
-    },
     "safebrowsing": {
         "enabled": false
     },
