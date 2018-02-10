@@ -10,11 +10,10 @@ Compatibility
 Unless otherwise noted, these confs and scripts should work correctly on current
 releases of
 
-  1. Fedora Linux
-  2. OpenBSD
-  3. NetBSD
+  1. OpenBSD
+  2. Fedora Linux
 
-macOS compatibility is untested. Windows 10 compatibility is best-effort.
+macOS compatibility is untested. Windows 10 compatibility should not be assumed.
 
 
 Testing
