@@ -36,31 +36,39 @@ if ${FETCH} 2>/dev/null; then
     # syntax check for sanity - we do NOT want to break the DNS!!
     if /usr/sbin/unbound-checkconf >/dev/null 2>&1; then
       # BSD
-      if [ -f /etc/rc.d/unbound ]; then
+      if rcctl ls on 2>/dev/null | grep -qE "^unbound$"; then
         rcctl restart unbound >/dev/null 2>&1
       # Linux with systemd
-      elif systemctl is-enabled unbound; then
+      elif systemctl is-enabled unbound >/dev/null 2>&1; then
         systemctl restart unbound >/dev/null 2>&1
       fi
     elif [ -f "${BLOCKLIST_FILE}.bak" ]; then
       mv "${BLOCKLIST_FILE}.bak" "${BLOCKLIST_FILE}"
     fi
+
     if [ -d /etc/privoxy ]; then
       # generate a Privoxy blocklist while we're at it
       echo '{ +block{dnsblock} }' | tee "${PRIVOXY_TMP}" >/dev/null 2>&1
       awk '$1 == "0.0.0.0" {print $2}' "${SRC}" | tee -a "${PRIVOXY_TMP}" >/dev/null 2>&1
+      # create a backup
+      if [ -f "${PRIVOXY_CONF}" ]; then
+        cp -p "${PRIVOXY_CONF}" "${PRIVOXY_CONF}.bak"
+      fi
+      # copy in the new blocklist
+      cp "${PRIVOXY_TMP}" "${PRIVOXY_CONF}"
+      chmod 0444 "${PRIVOXY_CONF}"
+      # syntax check for sanity
       if privoxy --config-test --chroot /etc/privoxy >/dev/null 2>&1; then
-        if [ -f "${PRIVOXY_CONF}" ]; then
-          cp -p "${PRIVOXY_CONF}" "${PRIVOXY_CONF}.bak"
-        fi
-        mv "${PRIVOXY_TMP}" "${PRIVOXY_CONF}"
-        if [ -f /etc/rc.d/privoxy ]; then
+        if rcctl ls on 2>/dev/null | grep -qE "^privoxy$"; then
           rcctl restart privoxy >/dev/null 2>&1
-        elif systemctl is-enabled privoxy; then
+        elif systemctl is-enabled privoxy >/dev/null 2>&1; then
           systemctl restart privoxy >/dev/null 2>&1
         fi
+      elif [ -f "${PRIVOXY_CONF}.bak" ]; then
+        mv "${PRIVOXY_CONF}.bak" "${PRIVOXY_CONF}"
       fi
     fi
+
     rm "${TMP}" "${SRC}"
   else
     echo 'ERROR: Unbound not running.'
