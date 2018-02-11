@@ -51,7 +51,11 @@ if [[ -x "$(/usr/bin/which surfraw 2>/dev/null)" ]]; then
   export SURFRAW_text_browser=${BROWSER}
 fi
 export TZ='US/Eastern'
-export VISUAL=vi
+if [[ -x "$(/usr/bin/which mg 2>/dev/null)" ]]; then
+  export VISUAL=mg
+else
+  export VISUAL=vi
+fi
 
 
 ## aliases
@@ -79,6 +83,9 @@ if [[ -x "$(/usr/bin/which nvim 2>/dev/null)" ]]; then
 elif [[ -x "$(/usr/bin/which vim 2>/dev/null)" ]]; then
   alias vi=vim
   alias view='vim --cmd "let no_plugin_maps = 1" -c "runtime! macros/less.vim" -m -M -R -n'
+else
+  alias view='less -R'
+  alias vim=vi
 fi
 if [[ -x "$(/usr/bin/which curl 2>/dev/null)" ]]; then
   alias weather='curl -4k https://wttr.in/?m'
