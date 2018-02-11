@@ -8,7 +8,5 @@ set ruler
 set searchincr
 " disable access to external programs
 set secure
-" word-wrap length - disable with `set wraplen=0`
-"set wraplen=72
 " word-wrap existing lines also
 set wrapscan
