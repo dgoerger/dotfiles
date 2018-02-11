@@ -2,25 +2,27 @@
 
 UPSTREAM_HOSTS_FILE='https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-porn/hosts'
 
-TMP='/tmp/unbound'
-SRC='/tmp/hostfile.src'
+TMP="$(mktemp)"
+SRC="$(mktemp)"
 CONF_DIR='/usr/local/etc'
 BLOCKLIST_FILE="${CONF_DIR}/blocklist.conf"
-PRIVOXY_TMP='/tmp/privoxy'
+PRIVOXY_TMP="$(mktemp)"
 PRIVOXY_CONF='/etc/privoxy/dnsblock.action'
 
 case "$(uname)" in
   OpenBSD) FETCHER='/usr/bin/ftp -VMo' ;;
   Linux) FETCHER='/usr/bin/curl -sLo' ;;
-  NetBSD) FETCHER='/usr/bin/ftp -o' ;;
   *) echo 'ERROR: Unsupported OS' && exit 1 ;;
 esac
 
+# globbing sucks
+export FETCH="${FETCHER} ${SRC} ${UPSTREAM_HOSTS_FILE}"
+
 # first verify we can reach upstream
-if ${FETCHER} ${SRC} ${UPSTREAM_HOSTS_FILE} 2>/dev/null; then
+if ${FETCH} 2>/dev/null; then
   if pgrep unbound >/dev/null 2>&1; then
     # build for unbound
-    awk '$1 == "0.0.0.0" {print "local-zone: \""$2"\" always_nxdomain"}' ${SRC} | tee ${TMP} >/dev/null 2>&1
+    awk '$1 == "0.0.0.0" {print "local-zone: \""$2"\" always_nxdomain"}' "${SRC}" | tee "${TMP}" >/dev/null 2>&1
     # create a backup of any existing, working blocklist
     if [ -f "${BLOCKLIST_FILE}" ]; then
       cp -p "${BLOCKLIST_FILE}" "${BLOCKLIST_FILE}.bak"
