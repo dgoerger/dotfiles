@@ -1,4 +1,4 @@
-#!/bin/python3
+#!/usr/bin/env python3
 # source: https://unix.stackexchange.com/a/261017
 # export PYTHONSTARTUP=/usr/local/lib/python3_startup.py
 
