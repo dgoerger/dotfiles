@@ -88,6 +88,7 @@ pref("browser.onboarding.enabled", false);
 pref("media.autoplay.enabled", false);
 pref("dom.serviceWorkers.enabled", false);
 pref("offline-apps.allow_by_default", false);
+pref("network.dnsCacheExpiration", 0);
 
 //// disable captive portal detection - GNOME provides this
 pref("network.captive-portal-service.enabled", false);
