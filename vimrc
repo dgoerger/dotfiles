@@ -39,10 +39,7 @@ set ignorecase              " ignore case when searching,
 set smartcase               " except when CAPS
 
 """ relocate swapfiles to not live on removable media
-if has ('autocmd')
-  autocmd BufNewFile,BufReadPre /media/*,/run/media/*,/mnt/* |
-  \ set directory=~/tmp,/var/tmp,/tmp
-endif
+set directory=${HOME}/.vim.d//
 
 """ file format support
 if has('autocmd')
