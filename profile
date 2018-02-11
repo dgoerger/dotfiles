@@ -1,7 +1,15 @@
 # .profile
 
+### PATH
+if [[ "$(uname)" == 'Linux' ]]; then
+  export PATH=/usr/local/bin:/usr/bin:/usr/sbin
+elif [[ "$(uname)" == 'NetBSD' ]]; then
+  export PATH=/usr/pkg/bin:/usr/bin:/bin:/usr/local/bin:/usr/pkg/games
+elif [[ "$(uname)" == 'OpenBSD' ]]; then
+  export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/games:/usr/local/bin
+fi
+
 ### all operating systems and shells
-## prelude
 # detect git branch (if any)
 _ps1() {
   _gitbr="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
@@ -33,6 +41,7 @@ export GIT_COMMITTER_EMAIL=${GIT_AUTHOR_EMAIL}
 export GIT_COMMITTER_NAME=${GIT_AUTHOR_NAME}
 #export GITHUB_HOST=if.not.github.com #for `hub`
 #export GITHUB_TOKEN= #for `hub`
+export GITHUB_USER="${USER}"
 export HISTCONTROL=ignoredups
 export HISTFILE=${HOME}/.history
 export HISTSIZE=20736
@@ -64,7 +73,7 @@ alias cal='cal -m'
 if [[ -x "$(/usr/bin/which colordiff 2>/dev/null)" ]]; then
   alias diff='colordiff'
 fi
-if [[ -x "$(/usr/bin/which fetchmail 2>/dev/null)" ]]; then
+if [[ -x "$(/usr/bin/which fetchmail 2>/dev/null)" ]] && [[ -r "${HOME}/.fetchmailrc" ]]; then
   alias fetch='fetchmail --silent'
 fi
 if [[ -x "$(/usr/bin/which kpcli 2>/dev/null)" ]]; then
@@ -99,95 +108,38 @@ alias woohoo='echo \\\(ˆ˚ˆ\)/'
 
 
 ## daemons and shell-specific features
-if [[ "$(uname -n)" != 'sdf' ]]; then
-  # pgrep coredumps on sdf.org
-
-  # gpg-agent
-  if [[ -z "$(pgrep -U "${USER}" gpg-agent)" ]]; then
-    # if not running but socket exists, delete
-    if [[ -S "${HOME}/.gnupg/S.gpg-agent" ]]; then
-      rm "${HOME}/.gnupg/S.gpg-agent"
-    elif [[ -S "${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent" ]]; then
-      rm "${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent"
-    elif [[ ! -d "${HOME}/.gnupg" ]]; then
-      mkdir -m0700 -p "${HOME}/.gnupg"
-    fi
-    if [[ -x "$(/usr/bin/which gpg-agent 2>/dev/null)" ]]; then
-      eval $(gpg-agent --daemon --quiet 2>/dev/null)
-    fi
+# gpg-agent
+if [[ -z "$(pgrep -U "${USER}" gpg-agent)" ]]; then
+  # if not running but socket exists, delete
+  if [[ -S "${HOME}/.gnupg/S.gpg-agent" ]]; then
+    rm "${HOME}/.gnupg/S.gpg-agent"
+  elif [[ -S "${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent" ]]; then
+    rm "${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent"
+  elif [[ ! -d "${HOME}/.gnupg" ]]; then
+    mkdir -m0700 -p "${HOME}/.gnupg"
   fi
+  if [[ -x "$(/usr/bin/which gpg-agent 2>/dev/null)" ]]; then
+    eval $(gpg-agent --daemon --quiet 2>/dev/null)
+  fi
+fi
 
-  # ssh-agent
-  if [[ -z ${SSH_AUTH_SOCK} ]] || [[ -n $(echo ${SSH_AUTH_SOCK} | grep -E "^/run/user/$(id -u)/keyring/ssh$") ]]; then
-    # if ssh-agent isn't running OR GNOME Keyring controls the socket
-    # NB: include hostname so as to not clobber on NFS/shared $HOME
-    export SSH_AUTH_SOCK="${HOME}/.ssh/${USER}@${HOSTNAME}.socket"
-    if [[ ! -S "${SSH_AUTH_SOCK}" ]]; then
+# ssh-agent
+if [[ -z ${SSH_AUTH_SOCK} ]] || [[ -n $(echo ${SSH_AUTH_SOCK} | grep -E "^/run/user/$(id -u)/keyring/ssh$") ]]; then
+  # if ssh-agent isn't running OR GNOME Keyring controls the socket
+  export SSH_AUTH_SOCK="${HOME}/.ssh/${USER}@${HOSTNAME}.socket"
+  if [[ ! -S "${SSH_AUTH_SOCK}" ]]; then
+    eval $(ssh-agent -s -a "${SSH_AUTH_SOCK}" >/dev/null)
+  elif ! pgrep -U "${USER}" -f "ssh-agent -s -a ${SSH_AUTH_SOCK}" >/dev/null; then
+    if [[ -S "${SSH_AUTH_SOCK}" ]]; then
+      # if proc isn't running but the socket exists, remove and restart
+      rm "${SSH_AUTH_SOCK}"
       eval $(ssh-agent -s -a "${SSH_AUTH_SOCK}" >/dev/null)
-    elif ! pgrep -U "${USER}" -f "ssh-agent -s -a ${SSH_AUTH_SOCK}" >/dev/null; then
-      if [[ -S "${SSH_AUTH_SOCK}" ]]; then
-        # if proc isn't running but the socket exists, remove and restart
-        rm "${SSH_AUTH_SOCK}"
-        eval $(ssh-agent -s -a "${SSH_AUTH_SOCK}" >/dev/null)
-      fi
-    fi
-  fi
-
-  # OpenBSD ksh tab-completion
-  if [[ "${0}" == '-ksh' ]]; then
-    # NB: NetBSD ksh does NOT support `set -A complete_`
-    if echo "${KSH_VERSION}" | grep -q 'PD KSH'; then
-      # aliases
-      if [[ -x "$(which cabal 2>/dev/null)" ]] && [[ -d /usr/local/cabal/build ]] && [[ -w /usr/local/cabal/build ]]; then
-        # ref: https://deftly.net/posts/2017-10-12-using-cabal-on-openbsd.html
-        ln -sf /usr/local/cabal ${HOME}/.cabal
-        alias cabal='env TMPDIR=/usr/local/cabal/build/ cabal'
-        # alias the pandoc relocatable-binary build command for easy reference
-        alias pandoc_rebuild='cabal update && cabal install pandoc -fembed_data_files -fhttps'
-      fi
-
-      # tab completions
-      set -A complete_dig_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
-      set -A complete_git_1 -- add bisect blame checkout clone commit diff log mv pull push rebase reset revert rm stash status submodule
-      set -A complete_gpg2 -- --refresh --receive-keys --armor --clearsign --sign --list-key --decrypt --verify --detach-sig
-      set -A complete_host_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
-      set -A complete_ifconfig_1 -- $(ifconfig | awk -F':' '/^[a-z]/ {print $1}')
-      set -A complete_kill_1 -- -9 -HUP -INFO -KILL -TERM
-      set -A complete_kpcli_1 -- --kdb
-      set -A complete_man_1 -- $(ls /usr/share/man/man{1,2,3,4,5,6,7,8,9}/ /usr/local/man/man{1,2,3,3f,3p,4,5,6,7,8,9}/ | grep -Ev "(^|:)$" | awk -F'\.' '/[A-Z].*[A-Z]/i {print $1}' | sort -u)
-      if pgrep sndio 2>/dev/null; then
-        set -A complete_mixerctl_1 -- $(mixerctl | cut -d= -f 1)
-      fi
-      set -A complete_mosh_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
-      set -A complete_mosh_2 -- --
-      set -A complete_mosh_3 -- tmux
-      set -A complete_mosh_4 -- attach
-      set -A complete_nmap_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
-      set -A complete_ping_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
-      set -A complete_rcctl_1 -- disable enable get ls order set
-      set -A complete_rcctl_2 -- $(ls /etc/rc.d)
-      set -A complete_rsync_1 -- -rltHhPv
-      set -A complete_rsync_2 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1] ":"}' ~/.ssh/known_hosts)
-      set -A complete_rsync_3 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1] ":"}' ~/.ssh/known_hosts)
-      set -A complete_signify_1 -- -C -G -S -V
-      set -A complete_signify_2 -- -q -p -x -c -m -t -z
-      set -A complete_signify_3 -- -p -x -c -m -t -z
-      set -A complete_scp_1 -- -3 -4 -6 -p -r
-      set -A complete_scp_2 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1] ":"}' ~/.ssh/known_hosts)
-      set -A complete_scp_3 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1] ":"}' ~/.ssh/known_hosts)
-      set -A complete_surfraw_1 -- $(ls /usr/local/lib/surfraw)
-      set -A complete_surfraw_2 -- -local-help
-      set -A complete_ssh_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
-      set -A complete_telnet_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
-      set -A complete_toot_1 -- block curses follow mute post timeline unblock unfollow unmute upload whoami whois
-      set -A complete_toot_2 -- --help
-      set -A complete_traceroute_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
     fi
   fi
 fi
 
 
-### OS-specific
+### OS-specific overrides
 if [[ "$(uname)" == "Linux" ]]; then
   # env
   export QUOTING_STYLE=literal
@@ -208,6 +160,52 @@ if [[ "$(uname)" == "Linux" ]]; then
   if [[ -x "$(/usr/bin/which tree 2>/dev/null)" ]]; then
     alias tree='tree -N'
   fi
+elif [[ "$(uname)" == 'OpenBSD' ]]; then
+  # aliases
+  if [[ -x "$(which cabal 2>/dev/null)" ]] && [[ -d /usr/local/cabal/build ]] && [[ -w /usr/local/cabal/build ]]; then
+    # ref: https://deftly.net/posts/2017-10-12-using-cabal-on-openbsd.html
+    ln -sf /usr/local/cabal ${HOME}/.cabal
+    alias cabal='env TMPDIR=/usr/local/cabal/build/ cabal'
+    # alias the pandoc relocatable-binary build command for easy reference
+    alias pandoc_rebuild='cabal update && cabal install pandoc -fembed_data_files -fhttps'
+  fi
+
+  # tab completions
+  set -A complete_dig_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
+  set -A complete_git_1 -- add bisect blame checkout clone commit diff log mv pull push rebase reset revert rm stash status submodule
+  set -A complete_gpg2 -- --refresh --receive-keys --armor --clearsign --sign --list-key --decrypt --verify --detach-sig
+  set -A complete_host_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
+  set -A complete_ifconfig_1 -- $(ifconfig | awk -F':' '/^[a-z]/ {print $1}')
+  set -A complete_kill_1 -- -9 -HUP -INFO -KILL -TERM
+  set -A complete_kpcli_1 -- --kdb
+  set -A complete_man_1 -- $(ls /usr/share/man/man{1,2,3,4,5,6,7,8,9}/ /usr/local/man/man{1,2,3,3f,3p,4,5,6,7,8,9}/ | grep -Ev "(^|:)$" | awk -F'\.' '/[A-Z].*[A-Z]/i {print $1}' | sort -u)
+  if pgrep sndio 2>/dev/null; then
+    set -A complete_mixerctl_1 -- $(mixerctl | cut -d= -f 1)
+  fi
+  set -A complete_mosh_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
+  set -A complete_mosh_2 -- --
+  set -A complete_mosh_3 -- tmux
+  set -A complete_mosh_4 -- attach
+  set -A complete_nmap_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
+  set -A complete_ping_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
+  set -A complete_rcctl_1 -- disable enable get ls order set
+  set -A complete_rcctl_2 -- $(ls /etc/rc.d)
+  set -A complete_rsync_1 -- -rltHhPv
+  set -A complete_rsync_2 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1] ":"}' ~/.ssh/known_hosts)
+  set -A complete_rsync_3 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1] ":"}' ~/.ssh/known_hosts)
+  set -A complete_signify_1 -- -C -G -S -V
+  set -A complete_signify_2 -- -q -p -x -c -m -t -z
+  set -A complete_signify_3 -- -p -x -c -m -t -z
+  set -A complete_scp_1 -- -3 -4 -6 -p -r
+  set -A complete_scp_2 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1] ":"}' ~/.ssh/known_hosts)
+  set -A complete_scp_3 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1] ":"}' ~/.ssh/known_hosts)
+  set -A complete_surfraw_1 -- $(ls /usr/local/lib/surfraw)
+  set -A complete_surfraw_2 -- -local-help
+  set -A complete_ssh_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
+  set -A complete_telnet_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
+  set -A complete_toot_1 -- block curses follow mute post timeline unblock unfollow unmute upload whoami whois
+  set -A complete_toot_2 -- --help
+  set -A complete_traceroute_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
 fi
 
 
