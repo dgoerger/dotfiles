@@ -3,6 +3,9 @@
 ### PATH
 if [[ "$(uname)" == 'Linux' ]]; then
   export PATH=/usr/local/bin:/usr/bin:/usr/sbin
+  if [[ ! -L /bin ]]; then
+    export PATH=${PATH}:/bin:/sbin
+  fi
 elif [[ "$(uname)" == 'NetBSD' ]]; then
   export PATH=/usr/pkg/bin:/usr/bin:/bin:/usr/local/bin:/usr/pkg/games
 elif [[ "$(uname)" == 'OpenBSD' ]]; then
@@ -110,7 +113,7 @@ alias woohoo='echo \\\(ˆ˚ˆ\)/'
 
 ## daemons
 # gpg-agent
-if ! pgrep -U "${USER}" -f "gpg-agent --daemon --quiet" >/dev/null; then
+if ! pgrep -U "${USER}" -f "gpg-agent --daemon --quiet" >/dev/null 2>&1; then
   # if not running but socket exists, delete
   if [[ -S "${HOME}/.gnupg/S.gpg-agent" ]]; then
     rm "${HOME}/.gnupg/S.gpg-agent"
@@ -130,7 +133,7 @@ if [[ -z ${SSH_AUTH_SOCK} ]] || [[ -n $(echo ${SSH_AUTH_SOCK} | grep -E "^/run/u
   export SSH_AUTH_SOCK="${HOME}/.ssh/${USER}@${HOSTNAME}.socket"
   if [[ ! -S "${SSH_AUTH_SOCK}" ]]; then
     eval $(ssh-agent -s -a "${SSH_AUTH_SOCK}" >/dev/null)
-  elif ! pgrep -U "${USER}" -f "ssh-agent -s -a ${SSH_AUTH_SOCK}" >/dev/null; then
+  elif ! pgrep -U "${USER}" -f "ssh-agent -s -a ${SSH_AUTH_SOCK}" >/dev/null 2>&1; then
     if [[ -S "${SSH_AUTH_SOCK}" ]]; then
       # if proc isn't running but the socket exists, remove and restart
       rm "${SSH_AUTH_SOCK}"
@@ -186,7 +189,7 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
   set -A complete_kill_1 -- -9 -HUP -INFO -KILL -TERM
   set -A complete_kpcli_1 -- --kdb
   set -A complete_man_1 -- $(ls /usr/share/man/man{1,2,3,4,5,6,7,8,9}/ /usr/local/man/man{1,2,3,3f,3p,4,5,6,7,8,9}/ | grep -Ev "(^|:)$" | awk -F'\.' '/[A-Z].*[A-Z]/i {print $1}' | sort -u)
-  if pgrep sndio 2>/dev/null; then
+  if pgrep sndio >/dev/null 2>&1; then
     set -A complete_mixerctl_1 -- $(mixerctl | cut -d= -f 1)
   fi
   set -A complete_mosh_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
