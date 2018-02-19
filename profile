@@ -108,9 +108,9 @@ alias table_flip='echo '\''(╯°□°）╯︵ ┻━┻'\'''
 alias woohoo='echo \\\(ˆ˚ˆ\)/'
 
 
-## daemons and shell-specific features
+## daemons
 # gpg-agent
-if [[ -z "$(pgrep -U "${USER}" gpg-agent)" ]]; then
+if ! pgrep -U "${USER}" -f "gpg-agent --daemon --quiet" >/dev/null; then
   # if not running but socket exists, delete
   if [[ -S "${HOME}/.gnupg/S.gpg-agent" ]]; then
     rm "${HOME}/.gnupg/S.gpg-agent"
@@ -151,6 +151,8 @@ if [[ "$(uname)" == "Linux" ]]; then
   if [[ -x "$(/usr/bin/which tnftp 2>/dev/null)" ]]; then
     # BSD ftp has support for wget-like functionality
     alias ftp=tnftp
+  else
+    alias ftp='curl -LO'
   fi
   alias l='ls -lhF --color=auto'
   alias la='ls -lhFa --color=auto'
