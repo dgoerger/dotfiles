@@ -84,6 +84,7 @@ alias la='ls -lhFa'
 alias less='less -R'
 alias listening='fstat -n | grep internet'
 alias ll='ls -lhF'
+alias psaux='ps aux'
 if [[ -x "$(/usr/bin/which nvim 2>/dev/null)" ]]; then
   # prefer neovim > vim if available
   alias vi='nvim -u ${HOME}/.vimrc -i NONE'
@@ -157,6 +158,10 @@ if [[ "$(uname)" == "Linux" ]]; then
   alias listening='netstat -launt'
   alias ll='ls -lhF --color=auto'
   alias ls='ls -F --color=auto'
+  # linux ps lists kernel threads amongst procs.. deselect those
+  # .. it's a bit hacky, but seems to work 4.15.x (F27)
+  # ref: https://unix.stackexchange.com/a/78585
+  alias psaux='ps au --ppid 2 -p 2 --deselect'
   if [[ -x "$(/usr/bin/which tree 2>/dev/null)" ]]; then
     alias tree='tree -N'
   fi
