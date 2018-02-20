@@ -1,13 +1,3 @@
-### Begin default Red Hat mailcap ###
-#audio/*; /usr/bin/xdg-open %s
-#image/*; /usr/bin/xdg-open %s
-
-#application/msword; /usr/bin/xdg-open %s
-#application/pdf; /usr/bin/xdg-open %s
-#application/postscript ; /usr/bin/xdg-open %s
-
-#text/html; /usr/bin/xdg-open %s ; copiousoutput
-
 ### Begin custom config for mutt et al ###
 # html
 text/html; lynx -vikeys -force_empty_hrefless_a -enable_scrollback -dump %s; nametemplate=%s.html; copiousoutput
