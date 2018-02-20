@@ -84,7 +84,7 @@ if [[ -x "$(/usr/bin/which kpcli 2>/dev/null)" ]]; then
 fi
 alias l='ls -lhF'
 alias la='ls -lhFa'
-alias less='less -R'
+alias less='less -MR'
 alias listening='fstat -n | grep internet'
 alias ll='ls -lhF'
 alias psaux='ps aux'
@@ -97,7 +97,7 @@ elif [[ -x "$(/usr/bin/which vim 2>/dev/null)" ]]; then
   alias vi=vim
   alias view='vim --cmd "let no_plugin_maps = 1" -c "runtime! macros/less.vim" -m -M -R -n'
 else
-  alias view='less -R'
+  alias view='less -MR'
   alias vim=vi
 fi
 if [[ -x "$(/usr/bin/which curl 2>/dev/null)" ]]; then
