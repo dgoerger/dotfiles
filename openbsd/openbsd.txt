@@ -28,10 +28,8 @@ echo 'https://fastly.cdn.openbsd.org/pub/OpenBSD' | tee /etc/installurl
 
 #sed -i 's/ffs\ rw/ffs\ rw\,softdep\,noatime/g' /etc/fstab
 
-pkg_add colordiff curl dnscrypt-proxy fetchmail git hub kpcli lynx mosh mutt--gpgme-sasl ncdu neovim newsboat nmap privoxy pstree rsync surfraw tor tree unzip
-ftp -o /usr/local/sbin/pomodoro https://raw.githubusercontent.com/dgoerger/dotfiles/master/scripts/pomodoro.sh
+pkg_add colordiff curl fetchmail git kpcli lynx mosh mutt ncdu neovim newsboat nmap privoxy pstree rsync surfraw tor tree unzip
 ftp -o /usr/local/sbin/pf_update https://raw.githubusercontent.com/dgoerger/dotfiles/master/openbsd/pf_update.sh
-chmod 0555 /usr/local/sbin/pomodoro
 chmod 0544 /usr/local/sbin/pf_update
 echo -e '\n## CUSTOM\n@weekly /usr/local/sbin/dnsblock\n@daily /usr/local/sbin/pf_update\n@daily /usr/sbin/pkg_add -Uu >/dev/null 2>&1' | tee -a /var/cron/tabs/root
 
@@ -64,5 +62,5 @@ rcctl start tor
 rcctl start privoxy
 
 # snap
-ftp -o /usr/local/sbin/snap https://raw.githubusercontent.com/qbit/snap/master/snap
-chmod 0544 /usr/local/sbin/snap
+ftp -o /usr/local/bin/snap https://raw.githubusercontent.com/qbit/snap/master/snap
+chmod 0544 /usr/local/bin/snap
