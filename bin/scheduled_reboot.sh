@@ -1,5 +1,5 @@
-#!/bin/sh
-
+#!/bin/bash
+#
 # NB: gui notification only works if SELinux is disabled
 #     ^ (alternatively, TODO write an SELinux policy)
 #
@@ -12,6 +12,12 @@
 # TODO: what's the correct xenocara proc to grep on *BSD?
 
 
+## sanity
+if [[ "$(uname)" != 'Linux' ]]; then
+  exit 1
+fi
+
+
 ## prep broadcast
 # fetch REBOOT_DELAY (in minutes) if passed in as an argument
 case ${1} in
@@ -19,7 +25,7 @@ case ${1} in
   *) REBOOT_DELAY=${1} ;;
 esac
 # else set a sane default for adequate pre-reboot warning
-if [ -z "${REBOOT_DELAY}" ]; then
+if [[ -z "${REBOOT_DELAY}" ]]; then
   REBOOT_DELAY=5
 fi
 REBOOT_DELAY_STRING="${REBOOT_DELAY} minutes"
@@ -28,8 +34,10 @@ REBOOT_GRAPHICAL_BANNER="SYSTEM REBOOT AT ${REBOOT_TIME}"
 REBOOT_GRAPHICAL_MESSAGE='Please save your work and log out.'
 REBOOT_WALL_MESSAGE='Pending reboot - please save your work and log out.'
 
+
 ## issue reboot command - notifies shell users
 /sbin/shutdown -r +${REBOOT_DELAY} "${REBOOT_WALL_MESSAGE}"
+
 
 ## notify graphical users
 notify() {

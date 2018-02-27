@@ -1,7 +1,13 @@
 #!/bin/ksh
 
+## sanity check
+if ! /usr/bin/which pfctl >/dev/null 2>&1; then
+  echo 'ERROR: this script requires pfctl'
+  exit 1
+fi
+
 ## restore table (e.g. after reboot)
-if [ -r /usr/local/etc/pf_bruteforcers.table ]; then
+if [[ -r /usr/local/etc/pf_bruteforcers.table ]]; then
   while read -r ip; do
     pfctl -t bruteforce -T add "${ip}" >/dev/null 2>&1
   done < /usr/local/etc/pf_bruteforcers.table

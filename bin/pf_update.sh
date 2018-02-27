@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/ksh
 #
 # pf_update
 #   Blocks nasties at the system firewall.
@@ -13,7 +13,7 @@ TMP_FILE="/tmp/${DROP_FILE}"
 SOURCE='https://rules.emergingthreats.net/fwrules/emerging-PF-ALL.rules'
 
 # sanity check
-if [ ! -f "${PF_MAIN}" ] || [ ! -x "$(which pfctl 2>/dev/null)" ]; then
+if [[ ! -f "${PF_MAIN}" ] || [ ! -x "$(/usr/bin/which pfctl 2>/dev/null)" ]]; then
   echo 'This script only supports pf.'
   exit 1
 fi
@@ -22,7 +22,7 @@ fi
 if ftp -VMo "${TMP_FILE}" "${SOURCE}" 2>/dev/null; then
   if pfctl -nf "${TMP_FILE}" 2>/dev/null; then
     mkdir -p "${PF_CONF_DIR}"
-    if [ -f "${PF_DROP_CONF}" ]; then
+    if [[ -f "${PF_DROP_CONF}" ]]; then
       mv "${PF_DROP_CONF}" "${PF_DROP_CONF}.bak"
     fi
     mv "${TMP_FILE}" "${PF_DROP_CONF}"
