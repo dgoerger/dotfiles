@@ -3,6 +3,9 @@
 //////////////////////////////////////////
 ////                                  ////
 ////     /etc/firefox/pref/user.js    ////
+////               OR                 ////
+//// /usr/local/lib/firefox*/browser  ////
+////    /defaults/preferences/user.js ////
 ////                                  ////
 ////  (applies to new profiles only)  ////
 ////                                  ////

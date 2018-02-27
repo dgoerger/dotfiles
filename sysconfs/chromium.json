@@ -1,5 +1,6 @@
 {
     "__comment": {
+        "__compat": "LINUX-ONLY",
         "__usage": "Set globally for new profiles at /etc/chromium/master_preferences."
     },
     "alternate_error_pages": {
