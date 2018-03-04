@@ -1,18 +1,8 @@
 # .profile
 
-### PATH
-if [[ "$(uname)" == 'Linux' ]]; then
-  export PATH=/usr/local/bin:/usr/bin:/usr/sbin
-  if [[ ! -L /bin ]]; then
-    export PATH=${PATH}:/bin:/sbin
-  fi
-elif [[ "$(uname)" == 'NetBSD' ]]; then
-  export PATH=/usr/pkg/bin:/usr/bin:/bin:/usr/local/bin:/usr/pkg/games
-elif [[ "$(uname)" == 'OpenBSD' ]]; then
-  export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/games:/usr/local/bin
-fi
-
 ### all operating systems and shells
+# PATH
+export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/games:/usr/local/bin
 # detect git branch (if any)
 _ps1() {
   _gitbr="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
@@ -42,9 +32,6 @@ export GIT_AUTHOR_EMAIL="$(getent passwd ${LOGNAME} | cut -d: -f1)@users.noreply
 export GIT_AUTHOR_NAME="$(getent passwd ${LOGNAME} | cut -d: -f5 | cut -d, -f1)"
 export GIT_COMMITTER_EMAIL=${GIT_AUTHOR_EMAIL}
 export GIT_COMMITTER_NAME=${GIT_AUTHOR_NAME}
-#export GITHUB_HOST=if.not.github.com #for `hub`
-#export GITHUB_TOKEN= #for `hub`
-export GITHUB_USER="${USER}"
 export HISTCONTROL=ignoredups
 export HISTFILE=${HOME}/.history
 export HISTSIZE=20736
@@ -188,7 +175,7 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
   set -A complete_ifconfig_1 -- $(ifconfig | awk -F':' '/^[a-z]/ {print $1}')
   set -A complete_kill_1 -- -9 -HUP -INFO -KILL -TERM
   set -A complete_kpcli_1 -- --kdb
-  set -A complete_man_1 -- $(ls /usr/share/man/man{1,2,3,4,5,6,7,8,9}/ /usr/local/man/man{1,2,3,3f,3p,4,5,6,7,8,9}/ | grep -Ev "(^|:)$" | awk -F'\.' '/[A-Z].*[A-Z]/i {print $1}' | sort -u)
+  set -A complete_man_1 -- $(man -k Nm~. | cut -d\( -f1 | tr -d ,)
   if pgrep sndio >/dev/null 2>&1; then
     set -A complete_mixerctl_1 -- $(mixerctl | cut -d= -f 1)
   fi
@@ -199,7 +186,7 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
   set -A complete_nmap_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
   set -A complete_ping_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
   set -A complete_rcctl_1 -- disable enable get ls order set
-  set -A complete_rcctl_2 -- $(ls /etc/rc.d)
+  set -A complete_rcctl_2 -- $(rcctl ls all)
   set -A complete_rsync_1 -- -rltHhPv
   set -A complete_rsync_2 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1] ":"}' ~/.ssh/known_hosts)
   set -A complete_rsync_3 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1] ":"}' ~/.ssh/known_hosts)
