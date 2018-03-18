@@ -196,7 +196,7 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
   set -A complete_scp_1 -- -3 -4 -6 -p -r
   set -A complete_scp_2 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1] ":"}' ~/.ssh/known_hosts)
   set -A complete_scp_3 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1] ":"}' ~/.ssh/known_hosts)
-  if [[ -x "$(/usr/bin/which surfraw >/dev/null 2>&1)" ]]; then
+  if [[ -x "$(/usr/bin/which surfraw 2>&1)" ]]; then
     set -A complete_surfraw_1 -- $(ls /usr/local/lib/surfraw)
     set -A complete_surfraw_2 -- -local-help
   fi
