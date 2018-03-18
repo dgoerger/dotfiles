@@ -93,6 +93,8 @@ pref("dom.serviceWorkers.enabled", false);
 pref("offline-apps.allow_by_default", false);
 pref("network.dnsCacheExpiration", 0);
 pref("network.ftp.enabled", false);
+// disable Firefox Sync
+pref("identity.fxaccounts.enabled", false);
 
 //// disable captive portal detection - GNOME provides this
 pref("network.captive-portal-service.enabled", false);
