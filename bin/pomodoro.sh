@@ -1,17 +1,17 @@
-#!/bin/sh
+#!/bin/ksh
 
 usage="Usage:\
   pomodoro [minutes] [message]\
 "
 
 # sanity checks
-if [ ! -x "$(/usr/bin/which notify-send 2>/dev/null)" ] || [ -n "${DESKTOP_SESSION}" ]; then
+if [[ ! -x "$(/usr/bin/which notify-send 2>/dev/null)" ]] || [[ -z "${DESKTOP_SESSION}" ]]; then
   echo 'This only works in a graphical environment.'
   return 1
-elif [ ! -x "$(/usr/bin/which tmux 2>/dev/null)" ]; then
+elif [[ ! -x "$(/usr/bin/which tmux 2>/dev/null)" ]]; then
   echo 'Please install tmux.'
   return 1
-elif [ $# -ne 2 ]; then
+elif [[ $# -ne 2 ]]; then
   echo "${usage}"
   return 1
 else
