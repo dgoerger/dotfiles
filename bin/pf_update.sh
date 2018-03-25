@@ -13,7 +13,7 @@ TMP_FILE="/tmp/${DROP_FILE}"
 SOURCE='https://rules.emergingthreats.net/fwrules/emerging-PF-ALL.rules'
 
 # sanity check
-if [[ ! -f "${PF_MAIN}" ] || [ ! -x "$(/usr/bin/which pfctl 2>/dev/null)" ]]; then
+if [[ ! -f "${PF_MAIN}" ]] || [[ ! -x "$(/usr/bin/which pfctl 2>/dev/null)" ]]; then
   echo 'This script only supports pf.'
   exit 1
 fi
