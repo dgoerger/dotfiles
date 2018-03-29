@@ -45,6 +45,8 @@ export LYNX_CFG=${HOME}/.lynxrc
 export PS1='$(_ps1)$ '
 if [[ -r /usr/local/lib/python3_startup.py ]]; then
   export PYTHONSTARTUP=/usr/local/lib/python3_startup.py
+elif [[ -r ${HOME}/.ssh/python3_startup.py ]]; then
+  export PYTHONSTARTUP=${HOME}/.ssh/python3_startup.py
 fi
 if [[ -x "$(/usr/bin/which surfraw 2>/dev/null)" ]]; then
   export SURFRAW_text_browser=${BROWSER}
@@ -184,6 +186,8 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
   set -A complete_mosh_3 -- tmux
   set -A complete_mosh_4 -- attach
   set -A complete_nmap_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
+  set -A complete_openssl_1 -- s_client
+  set -A complete_openssl_2 -- -connect
   set -A complete_ping_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
   set -A complete_rcctl_1 -- disable enable get ls order set
   set -A complete_rcctl_2 -- $(rcctl ls all)
