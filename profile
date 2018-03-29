@@ -106,12 +106,13 @@ if ! pgrep -U "${USER}" -f "gpg-agent --daemon --quiet" >/dev/null 2>&1; then
   # if not running but socket exists, delete
   if [[ -S "${HOME}/.gnupg/S.gpg-agent" ]]; then
     rm "${HOME}/.gnupg/S.gpg-agent"
-  elif [[ -S "${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent" ]]; then
+  elif [[ -n ${XDG_RUNTIME_DIR} ]] && [[ -S "${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent" ]]; then
     rm "${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent"
-  elif [[ ! -d "${HOME}/.gnupg" ]]; then
-    mkdir -m0700 -p "${HOME}/.gnupg"
   fi
   if [[ -x "$(/usr/bin/which gpg-agent 2>/dev/null)" ]]; then
+    if [[ ! -d "${HOME}/.gnupg" ]]; then
+      mkdir -m0700 -p "${HOME}/.gnupg"
+    fi
     eval $(gpg-agent --daemon --quiet 2>/dev/null)
   fi
 fi
