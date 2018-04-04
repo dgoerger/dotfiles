@@ -169,6 +169,13 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
     # alias the pandoc relocatable-binary build command for easy reference
     alias pandoc_rebuild='cabal update && cabal install pandoc -fembed_data_files -fhttps'
   fi
+  if [[ -r /etc/installurl ]]; then
+    # shortcut to check snapshot availability - especially useful during release/freeze
+    alias checksnaps='lynx "$(cat /etc/installurl)/snapshots/$(uname -m)"'
+  fi
+
+  # bind - clear screen with "ctrl+l"
+  bind -m '^L'=^Uclear'^J^Y'
 
   # tab completions
   set -A complete_dig_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
