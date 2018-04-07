@@ -4,7 +4,7 @@
 ////                                  ////
 ////     /etc/firefox/pref/user.js    ////
 ////               OR                 ////
-//// /usr/local/lib/firefox*/browser  ////
+////  /usr/local/lib/firefox/browser  ////
 ////    /defaults/preferences/user.js ////
 ////                                  ////
 ////  (applies to new profiles only)  ////
@@ -97,6 +97,7 @@ pref("network.dnsCacheExpiration", 0);
 pref("network.ftp.enabled", false);
 // disable Firefox Sync
 pref("identity.fxaccounts.enabled", false);
+pref("places.history.enabled", false);
 
 //// disable captive portal detection - GNOME provides this
 pref("network.captive-portal-service.enabled", false);
@@ -185,14 +186,22 @@ pref("security.cert_pinning.enforcement_level", 2);
 pref("security.ssl.treat_unsafe_negotiation_as_broken", true);
 pref("security.insecure_password.ui.enabled", true);
 pref("webgl.disabled", true);
+pref("webgl.disable-wgl", true);
 pref("webgl.enable-webgl2", false);
 pref("security.data_uri.block_toplevel_data_uri_navigations", true);
 pref("security.insecure_connection_icon.enabled", true);
+pref("accessibility.force_disabled", 1);
 
 //// try to upgrade http -> https using hsts
 // ref: https://bugzilla.mozilla.org/show_bug.cgi?id=1246540#c145
 pref("security.mixed_content.use_hsts", true);
 pref("security.mixed_content.send_hsts_priming", false);
+
+// disable miscellaneous prompts
+pref("permissions.default.camera", 2);
+pref("permissions.default.desktop-notification", 2);
+pref("permissions.default.geo", 2);
+pref("permissions.default.microphone", 2);
 
 //// block non-perfect forward secrecy legacy ciphers
 pref("security.tls.version.min", 3);
