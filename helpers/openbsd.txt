@@ -13,28 +13,36 @@ echo "Have you added your pubkey to ~/.ssh/authorized_keys ? (y/N)"
 read -r yesno
 if [[ "${yesno}" != 'yes' ]] || [[ "${yesno}" != 'y' ]] || [[ "${yesno}" != 'Y' ]]; then
   echo "please don't lock yourself out kthx"
-  exit 1
+  return 1
 fi
 if [[ "$(id -u)" != '0' ]]; then
   echo "please become root"
-  exit 2
+  return 2
 fi
 echo "Please enter DNS domain search domain base:"
 read -r dnsbase
 
-ftp -o /etc/ssh/sshd_config https://raw.githubusercontent.com/dgoerger/dotfiles/master/sshd_config
+ftp -o /etc/ssh/sshd_config https://raw.githubusercontent.com/dgoerger/dotfiles/master/sysconfs/sshd_config
 
 echo 'https://fastly.cdn.openbsd.org/pub/OpenBSD' | tee /etc/installurl
 
 #sed -i 's/ffs\ rw/ffs\ rw\,softdep\,noatime/g' /etc/fstab
 
-pkg_add colordiff curl fetchmail git kpcli lynx mosh mutt ncdu neovim newsboat nmap privoxy pstree rsync surfraw tor tree unzip
-ftp -o /usr/local/sbin/pf_update https://raw.githubusercontent.com/dgoerger/dotfiles/master/openbsd/pf_update.sh
+pkg_add colordiff fetchmail git kpcli lynx mosh mutt ncdu neovim newsboat nmap opmsg p5-Term-ReadLine-Gnu pkglocatedb privoxy pstree rsync surfraw toot tor tree unzip weechat wtf
+ftp -o /usr/local/sbin/dnsblock https://raw.githubusercontent.com/dgoerger/dotfiles/master/bin/dnsblock.sh
+ftp -o /usr/local/sbin/pf_bruteforcers https://raw.githubusercontent.com/dgoerger/dotfiles/master/bin/pf_bruteforcers.sh
+ftp -o /usr/local/sbin/pf_update https://raw.githubusercontent.com/dgoerger/dotfiles/master/bin/pf_update.sh
+chmod 0544 /usr/local/sbin/dnsblock
+chmod 0544 /usr/local/sbin/pf_bruteforcers
 chmod 0544 /usr/local/sbin/pf_update
-echo -e '\n## CUSTOM\n@weekly /usr/local/sbin/dnsblock\n@daily /usr/local/sbin/pf_update\n@daily /usr/sbin/pkg_add -Uu >/dev/null 2>&1' | tee -a /var/cron/tabs/root
+echo '## CUSTOM' | tee -a /var/cron/tabs/root
+echo '@weekly /usr/local/sbin/dnsblock' | tee -a /var/cron/tabs/root
+echo '*/5 * * * * /usr/local/sbin/pf_bruteforcers' | tee -a /var/cron/tabs/root
+echo '@daily /usr/local/sbin/pf_update' | tee -a /var/cron/tabs/root
+echo '@daily /usr/sbin/pkg_add -Uu >/dev/null 2>&1' | tee -a /var/cron/tabs/root
 
 if host "$(hostname)"; then
-  echo -e "\ndomain $(hostname) {\n  domain key \"/etc/ssl/private/$(hostname).key\"\n  domain certificate \"/etc/ssl/$(hostname).crt\"\n  domain full chain certificate \"/etc/ssl/$(hostname).fullchain.pem\"\n  sign with letsencrypt\n}" | tee -a /etc/acme-client.conf
+  echo -e "\\ndomain $(hostname) {\\n  domain key \"/etc/ssl/private/$(hostname).key\"\\n  domain certificate \"/etc/ssl/$(hostname).crt\"\\n  domain full chain certificate \"/etc/ssl/$(hostname).fullchain.pem\"\\n  sign with letsencrypt\\n}" | tee -a /etc/acme-client.conf
   acme-client -vAD "$(hostname)"
   echo -e "@daily /usr/sbin/rcctl start -f httpd 2>/dev/null && /usr/sbin/acme-client $(hostname) && /usr/sbin/rcctl stop httpd 2>/dev/null" | tee -a /var/cron/tabs/root
 fi
@@ -42,20 +50,18 @@ fi
 # unbound
 ftp -o /var/unbound/etc/named.cache https://www.internic.net/domain/named.cache
 unbound-anchor -a /var/unbound/db/root.key
-ftp -o /var/unbound/etc/unbound.conf https://raw.githubusercontent.com/dgoerger/dotfiles/master/unbound.conf
-ftp -o /usr/local/sbin/dnsblock https://raw.githubusercontent.com/dgoerger/dotfiles/master/scripts/dnsblock.sh
-chmod 0544 /usr/local/sbin/dnsblock
+ftp -o /var/unbound/etc/unbound.conf https://raw.githubusercontent.com/dgoerger/dotfiles/master/sysconfs/unbound.conf
 rcctl enable unbound
 rcctl disable sndio
 mkdir -p /usr/local/etc
 touch /usr/local/etc/blocklist.conf
 rcctl start unbound
 sh /usr/local/sbin/dnsblock
-echo -e "interface \"em0\" {\n  supersede domain-name \"${dnsbase}\";\n  supersede domain-name-servers 127.0.0.1;\n  request subnet-mask, broadcast-address, time-offset, routers;\n  require subnet-mask;\n}" | tee /etc/dhclient.conf
+echo -e "interface \"em0\" {\\n  supersede domain-name \"${dnsbase}\";\\n  supersede domain-name-servers 127.0.0.1;\\n  request subnet-mask, broadcast-address, time-offset, routers;\\n  require subnet-mask;\\n}" | tee /etc/dhclient.conf
 sh /etc/netstart
 
 # privoxy + tor
-ftp -o /etc/privoxy/config https://raw.githubusercontent.com/dgoerger/dotfiles/master/privoxy.config
+ftp -o /etc/privoxy/config https://raw.githubusercontent.com/dgoerger/dotfiles/master/sysconfs/privoxy_config
 rcctl enable tor
 rcctl enable privoxy
 rcctl start tor
