@@ -3,7 +3,7 @@
 ## sanity check
 if ! /usr/bin/which pfctl >/dev/null 2>&1; then
   echo 'ERROR: this script requires pfctl'
-  exit 1
+  return 1
 fi
 
 ## restore table (e.g. after reboot)
