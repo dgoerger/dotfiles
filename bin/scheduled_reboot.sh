@@ -19,7 +19,7 @@ fi
 
 # bsd vs gnu `date`...
 if [[ "$(uname)" == 'OpenBSD' ]]; then
-  REBOOT_TIME="$(date -r $(echo $(date +%s) + ${REBOOT_DELAY}*60 | bc -l) +%H:%M)"
+  REBOOT_TIME="$(date -r "$(echo "$(date +%s)" + "${REBOOT_DELAY}*60" | bc -l)" +%H:%M)"
 elif [[ "$(uname)" == 'Linux' ]]; then
   REBOOT_TIME="$(date --date="${REBOOT_DELAY} minutes" +%H:%M)"
 else
@@ -41,7 +41,7 @@ REBOOT_WALL_MESSAGE='Pending reboot - please save your work and log out.'
 notify() {
   if [[ "$(uname)" == 'OpenBSD' ]]; then
     # FIXME - doesn't work
-    x_users="$(ps -p $(pgrep -f Xsession) -O user | awk '{print $2}' | grep -Ev "^USER$" | uniq)"
+    x_users="$(ps -p "$(pgrep -f Xsession)" -O user | awk '{print $2}' | grep -Ev "^USER$" | uniq)"
     for x_user in ${x_users}; do
       su -l "${x_user}" /usr/local/bin/notify-send "${REBOOT_GRAPHICAL_BANNER}" "${REBOOT_GRAPHICAL_MESSAGE}" --icon=dialog-warning-symbolic --urgency=critical
     done
@@ -63,8 +63,8 @@ notify() {
     fi
     for tty in ${ttys}; do
       # normal console logins
-      if [[ -n "${tty}" ] && [ "${tty}" != '?' ]]; then
-        x_user=$(LANG='' who -u | grep "^[^ ]\+[ ]\+${tty}" | cut -d ' ' -f 1)
+      if [[ -n "${tty}" ]] && [[ "${tty}" != '?' ]]; then
+        x_user=$(LANG='' who -u | grep "^[^ ]\\+[ ]\\+${tty}" | cut -d ' ' -f 1)
         if [[ -n "${x_user}" ]] && [[ "$(getent passwd "${x_user}")" ]]; then
           /usr/bin/machinectl shell "${x_user}@" /usr/bin/notify-send "${REBOOT_GRAPHICAL_BANNER}" "${REBOOT_GRAPHICAL_MESSAGE}" --icon=dialog-warning-symbolic --urgency=critical
         fi
