@@ -15,7 +15,7 @@ SOURCE='https://rules.emergingthreats.net/fwrules/emerging-PF-ALL.rules'
 # sanity check
 if [[ ! -f "${PF_MAIN}" ]] || [[ ! -x "$(/usr/bin/which pfctl 2>/dev/null)" ]]; then
   echo 'This script only supports pf.'
-  exit 1
+  return 1
 fi
 
 # fetch updated ruleset
