@@ -1,64 +1,48 @@
 #!/bin/bash
 
 ##### CHANGEME #####
-# graphics or headless
-GRAPHICAL_INTERFACE=yes
 # fqdn hostname
 FQDN=host.change.me
-# gpu - supports 'intel' or 'nvidia'
+# gpu - supports 'intel' or 'nvidia' - if nvidia, auto-enable NEGATIVO17.org multimedia repo
 GPU=intel
-# do we need an RDP client
-RDP_CLIENT=no
-# enable rpmfusion.org ?
-RPMFUSION=no
-# enable Negativo17 ?
-NEGATIVO17=no
 # use Google's official version of Chrome ?
 GOOGLE_CHROME=no
-# install Steam ?
-STEAM_CLIENT=no
 
 
 ### usage
 function usage () {
   echo -e "\
-A Fedora Workstation x86_64 postinstall script.\n\
-\n\
-Usage:\n\
-\n\
-  $ # customize the CHANGEME section\n\
-  $ vi postinstall.sh\n\
-  $ # run the script\n\
-  $ sh postinstall.sh\n"
+A Fedora Workstation x86_64 postinstall script.\\n\
+\\n\
+Usage:\\n\
+\\n\
+  $ # customize the CHANGEME section\\n\
+  $ vi postinstall.sh\\n\
+  $ # run the script\\n\
+  $ sh postinstall.sh\\n"
 }
 
 
 ### bomb out if we're doing it wrong
 if [[ "$(uname -m)" != "x86_64" ]]; then
   usage
-  exit 1
+  return 1
 fi
 if sudo bootctl status 2>/dev/null | grep -q 'Secure Boot: enabled'; then
   if [[ "${GPU}" == 'nvidia' ]]; then
     echo "!! WARNING: Secure Boot detected !!"
     echo "- This script will NOT re-sign your kernel. Aborting."
     echo "  Please disable Secure Boot before proceeding."
-    exit 1
+    return 1
   fi
 fi
 
 ### confirm selections
 echo ""
 echo "You're about to configure this machine with the following parameters:"
-echo "  - Graphical interface? ${GRAPHICAL_INTERFACE}"
-echo "    - Atom text editor: ${ATOM_EDITOR}"
-echo "    - Google Chrome: ${GOOGLE_CHROME}"
-echo "    - RDP client: ${RDP_CLIENT}"
-echo "    - Steam client: ${STEAM_CLIENT}"
+echo "  - Google Chrome: ${GOOGLE_CHROME}"
 echo "  - Hostname/FQDN: ${FQDN}"
 echo "  - GPU type: ${GPU}"
-echo "  - Enable RPMFUSION repos? ${RPMFUSION}"
-echo "  - Enable Negativo17 repos (auto-enabled if gpu == nvidia)? ${NEGATIVO17}"
 echo ""
 echo "Proceed? (y/N)"
 read -r yesno
@@ -66,21 +50,9 @@ if [[ "${yesno}" != "y" ]] && [[ "${yesno}" != "Y" ]] && [[ "${yesno}" != "yes" 
   echo ""
   echo "No action taken."
   echo ""
-  exit 20
+  return 20
 fi
 
-
-########################
-### Additional repos ###
-########################
-if [[ "$RPMFUSION" == "yes" ]]; then
-  fedora_version=$(uname -r | awk -F"." '{print $(NF-1)}' | grep -E "^fc" | awk -F"fc" '{print $2}')
-  sudo dnf install -y "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-${fedora_version}.noarch.rpm"
-  sudo dnf install -y "https://download1.rpmfusion.org/free/fedora/rpmfusion-nonfree-release-${fedora_version}.noarch.rpm"
-fi
-if [[ "${NEGATIVO17}" == "yes" ]] || [[ "${GPU}" == "nvidia" ]]; then
-  sudo dnf config-manager --add-repo=https://negativo17.org/repos/fedora-multimedia.repo
-fi
 
 ########################
 ## Remove extraneous  ##
@@ -129,9 +101,8 @@ sudo rkhunter --propupd
 ### Hardware support ###
 ########################
 ## graphics
-if [[ "$RPMFUSION" == "yes" ]] && [[ "$GPU" == "intel" ]]; then
-    sudo dnf install -y libva-intel-driver
-elif [[ "$GPU" == "nvidia" ]]; then
+if [[ "$GPU" == "nvidia" ]]; then
+  sudo dnf config-manager --add-repo=https://negativo17.org/repos/fedora-multimedia.repo
   sudo dnf install -y nvidia-driver kernel-devel dkms-nvidia nvidia-driver-cuda cuda nvidia-xconfig
   sudo nvidia-xconfig
   sudo systemctl enable dkms
@@ -143,26 +114,11 @@ echo "blacklist ideapad_laptop" | sudo tee /etc/modprobe.d/lenovo_wifi.conf
 ########################
 ####### Software #######
 ########################
-if [[ "$GRAPHICAL_INTERFACE" != "yes" ]]; then
-  ## if there's no graphical interface, assume access is via ssh
-  sudo firewall-cmd --set-default-zone=dmz
-  sudo systemctl enable --now sshd
-else
-  ## firewall policy
-  sudo firewall-cmd --set-default-zone=drop
-  # optional apps
-  if [[ "$RPMFUSION" == "yes" ]]; then
-    sudo dnf install -y gstreamer1-libav
-    if [[ "$STEAM_CLIENT" == "yes" ]]; then
-      sudo dnf install -y steam libCg.i636 libCg.x86_64
-    fi
-  fi
-  if [[ "$GOOGLE_CHROME" == "yes" ]]; then
-    sudo dnf install -y https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
-  fi
-  if [[ "$RDP_CLIENT" == "yes" ]]; then
-    sudo dnf install -y remmina
-  fi
+## firewall policy
+sudo firewall-cmd --set-default-zone=drop
+# optional apps
+if [[ "$GOOGLE_CHROME" == "yes" ]]; then
+  sudo dnf install -y https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
 fi
 
 ### security ###
@@ -173,11 +129,18 @@ sudo hostnamectl set-hostname "${FQDN}"
 
 ### dns
 sudo dnf install -y dnssec-trigger
-sudo curl -Lo /etc/NetworkManager/NetworkManager.conf https://raw.githubusercontent.com/dgoerger/dotfiles/master/fedora/NetworkManager.conf
+sudo curl -Lo /etc/NetworkManager/NetworkManager.conf https://raw.githubusercontent.com/dgoerger/dotfiles/master/sysconfs/NetworkManager.conf
 sudo systemctl enable --now dnssec-triggerd.service
 
 ### harmonize bsd/linux
 sudo ln /usr/libexec/openssh/sftp-server /usr/libexec/sftp-server
+
+### why isn't this in skel??
+sudo mkdir -m0700 /etc/skel/.ssh
+sudo touch /etc/skel/.ssh/authorized_keys
+sudo chmod 0600 /etc/skel/.ssh/authorized_keys
+sudo touch /etc/skel/.ssh/config
+sudo chmod 0600 /etc/skel/.ssh/config
 
 ########################
 ##  First-user Setup  ##
