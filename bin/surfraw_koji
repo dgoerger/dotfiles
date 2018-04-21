@@ -1,0 +1,30 @@
+#!/bin/sh
+# elvis: koji		-- Search Fedora Koji (https://koji.fedoraproject.org/koji)
+# Author: dgoerger
+# /usr/local/lib/surfraw/koji
+
+. surfraw || exit 1
+
+w3_usage_hook () {
+    cat <<EOF
+
+Usage: $w3_argv0 [options] [search-string]
+Description:
+	Search Fedora Koji (https://koji.fedoraproject.org/koji)
+
+EOF
+    w3_global_usage
+}
+
+w3_config
+w3_parse_args "$@"
+# w3_args now contains list of arguments
+
+# No arguments parsed
+if [ -z "$w3_args" ]; then
+	w3_browse_url "https://koji.fedoraproject.org/koji"
+else
+	escaped_args=$(w3_url_of_arg $w3_args)
+	w3_browse_url "https://koji.fedoraproject.org/koji/search?match=glob&type=package&terms=${escaped_args}"
+fi
+
