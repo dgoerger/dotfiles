@@ -8,5 +8,5 @@ set ruler
 set searchincr
 " disable access to external programs
 set secure
-" word-wrap existing lines also
+" word-wrap existing lines when wraplen or wrapmargin is enabled
 set wrapscan
