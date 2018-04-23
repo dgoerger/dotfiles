@@ -95,6 +95,7 @@ fi
 
 # emoji
 alias disapprove='echo '\''ಠ_ಠ'\'''
+alias kilroy='echo '\''ฅ^•ﻌ•^ฅ'\'''
 alias shrug='echo '\''¯\_(ツ)_/¯'\'''
 alias table_flip='echo '\''(╯°□°）╯︵ ┻━┻'\'''
 alias woohoo='echo \\\(ˆ˚ˆ\)/'
