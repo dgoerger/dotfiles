@@ -97,6 +97,8 @@ fi
 alias disapprove='echo '\''ಠ_ಠ'\'''
 alias kilroy='echo '\''ฅ^•ﻌ•^ฅ'\'''
 alias shrug='echo '\''¯\_(ツ)_/¯'\'''
+alias stare='echo '\''(•_•)'\'''
+alias sunglasses='echo '\''(■_■¬)'\'''
 alias table_flip='echo '\''(╯°□°）╯︵ ┻━┻'\'''
 alias woohoo='echo \\\(ˆ˚ˆ\)/'
 
