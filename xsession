@@ -1,1 +1,2 @@
+# ~/.xsession
 cwm
