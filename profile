@@ -62,6 +62,7 @@ fi
 ## aliases
 alias bc='bc -l'
 alias cal='cal -m'
+alias df='df -h'
 if [[ -x "$(/usr/bin/which colordiff 2>/dev/null)" ]]; then
   alias diff='colordiff'
 fi
@@ -104,21 +105,21 @@ alias woohoo='echo \\\(ˆ˚ˆ\)/'
 
 
 ## daemons
-# gpg-agent
-if ! pgrep -U "${USER}" -f "gpg-agent --daemon --quiet" >/dev/null 2>&1; then
-  # if not running but socket exists, delete
-  if [[ -S "${HOME}/.gnupg/S.gpg-agent" ]]; then
-    rm "${HOME}/.gnupg/S.gpg-agent"
-  elif [[ -n ${XDG_RUNTIME_DIR} ]] && [[ -S "${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent" ]]; then
-    rm "${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent"
-  fi
-  if [[ -x "$(/usr/bin/which gpg-agent 2>/dev/null)" ]]; then
-    if [[ ! -d "${HOME}/.gnupg" ]]; then
-      mkdir -m0700 -p "${HOME}/.gnupg"
-    fi
-    eval $(gpg-agent --daemon --quiet 2>/dev/null)
-  fi
-fi
+## gpg-agent
+#if ! pgrep -U "${USER}" -f "gpg-agent --daemon --quiet" >/dev/null 2>&1; then
+#  # if not running but socket exists, delete
+#  if [[ -S "${HOME}/.gnupg/S.gpg-agent" ]]; then
+#    rm "${HOME}/.gnupg/S.gpg-agent"
+#  elif [[ -n ${XDG_RUNTIME_DIR} ]] && [[ -S "${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent" ]]; then
+#    rm "${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent"
+#  fi
+#  if [[ -x "$(/usr/bin/which gpg-agent 2>/dev/null)" ]]; then
+#    if [[ ! -d "${HOME}/.gnupg" ]]; then
+#      mkdir -m0700 -p "${HOME}/.gnupg"
+#    fi
+#    eval $(gpg-agent --daemon --quiet 2>/dev/null)
+#  fi
+#fi
 
 # ssh-agent
 if [[ -z ${SSH_AUTH_SOCK} ]] || [[ -n $(echo ${SSH_AUTH_SOCK} | grep -E "^/run/user/$(id -u)/keyring/ssh$") ]]; then
@@ -143,6 +144,7 @@ if [[ "$(uname)" == "Linux" ]]; then
   unset LS_COLORS
 
   # aliases
+  alias df='df -h -xtmpfs -xdevtmpfs'
   alias doas='/usr/bin/sudo' #mostly-compatible
   if [[ -x "$(/usr/bin/which tnftp 2>/dev/null)" ]]; then
     # BSD ftp has support for wget-like functionality
