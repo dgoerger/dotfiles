@@ -93,6 +93,7 @@ fi
 if [[ -x "$(/usr/bin/which curl 2>/dev/null)" ]]; then
   alias weather='curl -4k https://wttr.in/?m'
 fi
+alias which='/usr/bin/which'
 
 # emoji
 alias disapprove='echo '\''ಠ_ಠ'\'''
