@@ -155,8 +155,8 @@ if [[ "$(uname)" == "Linux" ]]; then
   fi
   alias l='ls -lhF --color=auto'
   alias la='ls -lhFa --color=auto'
-  # linux doesn't have fstat, but does have a pretty good netstat
-  alias listening='netstat -launt'
+  # linux doesn't have fstat
+  alias listening='ss -tau'
   alias ll='ls -lhF --color=auto'
   alias ls='ls -F --color=auto'
   # linux ps lists kernel threads amongst procs.. deselect those
