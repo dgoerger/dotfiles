@@ -20,6 +20,13 @@ pref("browser.newtabpage.enhanced", false);
 pref("browser.newtabpage.directory.ping", "");
 pref("browser.newtabpage.directory.source", "");
 pref("browser.newtabpage.activity-stream.enabled", false);
+pref("browser.newtabpage.activity-stream.feeds.topsites", false);
+pref("browser.newtabpage.activity-stream.feeds.telemetry", false);
+pref("browser.newtabpage.activity-stream.feeds.section.highlights", false);
+pref("browser.newtabpage.activity-stream.section.highlights.includePocket", false);
+pref("browser.newtabpage.activity-stream.showTopSites", false);
+pref("browser.newtabpage.activity-stream.showSponsored", false);
+pref("browser.newtabpage.activity-stream.telemetry", false);
 
 //// set DONOTTRACK header
 pref("privacy.donottrackheader.enabled", true);
