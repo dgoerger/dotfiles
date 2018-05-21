@@ -66,6 +66,18 @@ alias df='df -h'
 if [[ -x "$(/usr/bin/which colordiff 2>/dev/null)" ]]; then
   alias diff='colordiff'
 fi
+if [[ -x "$(/usr/bin/which mpv 2>/dev/null)" ]]; then
+  dvd() {
+    if [[ $# -eq 1 ]]; then
+      case ${1} in
+        ''|*[!0-9]*) echo "Error: \${1} must be an integer." && return 1 ;;
+        *) mpv --audio-normalize-downmix=yes dvdread://${1} ;;
+      esac
+    else
+      echo "Usage: 'dvd INT', where INT is the chapter number."
+    fi
+  }
+fi
 if [[ -x "$(/usr/bin/which fetchmail 2>/dev/null)" ]] && [[ -r "${HOME}/.fetchmailrc" ]]; then
   alias fetch='fetchmail --silent'
 fi
@@ -145,13 +157,14 @@ if [[ "$(uname)" == "Linux" ]]; then
   unset LS_COLORS
 
   # aliases
+  if [[ -x "$(/usr/bin/which bc 2>/dev/null)" ]]; then
+    alias bc='bc -ql'
+  fi
   alias df='df -h -xtmpfs -xdevtmpfs'
   alias doas='/usr/bin/sudo' #mostly-compatible
   if [[ -x "$(/usr/bin/which tnftp 2>/dev/null)" ]]; then
     # BSD ftp has support for wget-like functionality
     alias ftp=tnftp
-  else
-    alias ftp='curl -LO'
   fi
   alias l='ls -lhF --color=auto'
   alias la='ls -lhFa --color=auto'
