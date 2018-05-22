@@ -66,18 +66,6 @@ alias df='df -h'
 if [[ -x "$(/usr/bin/which colordiff 2>/dev/null)" ]]; then
   alias diff='colordiff'
 fi
-if [[ -x "$(/usr/bin/which mpv 2>/dev/null)" ]]; then
-  dvd() {
-    if [[ $# -eq 1 ]]; then
-      case ${1} in
-        ''|*[!0-9]*) echo "Error: \${1} must be an integer." && return 1 ;;
-        *) mpv --audio-normalize-downmix=yes dvdread://${1} ;;
-      esac
-    else
-      echo "Usage: 'dvd INT', where INT is the chapter number."
-    fi
-  }
-fi
 if [[ -x "$(/usr/bin/which fetchmail 2>/dev/null)" ]] && [[ -r "${HOME}/.fetchmailrc" ]]; then
   alias fetch='fetchmail --silent'
 fi
@@ -236,6 +224,99 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
   set -A complete_toot_1 -- block curses follow mute post timeline unblock unfollow unmute upload whoami whois
   set -A complete_toot_2 -- --help
   set -A complete_traceroute_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
+fi
+
+
+### functions
+# dvd()
+if [[ -x "$(/usr/bin/which mpv 2>/dev/null)" ]]; then
+  dvd() {
+    if [[ $# -eq 1 ]]; then
+      case ${1} in
+        ''|*[!0-9]*) echo "Error: \${1} must be an integer." && return 1 ;;
+        *) mpv --audio-normalize-downmix=yes dvdread://${1} ;;
+      esac
+    else
+      echo "Usage: 'dvd INT', where INT is the chapter number." && return 1
+    fi
+  }
+fi
+
+# ereader()
+if [[ -x "$(/usr/bin/which pandoc 2>/dev/null)" ]] && [[ -x "$(/usr/bin/which lynx 2>/dev/null)" ]]; then
+  ereader() {
+    usage='Usage: ereader file.epub\n'
+    if [[ $# -ne 1 ]]; then
+      echo -e "${usage}" && return 1
+    elif [[ "${1}" = '-h' ]] || [[ "${1}" = '--help' ]]; then
+      echo -e "${usage}" && return 0
+    elif echo "${1}" | grep -Evq '\.epub$'; then
+      echo -e "${usage}" && return 1
+    elif ! ls "${1}" >/dev/null 2>&1; then
+      echo 'ERROR: file not found' && return 1
+    else
+      echo 'Reformatting.. (might take a moment)'
+      pandoc -f epub -t html "${1}" | lynx -stdin
+    fi
+  }
+fi
+
+# photo_import()
+if [[ -x "$(which exiv2 2>/dev/null)" ]]; then
+  _import_photo() {
+    DATETIME="$(exiv2 -pt -qK Exif.Photo.DateTimeOriginal "${1}" 2>/dev/null | awk '{print $(NF-1)}' | sed 's/\:/\//g' | sort -u)"
+    FILENAME="$(echo "${1}" | awk -F"/" '{print $NF}' | tr '[:upper:]' '[:lower:]')"
+    PHOTO_DIR="${HOME}/Pictures"
+
+    # sanity checks
+    if [[ -z "${DATETIME}" ]]; then
+      echo "${1}: Abort! DateTime not found" && return 1
+    elif [[ "$(echo "${DATETIME}" | wc -l)" -ne 1 ]]; then
+      echo "${1}: Abort! File has more than one DateTime declaration" && return 1
+    elif [[ "$(uname)" == 'OpenBSD' ]]; then
+      if ! date -j "$(echo "${DATETIME}/0000" | sed 's/\///g')" >/dev/null 2>&1; then
+        echo "${1}: Abort! /bin/date doesn't recognise the detected DateTime as a valid date" && return 1
+      fi
+    elif [[ "$(uname)" == 'Linux' ]]; then
+      if ! date --date="$(echo "${DATETIME}" | sed 's/\///g')" >/dev/null 2>&1; then
+        echo "${1}: Abort! /bin/date doesn't recognise the detected DateTime as a valid date" && return 1
+      fi
+    fi
+
+    # copy the file into place
+    if [[ -n "${FILENAME}" ]]; then
+      mkdir -p "${PHOTO_DIR}/${DATETIME}"
+      if [[ ! -f "${PHOTO_DIR}/${DATETIME}/${FILENAME}" ]]; then
+        cp -p "${1}" "${PHOTO_DIR}/${DATETIME}/${FILENAME}"
+      fi
+    fi
+  }
+  photo_import() {
+    # This script will search recursively for exif metadata in supported
+    #   files within the current directory, and copy images to
+    #   $PHOTO_DIR/$YYYY/$MM/$DD
+    FILETYPES="jpg jpeg"
+    for x in ${FILETYPES}; do
+      find . -type f -iname "*.${x}" | while read -r photo; do _import_photo "${photo}"; done
+    done
+  }
+fi
+
+# pomodoro()
+if [[ -x "$(/usr/bin/which notify-send 2>/dev/null)" ]] && [[ -x "$(/usr/bin/which tmux 2>/dev/null)" ]] && [[ -n "${DESKTOP_SESSION}" ]]; then
+  pomodoro() {
+    usage='Usage: pomodoro [minutes] [message]\n'
+    if [[ $# -ne 2 ]]; then
+      echo -e "${usage}" && return 1
+    else
+      message="${2}"
+    fi
+    case ${1} in
+      ''|*[!0-9]*) echo "Error: \${1} must be an integer." && return 1 ;;
+      *) delay=${1} ;;
+    esac
+    tmux new -d "sleep $(echo "${delay}*60" | bc -l); notify-send POMODORO ${message} --icon=dialog-warning-symbolic --urgency=critical"
+  }
 fi
 
 
