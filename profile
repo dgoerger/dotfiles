@@ -77,6 +77,9 @@ alias la='ls -lhFa'
 alias less='less -MR'
 alias listening='fstat -n | grep internet'
 alias ll='ls -lhF'
+if [[ -x "$(/usr/bin/which newsboat 2>/dev/null)" ]]; then
+  alias news=newsboat
+fi
 alias psaux='ps aux'
 if [[ -x "$(/usr/bin/which nvim 2>/dev/null)" ]]; then
   # prefer neovim > vim if available
