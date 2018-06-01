@@ -160,7 +160,7 @@ if [[ "$(uname)" == "Linux" ]]; then
   alias l='ls -lhF --color=auto'
   alias la='ls -lhFa --color=auto'
   # linux doesn't have fstat
-  alias listening='ss -tau'
+  alias listening='ss -ntau'
   alias ll='ls -lhF --color=auto'
   alias ls='ls -F --color=auto'
   # linux ps lists kernel threads amongst procs.. deselect those
