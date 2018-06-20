@@ -23,5 +23,8 @@ root    ALL=(ALL)       ALL
 Defaults umask_override
 Defaults umask = 0022
 
+# ref: http://www.openwall.com/lists/oss-security/2018/06/12/2
+Defaults use_pty
+
 # by default, sudo timeout is 5 minutes - change to 30 minutes
 Defaults timestamp_timeout = 30
