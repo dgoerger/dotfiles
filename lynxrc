@@ -1,9 +1,9 @@
 # .lynxrc
 
 # homepage
-STARTFILE:./.ssh/bookmarks.html
-DEFAULT_BOOKMARK_FILE:./.ssh/bookmarks.html
-DEFAULT_INDEX_FILE:./.ssh/bookmarks.html
+STARTFILE:~/.ssh/bookmarks.html
+DEFAULT_BOOKMARK_FILE:~/.ssh/bookmarks.html
+DEFAULT_INDEX_FILE:~/.ssh/bookmarks.html
 
 # sane defaults
 ACCEPT_ALL_COOKIES:TRUE
