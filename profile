@@ -87,6 +87,10 @@ if [[ -x "$(/usr/bin/which newsboat 2>/dev/null)" ]]; then
   alias news=newsboat
 fi
 alias psaux='ps aux'
+if [[ -x "$(/usr/bin/which python3 2>/dev/null)" ]]; then
+  alias py=python3
+  alias python=python3
+fi
 if [[ -x "$(/usr/bin/which nvim 2>/dev/null)" ]]; then
   # prefer neovim > vim if available
   alias vi='nvim -u ${HOME}/.vimrc -i NONE'
