@@ -43,20 +43,14 @@ export LESSHISTFILE=-
 export LYNX_CFG=${HOME}/.lynxrc
 #export MUTTRC=${path_to_mutt_gpg}
 export PS1='$(_ps1)$ '
-if [[ -r /usr/local/lib/python3_startup.py ]]; then
-  export PYTHONSTARTUP=/usr/local/lib/python3_startup.py
-elif [[ -r ${HOME}/.ssh/python3_startup.py ]]; then
-  export PYTHONSTARTUP=${HOME}/.ssh/python3_startup.py
+if [[ -r ${HOME}/.pythonrc ]]; then
+  export PYTHONSTARTUP=${HOME}/.pythonrc
 fi
 if [[ -x "$(/usr/bin/which surfraw 2>/dev/null)" ]]; then
   export SURFRAW_text_browser=${BROWSER}
 fi
 export TZ='US/Eastern'
-if [[ -x "$(/usr/bin/which mg 2>/dev/null)" ]]; then
-  export VISUAL=mg
-else
-  export VISUAL=vi
-fi
+export VISUAL=vi
 
 
 ## aliases

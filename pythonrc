@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # source: https://unix.stackexchange.com/a/261017
-# export PYTHONSTARTUP=/path/to/python3_startup.py
+# export PYTHONSTARTUP=~/.pythonrc
 
 import sys
 # disable history (but also auto-completion)
