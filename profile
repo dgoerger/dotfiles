@@ -60,8 +60,14 @@ fi
 
 
 ## aliases
+if [[ -x "$(/usr/bin/which abook 2>/dev/null)" ]]; then
+  alias abook='abook --config ${HOME}/.ssh/abookrc --datafile ${HOME}/.ssh/addressbook'
+fi
 alias bc='bc -l'
 alias cal='cal -m'
+if [[ -x "$(/usr/bin/which calendar 2>/dev/null)" ]]; then
+  export CALENDAR_DIR="${HOME}/.ssh"
+fi
 alias df='df -h'
 if [[ -x "$(/usr/bin/which colordiff 2>/dev/null)" ]]; then
   alias diff='colordiff'
@@ -231,8 +237,9 @@ fi
 
 
 ### functions
-# dvd()
+# dvd() and anonradio()
 if [[ -x "$(/usr/bin/which mpv 2>/dev/null)" ]]; then
+  alias anonradio='mpv "http://anonradio.net:8000/anonradio"'
   dvd() {
     if [[ $# -eq 1 ]]; then
       case ${1} in
