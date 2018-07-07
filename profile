@@ -3,20 +3,17 @@
 ### all operating systems and shells
 # PATH
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/games:/usr/local/bin
-# detect git branch (if any)
 _ps1() {
-  _gitbr="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
+  # detect git project name (if any)
   _gitproject="$(git rev-parse --show-toplevel 2>/dev/null | awk -F'/' '{print $NF}')"
-  if [ -n "${_gitbr}" ] && [ -n "${_gitproject}" ]; then
-    if [ "${_gitbr}" = 'master' ]; then
-      # alert with RED when operating on `master`
-      printf "[\033[1;34m%s\033[m@\033[1;31m%s\033[m]" "${_gitproject}" "${_gitbr}"
-    else
-      # else print branch name in GREEN
-      printf "[\033[1;34m%s\033[m@\033[1;32m%s\033[m]" "${_gitproject}" "${_gitbr}"
-    fi
+  if [[ -r "${PWD}/CVS/Repository" ]]; then
+    # fetch cvs project name (if any)
+    _cvsproject="$(cat ${PWD}/CVS/Repository 2>/dev/null | awk -F'/' '{print $1}')"
+    printf "%s*%s" "${_cvsproject}" "$(hostname -s)"
+  elif [[ -n "${_gitproject}" ]]; then
+    printf "%s*%s" "${_gitproject}" "$(hostname -s)"
   else
-    # else print hostname
+    # else just print the hostname
     printf "%s" "$(hostname -s)"
   fi
 }
