@@ -157,6 +157,7 @@ if [[ "$(uname)" == "Linux" ]]; then
   fi
   alias df='df -h -xtmpfs -xdevtmpfs'
   alias doas='/usr/bin/sudo' #mostly-compatible
+  alias free='free -h'
   if [[ -x "$(/usr/bin/which tnftp 2>/dev/null)" ]]; then
     # BSD ftp has support for wget-like functionality
     alias ftp=tnftp
@@ -187,6 +188,7 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
     # shortcut to check snapshot availability - especially useful during release/freeze
     alias checksnaps='lynx "$(cat /etc/installurl)/snapshots/$(uname -m)"'
   fi
+  alias free='top -d1 | head -n4'
 
   # bind - clear screen with "ctrl+l"
   bind -m '^L'=^Uclear'^J^Y'
