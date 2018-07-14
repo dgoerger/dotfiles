@@ -251,10 +251,25 @@ if [[ -x "$(/usr/bin/which mpv 2>/dev/null)" ]]; then
     usage='Usage:  radio stream_name\n'
     if [[ $# -eq 1 ]]; then
       case ${1} in
+        # via https://www.radio-browser.info
         anon) mpv "http://anonradio.net:8000/anonradio" ;;
-        antenne1) mpv "http://81.201.157.218:80/a1stg/livestream2.mp3" ;;
+        antenne1) mpv "http://81.201.157.218/a1stg/livestream2.mp3" ;;
+        bbc1) mpv "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio1_mf_p" ;;
+        bbc2) mpv "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio2_mf_p" ;;
+        bbc3) mpv "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio3_mf_p" ;;
+        bbc4) mpv "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio4fm_mf_p" ;;
+        bbc5) mpv "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio5live_mf_p" ;;
+        bbcworld) mpv "http://as-hls-ww-live.bbcfmt.hs.llnwd.net/pool_27/live/bbc_world_service/bbc_world_service.isml/bbc_world_service-audio%3d96000.norewind.m3u8" ;;
+        cbw) mpv "http://cbc_r1_wpg.akacast.akamaistream.net/7/831/451661/v1/rc.akacast.akamaistream.net/cbc_r1_wpg" ;;
+        fc) mpv "http://mp3.fckoeln.c.nmdn.net/fckoeln/livestream01.mp3" ;;
+        ici) mpv "http://2QMTL0.akacast.akamaistream.net/7/953/177387/v1/rc.akacast.akamaistream.net/2QMTL0" ;;
+        ici-musique) mpv "http://7qmtl0.akacast.akamaistream.net/7/445/177407/v1/rc.akacast.akamaistream.net/7QMTL0" ;;
         kdsu) mpv "https://18433.live.streamtheworld.com/KCNDHD3_SC" ;;
-        schlager) mpv "http://85.25.217.30:80/schlagerparadies" ;;
+        schlager) mpv "http://85.25.217.30/schlagerparadies" ;;
+        swr3) mpv "http://swr-swr3-live.cast.addradio.de/swr/swr3/live/mp3/128/stream.mp3" ;;
+        wgbh) mpv "http://audio.wgbh.org:8000" ;;
+        wnyc) mpv "http://fm939.wnyc.org/wnycfm" ;;
+        y94) mpv "https://16693.live.streamtheworld.com/KOYYFMAAC_SC" ;;
         *) echo -e "Error: unknown stream" && return 1 ;;
       esac
     else
