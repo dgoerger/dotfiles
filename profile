@@ -82,6 +82,7 @@ if [[ -x "$(/usr/bin/which python3 2>/dev/null)" ]]; then
   alias py=python3
   alias python=python3
 fi
+alias ssh-add='ssh-add -c'
 if [[ -x "$(/usr/bin/which nvim 2>/dev/null)" ]]; then
   # prefer neovim > vim if available
   alias vi='nvim -u ${HOME}/.vimrc -i NONE'
@@ -99,7 +100,7 @@ if [[ -x "$(/usr/bin/which curl 2>/dev/null)" ]]; then
 fi
 alias which='/usr/bin/which'
 
-# emoji
+# kaomoji
 alias disapprove='echo '\''ಠ_ಠ'\'''
 alias kilroy='echo '\''ฅ^•ﻌ•^ฅ'\'''
 alias shrug='echo '\''¯\_(ツ)_/¯'\'''
@@ -234,9 +235,8 @@ fi
 
 
 ### functions
-# dvd() and anonradio()
+# dvd() and radio()
 if [[ -x "$(/usr/bin/which mpv 2>/dev/null)" ]]; then
-  alias anonradio='mpv "http://anonradio.net:8000/anonradio"'
   dvd() {
     if [[ $# -eq 1 ]]; then
       case ${1} in
@@ -245,6 +245,20 @@ if [[ -x "$(/usr/bin/which mpv 2>/dev/null)" ]]; then
       esac
     else
       echo "Usage: 'dvd INT', where INT is the chapter number." && return 1
+    fi
+  }
+  radio() {
+    usage='Usage:  radio stream_name\n'
+    if [[ $# -eq 1 ]]; then
+      case ${1} in
+        anon) mpv "http://anonradio.net:8000/anonradio" ;;
+        antenne1) mpv "http://81.201.157.218:80/a1stg/livestream2.mp3" ;;
+        kdsu) mpv "https://18433.live.streamtheworld.com/KCNDHD3_SC" ;;
+        schlager) mpv "http://85.25.217.30:80/schlagerparadies" ;;
+        *) echo -e "Error: unknown stream" && return 1 ;;
+      esac
+    else
+      echo -e "${usage}" && return 1
     fi
   }
 fi
