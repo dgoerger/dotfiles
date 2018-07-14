@@ -265,6 +265,7 @@ if [[ -x "$(/usr/bin/which mpv 2>/dev/null)" ]]; then
         ici) mpv "http://2QMTL0.akacast.akamaistream.net/7/953/177387/v1/rc.akacast.akamaistream.net/2QMTL0" ;;
         ici-musique) mpv "http://7qmtl0.akacast.akamaistream.net/7/445/177407/v1/rc.akacast.akamaistream.net/7QMTL0" ;;
         kdsu) mpv "https://18433.live.streamtheworld.com/KCNDHD3_SC" ;;
+        mpr) mpv "https://current.stream.publicradio.org/kcmp.mp3" ;;
         schlager) mpv "http://85.25.217.30/schlagerparadies" ;;
         swr3) mpv "http://swr-swr3-live.cast.addradio.de/swr/swr3/live/mp3/128/stream.mp3" ;;
         wgbh) mpv "http://audio.wgbh.org:8000" ;;
