@@ -261,11 +261,16 @@ if [[ -x "$(/usr/bin/which mpv 2>/dev/null)" ]]; then
         bbc5) mpv "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio5live_mf_p" ;;
         bbcworld) mpv "http://as-hls-ww-live.bbcfmt.hs.llnwd.net/pool_27/live/bbc_world_service/bbc_world_service.isml/bbc_world_service-audio%3d96000.norewind.m3u8" ;;
         cbw) mpv "http://cbc_r1_wpg.akacast.akamaistream.net/7/831/451661/v1/rc.akacast.akamaistream.net/cbc_r1_wpg" ;;
-        fc) mpv "http://mp3.fckoeln.c.nmdn.net/fckoeln/livestream01.mp3" ;;
+        espn) mpv "http://espn-network.akacast.akamaistream.net/7/245/126490/v1/espn.akacast.akamaistream.net/espn-network" ;;
+        fckoeln) mpv "http://mp3.fckoeln.c.nmdn.net/fckoeln/livestream01.mp3" ;;
+        foxsports) mpv "http://c5icyelb.prod.playlists.ihrhls.com/5227_icy" ;;
         ici) mpv "http://2QMTL0.akacast.akamaistream.net/7/953/177387/v1/rc.akacast.akamaistream.net/2QMTL0" ;;
         ici-musique) mpv "http://7qmtl0.akacast.akamaistream.net/7/445/177407/v1/rc.akacast.akamaistream.net/7QMTL0" ;;
         kdsu) mpv "https://18433.live.streamtheworld.com/KCNDHD3_SC" ;;
+        knfl) mpv "https://18813.live.streamtheworld.com:3690/KVOXAMAAC_SC" ;;
         mpr) mpv "https://current.stream.publicradio.org/kcmp.mp3" ;;
+        pride1) mpv "http://stream.pride1.de:8000/;stream.mp3" ;;
+        queerlive) mpv "https://queerlive.stream.laut.fm/queerlive" ;;
         schlager) mpv "http://85.25.217.30/schlagerparadies" ;;
         swr3) mpv "http://swr-swr3-live.cast.addradio.de/swr/swr3/live/mp3/128/stream.mp3" ;;
         wgbh) mpv "http://audio.wgbh.org:8000" ;;
