@@ -45,6 +45,9 @@ if [[ -r ${HOME}/.pythonrc ]]; then
 fi
 if [[ -x "$(/usr/bin/which surfraw 2>/dev/null)" ]]; then
   export SURFRAW_text_browser=${BROWSER}
+  alias duckduckgo='surfraw duckduckgo'
+  alias wikipedia='surfraw wikipedia'
+  alias wiktionary='surfraw wiktionary'
 fi
 export TZ='US/Eastern'
 export VISUAL=vi
