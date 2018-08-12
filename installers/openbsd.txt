@@ -32,7 +32,7 @@ echo 'https://fastly.cdn.openbsd.org/pub/OpenBSD' | tee /etc/installurl
 #pkg_add gnome-control-center gnome-desktop gnome-keyring gnome-session gnome-shell-extensions gnome-terminal
 
 # desktop apps
-#pkg_add eog evince--light firefox gedit gnome-screenshot gnome-tweak-tool iridium keepassxc mpv
+#pkg_add eog evince--light firefox gedit gnome-screenshot gnome-tweak-tool iridium keepassxc mpv sct
 #pkg_add cabal-install exiv2 ffmpeg ghc mosh youtube-dl
 
 # cli apps

@@ -254,30 +254,52 @@ if [[ -x "$(/usr/bin/which mpv 2>/dev/null)" ]]; then
     usage='Usage:  radio stream_name\n'
     if [[ $# -eq 1 ]]; then
       case ${1} in
-        # via https://www.radio-browser.info
+        ## via https://www.radio-browser.info
+        # SDF.org
         anon) mpv "http://anonradio.net:8000/anonradio" ;;
+        # Deutschland: Antenne1 Stuttgart
         antenne1) mpv "http://81.201.157.218/a1stg/livestream2.mp3" ;;
+        # United Kingdom: BBC
         bbc1) mpv "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio1_mf_p" ;;
         bbc2) mpv "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio2_mf_p" ;;
         bbc3) mpv "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio3_mf_p" ;;
         bbc4) mpv "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio4fm_mf_p" ;;
         bbc5) mpv "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio5live_mf_p" ;;
         bbcworld) mpv "http://as-hls-ww-live.bbcfmt.hs.llnwd.net/pool_27/live/bbc_world_service/bbc_world_service.isml/bbc_world_service-audio%3d96000.norewind.m3u8" ;;
+        # Canada: CBC Winnipeg
         cbw) mpv "http://cbc_r1_wpg.akacast.akamaistream.net/7/831/451661/v1/rc.akacast.akamaistream.net/cbc_r1_wpg" ;;
+        # Deutschland: FC-Köln
+        effzeh) mpv "http://mp3.fckoeln.c.nmdn.net/fckoeln/livestream01.mp3" ;;
+        # USA: ESPN
         espn) mpv "http://espn-network.akacast.akamaistream.net/7/245/126490/v1/espn.akacast.akamaistream.net/espn-network" ;;
-        fckoeln) mpv "http://mp3.fckoeln.c.nmdn.net/fckoeln/livestream01.mp3" ;;
+        # USA: Fox Sports
         foxsports) mpv "http://c5icyelb.prod.playlists.ihrhls.com/5227_icy" ;;
+        # Canada: Radio-Canada Montréal (français)
         ici) mpv "http://2QMTL0.akacast.akamaistream.net/7/953/177387/v1/rc.akacast.akamaistream.net/2QMTL0" ;;
         ici-musique) mpv "http://7qmtl0.akacast.akamaistream.net/7/445/177407/v1/rc.akacast.akamaistream.net/7QMTL0" ;;
+        # USA: Prairie Public Radio (North Dakota)
         kdsu) mpv "https://18433.live.streamtheworld.com/KCNDHD3_SC" ;;
+        # USA: The Fan Sports Radio (North Dakota)
         knfl) mpv "https://18813.live.streamtheworld.com:3690/KVOXAMAAC_SC" ;;
+        # USA: Minnesota Public Radio
         mpr) mpv "https://current.stream.publicradio.org/kcmp.mp3" ;;
+        # USA: NBC Sports
+        nbcsports) mpv "http://icy3.abacast.com/dialglobal-nbcsportsmp3-48" ;;
+        # Deutschland: Schwul
         pride1) mpv "http://stream.pride1.de:8000/;stream.mp3" ;;
         queerlive) mpv "https://queerlive.stream.laut.fm/queerlive" ;;
+        # Deutschland: Schlager
         schlager) mpv "http://85.25.217.30/schlagerparadies" ;;
+        # Deutschland: SWR3
         swr3) mpv "http://swr-swr3-live.cast.addradio.de/swr/swr3/live/mp3/128/stream.mp3" ;;
+        # United Kingdom: talkSports
+        talksport) mpv "https://radio.talksport.com/stream?awparams=platform:ts-web&amsparams=playerid:ts-web" ;;
+        talksport2) mpv "https://radio.talksport.com/stream2?awparams=platform:ts-web&amsparams=playerid:ts-web" ;;
+        # USA: NPR WGBH Boston
         wgbh) mpv "http://audio.wgbh.org:8000" ;;
+        # USA: NPR WNYC New York City
         wnyc) mpv "http://fm939.wnyc.org/wnycfm" ;;
+        # USA: Y94 top hits (Fargo, North Dakota)
         y94) mpv "https://16693.live.streamtheworld.com/KOYYFMAAC_SC" ;;
         *) echo -e "Error: unknown stream" && return 1 ;;
       esac

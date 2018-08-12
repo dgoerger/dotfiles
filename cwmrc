@@ -1,0 +1,3 @@
+# application launchers
+sticky yes
+bind-key CMS-v window-vtile

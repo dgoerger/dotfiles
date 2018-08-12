@@ -1,4 +1,10 @@
 # ~/.Xdefaults
 XTerm*loginShell:true
+XTerm*termName:xterm-256color
+XTerm*font:xft:inconsolata:pixelsize=14
+XTerm*scrollBar:false
 XTerm*background:black
 XTerm*foreground:white
+XTerm.VT100.translations: #override \n\
+    Ctrl Shift <Key>C: copy-selection(CLIPBOARD) \n\
+    Ctrl Shift <Key>V: insert-selection(CLIPBOARD)
