@@ -1,3 +1,9 @@
 # application launchers
 sticky yes
 bind-key CMS-v window-vtile
+bind-key 4-l "/usr/X11R6/bin/xlock"
+# autogroup
+autogroup 1 xterm
+autogroup 1 firefox
+autogroup 4 gnome-latex
+autogroup 4 evince
