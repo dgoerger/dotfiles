@@ -78,7 +78,7 @@ alias less='less -MR'
 alias listening='fstat -n | grep internet'
 alias ll='ls -lhF'
 if [[ -x "$(/usr/bin/which newsboat 2>/dev/null)" ]]; then
-  alias news=newsboat
+  alias news='newsboat -q'
 fi
 alias psaux='ps aux'
 if [[ -x "$(/usr/bin/which python3 2>/dev/null)" ]]; then
