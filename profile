@@ -190,6 +190,8 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
     alias checksnaps='lynx "$(cat /etc/installurl)/snapshots/$(uname -m)"'
   fi
   alias free='top -d1 | head -n4'
+  alias voldown='mixerctl outputs.master=-5,-5'
+  alias volup='mixerctl outputs.master=+5,+5'
 
   # bind - clear screen with "ctrl+l"
   bind -m '^L'=^Uclear'^J^Y'
