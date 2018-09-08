@@ -66,6 +66,7 @@ alias df='df -h'
 if [[ -x "$(/usr/bin/which colordiff 2>/dev/null)" ]]; then
   alias diff='colordiff'
 fi
+alias elynx='COLUMNS=80 lynx -cfg=~/.elynxrc -useragent "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:52.0) Gecko/20100101 Firefox/52.0" 2>/dev/null'
 if [[ -x "$(/usr/bin/which fetchmail 2>/dev/null)" ]] && [[ -r "${HOME}/.fetchmailrc" ]]; then
   alias fetch='fetchmail --silent'
 fi
@@ -77,6 +78,7 @@ alias la='ls -lhFa'
 alias less='less -MR'
 alias listening='fstat -n | grep internet'
 alias ll='ls -lhF'
+alias lynx='COLUMNS=80 lynx -useragent "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:52.0) Gecko/20100101 Firefox/52.0" 2>/dev/null'
 if [[ -x "$(/usr/bin/which newsboat 2>/dev/null)" ]]; then
   alias news='newsboat -q'
 fi
@@ -173,6 +175,9 @@ if [[ "$(uname)" == "Linux" ]]; then
   # .. it's a bit hacky, but seems to work 4.15.x (F27)
   # ref: https://unix.stackexchange.com/a/78585
   alias psaux='ps au --ppid 2 -p 2 --deselect'
+  if [[ -x "$(/usr/bin/which sshfs 2>/dev/null)" ]]; then
+    alias sshfs='sshfs -o no_readahead,idmap=user'
+  fi
   if [[ -x "$(/usr/bin/which tree 2>/dev/null)" ]]; then
     alias tree='tree -N'
   fi
