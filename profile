@@ -70,6 +70,7 @@ alias elynx='COLUMNS=80 lynx -cfg=~/.elynxrc -useragent "Mozilla/5.0 (Windows NT
 if [[ -x "$(/usr/bin/which fetchmail 2>/dev/null)" ]] && [[ -r "${HOME}/.fetchmailrc" ]]; then
   alias fetch='fetchmail --silent'
 fi
+alias free='top | grep -E "^Memory"'
 if [[ -x "$(/usr/bin/which kpcli 2>/dev/null)" ]]; then
   alias kpcli='kpcli --histfile=/dev/null --readonly'
 fi
@@ -192,11 +193,8 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
   fi
   if [[ -r /etc/installurl ]]; then
     # shortcut to check snapshot availability - especially useful during release/freeze
-    alias checksnaps='lynx "$(cat /etc/installurl)/snapshots/$(uname -m)"'
+    alias checksnaps='/usr/local/bin/lynx "$(cat /etc/installurl)/snapshots/$(uname -m)"'
   fi
-  alias free='top -d1 | head -n4'
-  alias voldown='mixerctl outputs.master=-5,-5'
-  alias volup='mixerctl outputs.master=+5,+5'
 
   # bind - clear screen with "ctrl+l"
   bind -m '^L'=^Uclear'^J^Y'
@@ -212,6 +210,8 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
   set -A complete_man_1 -- $(man -k Nm~. | cut -d\( -f1 | tr -d ,)
   if pgrep sndio >/dev/null 2>&1; then
     set -A complete_mixerctl_1 -- $(mixerctl | cut -d= -f 1)
+    alias voldown='mixerctl outputs.master=-5,-5'
+    alias volup='mixerctl outputs.master=+5,+5'
   fi
   set -A complete_mosh_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
   set -A complete_mosh_2 -- --
