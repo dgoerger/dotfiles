@@ -1,4 +1,5 @@
-# .lynxrc
+# ~/.lynxrc
+# see https://lynx.invisible-island.net/release/lynx_help/body.html
 
 # homepage
 STARTFILE:~/.ssh/bookmarks.html
@@ -10,20 +11,46 @@ ACCEPT_ALL_COOKIES:TRUE
 CHARACTER_SET:utf-8
 CONNECT_TIMEOUT:10
 COOKIE_FILE:/dev/null
+DEFAULT_USER_MODE:ADVANCED
 DOWNLOADER:View with less:less %s:TRUE
 EMACS_KEYS_ALWAYS_ON:FALSE
 ENABLE_SCROLLBACK:TRUE
 FORCE_EMPTY_HREFLESS_A:TRUE
+FORCE_SSL_COOKIES_SECURE:TRUE
+HTTP_PROTOCOL:1.1
 LOCALE_CHARSET:TRUE
 MAKE_PSEUDO_ALTS_FOR_INLINES:FALSE
 NO_PAUSE:TRUE
 NO_REFERER_HEADER:TRUE
+PREFERRED_CHARSET:utf-8
+READ_TIMEOUT:15
+SAVE_SPACE:~/Downloads/
 SET_COOKIES:TRUE
 TEXTFIELDS_NEED_ACTIVATION:TRUE
 USE_MOUSE:TRUE
 VI_KEYS_ALWAYS_ON:TRUE
 
 # proxy
-ftp_proxy:http://127.0.0.1:1080
 http_proxy:http://127.0.0.1:1080
 https_proxy:http://127.0.0.1:1080
+
+# block protocols which don't work with privoxy
+RULE:Fail bibp:*
+RULE:Fail cso:*
+RULE:Fail finger:*
+RULE:Fail ftp:*
+RULE:Fail gopher:*
+RULE:Fail lynxexec:*
+RULE:Fail lynxprog:*
+RULE:Fail mailto:*
+RULE:Fail news:*
+RULE:Fail newspost:*
+RULE:Fail newsreply:*
+RULE:Fail nntp:*
+RULE:Fail rlogin:*
+RULE:Fail snews:*
+RULE:Fail snewspost:*
+RULE:Fail snewsreply:*
+RULE:Fail telnet:*
+RULE:Fail tn3270:*
+RULE:Fail wais:*
