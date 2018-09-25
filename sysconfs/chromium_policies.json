@@ -1,0 +1,30 @@
+{
+    "__comment": {
+        "__compat": "LINUX-ONLY",
+        "__usage": "Set globally for new AND old profiles at /etc/chromium/policies/managed/policy.json"
+    },
+    "HomepageLocation": "https://duckduckgo.com/?kae=t&kac=-1&kaj=m&kam=osm&kak=-1&kax=-1&kv=-1&kaq=-1&kap=-1&kg=g",
+    "SyncDisabled": true,
+    "RestrictSigninToPattern": ".*@example.com",
+    "BrowserAddPersonEnabled": false,
+    "ForceEphemeralProfiles": true,
+    "BuiltInDnsClientEnabled": false,
+    "CloudPrintProxyEnabled": false,
+    "EnableMediaRouter": false,
+    "PromotionalTabsEnabled": false,
+    "SearchSuggestEnabled": false,
+    "TranslateEnabled": false,
+    "WPADQuickCheckEnabled": false,
+    "IncognitoModeAvailability": 2,
+    "ExtensionInstallForcelist": [
+      "gcbommkclmclpchllfjekcdonpmejbdp;https://clients2.google.com/service/update2/crx"
+    ],
+    "SafeBrowsingEnabled": false,
+    "BookmarkBarEnabled": false,
+    "EditBookmarksEnabled": false,
+    "DefaultBrowserSettingEnabled": false,
+    "DefaultSearchProviderEnabled": true,
+    "DefaultSearchProviderName": "DuckDuckGo",
+    "DefaultSearchProviderSearchURL": "https://duckduckgo.com/?kae=t&kac=-1&kaj=m&kam=osm&kak=-1&kax=-1&kv=-1&kaq=-1&kap=-1&kg=g&q={searchTerms}",
+    "DefaultSearchProviderIconURL": "https://duckduckgo.com/favicon.ico"
+}
