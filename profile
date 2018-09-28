@@ -62,6 +62,9 @@ alias cal='cal -m'
 if [[ -x "$(/usr/bin/which calendar 2>/dev/null)" ]]; then
   export CALENDAR_DIR="${HOME}/.ssh"
 fi
+if [[ -x "$(/usr/bin/which cvs 2>/dev/null)" ]]; then
+  alias cvsup='cvs -q up -PdA'
+fi
 alias df='df -h'
 if [[ -x "$(/usr/bin/which colordiff 2>/dev/null)" ]]; then
   alias diff='colordiff'
