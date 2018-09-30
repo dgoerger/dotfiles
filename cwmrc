@@ -1,9 +1,20 @@
-# application launchers
+# ~/.cwmrc
+#
+# newly-launch applications "stick" with the current group
 sticky yes
+# emulate tiling
 bind-key CMS-v window-vtile
+# shortcut compatibility with GNOME3 and other window managers
 bind-key 4-l "/usr/X11R6/bin/xlock"
-# autogroup
-autogroup 1 xterm
-autogroup 1 firefox
-autogroup 4 gnome-latex
-autogroup 4 evince
+bind-key CM-Up group-cycle
+bind-key CM-Down group-cycle
+# quickly switch between groups / virtual desktops
+bind-key M-1 group-only-1
+bind-key M-2 group-only-2
+bind-key M-3 group-only-3
+bind-key M-4 group-only-4
+bind-key M-5 group-only-5
+bind-key M-6 group-only-6
+bind-key M-7 group-only-7
+bind-key M-8 group-only-8
+bind-key M-9 group-only-9
