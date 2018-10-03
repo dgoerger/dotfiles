@@ -34,6 +34,7 @@ export HISTFILE=${HOME}/.history
 export HISTSIZE=20736
 export HOSTNAME=$(hostname -s)
 export HTOPRC=/dev/null
+export LANG="en_CA.UTF-8"
 export LC_ALL="en_CA.UTF-8"
 export LESSSECURE=1
 export LESSHISTFILE=-
@@ -79,6 +80,7 @@ if [[ -x "$(/usr/bin/which kpcli 2>/dev/null)" ]]; then
 fi
 alias l='ls -lhF'
 alias la='ls -lhFa'
+alias larth='ls -larthF'
 alias less='less -MR'
 alias listening='fstat -n | grep internet'
 alias ll='ls -lhF'
