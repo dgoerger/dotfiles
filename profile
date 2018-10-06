@@ -88,7 +88,6 @@ alias lynx='COLUMNS=80 lynx -useragent "Mozilla/5.0 (Windows NT 6.1; Win64; x64;
 if [[ -x "$(/usr/bin/which newsboat 2>/dev/null)" ]]; then
   alias news='newsboat -q'
 fi
-alias psaux='ps aux'
 if [[ -x "$(/usr/bin/which python3 2>/dev/null)" ]]; then
   alias py=python3
   alias python=python3
@@ -228,6 +227,7 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
   set -A complete_ping_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
   set -A complete_rcctl_1 -- disable enable get ls order set
   set -A complete_rcctl_2 -- $(rcctl ls all)
+  set -A complete_rmapi_1 -- help put version
   set -A complete_rsync_1 -- -rltHhPv
   set -A complete_rsync_2 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1] ":"}' ~/.ssh/known_hosts)
   set -A complete_rsync_3 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1] ":"}' ~/.ssh/known_hosts)
