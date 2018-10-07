@@ -33,7 +33,7 @@ echo 'https://fastly.cdn.openbsd.org/pub/OpenBSD' | tee /etc/installurl
 
 # desktop apps
 #pkg_add eog evince--light firefox gedit gnome-screenshot gnome-tweak-tool iridium keepassxc mpv sct
-#pkg_add cabal-install exiv2 ffmpeg ghc mosh youtube-dl
+#pkg_add cabal-install exiv2 ffmpeg ghc mosh noto-cjk youtube-dl
 
 # cli apps
 pkg_add abook colordiff fetchmail git kpcli lynx mosh mutt ncdu neovim newsboat opmsg p5-Term-ReadLine-Gnu pkglocatedb privoxy rsync shellcheck surfraw toot tor tree weechat weechat-lua wtf

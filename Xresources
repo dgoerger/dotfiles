@@ -9,7 +9,7 @@ XTerm*foreground:white
 ! fonts
 XTerm*font:xft:Inconsolata:pixelsize=16
 XTerm*faceName:xft:Inconsolata:pixelsize=16
-XTerm*faceNameDoublesize:xft:Sazanami Mincho:pixelsize=12:style=Regular
+XTerm*faceNameDoublesize:xft:Noto Sans Mono CJK JP:pixelsize=12:style=Regular
 XTerm*antialias:true
 ! copy/paste
 XTerm*selectToClipboard:true
