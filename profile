@@ -84,6 +84,7 @@ alias larth='ls -larthF'
 alias less='less -MR'
 alias listening='fstat -n | grep internet'
 alias ll='ls -lhF'
+alias ls='ls -F'
 alias lynx='COLUMNS=80 lynx -useragent "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:52.0) Gecko/20100101 Firefox/52.0" 2>/dev/null'
 if [[ -x "$(/usr/bin/which newsboat 2>/dev/null)" ]]; then
   alias news='newsboat -q'
@@ -113,10 +114,10 @@ alias which='/usr/bin/which'
 # kaomoji
 alias disapprove='echo '\''ಠ_ಠ'\'''
 alias kilroy='echo '\''ฅ^•ﻌ•^ฅ'\'''
+alias rage='echo '\''(╯°□°）╯︵ ┻━┻'\'''
 alias shrug='echo '\''¯\_(ツ)_/¯'\'''
 alias stare='echo '\''(•_•)'\'''
 alias sunglasses='echo '\''(■_■¬)'\'''
-alias table_flip='echo '\''(╯°□°）╯︵ ┻━┻'\'''
 alias woohoo='echo \\\(ˆ˚ˆ\)/'
 
 
@@ -177,7 +178,7 @@ if [[ "$(uname)" == "Linux" ]]; then
   alias ll='ls -lhF --color=auto'
   alias ls='ls -F --color=auto'
   # linux ps lists kernel threads amongst procs.. deselect those
-  # .. it's a bit hacky, but seems to work 4.15.x (F27)
+  # .. it's a bit hacky, but seems to work
   # ref: https://unix.stackexchange.com/a/78585
   alias psaux='ps au --ppid 2 -p 2 --deselect'
   if [[ -x "$(/usr/bin/which sshfs 2>/dev/null)" ]]; then
@@ -238,7 +239,7 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
   set -A complete_scp_2 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1] ":"}' ~/.ssh/known_hosts)
   set -A complete_scp_3 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1] ":"}' ~/.ssh/known_hosts)
   if [[ -x "$(/usr/bin/which surfraw 2>&1)" ]]; then
-    set -A complete_surfraw_1 -- $(ls /usr/local/lib/surfraw)
+    set -A complete_surfraw_1 -- $(/bin/ls /usr/local/lib/surfraw)
     set -A complete_surfraw_2 -- -local-help
   fi
   set -A complete_ssh_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
@@ -246,6 +247,11 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
   set -A complete_toot_1 -- block curses follow mute post timeline unblock unfollow unmute upload whoami whois
   set -A complete_toot_2 -- --help
   set -A complete_traceroute_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
+
+  # display battery status
+  battery() {
+	/usr/sbin/apm | grep 'Battery state'
+  }
 fi
 
 
