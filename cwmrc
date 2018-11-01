@@ -1,7 +1,9 @@
 # ~/.cwmrc
 #
-# newly-launch applications "stick" with the current group
+# newly-launched applications "stick" with the current group
 sticky yes
+# st > xterm
+bind-key CM-Return "/usr/bin/env ENV=${HOME}/.profile /usr/local/bin/st"
 # emulate tiling
 bind-key CMS-v window-vtile
 # shortcut compatibility with GNOME3 and other window managers
