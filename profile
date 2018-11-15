@@ -106,9 +106,9 @@ else
   alias view='less -MR'
   alias vim=vi
 fi
-if [[ -x "$(/usr/bin/which curl 2>/dev/null)" ]]; then
-  alias weather='curl -4k https://wttr.in/?m'
-fi
+#if [[ -x "$(/usr/bin/which curl 2>/dev/null)" ]]; then
+#  alias weather='curl -4k https://wttr.in/?m'
+#fi
 alias which='/usr/bin/which'
 
 # kaomoji
