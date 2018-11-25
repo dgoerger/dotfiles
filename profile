@@ -218,10 +218,11 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
     alias voldown='mixerctl outputs.master=-5,-5'
     alias volup='mixerctl outputs.master=+5,+5'
   fi
-  set -A complete_mosh_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
-  set -A complete_mosh_2 -- --
-  set -A complete_mosh_3 -- tmux
-  set -A complete_mosh_4 -- attach
+  set -A complete_mosh_1 -- -4 -6
+  set -A complete_mosh_2 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
+  set -A complete_mosh_3 -- --
+  set -A complete_mosh_4 -- tmux
+  set -A complete_mosh_5 -- attach
   set -A complete_nmap_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
   set -A complete_openssl_1 -- s_client
   set -A complete_openssl_2 -- -connect
@@ -258,7 +259,20 @@ fi
 ### functions
 # dvd() and radio()
 if [[ -x "$(/usr/bin/which mpv 2>/dev/null)" ]]; then
+  audiocd() {
+    if [[ "$(uname)" == 'OpenBSD' ]] && [[ ! -r /dev/rcd0c ]]; then
+      echo 'Cannot read /dev/rcd0c. chgrp(1) to wheel?' && return 1
+    fi
+    if [[ $# -eq 0 ]]; then
+      mpv cdda://
+    else
+      echo "Usage: 'audiocd' (play whole disk) ['audiocd INT' (play track #INT) doesn't work yet]" && return 1
+    fi
+  }
   dvd() {
+    if [[ "$(uname)" == 'OpenBSD' ]] && [[ ! -r /dev/rcd0c ]]; then
+      echo 'Cannot read /dev/rcd0c. chgrp(1) to wheel?' && return 1
+    fi
     if [[ $# -eq 1 ]]; then
       case ${1} in
         ''|*[!0-9]*) echo "Error: \${1} must be an integer." && return 1 ;;
