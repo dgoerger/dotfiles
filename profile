@@ -205,10 +205,12 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
   bind -m '^L'=^Uclear'^J^Y'
 
   # tab completions
-  set -A complete_dig_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
+  export HOST_LIST=$(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
+
+  set -A complete_dig_1 -- ${HOST_LIST}
   set -A complete_git_1 -- add bisect blame checkout clone commit diff log mv pull push rebase reset revert rm stash status submodule
   set -A complete_gpg2 -- --refresh --receive-keys --armor --clearsign --sign --list-key --decrypt --verify --detach-sig
-  set -A complete_host_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
+  set -A complete_host_1 -- ${HOST_LIST}
   set -A complete_ifconfig_1 -- $(ifconfig | awk -F':' '/^[a-z]/ {print $1}')
   set -A complete_kill_1 -- -9 -HUP -INFO -KILL -TERM
   set -A complete_kpcli_1 -- --kdb
@@ -219,35 +221,45 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
     alias volup='mixerctl outputs.master=+5,+5'
   fi
   set -A complete_mosh_1 -- -4 -6
-  set -A complete_mosh_2 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
+  set -A complete_mosh_2 -- ${HOST_LIST}
   set -A complete_mosh_3 -- --
   set -A complete_mosh_4 -- tmux
   set -A complete_mosh_5 -- attach
-  set -A complete_nmap_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
+  if [[ -x "$(/usr/bin/which mtr 2>&1)" ]]; then
+    set -A complete_mtr_1 -- ${HOST_LIST}
+  fi
+  set -A complete_nmap_1 -- ${HOST_LIST}
   set -A complete_openssl_1 -- s_client
   set -A complete_openssl_2 -- -connect
-  set -A complete_ping_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
+  set -A complete_ping_1 -- ${HOST_LIST}
+  set -A complete_ping6_1 -- ${HOST_LIST}
   set -A complete_rcctl_1 -- disable enable get ls order set
   set -A complete_rcctl_2 -- $(rcctl ls all)
-  set -A complete_rmapi_1 -- help put version
+  if [[ -x "$(/usr/bin/which rmapi 2>&1)" ]]; then
+    set -A complete_rmapi_1 -- help put version
+  fi
   set -A complete_rsync_1 -- -rltHhPv
-  set -A complete_rsync_2 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1] ":"}' ~/.ssh/known_hosts)
-  set -A complete_rsync_3 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1] ":"}' ~/.ssh/known_hosts)
+  set -A complete_rsync_2 -- ${HOST_LIST}
+  set -A complete_rsync_3 -- ${HOST_LIST}
   set -A complete_signify_1 -- -C -G -S -V
   set -A complete_signify_2 -- -q -p -x -c -m -t -z
   set -A complete_signify_3 -- -p -x -c -m -t -z
   set -A complete_scp_1 -- -4pr
-  set -A complete_scp_2 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1] ":"}' ~/.ssh/known_hosts)
-  set -A complete_scp_3 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1] ":"}' ~/.ssh/known_hosts)
+  set -A complete_scp_2 -- ${HOST_LIST}
+  set -A complete_scp_3 -- ${HOST_LIST}
   if [[ -x "$(/usr/bin/which surfraw 2>&1)" ]]; then
     set -A complete_surfraw_1 -- $(/bin/ls /usr/local/lib/surfraw)
     set -A complete_surfraw_2 -- -local-help
   fi
-  set -A complete_ssh_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
-  set -A complete_telnet_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
-  set -A complete_toot_1 -- block curses follow mute post timeline unblock unfollow unmute upload whoami whois
-  set -A complete_toot_2 -- --help
-  set -A complete_traceroute_1 -- $(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
+  set -A complete_ssh_1 -- ${HOST_LIST}
+  set -A complete_telnet_1 -- ${HOST_LIST}
+  set -A complete_telnet_2 -- 22 25 80 443 465 587
+  if [[ -x "$(/usr/bin/which toot 2>&1)" ]]; then
+    set -A complete_toot_1 -- block curses follow mute post timeline unblock unfollow unmute upload whoami whois
+    set -A complete_toot_2 -- --help
+  fi
+  set -A complete_traceroute_1 -- ${HOST_LIST}
+  set -A complete_traceroute6_1 -- ${HOST_LIST}
 
   # display battery status
   battery() {
