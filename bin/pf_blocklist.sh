@@ -22,13 +22,16 @@ https://raw.githubusercontent.com/firehol/blocklist-ipsets/master/firehol_level2
 # block Shodan
 /usr/bin/su -s/bin/sh _pkgfetch -c "/usr/bin/ftp -VMo - https://isc.sans.edu/api/threatlist/shodan/shodan.txt | grep -Eo '([[:digit:]]{1,3}\.){3}[[:digit:]]{1,3}' >> ${TMPFILE}"
 
+# nixspam.org
+/usr/bin/su -s/bin/sh _pkgfetch -c "/usr/bin/ftp -VMo - http://www.dnsbl.manitu.net/download/nixspam-ip.dump.gz | /usr/bin/gzcat | grep -Eo '\ [1-9].*[0-9]' | sed 's/\ //g' | sort >> ${TMPFILE}"
+
 # copy into place
 if [[ -f "${CONF}" ]]; then
   cp -p "${CONF}" "${CONF}.bak"
 fi
 cp "${TMPFILE}" "${CONF}"
 chown root:wheel "${CONF}"
-chmod 0440 "${CONF}"
+chmod 0444 "${CONF}"
 
 # verify syntax and reload pf
 if pfctl -nf /etc/pf.conf 2>/dev/null; then
