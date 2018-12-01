@@ -445,6 +445,20 @@ if [[ -x "$(/usr/bin/which notify-send 2>/dev/null)" ]] && [[ -x "$(/usr/bin/whi
   }
 fi
 
+# pwgen() random password generator
+pwgen() {
+  if [[ $# == 0 ]]; then
+    </dev/urandom tr -cd [:alnum:] | fold -w 30 | head -n1
+  elif [[ $# == 1 ]]; then
+    case ${1} in
+      ''|*[!0-9]*) echo "Error: \${1} must be an integer." && return 1 ;;
+      *) </dev/urandom tr -cd [:alnum:] | fold -w ${1} | head -n1
+    esac
+  else
+    echo "Usage: pwgen [INT], where INT defaults to 30." && return 1
+  fi
+ }
+
 
 ### source profile-local files
 set -o emacs
