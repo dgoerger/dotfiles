@@ -269,6 +269,21 @@ fi
 
 
 ### functions
+# dict()
+if [[ -x "$(/usr/bin/which wn 2>/dev/null)" ]] && [[ -x "$(/usr/bin/which pandoc 2>/dev/null)" ]]; then
+  dict() {
+    if [[ $# -eq 1 ]]; then
+      if [[ -n "$(wn ${1} -over)" ]]; then
+        wn "${1}" -over | pandoc -t plain -
+      else
+        echo "No definition found for ${1}."
+      fi
+    else
+      echo "Usage: 'dict WORD'" && return 1
+    fi
+  }
+fi
+
 # dvd() and radio()
 if [[ -x "$(/usr/bin/which mpv 2>/dev/null)" ]]; then
   audiocd() {
