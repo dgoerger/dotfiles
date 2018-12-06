@@ -275,6 +275,8 @@ if [[ -x "$(/usr/bin/which wn 2>/dev/null)" ]] && [[ -x "$(/usr/bin/which pandoc
     if [[ $# -eq 1 ]]; then
       if [[ -n "$(wn ${1} -over)" ]]; then
         wn "${1}" -over | pandoc -t plain -
+      elif [[ -x "$(/usr/bin/which wtf 2>/dev/null)" ]]; then
+        wtf "${1}"
       else
         echo "No definition found for ${1}."
       fi
@@ -429,20 +431,36 @@ if [[ -x "$(which exiv2 2>/dev/null)" ]]; then
 fi
 
 # pomodoro()
-if [[ -x "$(/usr/bin/which notify-send 2>/dev/null)" ]] && [[ -x "$(/usr/bin/which tmux 2>/dev/null)" ]] && [[ -n "${DESKTOP_SESSION}" ]]; then
-  pomodoro() {
-    usage='Usage: pomodoro [minutes] [message]\n'
-    if [[ $# -ne 2 ]]; then
-      echo -e "${usage}" && return 1
-    else
-      message="${2}"
-    fi
-    case ${1} in
-      ''|*[!0-9]*) echo "Error: \${1} must be an integer." && return 1 ;;
-      *) delay=${1} ;;
-    esac
-    tmux new -d "sleep $(echo "${delay}*60" | bc -l); notify-send POMODORO ${message} --icon=dialog-warning-symbolic --urgency=critical"
-  }
+if [[ -x "$(/usr/bin/which tmux 2>/dev/null)" ]]; then
+  # GNOME3 - libnotify "toaster" popup
+  if [[ -x "$(/usr/bin/which notify-send 2>/dev/null)" ]] && [[ -n "${DESKTOP_SESSION}" ]]; then
+    pomodoro() {
+      usage='Usage: pomodoro [minutes] [message]\n'
+      if [[ $# -ne 2 ]]; then
+        echo -e "${usage}" && return 1
+      else
+        message="${2}"
+      fi
+      case ${1} in
+        ''|*[!0-9]*) echo "Error: \${1} must be an integer." && return 1 ;;
+        *) delay=${1} ;;
+      esac
+      tmux new -d "sleep $(echo "${delay}*60" | bc -l); notify-send POMODORO \"${message}\" --icon=dialog-warning-symbolic --urgency=critical"
+    }
+  # headless!
+  elif [[ -x "$(/usr/bin/which leave 2>/dev/null)" ]]; then
+    pomodoro() {
+      usage='Usage: pomodoro [minutes]\n\n  .. or just use leave(1)!\n'
+      if [[ $# -ne 1 ]]; then
+        echo -e "${usage}" && return 1
+      fi
+      case ${1} in
+        ''|*[!0-9]*) echo "Error: \${1} must be an integer." && return 1 ;;
+        *) delay=${1} ;;
+      esac
+      leave +${1}
+    }
+  fi
 fi
 
 # pwgen() random password generator
