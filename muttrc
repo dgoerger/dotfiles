@@ -38,8 +38,8 @@ folder-hook . "exec collapse-all"
 mime_lookup application/octet-stream
 set date_format = "%Y/%m/%d"
 set delete = 'yes'
-#set editor = 'vim -c "set spell spelllang=en_ca formatoptions+=aw textwidth=72"'
-set editor = 'mg'
+set editor = 'nvim -c "set spell spelllang=en_ca formatoptions+=aw textwidth=72"'
+#set editor = 'mg'
 set fast_reply
 set forward_format = '%s'
 set imap_keepalive = 300
@@ -55,7 +55,7 @@ set send_charset = "utf-8"
 set sleep_time = 0
 set smart_wrap
 set sort = 'threads'
-set sort_aux = 'reverse-last-date-received'
+set sort_aux = 'reverse-last-date-sent'
 set sort_browser = 'date'
 set ssl_force_tls = yes
 set ssl_starttls = yes
