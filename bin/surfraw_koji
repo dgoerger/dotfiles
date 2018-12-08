@@ -21,10 +21,10 @@ w3_parse_args "$@"
 # w3_args now contains list of arguments
 
 # No arguments parsed
-if [ -z "$w3_args" ]; then
+if [ -z "${w3_args}" ]; then
 	w3_browse_url "https://koji.fedoraproject.org/koji"
 else
-	escaped_args=$(w3_url_of_arg $w3_args)
+	escaped_args=$(w3_url_of_arg "${w3_args}")
 	w3_browse_url "https://koji.fedoraproject.org/koji/search?match=glob&type=package&terms=${escaped_args}"
 fi
 
