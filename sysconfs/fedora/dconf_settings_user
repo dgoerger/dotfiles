@@ -15,15 +15,12 @@ automatic-timezone=true
 [org/gnome/desktop/interface]
 clock-show-date=true
 
-#[org/gnome/desktop/background]
-#picture-uri='file:///usr/share/backgrounds/f27/default/f27.xml'
-
 [org/gnome/shell]
-enabled-extensions=['alternate-tab@gnome-shell-extensions.gcampax.github.com', 'apps-menu@gnome-shell-extensions.gcampax.github.com', 'GPaste@gnome-shell-extensions.gnome.org', 'simple-dock@nothing.org']
+enabled-extensions=['alternate-tab@gnome-shell-extensions.gcampax.github.com']
 
 # accessibility
 [org/gnome/desktop/a11y]
-always-show-universal-access-status=true
+always-show-universal-access-status=false
 
 # mouse
 [org/gnome/settings-daemon/peripherals/touchpad]
