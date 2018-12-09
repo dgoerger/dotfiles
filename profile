@@ -290,7 +290,7 @@ fi
 if [[ -x "$(/usr/bin/which mpv 2>/dev/null)" ]]; then
   audiocd() {
     if [[ "$(uname)" == 'OpenBSD' ]] && [[ ! -r /dev/rcd0c ]]; then
-      echo 'Cannot read /dev/rcd0c. chgrp(1) to wheel?' && return 1
+      echo 'Cannot read /dev/rcd0c. Try: chgrp wheel /dev/rcd0c' && return 1
     fi
     if [[ $# -eq 0 ]]; then
       mpv cdda://
@@ -300,7 +300,7 @@ if [[ -x "$(/usr/bin/which mpv 2>/dev/null)" ]]; then
   }
   dvd() {
     if [[ "$(uname)" == 'OpenBSD' ]] && [[ ! -r /dev/rcd0c ]]; then
-      echo 'Cannot read /dev/rcd0c. chgrp(1) to wheel?' && return 1
+      echo 'Cannot read /dev/rcd0c. Try: chgrp wheel /dev/rcd0c' && return 1
     fi
     if [[ $# -eq 1 ]]; then
       case ${1} in

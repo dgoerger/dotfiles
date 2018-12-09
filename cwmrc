@@ -12,6 +12,10 @@ bind-key CMS-v window-vtile
 bind-key 4-l '/usr/X11R6/bin/xlock'
 bind-key CM-Up group-rcycle
 bind-key CM-Down group-cycle
+# volume control
+bind-key SM-equal '/usr/bin/mixerctl outputs.master=+5,+5'
+bind-key M-equal '/usr/bin/mixerctl outputs.master=+5,+5'
+bind-key M-minus '/usr/bin/mixerctl outputs.master=-5,-5'
 # quickly switch between groups / virtual desktops
 bind-key M-1 group-only-1
 bind-key M-2 group-only-2
