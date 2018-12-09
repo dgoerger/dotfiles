@@ -1,4 +1,7 @@
+#!/bin/sh
 # OpenBSD: /etc/X11/xenodm/Xsetup_0
 
 # uncomment to start xconsole upon login - else leave this commented out
 #xconsole -geometry 480x130-0-0 -daemon -notify -verbose -fn fixed -exitOnFail
+
+# sxpm OpenBSD.xpm &
