@@ -12,6 +12,7 @@
     "BuiltInDnsClientEnabled": false,
     "CloudPrintProxyEnabled": false,
     "EnableMediaRouter": false,
+    "EnableCastDiscovery": false,
     "PromotionalTabsEnabled": false,
     "SearchSuggestEnabled": false,
     "TranslateEnabled": false,
