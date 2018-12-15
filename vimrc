@@ -41,6 +41,10 @@ set smartcase               " except when CAPS
 """ relocate swapfiles to not live on removable media
 set directory=${HOME}/.vim.d//
 
+""" spellcheck
+" disabled by default (for coding), enable with ':set spell'
+set spelllang=en_ca
+
 """ file format support
 if has('autocmd')
   " open EPUB as ZIP - requires `unzip`
