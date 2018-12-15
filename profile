@@ -269,9 +269,9 @@ fi
 
 
 ### functions
-# dict()
+# def()
 if [[ -x "$(/usr/bin/which wn 2>/dev/null)" ]] && [[ -x "$(/usr/bin/which pandoc 2>/dev/null)" ]]; then
-  dict() {
+  def() {
     if [[ $# -eq 1 ]]; then
       if [[ -n "$(wn ${1} -over)" ]]; then
         wn "${1}" -over | pandoc -t plain -
@@ -281,7 +281,7 @@ if [[ -x "$(/usr/bin/which wn 2>/dev/null)" ]] && [[ -x "$(/usr/bin/which pandoc
         echo "No definition found for ${1}."
       fi
     else
-      echo "Usage: 'dict WORD'" && return 1
+      echo "Usage: 'def WORD'" && return 1
     fi
   }
 fi
