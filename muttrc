@@ -38,7 +38,7 @@ folder-hook . "exec collapse-all"
 mime_lookup application/octet-stream
 set date_format = "%Y/%m/%d"
 set delete = 'yes'
-set editor = 'nvim -c "set spell spelllang=en_ca formatoptions+=aw textwidth=72"'
+set editor = 'nvim -u ${HOME}/.vimrc -i NONE -c "set spell spelllang=en_ca formatoptions+=aw textwidth=72"'
 #set editor = 'mg'
 set fast_reply
 set forward_format = '%s'
