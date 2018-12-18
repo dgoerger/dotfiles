@@ -10,6 +10,7 @@ bind-key CMS-w '/usr/local/bin/chrome --incognito --disable-features=EnableCastD
 bind-key CMS-v window-vtile
 # shortcut compatibility with GNOME3 and other window managers
 bind-key 4-l '/usr/X11R6/bin/xlock'
+bind-key 4-a menu-window
 bind-key CM-Up group-rcycle
 bind-key CM-Down group-cycle
 # volume control
