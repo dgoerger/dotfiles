@@ -238,7 +238,7 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
   if [[ -x "$(/usr/bin/which rmapi 2>&1)" ]]; then
     set -A complete_rmapi_1 -- help put version
   fi
-  set -A complete_rsync_1 -- -rltHhPv
+  set -A complete_rsync_1 -- -rLtHhPSv
   set -A complete_rsync_2 -- ${HOST_LIST}
   set -A complete_rsync_3 -- ${HOST_LIST}
   set -A complete_signify_1 -- -C -G -S -V
