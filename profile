@@ -70,7 +70,9 @@ alias df='df -h'
 if [[ -x "$(/usr/bin/which colordiff 2>/dev/null)" ]]; then
   alias diff='colordiff'
 fi
-alias elynx='COLUMNS=80 lynx -cfg=~/.elynxrc -useragent "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:52.0) Gecko/20100101 Firefox/52.0" 2>/dev/null'
+if [[ -r "${HOME}/.elynxrc" ]]; then
+  alias elynx='COLUMNS=80 lynx -cfg=~/.elynxrc -useragent "Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0" 2>/dev/null'
+fi
 if [[ -x "$(/usr/bin/which fetchmail 2>/dev/null)" ]] && [[ -r "${HOME}/.fetchmailrc" ]]; then
   alias fetch='fetchmail --silent'
 fi
@@ -85,7 +87,7 @@ alias less='less -MR'
 alias listening='fstat -n | grep internet'
 alias ll='ls -lhF'
 alias ls='ls -F'
-alias lynx='COLUMNS=80 lynx -useragent "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:52.0) Gecko/20100101 Firefox/52.0" 2>/dev/null'
+alias lynx='COLUMNS=80 lynx -useragent "Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0" 2>/dev/null'
 if [[ -x "$(/usr/bin/which newsboat 2>/dev/null)" ]]; then
   alias news='newsboat -q'
 fi
@@ -157,6 +159,7 @@ fi
 ### OS-specific overrides
 if [[ "$(uname)" == "Linux" ]]; then
   # env
+  export MANWIDTH=80
   export QUOTING_STYLE=literal
   unset LS_COLORS
 
@@ -187,6 +190,7 @@ if [[ "$(uname)" == "Linux" ]]; then
   if [[ -x "$(/usr/bin/which tree 2>/dev/null)" ]]; then
     alias tree='tree -N'
   fi
+  alias whence='(alias; declare -f) | /usr/bin/which --tty-only --read-alias --read-functions --show-tilde --show-dot'
 elif [[ "$(uname)" == 'OpenBSD' ]]; then
   # aliases
   if [[ -x "$(which cabal 2>/dev/null)" ]] && [[ -d /usr/local/cabal/build ]] && [[ -w /usr/local/cabal/build ]]; then
@@ -260,15 +264,25 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
   fi
   set -A complete_traceroute_1 -- ${HOST_LIST}
   set -A complete_traceroute6_1 -- ${HOST_LIST}
-
-  # display battery status
-  battery() {
-	/usr/sbin/apm | grep 'Battery state'
-  }
 fi
 
 
 ### functions
+# apropos()
+apropos() {
+  if [[ $# -eq 1 ]]; then
+    if [[ "$(uname)" == 'Linux' ]]; then
+      /usr/bin/man -wK "${1}"
+    elif [[ "$(uname)" == 'OpenBSD' ]]; then
+      /usr/bin/man -k any="${1}"
+    else
+      apropos "${1}"
+    fi
+  else
+    echo "Usage: 'apropos WORD'" && return 1
+  fi
+}
+
 # def()
 if [[ -x "$(/usr/bin/which wn 2>/dev/null)" ]] && [[ -x "$(/usr/bin/which pandoc 2>/dev/null)" ]]; then
   def() {
