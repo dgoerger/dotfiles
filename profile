@@ -95,7 +95,6 @@ if [[ -x "$(/usr/bin/which python3 2>/dev/null)" ]]; then
   alias py=python3
   alias python=python3
 fi
-alias ssh-add='ssh-add -c'
 if [[ -x "$(/usr/bin/which nvim 2>/dev/null)" ]]; then
   # prefer neovim > vim if available
   alias vi='nvim -u ${HOME}/.vimrc -i NONE'
