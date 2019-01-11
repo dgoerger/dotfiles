@@ -1,7 +1,7 @@
 # .profile
 
 ### all operating systems and shells
-# PATH
+# PATH and PS1
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/games:/usr/local/bin
 _ps1() {
   # detect git project name (if any)
@@ -186,6 +186,8 @@ if [[ "$(uname)" == "Linux" ]]; then
   if [[ -x "$(/usr/bin/which sshfs 2>/dev/null)" ]]; then
     alias sshfs='sshfs -o no_readahead,idmap=user'
   fi
+  alias sha256='sha256sum'
+  alias sha512='sha512sum'
   if [[ -x "$(/usr/bin/which tree 2>/dev/null)" ]]; then
     alias tree='tree -N'
   fi
@@ -279,6 +281,22 @@ apropos() {
     fi
   else
     echo "Usage: 'apropos WORD'" && return 1
+  fi
+}
+
+# compare512() sha512 file comparison
+compare512() {
+  if [[ $# == 2 ]] && [[ -r "${1}" ]] && [[ -r "${2}" ]]; then
+    file1="$(sha512 ${1} | awk '{print $NF}')"
+    file2="$(sha512 ${2} | awk '{print $NF}')"
+
+    if [[ "${file1}" == "${file2}" ]]; then
+      echo "The two files are sha512-identical."
+    else
+      echo "The two files are NOT sha512-identical."
+    fi
+  else
+      echo -e 'Usage: compare FILE1 FILE2\n' && return 1
   fi
 }
 
