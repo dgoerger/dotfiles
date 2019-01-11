@@ -186,8 +186,12 @@ if [[ "$(uname)" == "Linux" ]]; then
   if [[ -x "$(/usr/bin/which sshfs 2>/dev/null)" ]]; then
     alias sshfs='sshfs -o no_readahead,idmap=user'
   fi
-  alias sha256='sha256sum'
-  alias sha512='sha512sum'
+  sha256() {
+    sha256sum "${1}" | awk '{print $1}'
+  }
+  sha512() {
+    sha512sum "${1}" | awk '{print $1}'
+  }
   if [[ -x "$(/usr/bin/which tree 2>/dev/null)" ]]; then
     alias tree='tree -N'
   fi
