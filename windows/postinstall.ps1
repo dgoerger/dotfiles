@@ -59,7 +59,7 @@ iex ((new-object net.webclient).downloadstring('https://chocolatey.org/install.p
 choco install -y notepadplusplus sdelete
 
 ## optional packages to consider
-#choco install -y atom calibre ccleaner firefox gimp github googlechrome keepassx libreoffice sumatrapdf.install vlc winscp zotero
+#choco install -y firefox gimp googlechrome keepassxc libreoffice sumatrapdf.install vlc winscp zotero
 #choco install -y git miktex.install nmap openssh pandoc vim
 
 ## QEMU
@@ -88,4 +88,4 @@ Get-WUInstall -MicrosoftUpdate -AcceptAll -AutoReboot
 #\> # ^ select options for automatic clearing (probably "all")
 #\> cleanmgr.exe /sagerun:1; sdelete.exe -z; shutdown /s
 # on host system, execute:
-#$ qemu-img convert -p -c -f qcow2 -O qcow2 $input "$(date +%Y%m%d)_win10.qcow2"
+#$ qemu-img convert -p -c -f qcow2 -O qcow2 "${input}" "$(date +%Y%m%d)_win10.qcow2"
