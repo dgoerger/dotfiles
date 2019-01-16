@@ -249,9 +249,12 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
   set -A complete_signify_1 -- -C -G -S -V
   set -A complete_signify_2 -- -q -p -x -c -m -t -z
   set -A complete_signify_3 -- -p -x -c -m -t -z
-  set -A complete_scp_1 -- -4pr
+  set -A complete_scp_1 -- -4p
   set -A complete_scp_2 -- ${HOST_LIST}
   set -A complete_scp_3 -- ${HOST_LIST}
+  set -A complete_sftp_1 -- -4p
+  set -A complete_sftp_2 -- ${HOST_LIST}
+  set -A complete_sftp_3 -- ${HOST_LIST}
   if [[ -x "$(/usr/bin/which surfraw 2>&1)" ]]; then
     set -A complete_surfraw_1 -- $(/bin/ls /usr/local/lib/surfraw)
     set -A complete_surfraw_2 -- -local-help
