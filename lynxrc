@@ -39,7 +39,7 @@ RULE:Fail bibp:*
 RULE:Fail cso:*
 RULE:Fail finger:*
 RULE:Fail ftp:*
-RULE:Fail gopher:*
+#RULE:Fail gopher:*
 RULE:Fail lynxexec:*
 RULE:Fail lynxprog:*
 RULE:Fail mailto:*
