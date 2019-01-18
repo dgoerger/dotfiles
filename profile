@@ -209,6 +209,9 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
   # bind - clear screen with "ctrl+l"
   bind -m '^L'=^Uclear'^J^Y'
 
+  # SIGINFO - see signal(3)
+  stty status ^T
+
   # tab completions
   export HOST_LIST=$(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
 
