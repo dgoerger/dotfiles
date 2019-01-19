@@ -55,6 +55,9 @@ export VISUAL=vi
 
 
 ## aliases
+if [[ -x "$(/usr/bin/which 2048 2>/dev/null)" ]]; then
+  alias 2048='2048 -c'
+fi
 if [[ -x "$(/usr/bin/which abook 2>/dev/null)" ]]; then
   alias abook='abook --config ${HOME}/.ssh/abookrc --datafile ${HOME}/.ssh/addressbook'
 fi
