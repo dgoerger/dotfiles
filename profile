@@ -66,6 +66,7 @@ alias cal='cal -m'
 if [[ -x "$(/usr/bin/which calendar 2>/dev/null)" ]]; then
   export CALENDAR_DIR="${HOME}/.ssh"
 fi
+alias cp='cp -i'
 if [[ -x "$(/usr/bin/which cvs 2>/dev/null)" ]]; then
   alias cvsup='cvs -q up -PdA'
 fi
@@ -91,6 +92,7 @@ alias listening='fstat -n | grep internet'
 alias ll='ls -lhF'
 alias ls='ls -F'
 alias lynx='COLUMNS=80 lynx -useragent "Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0" 2>/dev/null'
+alias mv='mv -i'
 if [[ -x "$(/usr/bin/which newsboat 2>/dev/null)" ]]; then
   alias news='newsboat -q'
 fi
@@ -98,6 +100,7 @@ if [[ -x "$(/usr/bin/which python3 2>/dev/null)" ]]; then
   alias py=python3
   alias python=python3
 fi
+alias rm='rm -i'
 if [[ -x "$(/usr/bin/which nvim 2>/dev/null)" ]]; then
   # prefer neovim > vim if available
   alias vi='nvim -u ${HOME}/.vimrc -i NONE'
