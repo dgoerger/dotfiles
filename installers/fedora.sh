@@ -136,6 +136,7 @@ sudo touch /etc/cron.allow
 #sudo curl -Lo /etc/sudoers https://raw.githubusercontent.com/dgoerger/dotfiles/master/sysconfs/sudoers
 sudo dnf install -y rsyslog
 sudo systemctl enable --now rsyslog
+ln -sf /tmp /var/tmp
 
 ### hostname
 sudo hostnamectl set-hostname "${FQDN}"
