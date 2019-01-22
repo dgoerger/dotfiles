@@ -421,13 +421,13 @@ if [[ -x "$(/usr/bin/which pandoc 2>/dev/null)" ]] && [[ -x "$(/usr/bin/which ly
       echo -e "${usage}" && return 1
     elif [[ "${1}" = '-h' ]] || [[ "${1}" = '--help' ]]; then
       echo -e "${usage}" && return 0
-    elif echo "${1}" | grep -Evq '\.epub$'; then
+    elif echo "${1}" | grep -Evq '\.(epub|html|txt)$'; then
       echo -e "${usage}" && return 1
     elif ! ls "${1}" >/dev/null 2>&1; then
       echo 'ERROR: file not found' && return 1
     else
       echo 'Reformatting.. (might take a moment)'
-      pandoc -f epub -t html "${1}" | lynx -stdin
+      pandoc -t html "${1}" | lynx -stdin
     fi
   }
 fi
