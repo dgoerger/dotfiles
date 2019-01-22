@@ -33,8 +33,10 @@ attachments +I text/plain
 attachments -A message/external-body
 attachments -I message/external-body
 auto_view text/html
+bind editor <Tab> complete-query
 bind generic,alias,attach,browser,editor,index,compose,pager,pgp,postpone ':' noop
 folder-hook . "exec collapse-all"
+macro index,pager  a "<pipe-message>abook --config ${HOME}/.ssh/abookrc --datafile ${HOME}/.ssh/addressbook --add-email-quiet<return>" "add this sender to abook"
 mime_lookup application/octet-stream
 set date_format = "%Y/%m/%d"
 set delete = 'yes'
@@ -50,6 +52,7 @@ set markers = no
 set pager_context = 10
 set pager_index_lines = 10
 set pager_stop
+set query_command= "abook --config ${HOME}/.ssh/abookrc --datafile ${HOME}/.ssh/addressbook --mutt-query '%s'"
 set read_inc = 5000
 set send_charset = "utf-8"
 set sleep_time = 0
