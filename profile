@@ -2,7 +2,10 @@
 
 ### all operating systems and shells
 # PATH and PS1
-export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/games:/usr/local/bin
+if [[ ! -d "/etc/nixos" ]]; then
+  # NixOS breaks with convention
+  export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/games:/usr/local/bin
+fi
 _ps1() {
   # detect git project name (if any)
   _gitproject="$(git rev-parse --show-toplevel 2>/dev/null | awk -F'/' '{print $NF}')"
@@ -84,7 +87,7 @@ alias free='top | grep -E "^Memory"'
 if [[ -x "$(/usr/bin/which kpcli 2>/dev/null)" ]]; then
   alias kpcli='kpcli --histfile=/dev/null --readonly'
 fi
-alias l='ls -lhF'
+alias l='ls -1F'
 alias la='ls -lhFa'
 alias larth='ls -larthF'
 alias less='less -MR'
