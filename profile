@@ -250,8 +250,10 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
   set -A complete_openssl_2 -- -connect
   set -A complete_ping_1 -- ${HOST_LIST}
   set -A complete_ping6_1 -- ${HOST_LIST}
-  set -A complete_rcctl_1 -- disable enable get ls order set
-  set -A complete_rcctl_2 -- $(rcctl ls all)
+  if [[ -r /etc/rc.d ]]; then
+    set -A complete_rcctl_1 -- disable enable get ls order set
+    set -A complete_rcctl_2 -- $(rcctl ls all)
+  fi
   if [[ -x "$(/usr/bin/which rmapi 2>&1)" ]]; then
     set -A complete_rmapi_1 -- help put version
   fi
