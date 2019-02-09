@@ -1,0 +1,41 @@
+! ~/.Xdefaults
+!
+!!! XTerm
+! always source ~/.profile
+XTerm*loginShell            : true
+! colours
+XTerm*termName              : xterm-256color
+XTerm*background            : black
+XTerm*foreground            : white
+! fonts
+XTerm*font                  : xft:Inconsolata:pixelsize=16
+XTerm*faceName              : xft:Inconsolata:pixelsize=16
+XTerm*faceNameDoublesize    : xft:Noto Sans Mono CJK JP:pixelsize=12:style=Regular
+XTerm*antialias             : true
+! copy/paste
+XTerm*selectToClipboard     : true
+XTerm.VT100.translations    : #override \n\
+    Ctrl Shift <Key>C: copy-selection(CLIPBOARD) \n\
+    Ctrl Shift <Key>V: insert-selection(CLIPBOARD)
+! misc
+XTerm*ScrollBar             : false
+!
+!!! XLock
+! turn off the backlight
+XLock.dpmsoff               : 1
+! lock with a blank screen
+XLock.mode                  : blank
+XLock.background            : black
+XLock.foreground            : grey
+! wake screen by moving the mouse
+XLock.mousemotion           : on
+! iso10646-1 => unicode support
+XLock.font                  : -misc-fixed-medium-r-normal-*-20-*-*-*-*-iso10646-1
+XLock.planfont              : -misc-fixed-medium-r-normal-*-20-*-*-*-*-iso10646-1
+! don't display extraneous text on the lockscreen
+XLock.description           : off
+XLock.username              :
+XLock.password              :
+XLock.info                  :
+XLock.validate              :
+XLock.invalid               :
