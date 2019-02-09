@@ -3,7 +3,7 @@
 # newly-launched applications "stick" with the current group
 sticky yes
 # st > xterm
-bind-key CM-Return '/usr/bin/env ENV=${HOME}/.profile /usr/local/bin/st'
+bind-key CM-Return '/usr/local/bin/st'
 # www - Chrome uses pledge(2) and unveil(2) - Firefox doesn't use unveil(2) (yet), and requires an unfortunately-permissive pledge(2)
 bind-key CMS-w '/usr/local/bin/chrome --incognito --disable-features=EnableCastDiscovery,WebAssembly,AsmJsToWebAssembly'
 # emulate tiling
