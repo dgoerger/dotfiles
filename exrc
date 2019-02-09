@@ -16,6 +16,8 @@ set secure
 set showmatch
 " show mode in status bar
 set showmode
+" print helpful messages (e.g. 4 lines yanked)
+set report=1
 " TERM=screen-256color can break arrow key navigation
 set term=screen
 " word-wrap length - disable with `set wraplen=0`
