@@ -1,0 +1,46 @@
+{
+	"policies": {
+		"DisableFeedbackCommands": true,
+		"DisableFirefoxAccounts": true,
+		"DisableFirefoxScreenshots": true,
+		"DisableFirefoxStudies": true,
+		"DisableForgetButton": true,
+		"DisableFormHistory": true,
+		"DisableMasterPasswordCreation": true,
+		"DisablePocket": true,
+		"DisableSetDesktopBackground": true,
+		"DisableTelemetry": true,
+		"DNSOverHTTPS": {
+			"Enabled": false
+		},
+		"EnableTrackingProtection": {
+			"Value": true
+		},
+		"Extensions": {
+			"Install": [
+				"https://addons.mozilla.org/firefox/downloads/file/1669416.xpi",
+				"https://addons.mozilla.org/firefox/downloads/file/1671300.xpi",
+				"https://addons.mozilla.org/firefox/downloads/file/1189923.xpi",
+				"https://addons.mozilla.org/firefox/downloads/file/1672871.xpi",
+				"https://addons.mozilla.org/firefox/downloads/file/1193322.xpi",
+				"https://addons.mozilla.org/firefox/downloads/file/909656.xpi"
+			]
+		},
+		"NoDefaultBookmarks": true,
+		"OfferToSaveLogins": false,
+		"SanitizeOnShutdown": true,
+		"SearchEngines": {
+			"Add": [
+				{
+					"Name": "DuckDuckGo Dark",
+					"URLTemplate": "https://duckduckgo.com/?kae=t&kac=-1&kaj=m&kam=osm&kak=-1&kax=-1&kv=-1&kaq=-1&kap=-1&kg=g&q={searchTerms}",
+					"Method": "GET",
+					"IconURL": "https://duckduckgo.com/favicon.ico",
+					"Description": "We are the Internet privacy company that lets you take control of your information, without any tradeoffs. Welcome to the Duck Side!"
+				}
+			],
+			"Default": "DuckDuckGo Dark",
+			"PreventInstalls": true
+		}
+	}
+}
