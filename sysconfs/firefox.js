@@ -252,3 +252,4 @@ pref("network.IDN_show_punycode", true);
 
 //// private browsing mode by default
 pref("browser.privatebrowsing.autostart", true);
+pref("extensions.allowPrivateBrowsingByDefault", true);
