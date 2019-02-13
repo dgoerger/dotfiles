@@ -257,7 +257,7 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
   if [[ -x "$(/usr/bin/which rmapi 2>&1)" ]]; then
     set -A complete_rmapi_1 -- help put version
   fi
-  set -A complete_rsync_1 -- -rLtHhPSv
+  set -A complete_rsync_1 -- -HhLPprStv
   set -A complete_rsync_2 -- ${HOST_LIST}
   set -A complete_rsync_3 -- ${HOST_LIST}
   set -A complete_signify_1 -- -C -G -S -V
@@ -280,6 +280,7 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
     set -A complete_toot_1 -- block curses follow mute post timeline unblock unfollow unmute upload whoami whois
     set -A complete_toot_2 -- --help
   fi
+  set -A complete_tmux_1 -- attach
   set -A complete_traceroute_1 -- ${HOST_LIST}
   set -A complete_traceroute6_1 -- ${HOST_LIST}
 fi
