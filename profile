@@ -171,6 +171,12 @@ if [[ "$(uname)" == "Linux" ]]; then
   export MANWIDTH=80
   export QUOTING_STYLE=literal
   unset LS_COLORS
+  if [[ -x "$(/usr/bin/which flatpak 2>/dev/null)" ]]; then
+    if [[ "${XDG_DATA_DIRS#*flatpak}" = "${XDG_DATA_DIRS}" ]]; then
+      XDG_DATA_DIRS="${XDG_DATA_HOME:-"$HOME/.local/share"}/flatpak/exports/share:/var/lib/flatpak/exports/share:${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
+      export XDG_DATA_DIRS
+    fi
+  fi
 
   # aliases
   if [[ -x "$(/usr/bin/which bc 2>/dev/null)" ]]; then
