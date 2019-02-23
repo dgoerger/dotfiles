@@ -198,7 +198,7 @@ if [[ "$(uname)" == "Linux" ]]; then
     # BSD ftp has support for wget-like functionality
     alias ftp=tnftp
   fi
-  alias l='ls -lhF --color=never'
+  alias l='ls -1F --color=never'
   alias la='ls -lhFa --color=never'
   # linux doesn't have fstat
   if [[ -x "$(/usr/bin/which netstat 2>/dev/null)" ]]; then
@@ -249,7 +249,7 @@ fi
 
 
 # ksh tab completions
-if [[ "${0}" == 'ksh' ]]; then
+if [[ "${0}" == 'ksh' ]] || [[ "${0}" == '-ksh' ]]; then
   export HOST_LIST=$(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
 
   set -A complete_dig_1 -- ${HOST_LIST}
@@ -284,7 +284,7 @@ if [[ "${0}" == 'ksh' ]]; then
   set -A complete_openssl_2 -- -connect
   set -A complete_ping_1 -- ${HOST_LIST}
   set -A complete_ping6_1 -- ${HOST_LIST}
-  if [[ -r /etc/rc.d ]]; then
+  if [[ "$(uname)" == 'OpenBSD' ]] && [[ -r /etc/rc.d ]]; then
     set -A complete_rcctl_1 -- disable enable get ls order set
     set -A complete_rcctl_2 -- $(rcctl ls all)
   fi
@@ -294,9 +294,11 @@ if [[ "${0}" == 'ksh' ]]; then
   set -A complete_rsync_1 -- -HhLPprStv
   set -A complete_rsync_2 -- ${HOST_LIST}
   set -A complete_rsync_3 -- ${HOST_LIST}
-  set -A complete_signify_1 -- -C -G -S -V
-  set -A complete_signify_2 -- -q -p -x -c -m -t -z
-  set -A complete_signify_3 -- -p -x -c -m -t -z
+  if [[ -x "$(/usr/bin/which signify 2>/dev/null)" ]]; then
+    set -A complete_signify_1 -- -C -G -S -V
+    set -A complete_signify_2 -- -q -p -x -c -m -t -z
+    set -A complete_signify_3 -- -p -x -c -m -t -z
+  fi
   set -A complete_scp_1 -- -4p
   set -A complete_scp_2 -- ${HOST_LIST}
   set -A complete_scp_3 -- ${HOST_LIST}
