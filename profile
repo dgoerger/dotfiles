@@ -2,10 +2,7 @@
 
 ### all operating systems and shells
 # PATH and PS1
-if [[ ! -d "/etc/nixos" ]]; then
-  # NixOS breaks with convention
-  export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/games:/usr/local/bin
-fi
+export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/games:/usr/local/bin
 _ps1() {
   # detect git project name (if any)
   _gitproject="$(git rev-parse --show-toplevel 2>/dev/null | awk -F'/' '{print $NF}')"
@@ -62,12 +59,12 @@ if [[ -x "$(/usr/bin/which 2048 2>/dev/null)" ]]; then
   alias 2048='2048 -c'
 fi
 if [[ -x "$(/usr/bin/which abook 2>/dev/null)" ]]; then
-  alias abook='abook --config ${HOME}/.ssh/abookrc --datafile ${HOME}/.ssh/addressbook'
+  alias abook='abook --config ${HOME}/.abookrc --datafile ${HOME}/.addresses'
 fi
 alias bc='bc -l'
 alias cal='cal -m'
 if [[ -x "$(/usr/bin/which calendar 2>/dev/null)" ]]; then
-  export CALENDAR_DIR="${HOME}/.ssh"
+  alias calendar='calendar -f ${HOME}/.calendar'
 fi
 alias cp='cp -i'
 if [[ -x "$(/usr/bin/which cvs 2>/dev/null)" ]]; then
@@ -113,6 +110,7 @@ if [[ -x "$(/usr/bin/which nvim 2>/dev/null)" ]]; then
 elif [[ -x "$(/usr/bin/which vim 2>/dev/null)" ]]; then
   alias vi=vim
   alias view='vim --cmd "let no_plugin_maps = 1" -c "runtime! macros/less.vim" -m -M -R -n --'
+  alias vimdiff='vim -d -c "color blue" --'
 else
   alias view='less -MR'
   alias vim=vi
@@ -137,9 +135,9 @@ alias woohoo='echo \\\(ˆ˚ˆ\)/'
 #if ! pgrep -U "${USER}" -f "gpg-agent --daemon --quiet" >/dev/null 2>&1; then
 #  # if not running but socket exists, delete
 #  if [[ -S "${HOME}/.gnupg/S.gpg-agent" ]]; then
-#    rm "${HOME}/.gnupg/S.gpg-agent"
+#    /bin/rm "${HOME}/.gnupg/S.gpg-agent"
 #  elif [[ -n ${XDG_RUNTIME_DIR} ]] && [[ -S "${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent" ]]; then
-#    rm "${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent"
+#    /bin/rm "${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent"
 #  fi
 #  if [[ -x "$(/usr/bin/which gpg-agent 2>/dev/null)" ]]; then
 #    if [[ ! -d "${HOME}/.gnupg" ]]; then
@@ -151,6 +149,13 @@ alias woohoo='echo \\\(ˆ˚ˆ\)/'
 
 # ssh-agent
 if [[ -z ${SSH_AUTH_SOCK} ]] || [[ -n $(echo ${SSH_AUTH_SOCK} | grep -E "^/run/user/$(id -u)/keyring/ssh$") ]]; then
+  # create ~/.ssh if missing - some operating systems don't include this in /etc/skel
+  if [[ ! -d "${HOME}/.ssh" ]]; then
+    mkdir -m 0700 "${HOME}/.ssh"
+  fi
+  if [[ ! -f "${HOME}/.ssh/known_hosts" ]]; then
+    touch "${HOME}/.ssh/known_hosts"
+  fi
   # if ssh-agent isn't running OR GNOME Keyring controls the socket
   export SSH_AUTH_SOCK="${HOME}/.ssh/${USER}@${HOSTNAME}.socket"
   if [[ ! -S "${SSH_AUTH_SOCK}" ]]; then
@@ -158,7 +163,7 @@ if [[ -z ${SSH_AUTH_SOCK} ]] || [[ -n $(echo ${SSH_AUTH_SOCK} | grep -E "^/run/u
   elif ! pgrep -U "${USER}" -f "ssh-agent -s -a ${SSH_AUTH_SOCK}" >/dev/null 2>&1; then
     if [[ -S "${SSH_AUTH_SOCK}" ]]; then
       # if proc isn't running but the socket exists, remove and restart
-      rm "${SSH_AUTH_SOCK}"
+      /bin/rm "${SSH_AUTH_SOCK}"
       eval $(ssh-agent -s -a "${SSH_AUTH_SOCK}" >/dev/null)
     fi
   fi
@@ -169,10 +174,14 @@ fi
 if [[ "$(uname)" == "Linux" ]]; then
   # env
   export MANWIDTH=80
+  if [[ -L "/bin" ]]; then
+    # some Linux have /bin -> /usr/bin
+    export PATH=/bin:/sbin
+  fi
   export QUOTING_STYLE=literal
   unset LS_COLORS
   if [[ -x "$(/usr/bin/which flatpak 2>/dev/null)" ]]; then
-    if [[ "${XDG_DATA_DIRS#*flatpak}" = "${XDG_DATA_DIRS}" ]]; then
+    if [[ "${XDG_DATA_DIRS#*flatpak}" == "${XDG_DATA_DIRS}" ]]; then
       XDG_DATA_DIRS="${XDG_DATA_HOME:-"$HOME/.local/share"}/flatpak/exports/share:/var/lib/flatpak/exports/share:${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
       export XDG_DATA_DIRS
     fi
@@ -183,31 +192,40 @@ if [[ "$(uname)" == "Linux" ]]; then
     alias bc='bc -ql'
   fi
   alias df='df -h -xtmpfs -xdevtmpfs'
-  alias doas='/usr/bin/sudo' #mostly-compatible
+  alias doas='umask 0022 && /usr/bin/sudo' #mostly-compatible
   alias free='free -h'
   if [[ -x "$(/usr/bin/which tnftp 2>/dev/null)" ]]; then
     # BSD ftp has support for wget-like functionality
     alias ftp=tnftp
   fi
-  alias l='ls -lhF --color=auto'
-  alias la='ls -lhFa --color=auto'
+  alias l='ls -lhF --color=never'
+  alias la='ls -lhFa --color=never'
   # linux doesn't have fstat
-  alias listening='ss -ntau'
-  alias ll='ls -lhF --color=auto'
-  alias ls='ls -F --color=auto'
+  if [[ -x "$(/usr/bin/which netstat 2>/dev/null)" ]]; then
+    alias listening='netstat -launt | grep LISTEN'
+  else
+    alias listening='ss -tuna'
+  fi
+  alias ll='ls -lhF --color=never'
+  alias ls='ls -F --color=never'
   # linux ps lists kernel threads amongst procs.. deselect those
   # .. it's a bit hacky, but seems to work
   # ref: https://unix.stackexchange.com/a/78585
-  alias psaux='ps au --ppid 2 -p 2 --deselect'
+  alias psaux='ps auw --ppid 2 -p 2 --deselect'
   if [[ -x "$(/usr/bin/which sshfs 2>/dev/null)" ]]; then
     alias sshfs='sshfs -o no_readahead,idmap=user'
   fi
   alias sha256='sha256sum --tag'
   alias sha512='sha512sum --tag'
+  alias sudo='umask 0022 && /usr/bin/sudo'
   if [[ -x "$(/usr/bin/which tree 2>/dev/null)" ]]; then
     alias tree='tree -N'
   fi
-  alias whence='(alias; declare -f) | /usr/bin/which --tty-only --read-alias --read-functions --show-tilde --show-dot'
+  if [[ -z "$(whence whence 2>/dev/null)" ]]; then
+    # whence exists in ksh, but not in bash
+    alias whence='(alias; declare -f) | /usr/bin/which --tty-only --read-alias --read-functions --show-tilde --show-dot'
+  fi
+
 elif [[ "$(uname)" == 'OpenBSD' ]]; then
   # aliases
   if [[ -x "$(which cabal 2>/dev/null)" ]] && [[ -d /usr/local/cabal/build ]] && [[ -w /usr/local/cabal/build ]]; then
@@ -227,8 +245,11 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
 
   # SIGINFO - see signal(3)
   stty status ^T
+fi
 
-  # tab completions
+
+# ksh tab completions
+if [[ "${0}" == 'ksh' ]]; then
   export HOST_LIST=$(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
 
   set -A complete_dig_1 -- ${HOST_LIST}
@@ -238,21 +259,27 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
   set -A complete_ifconfig_1 -- $(ifconfig | awk -F':' '/^[a-z]/ {print $1}')
   set -A complete_kill_1 -- -9 -HUP -INFO -KILL -TERM
   set -A complete_kpcli_1 -- --kdb
-  set -A complete_man_1 -- $(man -k Nm~. | cut -d\( -f1 | tr -d ,)
+  if [[ "$(uname)" == 'OpenBSD' ]]; then
+    set -A complete_man_1 -- $(man -k Nm~. | cut -d\( -f1 | tr -d ,)
+  fi
   if pgrep sndio >/dev/null 2>&1; then
     set -A complete_mixerctl_1 -- $(mixerctl | cut -d= -f 1)
     alias voldown='mixerctl outputs.master=-5,-5'
     alias volup='mixerctl outputs.master=+5,+5'
   fi
-  set -A complete_mosh_1 -- -4 -6
-  set -A complete_mosh_2 -- ${HOST_LIST}
-  set -A complete_mosh_3 -- --
-  set -A complete_mosh_4 -- tmux
-  set -A complete_mosh_5 -- attach
-  if [[ -x "$(/usr/bin/which mtr 2>&1)" ]]; then
+  if [[ -x "$(/usr/bin/which mosh 2>/dev/null)" ]]; then
+    set -A complete_mosh_1 -- -4 -6
+    set -A complete_mosh_2 -- ${HOST_LIST}
+    set -A complete_mosh_3 -- --
+    set -A complete_mosh_4 -- tmux
+    set -A complete_mosh_5 -- attach
+  fi
+  if [[ -x "$(/usr/bin/which mtr 2>/dev/null)" ]]; then
     set -A complete_mtr_1 -- ${HOST_LIST}
   fi
-  set -A complete_nmap_1 -- ${HOST_LIST}
+  if [[ -x "$(/usr/bin/which nmap 2>/dev/null)" ]]; then
+    set -A complete_nmap_1 -- ${HOST_LIST}
+  fi
   set -A complete_openssl_1 -- s_client
   set -A complete_openssl_2 -- -connect
   set -A complete_ping_1 -- ${HOST_LIST}
@@ -261,7 +288,7 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
     set -A complete_rcctl_1 -- disable enable get ls order set
     set -A complete_rcctl_2 -- $(rcctl ls all)
   fi
-  if [[ -x "$(/usr/bin/which rmapi 2>&1)" ]]; then
+  if [[ -x "$(/usr/bin/which rmapi 2>/dev/null)" ]]; then
     set -A complete_rmapi_1 -- help put version
   fi
   set -A complete_rsync_1 -- -HhLPprStv
@@ -287,7 +314,7 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
     set -A complete_toot_1 -- block curses follow mute post timeline unblock unfollow unmute upload whoami whois
     set -A complete_toot_2 -- --help
   fi
-  set -A complete_tmux_1 -- attach
+  set -A complete_tmux_1 -- attach list-commands list-sessions list-windows new-session new-window source
   set -A complete_traceroute_1 -- ${HOST_LIST}
   set -A complete_traceroute6_1 -- ${HOST_LIST}
 fi
