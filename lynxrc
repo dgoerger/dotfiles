@@ -2,9 +2,9 @@
 # see https://lynx.invisible-island.net/release/lynx_help/body.html
 
 # homepage
-STARTFILE:~/.ssh/bookmarks.html
-DEFAULT_BOOKMARK_FILE:~/.ssh/bookmarks.html
-DEFAULT_INDEX_FILE:~/.ssh/bookmarks.html
+STARTFILE:~/.bookmarks.html
+DEFAULT_BOOKMARK_FILE:~/.bookmarks.html
+DEFAULT_INDEX_FILE:~/.bookmarks.html
 
 # sane defaults
 ACCEPT_ALL_COOKIES:TRUE
