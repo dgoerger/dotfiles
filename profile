@@ -256,7 +256,9 @@ if [[ "${0}" == 'ksh' ]] || [[ "${0}" == '-ksh' ]]; then
   set -A complete_git_1 -- add bisect blame checkout clone commit diff log mv pull push rebase reset revert rm stash status submodule
   set -A complete_gpg2 -- --refresh --receive-keys --armor --clearsign --sign --list-key --decrypt --verify --detach-sig
   set -A complete_host_1 -- ${HOST_LIST}
-  set -A complete_ifconfig_1 -- $(ifconfig | awk -F':' '/^[a-z]/ {print $1}')
+  if [[ -x "$(/usr/bin/which ifconfig 2>/dev/null)" ]]; then
+    set -A complete_ifconfig_1 -- $(ifconfig | awk -F':' '/^[a-z]/ {print $1}')
+  fi
   set -A complete_kill_1 -- -9 -HUP -INFO -KILL -TERM
   set -A complete_kpcli_1 -- --kdb
   if [[ "$(uname)" == 'OpenBSD' ]]; then
