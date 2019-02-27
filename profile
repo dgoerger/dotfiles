@@ -261,9 +261,9 @@ if [[ "${0}" == 'ksh' ]] || [[ "${0}" == '-ksh' ]]; then
   fi
   set -A complete_kill_1 -- -9 -HUP -INFO -KILL -TERM
   set -A complete_kpcli_1 -- --kdb
-  if [[ "$(uname)" == 'OpenBSD' ]]; then
-    set -A complete_man_1 -- $(man -k Nm~. | cut -d\( -f1 | tr -d ,)
-  fi
+#  if [[ "$(uname)" == 'OpenBSD' ]]; then
+#    set -A complete_man_1 -- $(man -k Nm~. | cut -d\( -f1 | tr -d ,)
+#  fi
   if pgrep sndio >/dev/null 2>&1; then
     set -A complete_mixerctl_1 -- $(mixerctl | cut -d= -f 1)
     alias voldown='mixerctl outputs.master=-5,-5'
