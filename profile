@@ -249,7 +249,8 @@ fi
 
 
 # ksh tab completions
-if [[ "${0}" == 'ksh' ]] || [[ "${0}" == '-ksh' ]]; then
+if [[ "${0}" == 'ksh' ]] || [[ "${0}" == '-ksh' ]] || [[ "${0}" == '/bin/ksh' ]]; then
+  # OpenBSD/CentOS/NetBSD compatibility
   export HOST_LIST=$(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
 
   set -A complete_dig_1 -- ${HOST_LIST}
@@ -583,7 +584,9 @@ pwgen() {
 
 
 ### source profile-local files
-set -o emacs
+if [[ "${SHELL}" != '/bin/ash' ]]; then
+  set -o emacs
+fi
 if [[ -r "${HOME}/.profile.local" ]]; then
   . "${HOME}/.profile.local"
 fi
