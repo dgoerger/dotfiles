@@ -101,6 +101,7 @@ if [[ -x "$(/usr/bin/which python3 2>/dev/null)" ]]; then
   alias python=python3
 fi
 alias rm='rm -i'
+alias tm='tmux new-session -A -s tm'
 if [[ -x "$(/usr/bin/which nvim 2>/dev/null)" ]]; then
   # prefer neovim > vim if available
   alias vi='nvim -u ${HOME}/.vimrc -i NONE'
