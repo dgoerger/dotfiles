@@ -18,6 +18,8 @@ bind-key 4-l lock
 bind-key 4-a menu-window
 bind-key CM-Up group-rcycle
 bind-key CM-Down group-cycle
+# override x11's ctrl+alt+backspace (?)
+bind-key CM-Backspace lock
 # volume control
 bind-key SM-equal '/usr/bin/mixerctl outputs.master=+5,+5'
 bind-key M-equal '/usr/bin/mixerctl outputs.master=+5,+5'
