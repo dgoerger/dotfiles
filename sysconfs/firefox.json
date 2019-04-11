@@ -1,4 +1,8 @@
 {
+  "__comment": {
+    "__compat": "NIX-ONLY",
+    "__usage": "Set globally for new AND old profiles at /usr/local/lib/firefox/distribution/policy.json"
+  },
 	"policies": {
 		"DisableFeedbackCommands": true,
 		"DisableFirefoxAccounts": true,
@@ -23,7 +27,8 @@
 				"https://addons.mozilla.org/firefox/downloads/file/1189923.xpi",
 				"https://addons.mozilla.org/firefox/downloads/file/1672871.xpi",
 				"https://addons.mozilla.org/firefox/downloads/file/1193322.xpi",
-				"https://addons.mozilla.org/firefox/downloads/file/909656.xpi"
+				"https://addons.mozilla.org/firefox/downloads/file/909656.xpi",
+        "https://addons.mozilla.org/firefox/downloads/file/1199801.xpi"
 			]
 		},
 		"NoDefaultBookmarks": true,
