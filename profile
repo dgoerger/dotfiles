@@ -240,6 +240,7 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
     # shortcut to check snapshot availability - especially useful during release/freeze
     alias checksnaps='/usr/local/bin/lynx "$(cat /etc/installurl)/snapshots/$(uname -m)"'
   fi
+  alias rsync='/usr/bin/openrsync'
 
   # bind - clear screen with "ctrl+l"
   bind -m '^L'=^Uclear'^J^Y'
@@ -295,7 +296,8 @@ if [[ "${0}" == 'ksh' ]] || [[ "${0}" == '-ksh' ]] || [[ "${0}" == '/bin/ksh' ]]
   if [[ -x "$(/usr/bin/which rmapi 2>/dev/null)" ]]; then
     set -A complete_rmapi_1 -- help put version
   fi
-  set -A complete_rsync_1 -- -HhLPprStv
+  #set -A complete_rsync_1 -- -HhLPprStv
+  set -A complete_rsync_1 -- -av
   set -A complete_rsync_2 -- ${HOST_LIST}
   set -A complete_rsync_3 -- ${HOST_LIST}
   if [[ -x "$(/usr/bin/which signify 2>/dev/null)" ]]; then
