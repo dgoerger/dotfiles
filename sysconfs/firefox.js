@@ -63,7 +63,7 @@ pref("privacy.firstparty.isolate", true);
 // disables "a MediaStream capturing in real-time the surface of an HTMLCanvasElement"
 pref("canvas.capturestream.enabled", false);
 // disable Firefox's built-in "Trusted Recursive Resolver" - if we can't trust localhost, game over
-pref("network.trr.mode", 0);
+pref("network.trr.mode", 5);
 
 //// discard third-party cookies
 pref("network.cookie.cookieBehavior", 1);
