@@ -106,6 +106,7 @@ pref("network.dnsCacheExpiration", 0);
 pref("network.ftp.enabled", false);
 pref("media.autoplay.default", 2);
 pref("app.normandy.enabled", false);
+pref("browser.ctrlTab.recentlyUsedOrder", false);
 // disable Firefox Sync
 pref("identity.fxaccounts.enabled", false);
 pref("places.history.enabled", false);
