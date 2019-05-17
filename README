@@ -7,13 +7,14 @@ May these be useful.
 Compatibility
 -------------
 
-Unless otherwise noted, these confs and scripts should work correctly on current
-releases of
+Unless otherwise noted, these confs and scripts should work correctly
+on OpenBSD-current, with versions tagged corresponding with each
+release.
 
-  1. OpenBSD
-  2. Fedora Linux
-
-macOS compatibility is untested. Windows 10 compatibility should not be assumed.
+I test things periodically on the latest versions of Fedora and
+CentOS Linux; but if package versions fall behind, I typically roll
+forward on OpenBSD, and wait to update installed Linux copies until
+after an OS upgrade.
 
 
 Testing
@@ -21,4 +22,4 @@ Testing
 
 Besides daily use, scripts should pass the following linters:
 
-- shell scripts: [ShellCheck](https://github.com/koalaman/shellcheck)
+- shell scripts: https://github.com/koalaman/shellcheck
