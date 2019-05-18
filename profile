@@ -386,6 +386,8 @@ certcheck() {
   QUERY="$(echo Q | openssl s_client ${PROTOCOL_FLAGS} -connect "${FQDN}:${PORT}" -status 2>/dev/null)"
   CERTIFICATE_AUTHORITY="$(echo "${QUERY}" | awk -F'CN=' '/^issuer=/ {print $2}')"
   ROOT_AUTHORITY="$(echo "${QUERY}" | grep -E '^Certificate chain$' -A4 | tail -n1 | awk -F'CN=' '/i:/ {print $2}')"
+  TLS_PROTOCOL="$(echo "${QUERY}" | awk '/Protocol  :/ {print $NF}')"
+  TLS_CIPHER="$(echo "${QUERY}" | awk '/Cipher    :/ {print $NF}')"
   EXPIRY_DATE="$(echo "${QUERY}" | openssl x509 -noout -enddate 2>/dev/null | awk -F'=' '/notAfter/ {print $2}')"
   CHAIN_OF_TRUST_STATUS="$(echo "${QUERY}" | awk '/Verify return code:/ {print $4}')"
   REVOCATION_STATUS="$(echo "${QUERY}" | awk '/Cert Status:/ {print $3}')"
@@ -395,7 +397,10 @@ certcheck() {
     echo "UNKNOWN: certificate ${FQDN}:${PORT} is unreachable" && return 1
   fi
 
-  # print certificate authority
+  # print certificate authority info
+  if [[ -z "${ROOT_AUTHORITY}" ]]; then
+    ROOT_AUTHORITY='??'
+  fi
   echo "Issuer: ${CERTIFICATE_AUTHORITY} -> ${ROOT_AUTHORITY}"
 
   # error if the chain-of-trust can't be verified
@@ -427,6 +432,7 @@ certcheck() {
     STATUS="OK - ${FQDN}:${PORT} expires in ${DAYS_TO_EXPIRY} day(s)"
   fi
 
+  echo "Cipher: ${TLS_CIPHER} (${TLS_PROTOCOL})"
   echo "Expiry: ${EXPIRY_DATE}"
   echo "Status: ${STATUS}"
 }
