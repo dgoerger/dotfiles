@@ -344,6 +344,93 @@ apropos() {
   fi
 }
 
+# certcheck() verify tls certificates
+certcheck() {
+  # set default options
+  EXPIRY_THRESHOLD_WARNING=15
+  EXPIRY_THRESHOLD_CRITICAL=5
+  PORT=443
+
+  # set FQDN (required)
+  if [[ -n "${1}" ]]; then
+    if getent hosts "${1}" >/dev/null 2>&1; then
+      FQDN="${1}"
+    else
+      echo "Cannot find ${1} in DNS." && return 1
+    fi
+  else
+    echo "Please specify an FQDN to query." && return 1
+  fi
+
+  # set PORT (optional)
+  if [[ -n "${2}" ]]; then
+    case ${2} in
+      ''|*[!0-9]*) echo 'port must be an integer' && return 1 ;;
+      *) PORT="${2}" ;;
+    esac
+  fi
+
+  # set protocol-specific flags as necessary
+  if [[ "${PORT}" == '25' ]] || [[ "${PORT}" == '587' ]]; then
+    # protocol == starttls (smtp/25, smtp-submission/587)
+    PROTOCOL_FLAGS="-starttls smtp"
+  elif [[ "${PORT}" == '5222' ]] || [[ "${PORT}" == '5269' ]]; then
+    # protocol == starttls (xmpp-client/5222, xmpp-server/5269)
+    PROTOCOL_FLAGS="-starttls xmpp"
+  else
+    # protocol == tls+sni (https/443, smtps/465, ldaps/636, xmpps/5223, https-tomcat/8443, etc)
+    PROTOCOL_FLAGS="-servername ${FQDN}"
+  fi
+
+  # query cert status
+  QUERY="$(echo Q | openssl s_client ${PROTOCOL_FLAGS} -connect "${FQDN}:${PORT}" -status 2>/dev/null)"
+  CERTIFICATE_AUTHORITY="$(echo "${QUERY}" | awk -F'CN=' '/^issuer=/ {print $2}')"
+  ROOT_AUTHORITY="$(echo "${QUERY}" | grep -E '^Certificate chain$' -A4 | tail -n1 | awk -F'CN=' '/i:/ {print $2}')"
+  EXPIRY_DATE="$(echo "${QUERY}" | openssl x509 -noout -enddate 2>/dev/null | awk -F'=' '/notAfter/ {print $2}')"
+  CHAIN_OF_TRUST_STATUS="$(echo "${QUERY}" | awk '/Verify return code:/ {print $4}')"
+  REVOCATION_STATUS="$(echo "${QUERY}" | awk '/Cert Status:/ {print $3}')"
+
+  # error if we can't find a certificate
+  if [[ -z "${EXPIRY_DATE}" ]]; then
+    echo "UNKNOWN: certificate ${FQDN}:${PORT} is unreachable" && return 1
+  fi
+
+  # print certificate authority
+  echo "Issuer: ${CERTIFICATE_AUTHORITY} -> ${ROOT_AUTHORITY}"
+
+  # error if the chain-of-trust can't be verified
+  if [[ "${CHAIN_OF_TRUST_STATUS}" != '0' ]]; then
+    echo "Status: CRITICAL - ${FQDN}:${PORT} cannot be determined to be authentic (chain-of-trust)" && return 1
+  fi
+
+  # error if the certificate has been revoked
+  if [[ -n "${REVOCATION_STATUS}" ]] && [[ "${REVOCATION_STATUS}" != 'good' ]]; then
+    echo "Status: CRITICAL - ${FQDN}:${PORT} cannot be determined to be authentic (OCSP)" && return 1
+  fi
+
+  # calculate the number of days to expiry
+  if [[ "$(uname)" == 'Linux' ]]; then
+    SECONDS_TO_EXPIRY="$(echo "$(date --date="${EXPIRY_DATE}" +%s) - $(date +%s)" | bc -l)"
+  else
+    SECONDS_TO_EXPIRY="$(echo "$(date -jf "%b %e %H:%M:%S %Y %Z" "${EXPIRY_DATE}" +%s) - $(date +%s)" | bc -l)"
+  fi
+  DAYS_TO_EXPIRY="$(echo "scale=0; ${SECONDS_TO_EXPIRY} / 86400" | bc -l)"
+
+  # set status based on expiry thresholds
+  if [[ "${SECONDS_TO_EXPIRY}" -lt '0' ]]; then
+    STATUS="CRITICAL - ${FQDN}:${PORT} is already expired"
+  elif [[ "${DAYS_TO_EXPIRY}" -le "${EXPIRY_THRESHOLD_CRITICAL}" ]]; then
+    STATUS="CRITICAL - ${FQDN}:${PORT} expires in ${DAYS_TO_EXPIRY} day(s)"
+  elif [[ "${DAYS_TO_EXPIRY}" -le "${EXPIRY_THRESHOLD_WARNING}" ]]; then
+    STATUS="WARNING - ${FQDN}:${PORT} expires in ${DAYS_TO_EXPIRY} day(s)"
+  else
+    STATUS="OK - ${FQDN}:${PORT} expires in ${DAYS_TO_EXPIRY} day(s)"
+  fi
+
+  echo "Expiry: ${EXPIRY_DATE}"
+  echo "Status: ${STATUS}"
+}
+
 # colours() test for true colour support
 colours() {
   awk -v term_cols="${width:-$(tput cols || echo 80)}" 'BEGIN{
