@@ -444,6 +444,15 @@ colours() {
 }
 alias colors=colours
 
+# deduplify() deduplicate text files while preserving line order
+deduplify() {
+  if [[ -r "${1}" ]]; then
+    awk '!visited[$0]++' "${1}"
+  else
+    echo "Cannot open file ${1}" && return 1
+  fi
+}
+
 # def()
 if [[ -x "$(/usr/bin/which wn 2>/dev/null)" ]] && [[ -x "$(/usr/bin/which pandoc 2>/dev/null)" ]]; then
   def() {
