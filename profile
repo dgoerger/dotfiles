@@ -1,7 +1,7 @@
 # .profile
 
 ### all operating systems and shells
-# PATH and PS1
+## PATH and PS1
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/games:/usr/local/bin
 _ps1() {
   # detect git project name (if any)
@@ -18,8 +18,11 @@ _ps1() {
   fi
 }
 
-# terminal settings
+## terminal settings
+# fix backspace on old TERMs
 #stty erase '^?' echoe
+# SIGINFO: see signal(3)
+stty status ^T 2>/dev/null
 umask 077
 
 
@@ -46,9 +49,9 @@ if [[ -r ${HOME}/.pythonrc ]]; then
 fi
 if [[ -x "$(/usr/bin/which surfraw 2>/dev/null)" ]]; then
   export SURFRAW_text_browser=${BROWSER}
-  alias duckduckgo='surfraw duckduckgo'
-  alias wikipedia='surfraw wikipedia'
-  alias wiktionary='surfraw wiktionary'
+  alias duckduckgo='COLUMNS=80 surfraw duckduckgo'
+  alias wikipedia='COLUMNS=80 surfraw wikipedia'
+  alias wiktionary='COLUMNS=80 surfraw wiktionary'
 fi
 export TZ='US/Eastern'
 export VISUAL=vi
@@ -101,6 +104,9 @@ if [[ -x "$(/usr/bin/which python3 2>/dev/null)" ]]; then
   alias python=python3
 fi
 alias rm='rm -i'
+if [[ -x "$(/usr/bin/which openrsync 2>/dev/null)" ]]; then
+  alias rsync=openrsync
+fi
 alias tm='tmux new-session -A -s tm'
 if [[ -x "$(/usr/bin/which nvim 2>/dev/null)" ]]; then
   # prefer neovim > vim if available
@@ -229,6 +235,10 @@ if [[ "$(uname)" == "Linux" ]]; then
 
 elif [[ "$(uname)" == 'OpenBSD' ]]; then
   # aliases
+  apropos() {
+    # search all sections of the manual by default
+    /usr/bin/man -k any="${1}"
+  }
   if [[ -x "$(which cabal 2>/dev/null)" ]] && [[ -d /usr/local/cabal/build ]] && [[ -w /usr/local/cabal/build ]]; then
     # ref: https://deftly.net/posts/2017-10-12-using-cabal-on-openbsd.html
     ln -sf /usr/local/cabal ${HOME}/.cabal
@@ -240,13 +250,6 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
     # shortcut to check snapshot availability - especially useful during release/freeze
     alias checksnaps='/usr/local/bin/lynx "$(cat /etc/installurl)/snapshots/$(uname -m)"'
   fi
-  alias rsync='/usr/bin/openrsync'
-
-  # bind - clear screen with "ctrl+l"
-  bind -m '^L'=^Uclear'^J^Y'
-
-  # SIGINFO - see signal(3)
-  stty status ^T
 fi
 
 
@@ -264,9 +267,9 @@ if [[ "${0}" == 'ksh' ]] || [[ "${0}" == '-ksh' ]] || [[ "${0}" == '/bin/ksh' ]]
   fi
   set -A complete_kill_1 -- -9 -HUP -INFO -KILL -TERM
   set -A complete_kpcli_1 -- --kdb
-#  if [[ "$(uname)" == 'OpenBSD' ]]; then
-#    set -A complete_man_1 -- $(man -k Nm~. | cut -d\( -f1 | tr -d ,)
-#  fi
+  if [[ "$(uname)" == 'OpenBSD' ]]; then
+    set -A complete_man_1 -- $(man -k Nm~. | cut -d\( -f1 | tr -d ,)
+  fi
   if pgrep sndio >/dev/null 2>&1; then
     set -A complete_mixerctl_1 -- $(mixerctl | cut -d= -f 1)
     alias voldown='mixerctl outputs.master=-5,-5'
@@ -283,10 +286,11 @@ if [[ "${0}" == 'ksh' ]] || [[ "${0}" == '-ksh' ]] || [[ "${0}" == '/bin/ksh' ]]
     set -A complete_mtr_1 -- ${HOST_LIST}
   fi
   if [[ -x "$(/usr/bin/which nmap 2>/dev/null)" ]]; then
-    set -A complete_nmap_1 -- ${HOST_LIST}
+    set -A complete_nmap_1 -- -Pn
+    set -A complete_nmap_2 -- ${HOST_LIST}
   fi
-  set -A complete_openssl_1 -- s_client
-  set -A complete_openssl_2 -- -connect
+  set -A complete_openssl_1 -- ciphers s_client verify version x509
+  set -A complete_openssl_2 -- -h
   set -A complete_ping_1 -- ${HOST_LIST}
   set -A complete_ping6_1 -- ${HOST_LIST}
   if [[ "$(uname)" == 'OpenBSD' ]] && [[ -r /etc/rc.d ]]; then
@@ -296,8 +300,8 @@ if [[ "${0}" == 'ksh' ]] || [[ "${0}" == '-ksh' ]] || [[ "${0}" == '/bin/ksh' ]]
   if [[ -x "$(/usr/bin/which rmapi 2>/dev/null)" ]]; then
     set -A complete_rmapi_1 -- help put version
   fi
-  #set -A complete_rsync_1 -- -HhLPprStv
-  set -A complete_rsync_1 -- -av
+  #set -A complete_rsync_1 -- -HhLPSprtv
+  set -A complete_rsync_1 -- -prtv
   set -A complete_rsync_2 -- ${HOST_LIST}
   set -A complete_rsync_3 -- ${HOST_LIST}
   if [[ -x "$(/usr/bin/which signify 2>/dev/null)" ]]; then
@@ -329,21 +333,6 @@ fi
 
 
 ### functions
-# apropos()
-apropos() {
-  if [[ $# -eq 1 ]]; then
-    if [[ "$(uname)" == 'Linux' ]]; then
-      /usr/bin/man -wK "${1}"
-    elif [[ "$(uname)" == 'OpenBSD' ]]; then
-      /usr/bin/man -k any="${1}"
-    else
-      apropos "${1}"
-    fi
-  else
-    echo "Usage: 'apropos WORD'" && return 1
-  fi
-}
-
 # certcheck() verify tls certificates
 certcheck() {
   # set default options
@@ -453,22 +442,7 @@ colours() {
     printf "\n";
   }'
 }
-
-# compare512() sha512 file comparison
-compare512() {
-  if [[ $# == 2 ]] && [[ -r "${1}" ]] && [[ -r "${2}" ]]; then
-    file1="$(sha512 ${1} | awk '{print $NF}')"
-    file2="$(sha512 ${2} | awk '{print $NF}')"
-
-    if [[ "${file1}" == "${file2}" ]]; then
-      echo "The two files are sha512-identical."
-    else
-      echo "The two files are NOT sha512-identical."
-    fi
-  else
-      echo -e 'Usage: compare FILE1 FILE2\n' && return 1
-  fi
-}
+alias colors=colours
 
 # def()
 if [[ -x "$(/usr/bin/which wn 2>/dev/null)" ]] && [[ -x "$(/usr/bin/which pandoc 2>/dev/null)" ]]; then
@@ -677,6 +651,22 @@ pwgen() {
     echo "Usage: pwgen [INT], where INT defaults to 30." && return 1
   fi
  }
+
+# shacompare() sha512 file comparison
+shacompare() {
+  if [[ $# == 2 ]] && [[ -r "${1}" ]] && [[ -r "${2}" ]]; then
+    file1="$(sha512 ${1} | awk '{print $NF}')"
+    file2="$(sha512 ${2} | awk '{print $NF}')"
+
+    if [[ "${file1}" == "${file2}" ]]; then
+      echo "The two files are sha512-identical."
+    else
+      echo "The two files are NOT sha512-identical."
+    fi
+  else
+      echo -e 'Usage: shacompare FILE1 FILE2\n' && return 1
+  fi
+}
 
 
 ### source profile-local files
