@@ -6,7 +6,7 @@
 /usr/X11R6/bin/setxkbmap us mac
 # background
 /usr/X11R6/bin/xsetroot -solid "#252123"
-/usr/local/bin/feh --bg-tile --zoom fill --no-fehbg ${HOME}/.config/wallpaper/current &
+/usr/local/bin/xwallpaper --center ${HOME}/.config/wallpaper/current
 # always use UTF-8
 export LANG=en_CA.UTF-8
 # load ~/.profile in ksh(1) interactive shells
