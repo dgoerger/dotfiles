@@ -267,8 +267,8 @@ if [[ "${0}" == 'ksh' ]] || [[ "${0}" == '-ksh' ]] || [[ "${0}" == '/bin/ksh' ]]
   fi
   set -A complete_kill_1 -- -9 -HUP -INFO -KILL -TERM
   set -A complete_kpcli_1 -- --kdb
-  if [[ "$(uname)" == 'OpenBSD' ]]; then
-    set -A complete_man_1 -- $(man -k Nm~. | cut -d\( -f1 | tr -d ,)
+  if [[ -r /usr/local/etc/manuals.list ]]; then
+    set -A complete_man_1 -- $(cat /usr/local/etc/manuals.list)
   fi
   if pgrep sndio >/dev/null 2>&1; then
     set -A complete_mixerctl_1 -- $(mixerctl | cut -d= -f 1)
