@@ -335,7 +335,7 @@ certcheck() {
 
   # set FQDN (required)
   if [[ -n "${1}" ]]; then
-    if getent hosts "${1}" >/dev/null 2>&1; then
+    if host "${1}" >/dev/null 2>&1; then
       FQDN="${1}"
     else
       echo "Cannot find ${1} in DNS." && return 1
