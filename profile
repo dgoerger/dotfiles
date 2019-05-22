@@ -1,4 +1,4 @@
-# .profile
+# ~/.profile
 
 ### all operating systems and shells
 ## PATH and PS1
@@ -46,12 +46,6 @@ export LYNX_CFG=${HOME}/.lynxrc
 export PS1='$(_ps1)$ '
 if [[ -r ${HOME}/.pythonrc ]]; then
   export PYTHONSTARTUP=${HOME}/.pythonrc
-fi
-if [[ -x "$(/usr/bin/which surfraw 2>/dev/null)" ]]; then
-  export SURFRAW_text_browser=${BROWSER}
-  alias duckduckgo='COLUMNS=80 surfraw duckduckgo'
-  alias wikipedia='COLUMNS=80 surfraw wikipedia'
-  alias wiktionary='COLUMNS=80 surfraw wiktionary'
 fi
 export TZ='US/Eastern'
 export VISUAL=vi
@@ -317,10 +311,7 @@ if [[ "${0}" == 'ksh' ]] || [[ "${0}" == '-ksh' ]] || [[ "${0}" == '/bin/ksh' ]]
   set -A complete_sftp_1 -- -4p
   set -A complete_sftp_2 -- ${HOST_LIST}
   set -A complete_sftp_3 -- ${HOST_LIST}
-  if [[ -x "$(/usr/bin/which surfraw 2>&1)" ]]; then
-    set -A complete_surfraw_1 -- $(/bin/ls /usr/local/lib/surfraw)
-    set -A complete_surfraw_2 -- -local-help
-  fi
+  set -A complete_surfraw_1 -- arxiv cve koji mathworld thesaurus wayback webster wikipedia wiktionary
   set -A complete_ssh_1 -- ${HOST_LIST}
   set -A complete_telnet_1 -- ${HOST_LIST}
   set -A complete_telnet_2 -- 22 25 80 443 465 587
@@ -374,14 +365,13 @@ certcheck() {
   fi
 
   # query cert status
-  QUERY="$(echo Q | openssl s_client ${PROTOCOL_FLAGS} -connect "${FQDN}:${PORT}" -status 2>/dev/null)"
+  QUERY="$(echo Q | openssl s_client ${PROTOCOL_FLAGS} -connect "${FQDN}:${PORT}" 2>/dev/null)"
   CERTIFICATE_AUTHORITY="$(echo "${QUERY}" | awk -F'CN=' '/^issuer=/ {print $2}')"
   ROOT_AUTHORITY="$(echo "${QUERY}" | grep -E '^Certificate chain$' -A4 | tail -n1 | awk -F'CN=' '/i:/ {print $2}')"
   TLS_PROTOCOL="$(echo "${QUERY}" | awk '/Protocol  :/ {print $NF}')"
   TLS_CIPHER="$(echo "${QUERY}" | awk '/Cipher    :/ {print $NF}')"
   EXPIRY_DATE="$(echo "${QUERY}" | openssl x509 -noout -enddate 2>/dev/null | awk -F'=' '/notAfter/ {print $2}')"
   CHAIN_OF_TRUST_STATUS="$(echo "${QUERY}" | awk '/Verify return code:/ {print $4}')"
-  REVOCATION_STATUS="$(echo "${QUERY}" | awk '/Cert Status:/ {print $3}')"
 
   # error if we can't find a certificate
   if [[ -z "${EXPIRY_DATE}" ]]; then
@@ -397,11 +387,6 @@ certcheck() {
   # error if the chain-of-trust can't be verified
   if [[ "${CHAIN_OF_TRUST_STATUS}" != '0' ]]; then
     echo "Status: CRITICAL - ${FQDN}:${PORT} cannot be determined to be authentic (chain-of-trust)" && return 1
-  fi
-
-  # error if the certificate has been revoked
-  if [[ -n "${REVOCATION_STATUS}" ]] && [[ "${REVOCATION_STATUS}" != 'good' ]]; then
-    echo "Status: CRITICAL - ${FQDN}:${PORT} cannot be determined to be authentic (OCSP)" && return 1
   fi
 
   # calculate the number of days to expiry
@@ -676,6 +661,141 @@ shacompare() {
     fi
   else
       echo -e 'Usage: shacompare FILE1 FILE2\n' && return 1
+  fi
+}
+
+# surfraw()
+surfraw() {
+  # try to guess preferred language from $LANG
+  if [[ -n "${LANG}" ]]; then
+    lang="$(echo "${LANG}" | cut -c1-2)"
+  else
+    lang='en'
+  fi
+
+  # escape characters for URL-encoding
+  _escape_html() {
+    echo "$@" | sed 's/%/%25/g;
+      s/+/%2B/g;
+#     s/ /+/g;
+      s/ /%20/g;
+      s/(/%28/g;
+      s/)/%29/g;
+      s/"/%22/g;
+      s/#/%23/g;
+      s/\$/%24/g;
+      s/&/%26/g;
+      s/,/%2C/g;
+#     s/\./%2E/g;
+      sx/x%2Fxg;
+      s/:/%3A/g;
+      s/;/%3B/g;
+      s/</%3C/g;
+      s/=/%3D/g;
+      s/>/%3E/g;
+      s/?/%3F/g;
+      s/@/%40/g;
+      s/\[/%5B/g;
+      s/\\/%5C/g;
+      s/\]/%5D/g;
+      s/\^/%5E/g;
+      s/{/%7B/g;
+      s/|/%7C/g;
+      s/}/%7D/g;
+      s/~/%7E/g;
+      s/`/%60/g;
+    '"s/'/%27/g"
+  }
+
+  # surf the netz raw
+  if [[ "${1}" == 'arxiv' ]]; then
+    shift
+    query="$(_escape_html "$@")"
+    if [[ -z "${query}" ]]; then
+      lynx "https://arxiv.org/"
+    else
+      lynx "https://arXiv.org/find/all/1/all:${query}/0/1/0/all/0/1"
+    fi
+  elif [[ "${1}" == 'cve' ]]; then
+    shift
+    query="$(_escape_html "$@")"
+    if [[ -z "${query}" ]]; then
+      lynx "http://cve.mitre.org"
+    else
+      lynx "http://cve.mitre.org/cgi-bin/cvename.cgi?name=${query}"
+    fi
+  #elif [[ "${1}" == 'gutenberg' ]]; then
+  #  shift
+  #  query="$(_escape_html "$@")"
+  #  if [[ -z "${query}" ]]; then
+  #    lynx "https://www.gutenberg.org/"
+  #  else
+  #    lynx "https://www.gutenberg.org/catalog/world/results?&title=${query}"
+  #  fi
+  elif [[ "${1}" == 'koji' ]]; then
+    shift
+    query="$(_escape_html "$@")"
+    if [[ -z "${query}" ]]; then
+      lynx "https://koji.fedoraproject.org/koji"
+    else
+      lynx "https://koji.fedoraproject.org/koji/search?match=glob&type=package&terms=${query}"
+    fi
+  elif [[ "${1}" == 'mathworld' ]]; then
+    shift
+    query="$(_escape_html "$@")"
+    if [[ -z "${query}" ]]; then
+      lynx "http://mathworld.wolfram.com/"
+    else
+      lynx "http://mathworld.wolfram.com/search/?query=${query}&x=0&y=0"
+    fi
+  elif [[ "${1}" == 'thesaurus' ]]; then
+    shift
+    query="$(_escape_html "$@")"
+    if [[ -z "${query}" ]]; then
+      lynx "https://en.oxforddictionaries.com/english-thesaurus"
+    else
+      lynx "https://en.oxforddictionaries.com/thesaurus/${query}"
+    fi
+  elif [[ "${1}" == 'wayback' ]]; then
+    shift
+    query="$(_escape_html "$@")"
+    if [[ -z "${query}" ]]; then
+      lynx "https://www.archive.org/"
+    else
+      lynx "https://www.archive.org/searchresults.php?mediatype=web&Submit=Take+Me+Back&search=${query}"
+    fi
+  elif [[ "${1}" == 'webster' ]]; then
+    shift
+    query="$(_escape_html "$@")"
+    if [[ -z "${query}" ]]; then
+      lynx "https://www.merriam-webster.com/dictionary.htm"
+    else
+      lynx "https://www.merriam-webster.com/dictionary/${query}"
+    fi
+  elif [[ "${1}" == 'wikipedia' ]]; then
+    shift
+    query="$(_escape_html "$@")"
+    if [[ -z "${query}" ]]; then
+      lynx "https://${lang}.wikipedia.org/wiki/"
+    else
+      lynx "https://${lang}.wikipedia.org/wiki/index.php?search=${query}&go=Go"
+    fi
+  elif [[ "${1}" == 'wiktionary' ]]; then
+    shift
+    query="$(_escape_html "$@")"
+    if [[ -z "${query}" ]]; then
+      lynx "https://${lang}.wiktionary.org/wiki/"
+    else
+      lynx "https://${lang}.wiktionary.org/wiki/index.php?search=${query}&go=Go"
+    fi
+  else
+    shift
+    query="$(_escape_html "$@")"
+    if [[ -z "${query}" ]]; then
+      lynx "https://www.duckduckgo.com/lite/"
+    else
+      lynx "https://www.duckduckgo.com/lite/?q=${query}&?kae=t&kac=-1&kaj=m&kam=osm&kak=-1&kax=-1&kv=-1&kaq=-1&kap=-1&kg=g"
+    fi
   fi
 }
 
