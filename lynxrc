@@ -1,5 +1,5 @@
 # ~/.lynxrc
-# see https://lynx.invisible-island.net/release/lynx_help/body.html
+# ref: https://lynx.invisible-island.net/release/lynx_help/body.html
 
 # homepage
 STARTFILE:~/.bookmarks.html

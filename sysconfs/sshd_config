@@ -1,4 +1,4 @@
-# OpenBSD: /etc/ssh/sshd_config
+# OpenBSD: /etc/ssh/sshd_config, see sshd_config(5)
 #
 # Linux nota bene:
 # - UsePAM yes

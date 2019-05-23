@@ -1,6 +1,4 @@
-! OpenBSD: /etc/X11/xenodm/Xresources
-!
-! documentation: man xenodm
+! OpenBSD: /etc/X11/xenodm/Xresources, see xenodm(1)
 !
 ! nota bene:     The geometry specified below is calibrated
 !                  to a 1920x1080 display.

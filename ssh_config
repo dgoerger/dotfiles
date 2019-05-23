@@ -1,4 +1,4 @@
-# .ssh/config
+# ~/.ssh/config, see ssh_config(5)
 
 # commonly needed for legacy hosts
 #Ciphers +aes256-ctr
