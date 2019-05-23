@@ -59,6 +59,9 @@ if [[ -x "$(/usr/bin/which abook 2>/dev/null)" ]]; then
   alias abook='abook --config ${HOME}/.abookrc --datafile ${HOME}/.addresses'
 fi
 alias bc='bc -l'
+if [[ -x "$(/usr/bin/which cabal 2>/dev/null)" ]] && [[ -d /usr/local/cabal/build ]] && [[ -w /usr/local/cabal/build ]]; then
+  alias cabal='env TMPDIR=/usr/local/cabal/build/ cabal'
+fi
 alias cal='cal -m'
 if [[ -x "$(/usr/bin/which calendar 2>/dev/null)" ]]; then
   alias calendar='calendar -f ${HOME}/.calendar'
@@ -115,6 +118,7 @@ elif [[ -x "$(/usr/bin/which vim 2>/dev/null)" ]]; then
   alias view='vim --cmd "let no_plugin_maps = 1" -c "runtime! macros/less.vim" -m -M -R -n --'
   alias vimdiff='vim -d -c "color blue" --'
 else
+  alias md=mg
   alias view='less -MR'
   alias vim=vi
 fi
@@ -183,19 +187,13 @@ if [[ "$(uname)" == "Linux" ]]; then
   fi
   export QUOTING_STYLE=literal
   unset LS_COLORS
-  if [[ -x "$(/usr/bin/which flatpak 2>/dev/null)" ]]; then
-    if [[ "${XDG_DATA_DIRS#*flatpak}" == "${XDG_DATA_DIRS}" ]]; then
-      XDG_DATA_DIRS="${XDG_DATA_HOME:-"$HOME/.local/share"}/flatpak/exports/share:/var/lib/flatpak/exports/share:${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
-      export XDG_DATA_DIRS
-    fi
-  fi
 
   # aliases
   if [[ -x "$(/usr/bin/which bc 2>/dev/null)" ]]; then
     alias bc='bc -ql'
   fi
   alias df='df -h -xtmpfs -xdevtmpfs'
-  alias doas='umask 0022 && /usr/bin/sudo' #mostly-compatible
+  alias doas=/usr/bin/sudo #mostly-compatible
   alias free='free -h'
   if [[ -x "$(/usr/bin/which tnftp 2>/dev/null)" ]]; then
     # BSD ftp has support for wget-like functionality
@@ -220,7 +218,6 @@ if [[ "$(uname)" == "Linux" ]]; then
   fi
   alias sha256='sha256sum --tag'
   alias sha512='sha512sum --tag'
-  alias sudo='umask 0022 && /usr/bin/sudo'
   if [[ -x "$(/usr/bin/which tree 2>/dev/null)" ]]; then
     alias tree='tree -N'
   fi
@@ -235,13 +232,6 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
     # search all sections of the manual by default
     /usr/bin/man -k any="${1}"
   }
-  if [[ -x "$(which cabal 2>/dev/null)" ]] && [[ -d /usr/local/cabal/build ]] && [[ -w /usr/local/cabal/build ]]; then
-    # ref: https://deftly.net/posts/2017-10-12-using-cabal-on-openbsd.html
-    ln -sf /usr/local/cabal ${HOME}/.cabal
-    alias cabal='env TMPDIR=/usr/local/cabal/build/ cabal'
-    # alias the pandoc relocatable-binary build command for easy reference
-    alias pandoc_rebuild='cabal update && cabal install pandoc -fembed_data_files -fhttps'
-  fi
   if [[ -r /etc/installurl ]]; then
     # shortcut to check snapshot availability - especially useful during release/freeze
     alias checksnaps='/usr/local/bin/lynx "$(cat /etc/installurl)/snapshots/$(uname -m)"'
@@ -256,7 +246,6 @@ if [[ "${0}" == 'ksh' ]] || [[ "${0}" == '-ksh' ]] || [[ "${0}" == '/bin/ksh' ]]
 
   set -A complete_dig_1 -- ${HOST_LIST}
   set -A complete_git_1 -- add bisect blame checkout clone commit diff log mv pull push rebase reset revert rm stash status submodule
-  set -A complete_gpg2 -- --refresh --receive-keys --armor --clearsign --sign --list-key --decrypt --verify --detach-sig
   set -A complete_host_1 -- ${HOST_LIST}
   if [[ -x "$(/usr/bin/which ifconfig 2>/dev/null)" ]]; then
     set -A complete_ifconfig_1 -- $(ifconfig | awk -F':' '/^[a-z]/ {print $1}')
@@ -282,8 +271,7 @@ if [[ "${0}" == 'ksh' ]] || [[ "${0}" == '-ksh' ]] || [[ "${0}" == '/bin/ksh' ]]
     set -A complete_mtr_1 -- ${HOST_LIST}
   fi
   if [[ -x "$(/usr/bin/which nmap 2>/dev/null)" ]]; then
-    set -A complete_nmap_1 -- -Pn
-    set -A complete_nmap_2 -- ${HOST_LIST}
+    set -A complete_nmap_1 -- ${HOST_LIST}
   fi
   set -A complete_openssl_1 -- ciphers s_client verify version x509
   set -A complete_openssl_2 -- -h
@@ -300,11 +288,6 @@ if [[ "${0}" == 'ksh' ]] || [[ "${0}" == '-ksh' ]] || [[ "${0}" == '/bin/ksh' ]]
   set -A complete_rsync_1 -- -prtv
   set -A complete_rsync_2 -- ${HOST_LIST}
   set -A complete_rsync_3 -- ${HOST_LIST}
-  if [[ -x "$(/usr/bin/which signify 2>/dev/null)" ]]; then
-    set -A complete_signify_1 -- -C -G -S -V
-    set -A complete_signify_2 -- -q -p -x -c -m -t -z
-    set -A complete_signify_3 -- -p -x -c -m -t -z
-  fi
   set -A complete_scp_1 -- -4p
   set -A complete_scp_2 -- ${HOST_LIST}
   set -A complete_scp_3 -- ${HOST_LIST}
@@ -335,7 +318,7 @@ certcheck() {
 
   # set FQDN (required)
   if [[ -n "${1}" ]]; then
-    if host "${1}" >/dev/null 2>&1; then
+    if getent hosts "${1}" >/dev/null 2>&1; then
       FQDN="${1}"
     else
       echo "Cannot find ${1} in DNS." && return 1
@@ -561,7 +544,7 @@ if [[ -x "$(/usr/bin/which pandoc 2>/dev/null)" ]] && [[ -x "$(/usr/bin/which ly
 fi
 
 # photo_import()
-if [[ -x "$(which exiv2 2>/dev/null)" ]]; then
+if [[ -x "$(/usr/bin/which exiv2 2>/dev/null)" ]]; then
   _import_photo() {
     DATETIME="$(exiv2 -pt -qK Exif.Photo.DateTimeOriginal "${1}" 2>/dev/null | awk '{print $(NF-1)}' | sed 's/\:/\//g' | sort -u)"
     FILENAME="$(echo "${1}" | awk -F"/" '{print $NF}' | tr '[:upper:]' '[:lower:]')"
@@ -789,7 +772,6 @@ surfraw() {
       lynx "https://${lang}.wiktionary.org/wiki/index.php?search=${query}&go=Go"
     fi
   else
-    shift
     query="$(_escape_html "$@")"
     if [[ -z "${query}" ]]; then
       lynx "https://www.duckduckgo.com/lite/"
