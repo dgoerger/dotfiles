@@ -1,11 +1,11 @@
-# ~/.newsboat/config
+# ~/.newsboat/config, see newsboat(1)
 always-display-description      true
 download-full-page              yes
 cleanup-on-quit                 yes
 history-limit                   0
 cache-file                      ~/.newsboat/cache.db
 keep-articles-days              15
-browser                         "COLUMNS=80 lynx -nocolor -useragent 'Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0' %u 2>/dev/null"
+browser                         "COLUMNS=80 lynx -nocolor -useragent 'Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101 Firefox/60.0' %u 2>/dev/null"
 use-proxy                       yes
 proxy                           127.0.0.1:9050
 proxy-type                      socks5

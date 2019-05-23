@@ -1,4 +1,4 @@
-# ~/.cwmrc
+# ~/.cwmrc, see cwmrc(5) and cwm(1)
 #
 # newly-launched applications "stick" with the current group/workspace
 sticky yes

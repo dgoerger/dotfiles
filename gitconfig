@@ -1,4 +1,4 @@
-# .gitconfig
+# ~/.gitconfig, see git-config(1)
 
 [apply]
     whitespace = fix

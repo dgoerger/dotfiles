@@ -1,6 +1,7 @@
 {
     "__comment": {
         "__compat": "NIX-ONLY",
+        "__docs": "https://www.chromium.org/administrators/policy-list-3",
         "__usage": "Set globally for new AND old profiles at /etc/chromium/policies/managed/policy.json"
     },
     "AllowFileSelectionDialogs": true,

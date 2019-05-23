@@ -1,4 +1,4 @@
-# .muttrc
+# ~/.muttrc, see muttrc(5)
 
 ### headers
 ignore *
@@ -89,4 +89,4 @@ set wrap = 80
 ## set record to '' for gmail and when otherwise automatically saved to Sent by server
 #set record = '+Archive'
 #set trash = '+Archive'
-source "gpg2 -dq ${MUTTRC} 2>/dev/null|"
+#source "gpg2 -dq ${MUTTRC} 2>/dev/null|"

@@ -1,3 +1,5 @@
+" ~/.exrc, see ex(1)
+"
 " enable autoindent
 set autoindent
 " enable extended regular expressions

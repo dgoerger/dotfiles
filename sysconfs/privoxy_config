@@ -1,37 +1,32 @@
 # OpenBSD: /etc/privoxy/config
 #
+# ref: https://www.privoxy.org/user-manual/config.html
+#
+#
 #  2.5. actionsfile
 #  =================
 #
-#  Specifies:
-#
-#      The actions file(s) to use
+#      The actions file(s) to use.
 #
 actionsfile /etc/privoxy/dnsblock.action
 #
 #  4.1. listen-address
 #  ====================
 #
-#  Specifies:
-#
 #      The address and TCP port on which Privoxy will listen for
 #      client requests.
 #
-Listen-address  127.0.0.1:1080
+listen-address  127.0.0.1:1080
 #
 #  4.3. enable-remote-toggle
 #  ==========================
 #
-#  Specifies:
-#
-#      Whether or not the web-based toggle feature may be used
+#      Whether or not the web-based toggle feature may be used.
 #
 enable-remote-toggle  0
 #
 #  4.4. enable-remote-http-toggle
 #  ===============================
-#
-#  Specifies:
 #
 #      Whether or not Privoxy recognizes special HTTP headers to
 #      change its behaviour.
@@ -41,26 +36,20 @@ enable-remote-http-toggle  0
 #  4.5. enable-edit-actions
 #  =========================
 #
-#  Specifies:
-#
-#      Whether or not the web-based actions file editor may be used
+#      Whether or not the web-based actions file editor may be used.
 #
 enable-edit-actions 0
 #
 #  4.6. enforce-blocks
 #  ====================
 #
-#  Specifies:
-#
 #      Whether the user is allowed to ignore blocks and can "go there
 #      anyway".
 #
 enforce-blocks 1
 #
-#  5.2. forward-socks4, forward-socks4a, forward-socks5 and forward-socks5t
-#  =========================================================================
-#
-#  Specifies:
+#  5.2. forward-socks4, forward-socks4a, forward-socks5
+#  =====================================================
 #
 #      Through which SOCKS proxy (and optionally to which parent HTTP
 #      proxy) specific requests should be routed.
@@ -91,8 +80,6 @@ forward-socks5t / 127.0.0.1:9050 .
 #
 #  6.8. socket-timeout
 #  ====================
-#
-#  Specifies:
 #
 #      Number of seconds after which a socket times out if no data is
 #      received.
