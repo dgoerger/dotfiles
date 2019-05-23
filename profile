@@ -107,13 +107,13 @@ fi
 alias tm='tmux new-session -A -s tm'
 if [[ -x "$(/usr/bin/which nvim 2>/dev/null)" ]]; then
   # prefer neovim > vim if available
-  alias md='nvim -u ${HOME}/.vimrc -i NONE -c "set spell spelllang=en_ca formatoptions+=aw textwidth=70"'
-  alias vi='nvim -u ${HOME}/.vimrc -i NONE'
-  alias view='nvim -u ${HOME}/.vimrc -i NONE --cmd "let no_plugin_maps = 1" -c "runtime! macros/less.vim" -m -M -R -n --'
-  alias vim='nvim -u ${HOME}/.vimrc -i NONE'
-  alias vimdiff='nvim -u ${HOME}/.vimrc -i NONE -d -c "color blue" --'
+  alias md=nvim
+  alias vi=nvim
+  alias view='nvim --cmd "let no_plugin_maps = 1" -c "runtime! macros/less.vim" -m -M -R -n --'
+  alias vim=nvim
+  alias vimdiff='nvim -d -c "color blue" --'
 elif [[ -x "$(/usr/bin/which vim 2>/dev/null)" ]]; then
-  alias md='vim -c "set spell spelllang=en_ca formatoptions+=aw textwidth=70"'
+  alias md=vim
   alias vi=vim
   alias view='vim --cmd "let no_plugin_maps = 1" -c "runtime! macros/less.vim" -m -M -R -n --'
   alias vimdiff='vim -d -c "color blue" --'

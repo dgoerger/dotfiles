@@ -1,54 +1,29 @@
-""" source global defaults - as of 8.0
-if filereadable(expand('$VIMRUNTIME/defaults.vim'))
-  source $VIMRUNTIME/defaults.vim
-  let skip_defaults_vim=1   " don't source again in absence of ~/.vimrc
-endif
-
-""" security
-set nomodeline              " see rhbz#1398227
-
+" ~/.vimrc or ~/.config/nvim/init.vim
+" ref: (n)vim's built-in ':help option' documentation system
+"
 """ general usability
-set viminfo="NONE"          " don't save search history
-colorscheme elflord         " default colorscheme is unreadable on dark console
-set mouse=i                 " enable the mouse in Insert mode
+colorscheme elflord             " default colorscheme is unreadable on a dark console
+let skip_defaults_vim=1         " don't source global defaults in absence of ~/.vimrc
+set directory=${HOME}/.vim.d//  " keep swapfiles tidy in their own directory
+set ignorecase                  " ignore case when searching
+set mouse=i                     " enable the mouse in Insert mode
+set nomodeline                  " disable modelines for security, see rhbz#1398227
+set shada="NONE"                " like viminfo, but worse
+set smartcase                   " if ':set ignorecase', use strict case with CAPS
+set spelllang=en_ca             " enable spellcheck with ':set spell'
+set viminfo="NONE"              " don't save search history
 
 """ indentation schema
-set autoindent              " enable automatic indentation
-" set default indentation scheme
-filetype plugin indent on   " indent based on filetype
+set autoindent                  " enable automatic indentation
 set tabstop=2
 set shiftwidth=2
-set expandtab               " insert spaces instead of tab
-" set language-specific indentation schema
-if has("autocmd")
-  " use real tabs in makefiles
-  autocmd FileType make setlocal tabstop=8 shiftwidth=8 softtabstop=0 noexpandtab
-  " indentation is tab/width=8,4 in C's KNF style
-  autocmd FileType c setlocal tabstop=8 shiftwidth=8 softtabstop=4 noexpandtab
-  autocmd FileType cpp setlocal tabstop=8 shiftwidth=8 softtabstop=4 noexpandtab
-  " indentation is four spaces in python
-  autocmd FileType python setlocal tabstop=4 shiftwidth=4 expandtab
-  " indentation is two spaces in ruby
-  autocmd FileType ruby setlocal tabstop=2 shiftwidth=2 expandtab
-  " indentation for shell scripts
-  autocmd FileType sh setlocal tabstop=2 shiftwidth=2 expandtab
-endif
-
-""" search
-set ignorecase              " ignore case when searching,
-set smartcase               " except when CAPS
-
-""" relocate swapfiles to not live on removable media
-set directory=${HOME}/.vim.d//
-
-""" spellcheck
-" disabled by default (for coding), enable with ':set spell'
-set spelllang=en_ca
-
-""" file format support
-if has('autocmd')
-  " open EPUB as ZIP - requires `unzip`
-  if filereadable(expand('$VIMRUNTIME/plugin/zipPlugin.vim'))
-    autocmd BufReadCmd *.epub call zip#Browse(expand("<amatch>"))
-  endif
-endif
+set expandtab                   " insert spaces instead of tab
+filetype plugin indent on       " indent based on filetype
+" use real tabs in makefiles
+autocmd FileType make setlocal tabstop=8 shiftwidth=8 softtabstop=0 noexpandtab
+" indentation is tab/width=8,4 in C's KNF style
+autocmd FileType c setlocal tabstop=8 shiftwidth=8 softtabstop=4 noexpandtab
+" indentation is four spaces in python
+autocmd FileType python setlocal tabstop=4 shiftwidth=4 expandtab
+" enable spellcheck and line-wrap for markdown files
+autocmd FileType markdown setlocal spell formatoptions+=aw textwidth=70
