@@ -746,6 +746,7 @@ surfraw() {
       lynx "https://www.weather.gov/"
     else
       lynx "https://forecast.weather.gov/zipcity.php?inputstring=${query}&btnSearch=Go&unit=1"
+    fi
   elif [[ "${1}" == 'rhbz' ]]; then
     shift
     query="$(_escape_html "$@")"
