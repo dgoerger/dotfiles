@@ -294,7 +294,7 @@ if [[ "${0}" == 'ksh' ]] || [[ "${0}" == '-ksh' ]] || [[ "${0}" == '/bin/ksh' ]]
   set -A complete_sftp_1 -- -4p
   set -A complete_sftp_2 -- ${HOST_LIST}
   set -A complete_sftp_3 -- ${HOST_LIST}
-  set -A complete_surfraw_1 -- arxiv cve koji mathworld thesaurus wayback webster wikipedia wiktionary
+  set -A complete_surfraw_1 -- arxiv cve koji mathworld mbug nws rhbz thesaurus wayback webster wikipedia wiktionary
   set -A complete_ssh_1 -- ${HOST_LIST}
   set -A complete_telnet_1 -- ${HOST_LIST}
   set -A complete_telnet_2 -- 22 25 80 443 465 587
@@ -697,7 +697,7 @@ surfraw() {
     if [[ -z "${query}" ]]; then
       lynx "https://arxiv.org/"
     else
-      lynx "https://arXiv.org/find/all/1/all:${query}/0/1/0/all/0/1"
+      lynx "https://arxiv.org/search/?query=${query}&searchtype=all&source=header"
     fi
   elif [[ "${1}" == 'cve' ]]; then
     shift
@@ -707,14 +707,14 @@ surfraw() {
     else
       lynx "http://cve.mitre.org/cgi-bin/cvename.cgi?name=${query}"
     fi
-  #elif [[ "${1}" == 'gutenberg' ]]; then
-  #  shift
-  #  query="$(_escape_html "$@")"
-  #  if [[ -z "${query}" ]]; then
-  #    lynx "https://www.gutenberg.org/"
-  #  else
-  #    lynx "https://www.gutenberg.org/catalog/world/results?&title=${query}"
-  #  fi
+  elif [[ "${1}" == 'gutenberg' ]]; then
+    shift
+    query="$(_escape_html "$@")"
+    if [[ -z "${query}" ]]; then
+      lynx "https://www.gutenberg.org/"
+    else
+      lynx "https://www.gutenberg.org/catalog/world/results?&title=${query}"
+    fi
   elif [[ "${1}" == 'koji' ]]; then
     shift
     query="$(_escape_html "$@")"
@@ -730,6 +730,29 @@ surfraw() {
       lynx "http://mathworld.wolfram.com/"
     else
       lynx "http://mathworld.wolfram.com/search/?query=${query}&x=0&y=0"
+    fi
+  elif [[ "${1}" == 'mbug' ]]; then
+    shift
+    query="$(_escape_html "$@")"
+    if [[ -z "${query}" ]]; then
+      lynx "https://bugzilla.mozilla.org/"
+    else
+      lynx "https://bugzilla.mozilla.org/buglist.cgi?quicksearch=${query}"
+    fi
+  elif [[ "${1}" == 'nws' ]]; then
+    shift
+    query="$(_escape_html "$@")"
+    if [[ -z "${query}" ]]; then
+      lynx "https://www.weather.gov/"
+    else
+      lynx "https://forecast.weather.gov/zipcity.php?inputstring=${query}&btnSearch=Go&unit=1"
+  elif [[ "${1}" == 'rhbz' ]]; then
+    shift
+    query="$(_escape_html "$@")"
+    if [[ -z "${query}" ]]; then
+      lynx "https://bugzilla.redhat.com/"
+    else
+      lynx "https://bugzilla.redhat.com/buglist.cgi?quicksearch=${query}"
     fi
   elif [[ "${1}" == 'thesaurus' ]]; then
     shift
