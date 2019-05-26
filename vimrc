@@ -11,6 +11,7 @@ set nomodeline                  " disable modelines for security, see rhbz#13982
 set shada="NONE"                " like viminfo, but worse
 set smartcase                   " if ':set ignorecase', use strict case with CAPS
 set spelllang=en_ca             " enable spellcheck with ':set spell'
+set termguicolors               " enable truecolor support
 set viminfo="NONE"              " don't save search history
 
 """ indentation schema
