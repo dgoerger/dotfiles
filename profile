@@ -8,7 +8,7 @@ _ps1() {
   _gitproject="$(git rev-parse --show-toplevel 2>/dev/null | awk -F'/' '{print $NF}')"
   if [[ -r "${PWD}/CVS/Repository" ]]; then
     # fetch cvs project name (if any)
-    _cvsproject="$(cat ${PWD}/CVS/Repository 2>/dev/null | awk -F'/' '{print $1}')"
+    _cvsproject="$(awk -F'/' '{print $1}' "${PWD}/CVS/Repository" 2>/dev/null)"
     printf "%s*%s" "${_cvsproject}" "$(hostname -s)"
   elif [[ -n "${_gitproject}" ]]; then
     printf "%s*%s" "${_gitproject}" "$(hostname -s)"
@@ -28,8 +28,8 @@ umask 077
 
 ## environment variables
 export BROWSER=lynx
-export GIT_AUTHOR_EMAIL="$(getent passwd ${LOGNAME} | cut -d: -f1)@users.noreply.github.com"
-export GIT_AUTHOR_NAME="$(getent passwd ${LOGNAME} | cut -d: -f5 | cut -d, -f1)"
+export GIT_AUTHOR_EMAIL="$(getent passwd "${LOGNAME}" | cut -d: -f1)@users.noreply.github.com"
+export GIT_AUTHOR_NAME="$(getent passwd "${LOGNAME}" | cut -d: -f5 | cut -d, -f1)"
 export GIT_COMMITTER_EMAIL=${GIT_AUTHOR_EMAIL}
 export GIT_COMMITTER_NAME=${GIT_AUTHOR_NAME}
 export HISTCONTROL=ignoredups
@@ -155,7 +155,7 @@ alias woohoo='echo \\\(ˆ˚ˆ\)/'
 #fi
 
 # ssh-agent
-if [[ -z ${SSH_AUTH_SOCK} ]] || [[ -n $(echo ${SSH_AUTH_SOCK} | grep -E "^/run/user/$(id -u)/keyring/ssh$") ]]; then
+if [[ -z "${SSH_AUTH_SOCK}" ]] || [[ -n "$(echo "${SSH_AUTH_SOCK}" | grep -E "^/run/user/$(id -u)/keyring/ssh$")" ]]; then
   # create ~/.ssh if missing - some operating systems don't include this in /etc/skel
   if [[ ! -d "${HOME}/.ssh" ]]; then
     mkdir -m 0700 "${HOME}/.ssh"
@@ -427,7 +427,7 @@ deduplify() {
 if [[ -x "$(/usr/bin/which wn 2>/dev/null)" ]] && [[ -x "$(/usr/bin/which pandoc 2>/dev/null)" ]]; then
   def() {
     if [[ $# -eq 1 ]]; then
-      if [[ -n "$(wn ${1} -over)" ]]; then
+      if [[ -n "$(wn "${1}" -over)" ]]; then
         wn "${1}" -over | pandoc -t plain -
       elif [[ -x "$(/usr/bin/which wtf 2>/dev/null)" ]]; then
         wtf "${1}"
@@ -459,7 +459,7 @@ if [[ -x "$(/usr/bin/which mpv 2>/dev/null)" ]]; then
     if [[ $# -eq 1 ]]; then
       case ${1} in
         ''|*[!0-9]*) echo "Error: \${1} must be an integer." && return 1 ;;
-        *) mpv --audio-normalize-downmix=yes dvdread://${1} ;;
+        *) mpv --audio-normalize-downmix=yes "dvdread://${1}" ;;
       esac
     else
       echo "Usage: 'dvd INT', where INT is the chapter number." && return 1
@@ -612,7 +612,7 @@ if [[ -x "$(/usr/bin/which tmux 2>/dev/null)" ]]; then
         ''|*[!0-9]*) echo "Error: \${1} must be an integer." && return 1 ;;
         *) delay=${1} ;;
       esac
-      leave +${1}
+      leave "+${1}"
     }
   fi
 fi
@@ -620,11 +620,11 @@ fi
 # pwgen() random password generator
 pwgen() {
   if [[ $# == 0 ]]; then
-    </dev/urandom tr -cd [:alnum:] | fold -w 30 | head -n1
+    </dev/urandom tr -cd '[:alnum:]' | fold -w 30 | head -n1
   elif [[ $# == 1 ]]; then
     case ${1} in
       ''|*[!0-9]*) echo "Error: \${1} must be an integer." && return 1 ;;
-      *) </dev/urandom tr -cd [:alnum:] | fold -w ${1} | head -n1
+      *) </dev/urandom tr -cd '[:alnum:]' | fold -w "${1}" | head -n1
     esac
   else
     echo "Usage: pwgen [INT], where INT defaults to 30." && return 1
@@ -634,8 +634,8 @@ pwgen() {
 # shacompare() sha512 file comparison
 shacompare() {
   if [[ $# == 2 ]] && [[ -r "${1}" ]] && [[ -r "${2}" ]]; then
-    file1="$(sha512 ${1} | awk '{print $NF}')"
-    file2="$(sha512 ${2} | awk '{print $NF}')"
+    file1="$(sha512 "${1}" | awk '{print $NF}')"
+    file2="$(sha512 "${2}" | awk '{print $NF}')"
 
     if [[ "${file1}" == "${file2}" ]]; then
       echo "The two files are sha512-identical."
