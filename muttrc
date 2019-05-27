@@ -38,6 +38,7 @@ bind generic,alias,attach,browser,editor,index,compose,pager,pgp,postpone ':' no
 folder-hook . "exec collapse-all"
 macro index,pager  a "<pipe-message>abook --config ${HOME}/.abookrc --datafile ${HOME}/.addresses --add-email-quiet<return>" "add this sender to abook"
 mime_lookup application/octet-stream
+set attribution = "%{%A, %Y%m%d %R%z}, %n wrote:"
 set date_format = "%Y/%m/%d"
 set delete = 'yes'
 set editor = 'nvim -u ${HOME}/.vimrc -i NONE -c "set spell spelllang=en_ca formatoptions+=aw textwidth=72"'
