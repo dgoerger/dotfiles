@@ -288,10 +288,10 @@ if [[ "${0}" == 'ksh' ]] || [[ "${0}" == '-ksh' ]] || [[ "${0}" == '/bin/ksh' ]]
   set -A complete_rsync_1 -- -prtv
   set -A complete_rsync_2 -- ${HOST_LIST}
   set -A complete_rsync_3 -- ${HOST_LIST}
-  set -A complete_scp_1 -- -4p
+  set -A complete_scp_1 -- -p
   set -A complete_scp_2 -- ${HOST_LIST}
   set -A complete_scp_3 -- ${HOST_LIST}
-  set -A complete_sftp_1 -- -4p
+  set -A complete_sftp_1 -- -p
   set -A complete_sftp_2 -- ${HOST_LIST}
   set -A complete_sftp_3 -- ${HOST_LIST}
   set -A complete_surfraw_1 -- arxiv cve koji mathworld mbug nws rhbz thesaurus wayback webster wikipedia wiktionary
