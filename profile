@@ -294,7 +294,7 @@ if [[ "${0}" == 'ksh' ]] || [[ "${0}" == '-ksh' ]] || [[ "${0}" == '/bin/ksh' ]]
   set -A complete_sftp_1 -- -p
   set -A complete_sftp_2 -- ${HOST_LIST}
   set -A complete_sftp_3 -- ${HOST_LIST}
-  set -A complete_surfraw_1 -- arxiv cve koji mathworld mbug nws rhbz thesaurus wayback webster wikipedia wiktionary
+  set -A complete_search_1 -- arxiv cve koji mathworld mbug nws rhbz thesaurus wayback webster wikipedia wiktionary
   set -A complete_ssh_1 -- ${HOST_LIST}
   set -A complete_telnet_1 -- ${HOST_LIST}
   set -A complete_telnet_2 -- 22 25 80 443 465 587
@@ -631,24 +631,8 @@ pwgen() {
   fi
  }
 
-# shacompare() sha512 file comparison
-shacompare() {
-  if [[ $# == 2 ]] && [[ -r "${1}" ]] && [[ -r "${2}" ]]; then
-    file1="$(sha512 "${1}" | awk '{print $NF}')"
-    file2="$(sha512 "${2}" | awk '{print $NF}')"
-
-    if [[ "${file1}" == "${file2}" ]]; then
-      echo "The two files are sha512-identical."
-    else
-      echo "The two files are NOT sha512-identical."
-    fi
-  else
-      echo -e 'Usage: shacompare FILE1 FILE2\n' && return 1
-  fi
-}
-
-# surfraw()
-surfraw() {
+# search()
+search() {
   # try to guess preferred language from $LANG
   if [[ -n "${LANG}" ]]; then
     lang="$(echo "${LANG}" | cut -c1-2)"
@@ -802,6 +786,22 @@ surfraw() {
     else
       lynx "https://www.duckduckgo.com/lite/?q=${query}&?kae=t&kac=-1&kaj=m&kam=osm&kak=-1&kax=-1&kv=-1&kaq=-1&kap=-1&kg=g"
     fi
+  fi
+}
+
+# shacompare() sha512 file comparison
+shacompare() {
+  if [[ $# == 2 ]] && [[ -r "${1}" ]] && [[ -r "${2}" ]]; then
+    file1="$(sha512 "${1}" | awk '{print $NF}')"
+    file2="$(sha512 "${2}" | awk '{print $NF}')"
+
+    if [[ "${file1}" == "${file2}" ]]; then
+      echo "The two files are sha512-identical."
+    else
+      echo "The two files are NOT sha512-identical."
+    fi
+  else
+      echo -e 'Usage: shacompare FILE1 FILE2\n' && return 1
   fi
 }
 
