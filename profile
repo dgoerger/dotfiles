@@ -27,6 +27,7 @@ umask 077
 
 
 ## environment variables
+unset ENV
 export BROWSER=lynx
 export GIT_AUTHOR_EMAIL="$(getent passwd "${LOGNAME}" | cut -d: -f1)@users.noreply.github.com"
 export GIT_AUTHOR_NAME="$(getent passwd "${LOGNAME}" | cut -d: -f5 | cut -d, -f1)"
