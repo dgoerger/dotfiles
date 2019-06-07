@@ -1,4 +1,4 @@
-# ~/.profile
+﻿# ~/.profile
 
 ### all operating systems and shells
 ## PATH and PS1
