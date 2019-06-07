@@ -2,7 +2,7 @@
   "__comment": {
     "__compat": "NIX-ONLY",
     "__docs": "https://github.com/mozilla/policy-templates/blob/master/README.md",
-    "__usage": "Set globally for new AND old profiles at /usr/local/lib/firefox/distribution/policies.json"
+    "__usage": "Set globally for new AND old profiles at /usr/local/lib/firefox/distribution/policies.json OR /usr/lib64/firefox/distribution/policies.json"
   },
 	"policies": {
 		"DisableFeedbackCommands": true,
