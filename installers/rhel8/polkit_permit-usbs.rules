@@ -1,4 +1,4 @@
-/* Fedora: /etc/polkit-1/rules.d/15-permit-usbs.rules */
+/* CentOS: /etc/polkit-1/rules.d/15-permit-usbs.rules */
 polkit.addRule(function(action, subject) {
     if ((action.id == "org.freedesktop.udisks2.eject-media" ||
          action.id == "org.freedesktop.udisks2.encrypted-unlock" ||

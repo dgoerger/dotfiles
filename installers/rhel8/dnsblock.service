@@ -1,0 +1,7 @@
+[Unit]
+Description=update the DNS blocklist
+
+[Service]
+Type=oneshot
+User=root
+ExecStart=/usr/local/sbin/dnsblock

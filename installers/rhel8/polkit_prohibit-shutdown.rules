@@ -1,4 +1,4 @@
-/* Fedora: /etc/polkit-1/rules.d/55-prohibit-shutdown.rules */
+/* CentOS: /etc/polkit-1/rules.d/55-prohibit-shutdown.rules */
 polkit.addRule(function(action, subject) {
     if ((action.id == "org.freedesktop.login1.suspend" ||
          action.id == "org.freedesktop.login1.suspend-multiple-sessions" ||
