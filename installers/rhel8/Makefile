@@ -1,0 +1,55 @@
+# Red Hat Enterprise Linux 8: Workstation
+# Last tested: 10 June 2019
+
+check:
+	/usr/sbin/sshd -t -f sshd_config
+	/usr/sbin/visudo --check --quiet -f sudoers
+	/usr/sbin/unbound-checkconf -f unbound.conf >/dev/null
+
+install:
+	## remove and disable unnecessary things
+	sudo yum -qy remove PackageKit-command-not-found baobab cheese eog evolution gedit gnome-boxes gnome-calculator gnome-font-viewer gnome-logs pidgin rhythmbox setroubleshoot totem yelp
+	sudo systemctl --quiet disable --now avahi-daemon.service
+	sudo systemctl --quiet disable --now avahi-daemon.socket
+	sudo systemctl --quiet disable --now crond
+	sudo systemctl --quiet disable --now cups.service
+	sudo systemctl --quiet disable --now cups.socket
+	sudo systemctl --quiet disable --now cups.path
+	sudo systemctl --quiet disable --now ModemManager
+	sudo touch /etc/cron.allow
+	# only allow SSH by default
+	sudo firewall-cmd --quiet --set-default-zone=dmz
+	sudo firewall-cmd --quiet --lockdown-on
+	## install useful utilities
+	sudo yum -qy install tmux
+	#add once EPEL8 exists: lynx ncdu
+	# install GNOME extensions and Tweaks
+	sudo yum -qy install gnome-shell-extension-dash-to-dock gnome-shell-extension-native-window-placement gnome-shell-extension-no-hot-corner gnome-tweaks
+	# enable flatpaks from Flathub.org
+	sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+	## copy confs
+	# chrony time daemon
+	sudo install -C -Z -o root -g root -m 0444 chrony.conf /etc/chrony.conf
+	# firefox
+	sudo install -C -Z -o root -g root -m 0444 firefox.json /usr/lib64/firefox/distribution/policies.json
+	# NetworkManager
+	sudo install -C -Z -o root -g root -m 0444 NetworkManager.conf /etc/NetworkManager/NetworkManager.conf
+	# OpenSSH
+	sudo install -C -Z -o root -g root -m 0444 sshd_config /etc/ssh/sshd_config
+	# polkit authorization policies
+	sudo install -C -Z -o root -g root -m 0444 polkit_permit-usbs.rules /etc/polkit-1/rules.d/15-permit-usbs.rules
+	sudo install -C -Z -o root -g root -m 0444 polkit_prohibit-shutdown.rules /etc/polkit-1/rules.d/55-prohibit-shutdown.rules
+	# unbound(8) DNS caching resolver
+	sudo yum -qy install unbound
+	sudo install -C -Z -o root -g root -m 0444 unbound.conf /etc/unbound/unbound.conf
+	sudo touch /usr/local/etc/blocklist.conf
+	echo "nameserver 127.0.0.1" | sudo tee /etc/resolv.conf >/dev/null 2>&1 || true
+	sudo chattr +i /etc/resolv.conf
+	sudo systemctl --quiet enable --now unbound
+	sudo install -C -Z -o root -g root -m 0544 dnsblock.sh /usr/local/sbin/dnsblock
+	sudo install -C -Z -o root -g root -m 0444 dnsblock.service /etc/systemd/system/dnsblock.service
+	sudo install -C -Z -o root -g root -m 0444 dnsblock.timer /etc/systemd/system/dnsblock.timer
+	sudo systemctl --quiet daemon-reload
+	sudo systemctl --quiet enable dnsblock.timer
+	# sudo
+	sudo install -C -Z -o root -g root -m 0444 sudoers /etc/sudoers

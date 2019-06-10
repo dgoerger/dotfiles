@@ -1,19 +1,14 @@
-# Fedora: /etc/sudoers
+# CentOS: /etc/sudoers, see sudoers(5)
 
-
-# Refuse to run if unable to disable echo on the tty.
+# refuse to run if unable to disable echo on the tty
 Defaults   !visiblepw
 
 Defaults    env_reset
-Defaults    env_keep =  "COLORS DISPLAY HOSTNAME HISTSIZE KDEDIR LS_COLORS"
-Defaults    env_keep += "MAIL PS1 PS2 QTDIR USERNAME LANG LC_ADDRESS LC_CTYPE"
-Defaults    env_keep += "LC_COLLATE LC_IDENTIFICATION LC_MEASUREMENT LC_MESSAGES"
-Defaults    env_keep += "LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER LC_TELEPHONE"
-Defaults    env_keep += "LC_TIME LC_ALL LANGUAGE LINGUAS _XKB_CHARSET XAUTHORITY"
+Defaults    env_keep =  "DISPLAY PS1 PS2 USERNAME LANG LC_ALL"
 
 Defaults    secure_path = /sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin
 
-## Allow root to run any commands anywhere
+## allow root to run any commands anywhere
 root ALL=(ALL) ALL
 
 ## don't lock out default admin group "wheel"
