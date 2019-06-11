@@ -6,6 +6,12 @@ check:
 	/usr/sbin/visudo --check --quiet -f sudoers
 	/usr/sbin/unbound-checkconf -f unbound.conf >/dev/null
 
+nvidia:
+	# NB: dkms is in the EPEL repository, or needs to be compiled from source
+	sudo yum -qy install dkms elfutils-libelf-devel kernel-devel
+	sudo curl -sLo /usr/local/src/nvidia-430.14.run 'https://us.download.nvidia.com/XFree86/Linux-x86_64/430.14/NVIDIA-Linux-x86_64-430.14.run'
+	sudo sh /usr/local/src/nvidia-430.14.run --accept-license --no-questions --dkms --silent
+
 install:
 	## remove and disable unnecessary things
 	sudo yum -qy remove PackageKit-command-not-found baobab cheese eog evolution gedit gnome-boxes gnome-calculator gnome-font-viewer gnome-logs pidgin rhythmbox setroubleshoot totem yelp
