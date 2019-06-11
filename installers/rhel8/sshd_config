@@ -2,7 +2,8 @@
 #
 # Linux nota bene:
 UsePAM yes
-# - sudo ln /usr/libexec/openssh/sftp-server /usr/libexec/sftp-server
+PrintMotd no
+# $ sudo ln /usr/libexec/openssh/sftp-server /usr/libexec/sftp-server
 
 
 ## Authentication
