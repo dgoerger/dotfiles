@@ -1,8 +1,9 @@
 # OpenBSD: /etc/ssh/sshd_config, see sshd_config(5)
 #
 # Linux nota bene:
-# - UsePAM yes
-# - sudo ln /usr/libexec/openssh/sftp-server /usr/libexec/sftp-server
+#UsePAM yes
+#PrintMotd no
+# $ sudo ln /usr/libexec/openssh/sftp-server /usr/libexec/sftp-server
 
 
 ## Authentication
