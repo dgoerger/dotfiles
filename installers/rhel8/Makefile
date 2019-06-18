@@ -1,16 +1,17 @@
 # Red Hat Enterprise Linux 8: Workstation
-# Last tested: 10 June 2019
+# Last tested: 18 June 2019
 
 check:
-	/usr/sbin/sshd -t -f sshd_config
-	/usr/sbin/visudo --check --quiet -f sudoers
-	/usr/sbin/unbound-checkconf -f unbound.conf >/dev/null
+	sudo sshd -t -f sshd_config
+	sudo visudo --check --quiet -f sudoers
+	sudo unbound-checkconf -f unbound.conf >/dev/null
 
 nvidia:
 	# NB: dkms is in the EPEL repository, or needs to be compiled from source
+	#     .. interim cache: https://sdf.org/~dgoerger/linux/el8/RPMS/noarch/dkms-2.7.1-1.el8.noarch.rpm
 	sudo yum -qy install dkms elfutils-libelf-devel kernel-devel
-	sudo curl -sLo /usr/local/src/nvidia-430.14.run 'https://us.download.nvidia.com/XFree86/Linux-x86_64/430.14/NVIDIA-Linux-x86_64-430.14.run'
-	sudo sh /usr/local/src/nvidia-430.14.run --accept-license --no-questions --dkms --silent
+	if [[ ! -f /usr/local/src/nvidia-430.26.run ]]; then sudo curl -sLo /usr/local/src/nvidia-430.26.run 'https://us.download.nvidia.com/XFree86/Linux-x86_64/430.26/NVIDIA-Linux-x86_64-430.26.run'; fi
+	if [[ ! -d /var/lib/dkms/nvidia/430.26 ]]; then sudo sh /usr/local/src/nvidia-430.26.run --accept-license --no-questions --dkms --silent; fi
 
 install:
 	## remove and disable unnecessary things
@@ -59,3 +60,5 @@ install:
 	sudo systemctl --quiet enable dnsblock.timer
 	# sudo
 	sudo install -C -Z -o root -g root -m 0444 sudoers /etc/sudoers
+
+all: check install nvidia
