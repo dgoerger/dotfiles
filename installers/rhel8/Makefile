@@ -23,6 +23,10 @@ install:
 	sudo systemctl --quiet disable --now cups.socket
 	sudo systemctl --quiet disable --now cups.path
 	sudo systemctl --quiet disable --now ModemManager
+	sudo systemctl --quiet disable --now rpcbind
+	sudo systemctl --quiet disable --now rpcbind.socket
+	sudo systemctl --quiet mask rpcbind
+	sudo systemctl --quiet mask rpcbind.socket
 	sudo touch /etc/cron.allow
 	# only allow SSH by default
 	sudo firewall-cmd --quiet --set-default-zone=dmz
