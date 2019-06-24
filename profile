@@ -271,6 +271,7 @@ if [[ "${0}" == 'ksh' ]] || [[ "${0}" == '-ksh' ]] || [[ "${0}" == '/bin/ksh' ]]
   set -A complete_openssl_2 -- -h
   set -A complete_ping_1 -- ${HOST_LIST}
   set -A complete_ping6_1 -- ${HOST_LIST}
+  set -A complete_ps_1 -- -auxw
   if [[ "$(uname)" == 'OpenBSD' ]] && [[ -r /etc/rc.d ]]; then
     set -A complete_rcctl_1 -- disable enable get ls order set
     set -A complete_rcctl_2 -- $(rcctl ls all)
@@ -288,7 +289,7 @@ if [[ "${0}" == 'ksh' ]] || [[ "${0}" == '-ksh' ]] || [[ "${0}" == '/bin/ksh' ]]
   set -A complete_sftp_1 -- -p
   set -A complete_sftp_2 -- ${HOST_LIST}
   set -A complete_sftp_3 -- ${HOST_LIST}
-  set -A complete_search_1 -- arxiv cve koji mathworld mbug nws rhbz thesaurus wayback webster wikipedia wiktionary
+  set -A complete_search_1 -- arxiv cve koji mathworld mbug nws rfc rhbz thesaurus wayback webster wikipedia wiktionary
   set -A complete_ssh_1 -- ${HOST_LIST}
   set -A complete_telnet_1 -- ${HOST_LIST}
   set -A complete_telnet_2 -- 22 25 80 443 465 587
@@ -724,6 +725,15 @@ search() {
       lynx "https://www.weather.gov/"
     else
       lynx "https://forecast.weather.gov/zipcity.php?inputstring=${query}&btnSearch=Go&unit=1"
+    fi
+  elif [[ "${1}" == 'rfc' ]]; then
+    shift
+    query="$(_escape_html "$@")"
+    if [[ -z "${query}" ]]; then
+      lynx "https://www.ietf.org/standards/rfcs/"
+    else
+      #lynx "https://www.rfc-editor.org/search/rfc_search_detail.php?rfc=${query}&pubstatus%5B%5D=Any&pub_date_type=any"
+      lynx "https://tools.ietf.org/rfc/rfc${query}.txt"
     fi
   elif [[ "${1}" == 'rhbz' ]]; then
     shift
