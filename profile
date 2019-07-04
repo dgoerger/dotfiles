@@ -72,14 +72,8 @@ if [[ -x "$(/usr/bin/which cvs 2>/dev/null)" ]]; then
   alias cvsup='cvs -q up -PdA'
 fi
 alias df='df -h'
-if [[ -x "$(/usr/bin/which colordiff 2>/dev/null)" ]]; then
-  alias diff='colordiff'
-fi
 if [[ -r "${HOME}/.elynxrc" ]]; then
   alias elynx='COLUMNS=80 lynx -cfg=~/.elynxrc -useragent "Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0" 2>/dev/null'
-fi
-if [[ -x "$(/usr/bin/which fetchmail 2>/dev/null)" ]] && [[ -r "${HOME}/.fetchmailrc" ]]; then
-  alias fetch='fetchmail --silent'
 fi
 alias free='top | grep -E "^Memory"'
 if [[ -x "$(/usr/bin/which kpcli 2>/dev/null)" ]]; then
@@ -238,6 +232,7 @@ if [[ "${0}" == 'ksh' ]] || [[ "${0}" == '-ksh' ]] || [[ "${0}" == '/bin/ksh' ]]
   # OpenBSD/CentOS/NetBSD compatibility
   export HOST_LIST=$(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
 
+  set -A complete_diff_1 -- -u
   set -A complete_dig_1 -- ${HOST_LIST}
   set -A complete_git_1 -- add bisect blame checkout clone commit diff log mv pull push rebase reset revert rm stash status submodule
   set -A complete_host_1 -- ${HOST_LIST}
@@ -434,6 +429,24 @@ if [[ -x "$(/usr/bin/which wn 2>/dev/null)" ]] && [[ -x "$(/usr/bin/which pandoc
     fi
   }
 fi
+
+# diff()
+diff() {
+  # nota bene: [[ -t 1 ]] => "is output to stdout", for example, versus a pipe or a file
+  if [[ -t 1 ]] && [[ "${#}" -eq 2 ]] && [[ -r "${1}" ]] && [[ -r "${2}" ]]; then
+    /usr/bin/diff "${1}" "${2}" | awk '/^[1-9]/ {printf "\033[0;36m%s\033[0;0m\n", $0}
+                                       /^</     {printf "\033[0;31m%s\033[0;0m\n", $0}
+                                       /^>/     {printf "\033[0;32m%s\033[0;0m\n", $0}
+                                       /^-/     {printf "\033[0;0m%s\n", $0}'
+  elif [[ -t 1 ]] && [[ "${#}" -eq 3 ]] && [[ "${1}" == '-u' ]] && [[ -r "${2}" ]] && [[ -r "${3}" ]]; then
+    /usr/bin/diff -u "${2}" "${3}" | awk '/^\@/ {printf "\033[0;36m%s\033[0;0m\n", $0}
+                                          /^\-/ {printf "\033[0;31m%s\033[0;0m\n", $0}
+                                          /^\+/ {printf "\033[0;32m%s\033[0;0m\n", $0}
+                                          /^\ / {printf "\033[0;0m%s\033[0;0m\n", $0}'
+  else
+    /usr/bin/diff "$@"
+  fi
+}
 
 # dvd() and radio()
 if [[ -x "$(/usr/bin/which mpv 2>/dev/null)" ]]; then

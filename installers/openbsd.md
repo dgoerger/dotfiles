@@ -26,8 +26,8 @@ Common
   2. pkg_add, for example:
 
 ```
-pkg_add abook colordiff git kpcli lynx mutt--sasl ncdu neovim \
-newsboat privoxy rclone shellcheck sysclean tor toot unzip wtf \
+pkg_add abook git kpcli lynx mutt--sasl ncdu neovim newsboat \
+privoxy rclone shellcheck sysclean tor toot unzip wtf \
 xlsx2csv yabitrot
 
 pkg_add chromium exiv2 ffmpeg firefox keepassxc mpv \

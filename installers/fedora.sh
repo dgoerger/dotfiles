@@ -118,7 +118,7 @@ sudo touch /etc/skel/.ssh/config
 sudo chmod 0600 /etc/skel/.ssh/config
 
 ### apps
-sudo "${PKG}" install -y bsdtar chromium colordiff firefox git \
+sudo "${PKG}" install -y bsdtar chromium firefox git \
 gnome-shell-extension-alternate-tab gnome-tweak-tool keepassxc kpcli \
 ksh lynx mg mosh ncdu neovim nmap pandoc rsync ShellCheck tmux tree
 
