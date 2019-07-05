@@ -214,6 +214,9 @@ if [[ "$(uname)" == "Linux" ]]; then
     alias whence='(alias; declare -f) | /usr/bin/which --tty-only --read-alias --read-functions --show-tilde --show-dot'
   fi
 
+elif [[ "$(uname)" == 'NetBSD' ]]; then
+  alias sha512='cksum -a SHA512'
+
 elif [[ "$(uname)" == 'OpenBSD' ]]; then
   # aliases
   apropos() {
