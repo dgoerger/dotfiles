@@ -7,11 +7,3 @@ fi
 
 # background colour synced with Xresources
 /usr/X11R6/bin/xsetroot -solid "#252123"
-
-### calibrated to a 1920x1080 display
-## DATE
-# x-offset = SCREENWIDTH/2; y-offset = (SCREENHEIGHT - x.Login.height)/2
-/usr/X11R6/bin/xclock -face "DejaVu Sans Mono-20" -geometry "+960+480" -strftime "%d %b %Y" &
-## TIME
-# x-offset = SCREENWIDTH/2; y-offset = (SCREENHEIGHT - x.Login.height)/2 + 40
-/usr/X11R6/bin/xclock -face "DejaVu Sans Mono-44" -geometry "+960+520" -strftime "%H:%M" &
