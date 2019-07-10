@@ -110,6 +110,9 @@ pref("browser.ctrlTab.recentlyUsedOrder", false);
 // disable Firefox Sync
 pref("identity.fxaccounts.enabled", false);
 pref("places.history.enabled", false);
+// don't import extra certs on the fly
+pref("security.certerrors.mitm.auto_enable_enterprise_roots", false);
+pref("security.enterprise_roots.enabled", false);
 
 //// disable captive portal detection - GNOME provides this
 pref("network.captive-portal-service.enabled", false);
