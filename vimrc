@@ -7,6 +7,7 @@ let skip_defaults_vim=1         " don't source global defaults in absence of ~/.
 set directory=${HOME}/.vim.d//  " keep swapfiles tidy in their own directory
 set ignorecase                  " ignore case when searching
 set mouse=i                     " enable the mouse in Insert mode
+set nojoinspaces                " insert ONE space between sentences, not TWO
 set nomodeline                  " disable modelines for security, see rhbz#1398227
 set shada="NONE"                " like viminfo, but worse
 set smartcase                   " if ':set ignorecase', use strict case with CAPS
