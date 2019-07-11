@@ -37,16 +37,21 @@ export HISTCONTROL=ignoredups
 export HISTFILE=${HOME}/.history
 export HISTSIZE=20736
 export HOSTNAME=$(hostname -s)
-export HTOPRC=/dev/null
 export LANG="en_CA.UTF-8"
 export LC_ALL="en_CA.UTF-8"
 export LESSSECURE=1
 export LESSHISTFILE=-
-export LYNX_CFG=${HOME}/.lynxrc
+if [[ -x "$(/usr/bin/which lynx 2>/dev/null)" ]] && [[ -r "${HOME}/.lynxrc" ]]; then
+  export LYNX_CFG="${HOME}/.lynxrc"
+  alias lynx='COLUMNS=80 lynx -useragent "Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101 Firefox/68.0" 2>/dev/null'
+  if [[ -r "${HOME}/.elynxrc" ]]; then
+    alias elynx='COLUMNS=80 lynx -cfg=~/.elynxrc -useragent "Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101 Firefox/68.0" 2>/dev/null'
+  fi
+fi
 #export MUTTRC=${path_to_mutt_gpg}
 export PS1='$(_ps1)$ '
-if [[ -r ${HOME}/.pythonrc ]]; then
-  export PYTHONSTARTUP=${HOME}/.pythonrc
+if [[ -r "${HOME}/.pythonrc" ]]; then
+  export PYTHONSTARTUP="${HOME}/.pythonrc"
 fi
 export TZ='US/Eastern'
 export VISUAL=vi
@@ -72,9 +77,6 @@ if [[ -x "$(/usr/bin/which cvs 2>/dev/null)" ]]; then
   alias cvsup='cvs -q up -PdA'
 fi
 alias df='df -h'
-if [[ -r "${HOME}/.elynxrc" ]]; then
-  alias elynx='COLUMNS=80 lynx -cfg=~/.elynxrc -useragent "Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0" 2>/dev/null'
-fi
 alias free='top | grep -E "^Memory"'
 if [[ -x "$(/usr/bin/which kpcli 2>/dev/null)" ]]; then
   alias kpcli='kpcli --histfile=/dev/null --readonly'
@@ -86,7 +88,6 @@ alias less='less -MR'
 alias listening='fstat -n | grep internet'
 alias ll='ls -lhF'
 alias ls='ls -F'
-alias lynx='COLUMNS=80 lynx -useragent "Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0" 2>/dev/null'
 alias mv='mv -i'
 if [[ -x "$(/usr/bin/which newsboat 2>/dev/null)" ]]; then
   alias news='newsboat -q'
@@ -168,6 +169,7 @@ fi
 ### OS-specific overrides
 if [[ "$(uname)" == "Linux" ]]; then
   # env
+  export HTOPRC=/dev/null
   export MANWIDTH=80
   if [[ -L "/bin" ]]; then
     # some Linux have /bin -> /usr/bin
