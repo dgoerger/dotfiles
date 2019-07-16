@@ -1,10 +1,10 @@
 /* CentOS: /etc/polkit-1/rules.d/15-permit-usbs.rules */
 polkit.addRule(function(action, subject) {
-    if ((action.id == "org.freedesktop.udisks2.eject-media" ||
-         action.id == "org.freedesktop.udisks2.encrypted-unlock" ||
-         action.id == "org.freedesktop.udisks2.filesystem-mount" ||
-         action.id == "org.freedesktop.udisks2.power-off-drive")) {
-    // mounting usbs is useful
-        return polkit.Result.YES;
-    }
+	if ((action.id == "org.freedesktop.udisks2.eject-media" ||
+		 action.id == "org.freedesktop.udisks2.encrypted-unlock" ||
+		 action.id == "org.freedesktop.udisks2.filesystem-mount" ||
+		 action.id == "org.freedesktop.udisks2.power-off-drive")) {
+	// mounting usbs is useful
+		return polkit.Result.YES;
+	}
 });
