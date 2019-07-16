@@ -4,7 +4,7 @@
 sticky yes
 # builtin command definitions and overrides
 command lock /usr/X11R6/bin/xlock
-command term /usr/local/bin/st
+command term "/usr/local/bin/st -f 'Hack:size=10'"
 # application bindings
 bind-key CMS-w /usr/local/bin/firefox
 # emulate tiling
