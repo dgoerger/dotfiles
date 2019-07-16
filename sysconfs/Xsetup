@@ -2,7 +2,7 @@
 # OpenBSD: /etc/X11/xenodm/Xsetup_0
 
 if [[ -x /usr/local/bin/sct ]]; then
-  /usr/local/bin/sct 3000
+	/usr/local/bin/sct 3000
 fi
 
 # background colour synced with Xresources

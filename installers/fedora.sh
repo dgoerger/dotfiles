@@ -9,38 +9,38 @@ GOOGLE_CHROME=no
 
 ### usage
 usage() {
-  echo -e "\
+	echo -e "\
 A Fedora Workstation x86_64 postinstall script.\\n\
 \\n\
 Usage:\\n\
 \\n\
-  $ # customize the CHANGEME section\\n\
-  $ vi postinstall.sh\\n\
-  $ # run the script\\n\
-  $ sh postinstall.sh\\n"
+	$ # customize the CHANGEME section\\n\
+	$ vi postinstall.sh\\n\
+	$ # run the script\\n\
+	$ sh postinstall.sh\\n"
 }
 
 
 ### hardware check
 if [[ "$(uname -m)" != "x86_64" ]]; then
-  usage
-  return 1
+	usage
+	return 1
 fi
 if [[ -n "$(lspci | awk '/VGA compatible controller: NVIDIA/')" ]]; then
-  GPU=nvidia
+	GPU=nvidia
 fi
 if [[ "${GPU}" == 'nvidia' ]]; then
-  if sudo bootctl status 2>/dev/null | grep -q 'Secure Boot: enabled'; then
-    echo "!! WARNING: Secure Boot detected !!"
-    echo "- This script will NOT re-sign your kernel. Aborting."
-    echo "  Please disable Secure Boot before proceeding."
-    return 1
-  fi
+	if sudo bootctl status 2>/dev/null | grep -q 'Secure Boot: enabled'; then
+		echo "!! WARNING: Secure Boot detected !!"
+		echo "- This script will NOT re-sign your kernel. Aborting."
+		echo "  Please disable Secure Boot before proceeding."
+		return 1
+	fi
 fi
 if [[ -x "$(/usr/bin/which dnf 2>/dev/null)" ]]; then
-  PKG='/usr/bin/dnf'
+	PKG='/usr/bin/dnf'
 else
-  PKG='/usr/bin/rpm-ostree'
+	PKG='/usr/bin/rpm-ostree'
 fi
 
 
@@ -54,10 +54,10 @@ echo ""
 echo "Proceed? (y/N)"
 read -r yesno
 if [[ "${yesno}" != "y" ]] && [[ "${yesno}" != "Y" ]] && [[ "${yesno}" != "yes" ]]; then
-  echo ""
-  echo "No action taken."
-  echo ""
-  return 20
+	echo ""
+	echo "No action taken."
+	echo ""
+	return 20
 fi
 
 
@@ -81,19 +81,19 @@ sudo systemctl disable --now cups.path
 ########################
 ## graphics
 if [[ "$GPU" == "nvidia" ]] && [[ "${PKG}" == '/usr/bin/dnf' ]]; then
-  # TODO: add support for Nvidia/rpm-ostree
-  sudo dnf config-manager --add-repo=https://negativo17.org/repos/fedora-nvidia.repo
-  sudo dnf install -y nvidia-driver kernel-devel dkms-nvidia nvidia-driver-cuda cuda nvidia-xconfig
-  sudo nvidia-xconfig
-  sudo systemctl enable dkms
-  sudo dkms autoinstall
+	# TODO: add support for Nvidia/rpm-ostree
+	sudo dnf config-manager --add-repo=https://negativo17.org/repos/fedora-nvidia.repo
+	sudo dnf install -y nvidia-driver kernel-devel dkms-nvidia nvidia-driver-cuda cuda nvidia-xconfig
+	sudo nvidia-xconfig
+	sudo systemctl enable dkms
+	sudo dkms autoinstall
 fi
 
 ########################
 ####### Software #######
 ########################
 if [[ "$GOOGLE_CHROME" == "yes" ]]; then
-  sudo "${PKG}" install -y https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
+	sudo "${PKG}" install -y https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
 fi
 
 ### security ###

@@ -15,8 +15,8 @@ XTerm*antialias             : true
 ! copy/paste
 XTerm*selectToClipboard     : true
 XTerm.VT100.translations    : #override \n\
-    Ctrl Shift <Key>C: copy-selection(CLIPBOARD) \n\
-    Ctrl Shift <Key>V: insert-selection(CLIPBOARD)
+	Ctrl Shift <Key>C: copy-selection(CLIPBOARD) \n\
+	Ctrl Shift <Key>V: insert-selection(CLIPBOARD)
 ! misc
 XTerm*ScrollBar             : false
 !

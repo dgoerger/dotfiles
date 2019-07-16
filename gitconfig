@@ -1,12 +1,12 @@
 # ~/.gitconfig, see git-config(1)
 
 [apply]
-    whitespace = fix
+	whitespace = fix
 [branch]
-    autosetuprebase = always
+	autosetuprebase = always
 [color]
-    ui = true
+	ui = true
 [mergetool]
-    prompt = false
+	prompt = false
 [push]
-    default = simple
+	default = simple

@@ -6,7 +6,7 @@ chown root:_pkgfetch "${TMPFILE}"
 chmod 0660 "${TMPFILE}"
 
 if [[ "$(uname)" != 'OpenBSD' ]]; then
-  echo 'ERROR: Unsupported OS' && return 1
+	echo 'ERROR: Unsupported OS' && return 1
 fi
 
 # kludge to avoid a race condition with the dnsblock script reloading unbound
@@ -27,7 +27,7 @@ https://raw.githubusercontent.com/firehol/blocklist-ipsets/master/firehol_level2
 
 # copy into place
 if [[ -f "${CONF}" ]]; then
-  cp -p "${CONF}" "${CONF}.bak"
+	cp -p "${CONF}" "${CONF}.bak"
 fi
 cp "${TMPFILE}" "${CONF}"
 chown root:wheel "${CONF}"
@@ -35,8 +35,8 @@ chmod 0440 "${CONF}"
 
 # verify syntax and reload pf
 if pfctl -nf /etc/pf.conf 2>/dev/null; then
-  pfctl -f /etc/pf.conf
+	pfctl -f /etc/pf.conf
 else
-  mv "${CONF}.bak" "${CONF}"
-  echo "Invalid PF syntax, backing out blocklist update, please verify." | mailx -s "pf: failed to verify updated blocklist" root
+	mv "${CONF}.bak" "${CONF}"
+	echo "Invalid PF syntax, backing out blocklist update, please verify." | mailx -s "pf: failed to verify updated blocklist" root
 fi
