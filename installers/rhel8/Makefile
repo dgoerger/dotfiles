@@ -15,7 +15,7 @@ nvidia:
 
 install:
 	## remove and disable unnecessary things
-	sudo yum -qy remove PackageKit-command-not-found baobab cheese eog evolution gedit gnome-boxes gnome-calculator gnome-font-viewer gnome-logs pidgin rhythmbox setroubleshoot totem yelp
+	sudo yum -qy remove PackageKit-command-not-found baobab cheese eog evince evolution gedit gnome-boxes gnome-calculator gnome-font-viewer gnome-logs pidgin rhythmbox setroubleshoot totem yelp
 	sudo systemctl --quiet disable --now avahi-daemon.service
 	sudo systemctl --quiet disable --now avahi-daemon.socket
 	sudo systemctl --quiet disable --now crond
