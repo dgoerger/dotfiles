@@ -1,5 +1,5 @@
 # Red Hat Enterprise Linux 8: Workstation
-# Last tested: 18 June 2019
+# Last tested: 20 July 2019
 
 check:
 	sudo sshd -t -f sshd_config
@@ -50,6 +50,8 @@ install:
 	# polkit authorization policies
 	sudo install -C -Z -o root -g root -m 0444 polkit_permit-usbs.rules /etc/polkit-1/rules.d/15-permit-usbs.rules
 	sudo install -C -Z -o root -g root -m 0444 polkit_prohibit-shutdown.rules /etc/polkit-1/rules.d/55-prohibit-shutdown.rules
+	# tuned(8), see tuned-profiles(7)
+	sudo tuned-adm profile latency-performance
 	# unbound(8) DNS caching resolver
 	sudo yum -qy install unbound
 	sudo install -C -Z -o root -g root -m 0444 unbound.conf /etc/unbound/unbound.conf
