@@ -10,6 +10,7 @@ nvidia:
 	# NB: dkms is in the EPEL repository, or needs to be compiled from source
 	#     .. interim cache: https://sdf.org/~dgoerger/linux/el8/RPMS/noarch/dkms-2.7.1-1.el8.noarch.rpm
 	sudo yum -qy install dkms elfutils-libelf-devel kernel-devel
+	sudo systemctl enable --now dkms
 	if [[ ! -f /usr/local/src/nvidia-430.40.run ]]; then sudo curl -sLo /usr/local/src/nvidia-430.40.run 'https://us.download.nvidia.com/XFree86/Linux-x86_64/430.40/NVIDIA-Linux-x86_64-430.40.run'; fi
 	if [[ ! -d /var/lib/dkms/nvidia/430.40 ]]; then sudo sh /usr/local/src/nvidia-430.40.run --accept-license --no-questions --dkms --silent; fi
 
