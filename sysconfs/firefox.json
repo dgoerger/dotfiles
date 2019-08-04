@@ -35,10 +35,18 @@
 				"https://addons.mozilla.org/firefox/downloads/file/3043038.xpi"
 			]
 		},
+		"FirefoxHome": {
+			"Highlights": false,
+			"Pocket": false,
+			"Snippets": false,
+			"TopSites": false
+		},
 		"NetworkPrediction": false,
+		"NewTabPage": false,
 		"NoDefaultBookmarks": true,
 		"OfferToSaveLogins": false,
 		"SanitizeOnShutdown": true,
+		"SearchBar": false,
 		"SearchEngines": {
 			"Add": [
 				{
@@ -51,6 +59,8 @@
 			],
 			"Default": "DuckDuckGo Dark",
 			"PreventInstalls": true
-		}
+		},
+		"SearchSuggestEnabled": false,
+		"SSLVersionMin": "tls1.2"
 	}
 }
