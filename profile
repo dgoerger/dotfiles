@@ -5,7 +5,9 @@
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/games:/usr/local/bin
 _ps1() {
 	# detect git project name (if any)
-	_gitproject="$(git rev-parse --show-toplevel 2>/dev/null | awk -F'/' '{print $NF}')"
+	if [[ -x "$(/usr/bin/which git 2>/dev/null)" ]]; then
+		_gitproject="$(git rev-parse --show-toplevel 2>/dev/null | awk -F'/' '{print $NF}')"
+	fi
 	if [[ -r "${PWD}/CVS/Repository" ]]; then
 		# fetch cvs project name (if any)
 		_cvsproject="$(awk -F'/' '{print $1}' "${PWD}/CVS/Repository" 2>/dev/null)"
@@ -112,7 +114,7 @@ else
 	alias vim=vi
 fi
 #if [[ -x "$(/usr/bin/which curl 2>/dev/null)" ]]; then
-#  alias weather='curl -4k https://wttr.in/?m'
+#	alias weather='curl -4k https://wttr.in/?m'
 #fi
 alias which='/usr/bin/which'
 
@@ -129,18 +131,18 @@ alias woohoo='echo \\\(ˆ˚ˆ\)/'
 ## daemons
 ## gpg-agent
 #if ! pgrep -U "${USER}" -f "gpg-agent --daemon --quiet" >/dev/null 2>&1; then
-#  # if not running but socket exists, delete
-#  if [[ -S "${HOME}/.gnupg/S.gpg-agent" ]]; then
-#    /bin/rm "${HOME}/.gnupg/S.gpg-agent"
-#  elif [[ -n ${XDG_RUNTIME_DIR} ]] && [[ -S "${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent" ]]; then
-#    /bin/rm "${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent"
-#  fi
-#  if [[ -x "$(/usr/bin/which gpg-agent 2>/dev/null)" ]]; then
-#    if [[ ! -d "${HOME}/.gnupg" ]]; then
-#      mkdir -m0700 -p "${HOME}/.gnupg"
-#    fi
-#    eval $(gpg-agent --daemon --quiet 2>/dev/null)
-#  fi
+#	# if not running but socket exists, delete
+#	if [[ -S "${HOME}/.gnupg/S.gpg-agent" ]]; then
+#		/bin/rm "${HOME}/.gnupg/S.gpg-agent"
+#	elif [[ -n ${XDG_RUNTIME_DIR} ]] && [[ -S "${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent" ]]; then
+#		/bin/rm "${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent"
+#	fi
+#	if [[ -x "$(/usr/bin/which gpg-agent 2>/dev/null)" ]]; then
+#		if [[ ! -d "${HOME}/.gnupg" ]]; then
+#			mkdir -m 0700 -p "${HOME}/.gnupg"
+#		fi
+#		eval $(gpg-agent --daemon --quiet 2>/dev/null)
+#	fi
 #fi
 
 # ssh-agent
@@ -240,6 +242,9 @@ if [[ "${0}" == 'ksh' ]] || [[ "${0}" == '-ksh' ]] || [[ "${0}" == '/bin/ksh' ]]
 	set -A complete_diff_1 -- -u
 	set -A complete_dig_1 -- ${HOST_LIST}
 	set -A complete_git_1 -- add bisect blame checkout clone commit diff log mv pull push rebase reset revert rm stash status submodule
+	if [[ -x "$(/usr/bin/which got 2>/dev/null)" ]]; then
+		set -A complete_got_1 -- add blame branch checkout cherrypick commit diff histedit import init log rebase ref remove revert status tree
+	fi
 	set -A complete_host_1 -- ${HOST_LIST}
 	if [[ -x "$(/usr/bin/which ifconfig 2>/dev/null)" ]]; then
 		set -A complete_ifconfig_1 -- $(ifconfig | awk -F':' '/^[a-z]/ {print $1}')
@@ -440,9 +445,9 @@ diff() {
 	# nota bene: [[ -t 1 ]] => "is output to stdout", for example, versus a pipe or a file
 	if [[ -t 1 ]] && [[ "${#}" -eq 2 ]] && [[ -r "${1}" ]] && [[ -r "${2}" ]]; then
 		/usr/bin/diff "${1}" "${2}" | awk '/^[1-9]/ {printf "\033[0;36m%s\033[0;0m\n", $0}
-			/^</     {printf "\033[0;31m%s\033[0;0m\n", $0}
-			/^>/     {printf "\033[0;32m%s\033[0;0m\n", $0}
-									                     /^-/     {printf "\033[0;0m%s\n", $0}'
+			/^</ {printf "\033[0;31m%s\033[0;0m\n", $0}
+			/^>/ {printf "\033[0;32m%s\033[0;0m\n", $0}
+			/^-/ {printf "\033[0;0m%s\n", $0}'
 	elif [[ -t 1 ]] && [[ "${#}" -eq 3 ]] && [[ "${1}" == '-u' ]] && [[ -r "${2}" ]] && [[ -r "${3}" ]]; then
 		/usr/bin/diff -u "${2}" "${3}" | awk '/^\@/ {printf "\033[0;36m%s\033[0;0m\n", $0}
 			/^\-/ {printf "\033[0;31m%s\033[0;0m\n", $0}
@@ -657,7 +662,7 @@ search() {
 	_escape_html() {
 		echo "$@" | sed 's/%/%25/g;
 			s/+/%2B/g;
-#     s/ /+/g;
+#			s/ /+/g;
 			s/ /%20/g;
 			s/(/%28/g;
 			s/)/%29/g;
@@ -666,7 +671,7 @@ search() {
 			s/\$/%24/g;
 			s/&/%26/g;
 			s/,/%2C/g;
-#     s/\./%2E/g;
+#			s/\./%2E/g;
 			sx/x%2Fxg;
 			s/:/%3A/g;
 			s/;/%3B/g;
