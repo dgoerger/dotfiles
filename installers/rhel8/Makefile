@@ -8,6 +8,7 @@ check:
 
 nvidia:
 	# NB: dkms is in the EPEL repository, or needs to be compiled from source
+	#     .. dkms, rhbz#1741370: https://bugzilla.redhat.com/show_bug.cgi?id=1741370
 	#     .. interim cache: https://sdf.org/~dgoerger/linux/el8/RPMS/noarch/dkms-2.7.1-1.el8.noarch.rpm
 	sudo yum -qy install dkms elfutils-libelf-devel kernel-devel
 	sudo systemctl enable --now dkms
@@ -17,8 +18,10 @@ nvidia:
 install:
 	## remove and disable unnecessary things
 	sudo yum -qy remove PackageKit-command-not-found baobab cheese eog evince evolution gedit gnome-boxes gnome-calculator gnome-font-viewer gnome-logs pidgin rhythmbox setroubleshoot totem yelp
+	sudo systemctl --quiet disable --now atd
 	sudo systemctl --quiet disable --now avahi-daemon.service
 	sudo systemctl --quiet disable --now avahi-daemon.socket
+	sudo systemctl --quiet disable --now bolt
 	sudo systemctl --quiet disable --now crond
 	sudo systemctl --quiet disable --now cups.service
 	sudo systemctl --quiet disable --now cups.socket
@@ -33,8 +36,10 @@ install:
 	sudo firewall-cmd --quiet --set-default-zone=dmz
 	sudo firewall-cmd --quiet --lockdown-on
 	## install useful utilities
+	##install epel-release
 	sudo yum -qy install tmux
 	#add once EPEL8 exists: lynx ncdu
+	#     .. ncdu, rhbz#1741372: https://bugzilla.redhat.com/show_bug.cgi?id=1741372
 	# install GNOME extensions and Tweaks
 	sudo yum -qy install gnome-shell-extension-dash-to-dock gnome-shell-extension-native-window-placement gnome-shell-extension-no-hot-corner gnome-tweaks
 	# enable flatpaks from Flathub.org
