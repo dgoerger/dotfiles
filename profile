@@ -530,6 +530,8 @@ if [[ -x "$(/usr/bin/which mpv 2>/dev/null)" ]]; then
 				talksport2) mpv "https://radio.talksport.com/stream2?awparams=platform:ts-web&amsparams=playerid:ts-web" ;;
 				# USA: NPR WGBH Boston
 				wgbh) mpv "http://audio.wgbh.org:8000" ;;
+				# USA: Monroe independent radio station
+				wmnr) mpv "http://amber.streamguys.com:6050/live.m3u" ;;
 				# USA: NPR WNYC New York City
 				wnyc) mpv "http://fm939.wnyc.org/wnycfm" ;;
 				# USA: Y94 top hits (Fargo, North Dakota)
