@@ -108,10 +108,12 @@ if [[ -x "$(/usr/bin/which nvim 2>/dev/null)" ]]; then
 	alias vi=nvim
 	alias view='nvim --cmd "let no_plugin_maps = 1" -c "runtime! macros/less.vim" -m -M -R -n --'
 	alias vim=nvim
+	alias vimlite='nvim -u NONE -i NONE'
 	alias vimdiff='nvim -d -c "color blue" --'
 else
 	alias view='less -MR'
 	alias vim=vi
+	alias vimlite='vim -u NONE -i NONE'
 fi
 #if [[ -x "$(/usr/bin/which curl 2>/dev/null)" ]]; then
 #	alias weather='curl -4k https://wttr.in/?m'
