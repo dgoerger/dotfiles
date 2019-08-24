@@ -35,6 +35,9 @@ export GIT_AUTHOR_EMAIL="$(getent passwd "${LOGNAME}" | cut -d: -f1)@users.norep
 export GIT_AUTHOR_NAME="$(getent passwd "${LOGNAME}" | cut -d: -f5 | cut -d, -f1)"
 export GIT_COMMITTER_EMAIL=${GIT_AUTHOR_EMAIL}
 export GIT_COMMITTER_NAME=${GIT_AUTHOR_NAME}
+if [[ -x "$(/usr/bin/which got 2>/dev/null)" ]]; then
+	export GOT_AUTHOR="${GIT_AUTHOR_NAME} <${GIT_AUTHOR_EMAIL}>"
+fi
 export HISTCONTROL=ignoredups
 export HISTFILE=${HOME}/.history
 export HISTSIZE=20736
@@ -245,7 +248,7 @@ if [[ "${0}" == 'ksh' ]] || [[ "${0}" == '-ksh' ]] || [[ "${0}" == '/bin/ksh' ]]
 	set -A complete_dig_1 -- ${HOST_LIST}
 	set -A complete_git_1 -- add bisect blame checkout clone commit diff log mv pull push rebase reset revert rm stash status submodule
 	if [[ -x "$(/usr/bin/which got 2>/dev/null)" ]]; then
-		set -A complete_got_1 -- add blame branch checkout cherrypick commit diff histedit import init log rebase ref remove revert status tree
+		set -A complete_got_1 -- add backout blame branch checkout cherrypick commit diff histedit import init log rebase ref rm revert stage status tag tree unstage update
 	fi
 	set -A complete_host_1 -- ${HOST_LIST}
 	if [[ -x "$(/usr/bin/which ifconfig 2>/dev/null)" ]]; then
