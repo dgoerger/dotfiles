@@ -1,5 +1,5 @@
 # Red Hat Enterprise Linux 8: Workstation
-# Last tested: 20 July 2019
+# Last tested: 23 August 2019
 
 check:
 	sudo sshd -t -f sshd_config
@@ -7,9 +7,7 @@ check:
 	sudo unbound-checkconf -f unbound.conf >/dev/null
 
 nvidia:
-	# NB: dkms is in the EPEL repository, or needs to be compiled from source
-	#     .. dkms, rhbz#1741370: https://bugzilla.redhat.com/show_bug.cgi?id=1741370
-	#     .. interim cache: https://sdf.org/~dgoerger/linux/el8/RPMS/noarch/dkms-2.7.1-1.el8.noarch.rpm
+	# note: dkms is in the EPEL repository
 	sudo yum -qy install dkms elfutils-libelf-devel kernel-devel
 	sudo systemctl enable --now dkms
 	if [[ ! -f /usr/local/src/nvidia-430.40.run ]]; then sudo curl -sLo /usr/local/src/nvidia-430.40.run 'https://us.download.nvidia.com/XFree86/Linux-x86_64/430.40/NVIDIA-Linux-x86_64-430.40.run'; fi
@@ -35,9 +33,10 @@ install:
 	# only allow SSH by default
 	sudo firewall-cmd --quiet --set-default-zone=dmz
 	sudo firewall-cmd --quiet --lockdown-on
+	## enable EPEL
+	if [[ ! -f /etc/yum.repos.d/epel.repo ]]; then sudo yum -qy install epel-release 2>/dev/null || sudo yum -qy install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm; fi
 	## install useful utilities
-	##install epel-release
-	sudo yum -qy install tmux
+	sudo yum -qy install podman-docker qemu-img tmux
 	#add once EPEL8 exists: lynx ncdu
 	#     .. ncdu, rhbz#1741372: https://bugzilla.redhat.com/show_bug.cgi?id=1741372
 	# install GNOME extensions and Tweaks
@@ -53,6 +52,8 @@ install:
 	sudo install -C -Z -o root -g root -m 0444 NetworkManager.conf /etc/NetworkManager/NetworkManager.conf
 	# OpenSSH
 	sudo install -C -Z -o root -g root -m 0444 sshd_config /etc/ssh/sshd_config
+	# patchall script
+	sudo install -C -Z -o root -g root -m 0544 patchall.sh /usr/local/sbin/patchall
 	# polkit authorization policies
 	sudo install -C -Z -o root -g root -m 0444 polkit_permit-usbs.rules /etc/polkit-1/rules.d/15-permit-usbs.rules
 	sudo install -C -Z -o root -g root -m 0444 polkit_prohibit-shutdown.rules /etc/polkit-1/rules.d/55-prohibit-shutdown.rules
