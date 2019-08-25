@@ -15,7 +15,7 @@ nvidia:
 
 install:
 	## remove and disable unnecessary things
-	sudo yum -qy remove PackageKit-command-not-found baobab cheese eog evince evolution gedit gnome-boxes gnome-calculator gnome-font-viewer gnome-logs pidgin rhythmbox setroubleshoot subscription-manager-cockpit totem yelp
+	sudo yum -qy remove PackageKit-command-not-found baobab cheese eog evince evolution firefox gedit gnome-boxes gnome-calculator gnome-font-viewer gnome-logs pidgin rhythmbox setroubleshoot subscription-manager-cockpit totem yelp
 	sudo systemctl --quiet disable --now atd
 	sudo systemctl --quiet disable --now avahi-daemon.service
 	sudo systemctl --quiet disable --now avahi-daemon.socket
@@ -39,6 +39,7 @@ install:
 	sudo yum -qy install podman-docker qemu-img tmux
 	#add once EPEL8 exists: lynx ncdu
 	#     .. ncdu, rhbz#1741372: https://bugzilla.redhat.com/show_bug.cgi?id=1741372
+	# note: to mount/share volumes with a container, one must `sudo chcon -Rt svirt_sandbox_file_t /path/to/mountpoint`
 	# install GNOME extensions and Tweaks
 	sudo yum -qy install gnome-shell-extension-dash-to-dock gnome-shell-extension-native-window-placement gnome-shell-extension-no-hot-corner gnome-tweaks
 	# enable flatpaks from Flathub.org
