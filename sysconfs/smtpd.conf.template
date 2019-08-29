@@ -14,7 +14,7 @@ pki fq.dn cert "/etc/ssl/fq.dn.fullchain.pem"
 pki fq.dn key "/etc/ssl/private/fq.dn.key"
 
 # filters
-filter check-fcrdns phase connect match fcrdns disconnect "550 relay denied"
+filter check-fcrdns phase connect match ! fcrdns disconnect "550 relay denied"
 filter all_filters chain { check-fcrdns }
 
 # open ports
