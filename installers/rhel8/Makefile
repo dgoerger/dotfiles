@@ -1,5 +1,5 @@
 # Red Hat Enterprise Linux 8: Workstation
-# Last tested: 23 August 2019
+# Last tested: 30 August 2019
 
 check:
 	sudo sshd -t -f sshd_config
@@ -27,6 +27,8 @@ install:
 	sudo systemctl --quiet disable --now ModemManager
 	sudo systemctl --quiet disable --now rpcbind
 	sudo systemctl --quiet disable --now rpcbind.socket
+	sudo systemctl --quiet mask fprintd
+	sudo systemctl --quiet mask geoclue
 	sudo systemctl --quiet mask rpcbind
 	sudo systemctl --quiet mask rpcbind.socket
 	sudo touch /etc/cron.allow
