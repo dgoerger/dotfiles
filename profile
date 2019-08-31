@@ -360,6 +360,8 @@ certcheck() {
 	TLS_CIPHER="$(echo "${QUERY}" | awk '/Cipher    :/ {print $NF}')"
 	EXPIRY_DATE="$(echo "${QUERY}" | openssl x509 -noout -enddate 2>/dev/null | awk -F'=' '/notAfter/ {print $2}')"
 	CHAIN_OF_TRUST_STATUS="$(echo "${QUERY}" | awk '/Verify return code:/ {print $4}')"
+	# note - this doesn't take wildcard certificates into consideration
+	VALID_FOR_DOMAIN="$(echo "${QUERY}" | openssl x509 -text | grep "DNS:${FQDN}")"
 
 	# error if we can't find a certificate
 	if [[ -z "${EXPIRY_DATE}" ]]; then
@@ -398,6 +400,11 @@ certcheck() {
 
 	echo "Cipher: ${TLS_CIPHER} (${TLS_PROTOCOL})"
 	echo "Expiry: ${EXPIRY_DATE}"
+	if [[ -n "${VALID_FOR_DOMAIN}" ]]; then
+		echo "Domain: OK - certificate is valid for ${FQDN}"
+	else
+		echo "Domain: WARNING - certificate is NOT explicitly valid for ${FQDN} (is it a wildcard?)"
+	fi
 	echo "Status: ${STATUS}"
 }
 
