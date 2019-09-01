@@ -51,6 +51,8 @@ install:
 	sudo install -C -Z -o root -g root -m 0444 chrony.conf /etc/chrony.conf
 	# firefox
 	sudo install -C -Z -o root -g root -m 0444 firefox.json /usr/lib64/firefox/distribution/policies.json
+	# mlocate
+	sudo systemctl --quiet enable --now mlocate-updatedb.timer
 	# NetworkManager
 	sudo install -C -Z -o root -g root -m 0444 NetworkManager.conf /etc/NetworkManager/NetworkManager.conf
 	# OpenSSH
