@@ -39,9 +39,8 @@ install:
 	if [[ ! -f /etc/yum.repos.d/epel.repo ]]; then sudo yum -qy install epel-release 2>/dev/null || sudo yum -qy install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm; fi
 	## install useful utilities
 	sudo yum -qy install podman-docker qemu-img tmux
-	#add once EPEL8 exists: lynx ncdu
+	#add once EPEL8 exists: ncdu
 	#     .. ncdu, rhbz#1741372: https://bugzilla.redhat.com/show_bug.cgi?id=1741372
-	# note: to mount/share volumes with a container, one must `sudo chcon -Rt svirt_sandbox_file_t /path/to/mountpoint`
 	# install GNOME extensions and Tweaks
 	sudo yum -qy install gnome-shell-extension-dash-to-dock gnome-shell-extension-native-window-placement gnome-shell-extension-no-hot-corner gnome-tweaks
 	# enable flatpaks from Flathub.org
