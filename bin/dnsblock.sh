@@ -26,6 +26,8 @@ if ${FETCH} 2>/dev/null; then
 	else
 		# build for unbound(8)
 		awk '$1 == "0.0.0.0" {print "local-zone: \""$2"\" always_nxdomain"}' "${SRC}" | tee "${TMP}" >/dev/null 2>&1
+		# ref: https://support.mozilla.org/en-US/kb/configuring-networks-disable-dns-over-https
+		echo 'local-zone: "use-application-dns.net" always_nxdomain' | tee -a "${TMP}" >/dev/null 2>&1
 	fi
 	# create a backup of any existing, working blocklist
 	if [[ -f "${BLOCKLIST_FILE}" ]]; then
