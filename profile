@@ -240,8 +240,8 @@ fi
 
 
 # ksh tab completions
-if [[ "${0}" == 'ksh' ]] || [[ "${0}" == '-ksh' ]] || [[ "${0}" == '/bin/ksh' ]]; then
-	# OpenBSD/CentOS/NetBSD compatibility
+if [[ "${0}" == '-ksh' ]] || [[ "${0}" == '-oksh' ]] || [[ "${0}" == 'ksh' ]]; then
+	# OpenBSD/NetBSD compatibility
 	export HOST_LIST=$(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
 
 	set -A complete_diff_1 -- -u
@@ -846,6 +846,26 @@ shacompare() {
 	fi
 }
 
+# touchmode() touch + set the mode of a new file
+touchmode() {
+	if [[ $# == 2 ]]; then
+		case "${1}" in
+			''|*[!0-9]*) echo 'MODE must be an integer' && return 1 ;;
+			*) MODE="${1}" ;;
+		esac
+		if [[ -f "${2}" ]]; then
+			echo 'File already exists.' && return 1
+		else
+			if [[ "$(uname)" == 'Linux' ]]; then
+				install -Z -C -m "${MODE}" /dev/null "${2}"
+			else
+				install -C -m "${MODE}" /dev/null "${2}"
+			fi
+		fi
+	else
+		echo -e 'usage:\n        touchmode MODE /path/to/file' && return 1
+	fi
+}
 
 ### source profile-local files
 if [[ "${SHELL}" != '/bin/ash' ]]; then
