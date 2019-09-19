@@ -1,5 +1,5 @@
 # Red Hat Enterprise Linux 8: Workstation
-# Last tested: 30 August 2019
+# Last tested: 19 September 2019
 
 check:
 	sudo sshd -t -f sshd_config
@@ -10,8 +10,8 @@ nvidia:
 	# note: dkms is in the EPEL repository
 	sudo yum -qy install dkms elfutils-libelf-devel kernel-devel
 	sudo systemctl enable --now dkms
-	if [[ ! -f /usr/local/src/nvidia-430.40.run ]]; then sudo curl -sLo /usr/local/src/nvidia-430.40.run 'https://us.download.nvidia.com/XFree86/Linux-x86_64/430.40/NVIDIA-Linux-x86_64-430.40.run'; fi
-	if [[ ! -d /var/lib/dkms/nvidia/430.40 ]]; then sudo sh /usr/local/src/nvidia-430.40.run --accept-license --no-questions --dkms --silent; fi
+	if [[ ! -f /usr/local/src/nvidia-430.50.run ]]; then sudo curl -sLo /usr/local/src/nvidia-430.50.run 'https://us.download.nvidia.com/XFree86/Linux-x86_64/430.50/NVIDIA-Linux-x86_64-430.50.run'; fi
+	if [[ ! -d /var/lib/dkms/nvidia/430.50 ]]; then sudo sh /usr/local/src/nvidia-430.50.run --accept-license --no-questions --dkms --silent; fi
 
 install:
 	## remove and disable unnecessary things
@@ -38,9 +38,7 @@ install:
 	## enable EPEL
 	if [[ ! -f /etc/yum.repos.d/epel.repo ]]; then sudo yum -qy install epel-release 2>/dev/null || sudo yum -qy install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm; fi
 	## install useful utilities
-	sudo yum -qy install podman-docker qemu-img tmux
-	#add once EPEL8 exists: ncdu
-	#     .. ncdu, rhbz#1741372: https://bugzilla.redhat.com/show_bug.cgi?id=1741372
+	sudo yum -qy install ncdu podman-docker qemu-img tmux
 	# install GNOME extensions and Tweaks
 	sudo yum -qy install gnome-shell-extension-dash-to-dock gnome-shell-extension-native-window-placement gnome-shell-extension-no-hot-corner gnome-tweaks
 	# enable flatpaks from Flathub.org
