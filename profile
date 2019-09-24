@@ -304,7 +304,7 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == '-oksh' ]] || [[ "${0}" == 'ksh' ]]; t
 	set -A complete_telnet_1 -- ${HOST_LIST}
 	set -A complete_telnet_2 -- 22 25 80 443 465 587
 	if [[ -x "$(/usr/bin/which toot 2>&1)" ]]; then
-		set -A complete_toot_1 -- block curses follow mute post timeline unblock unfollow unmute upload whoami whois
+		set -A complete_toot_1 -- block follow instance mute notifications post tui unblock unfollow unmute upload whoami whois
 		set -A complete_toot_2 -- --help
 	fi
 	set -A complete_tmux_1 -- attach list-commands list-sessions list-windows new-session new-window source
