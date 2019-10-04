@@ -299,7 +299,7 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == '-oksh' ]] || [[ "${0}" == 'ksh' ]]; t
 	set -A complete_sftp_1 -- -p
 	set -A complete_sftp_2 -- ${HOST_LIST}
 	set -A complete_sftp_3 -- ${HOST_LIST}
-	set -A complete_search_1 -- apk arxiv cve koji mathworld mbug nws rfc rhbz thesaurus wayback webster wikipedia wiktionary
+	set -A complete_search_1 -- alpine arxiv centos cve fedora mathworld mbug nws rfc rhbz thesaurus wayback webster wikipedia wiktionary
 	set -A complete_ssh_1 -- ${HOST_LIST}
 	set -A complete_telnet_1 -- ${HOST_LIST}
 	set -A complete_telnet_2 -- 22 25 80 443 465 587
@@ -707,7 +707,7 @@ search() {
 	}
 
 	# surf the netz raw
-	if [[ "${1}" == 'apk' ]]; then
+	if [[ "${1}" == 'alpine' ]]; then
 		shift
 		query="$(_escape_html "$@")"
 		if [[ -z "{query}" ]]; then
@@ -723,6 +723,14 @@ search() {
 		else
 			lynx "https://arxiv.org/search/?query=${query}&searchtype=all&source=header"
 		fi
+	elif [[ "${1}" == 'centos' ]]; then
+		shift
+		query ="$(_escape_html "$@")"
+		if [[ -z "${query}" ]]; then
+			lynx "https://koji.mbox.centos.org/koji/"
+		else
+			lynx "https://koji.mbox.centos.org/koji/search?match=glob&type=package&terms=${query}"
+		fi
 	elif [[ "${1}" == 'cve' ]]; then
 		shift
 		query="$(_escape_html "$@")"
@@ -731,6 +739,14 @@ search() {
 		else
 			lynx "http://cve.mitre.org/cgi-bin/cvename.cgi?name=${query}"
 		fi
+	elif [[ "${1}" == 'fedora' ]]; then
+		shift
+		query="$(_escape_html "$@")"
+		if [[ -z "${query}" ]]; then
+			lynx "https://koji.fedoraproject.org/koji"
+		else
+			lynx "https://koji.fedoraproject.org/koji/search?match=glob&type=package&terms=${query}"
+		fi
 	elif [[ "${1}" == 'gutenberg' ]]; then
 		shift
 		query="$(_escape_html "$@")"
@@ -738,14 +754,6 @@ search() {
 			lynx "https://www.gutenberg.org/"
 		else
 			lynx "https://www.gutenberg.org/catalog/world/results?&title=${query}"
-		fi
-	elif [[ "${1}" == 'koji' ]]; then
-		shift
-		query="$(_escape_html "$@")"
-		if [[ -z "${query}" ]]; then
-			lynx "https://koji.fedoraproject.org/koji"
-		else
-			lynx "https://koji.fedoraproject.org/koji/search?match=glob&type=package&terms=${query}"
 		fi
 	elif [[ "${1}" == 'mathworld' ]]; then
 		shift
