@@ -3,22 +3,22 @@
 ### all operating systems and shells
 ## PATH and PS1
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/games:/usr/local/bin
-_ps1() {
-	# detect git project name (if any)
-	if [[ -x "$(/usr/bin/which git 2>/dev/null)" ]]; then
-		_gitproject="$(git rev-parse --show-toplevel 2>/dev/null | awk -F'/' '{print $NF}')"
-	fi
-	if [[ -r "${PWD}/CVS/Repository" ]]; then
-		# fetch cvs project name (if any)
-		_cvsproject="$(awk -F'/' '{print $1}' "${PWD}/CVS/Repository" 2>/dev/null)"
-		printf "%s*%s" "${_cvsproject}" "$(hostname -s)"
-	elif [[ -n "${_gitproject}" ]]; then
-		printf "%s*%s" "${_gitproject}" "$(hostname -s)"
-	else
-		# else just print the hostname
-		printf "%s" "$(hostname -s)"
-	fi
-}
+#_ps1() {
+#	# detect git project name (if any)
+#	if [[ -x "$(/usr/bin/which git 2>/dev/null)" ]]; then
+#		_gitproject="$(git rev-parse --show-toplevel 2>/dev/null | awk -F'/' '{print $NF}')"
+#	fi
+#	if [[ -r "${PWD}/CVS/Repository" ]]; then
+#		# fetch cvs project name (if any)
+#		_cvsproject="$(awk -F'/' '{print $1}' "${PWD}/CVS/Repository" 2>/dev/null)"
+#		printf "%s*%s" "${_cvsproject}" "$(hostname -s)"
+#	elif [[ -n "${_gitproject}" ]]; then
+#		printf "%s*%s" "${_gitproject}" "$(hostname -s)"
+#	else
+#		# else just print the hostname
+#		printf "%s" "$(hostname -s)"
+#	fi
+#}
 
 ## terminal settings
 # fix backspace on old TERMs
@@ -54,7 +54,7 @@ if [[ -x "$(/usr/bin/which lynx 2>/dev/null)" ]] && [[ -r "${HOME}/.lynxrc" ]]; 
 	fi
 fi
 #export MUTTRC=${path_to_mutt_gpg}
-export PS1='$(_ps1)$ '
+#export PS1='$(_ps1)$ '
 if [[ -r "${HOME}/.pythonrc" ]]; then
 	export PYTHONSTARTUP="${HOME}/.pythonrc"
 fi
@@ -299,7 +299,7 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == '-oksh' ]] || [[ "${0}" == 'ksh' ]]; t
 	set -A complete_sftp_1 -- -p
 	set -A complete_sftp_2 -- ${HOST_LIST}
 	set -A complete_sftp_3 -- ${HOST_LIST}
-	set -A complete_search_1 -- arxiv cve koji mathworld mbug nws rfc rhbz thesaurus wayback webster wikipedia wiktionary
+	set -A complete_search_1 -- apk arxiv cve koji mathworld mbug nws rfc rhbz thesaurus wayback webster wikipedia wiktionary
 	set -A complete_ssh_1 -- ${HOST_LIST}
 	set -A complete_telnet_1 -- ${HOST_LIST}
 	set -A complete_telnet_2 -- 22 25 80 443 465 587
@@ -707,7 +707,15 @@ search() {
 	}
 
 	# surf the netz raw
-	if [[ "${1}" == 'arxiv' ]]; then
+	if [[ "${1}" == 'apk' ]]; then
+		shift
+		query="$(_escape_html "$@")"
+		if [[ -z "{query}" ]]; then
+			lynx "https://pkgs.alpinelinux.org/packages"
+		else
+			lynx "https://pkgs.alpinelinux.org/packages?name=${query}&branch=edge"
+		fi
+	elif [[ "${1}" == 'arxiv' ]]; then
 		shift
 		query="$(_escape_html "$@")"
 		if [[ -z "${query}" ]]; then
