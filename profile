@@ -725,7 +725,7 @@ search() {
 		fi
 	elif [[ "${1}" == 'centos' ]]; then
 		shift
-		query ="$(_escape_html "$@")"
+		query="$(_escape_html "$@")"
 		if [[ -z "${query}" ]]; then
 			lynx "https://koji.mbox.centos.org/koji/"
 		else
