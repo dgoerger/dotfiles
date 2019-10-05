@@ -715,6 +715,15 @@ search() {
 		else
 			lynx "https://www.gutenberg.org/catalog/world/results?&title=${query}"
 		fi
+	elif [[ "${1}" == 'linux' ]]; then
+		shift
+		if [[ "$#" == '0' ]]; then
+			lynx "https://linux.die.net/man/"
+		elif [[ "$#" == '2' ]]; then
+			lynx "https://linux.die.net/man/${1}/${2}"
+		else
+			echo -e 'usage:\n\n    search linux SECTION MANUAL' && return 1
+		fi
 	elif [[ "${1}" == 'mathworld' ]]; then
 		shift
 		query="$(_escape_html "$@")"
