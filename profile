@@ -30,7 +30,7 @@ export LANG="en_CA.UTF-8"
 export LC_ALL="en_CA.UTF-8"
 export LESSSECURE=1
 export LESSHISTFILE=-
-if [[ -x "$(/usr/bin/which lynx 2>/dev/null)" ]] && [[ -r "${HOME}/.lynxrc" ]]; then
+if [[ -r "${HOME}/.lynxrc" ]]; then
 	export LYNX_CFG="${HOME}/.lynxrc"
 	alias lynx='COLUMNS=80 lynx -useragent "Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101 Firefox/68.0" 2>/dev/null'
 	if [[ -r "${HOME}/.elynxrc" ]]; then
@@ -184,7 +184,16 @@ if [[ "$(uname)" == "Linux" ]]; then
 	fi
 
 elif [[ "$(uname)" == 'NetBSD' ]]; then
+	export CC=clang
+	export CXX=clang++
+	export MANPATH=/usr/pkg/man:/usr/pkg/share/man:/usr/share/man:/usr/pkg/X11R7/man:/usr/local/man
+	export PATH=${HOME}/bin:/usr/pkg/bin:$PATH
+
+	alias pkgsrc='lynx "https://ftp.netbsd.org/pub/pkgsrc/packages/NetBSD/x86_64/$(uname -r)/All/"'
+	alias py=/usr/pkg/bin/python3
+	alias python=/usr/pkg/bin/python3
 	alias sha512='cksum -a SHA512'
+	alias vi=/usr/pkg/bin/vim
 
 elif [[ "$(uname)" == 'OpenBSD' ]]; then
 	# aliases
