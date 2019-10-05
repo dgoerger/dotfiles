@@ -3,22 +3,6 @@
 ### all operating systems and shells
 ## PATH and PS1
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/games:/usr/local/bin
-#_ps1() {
-#	# detect git project name (if any)
-#	if [[ -x "$(/usr/bin/which git 2>/dev/null)" ]]; then
-#		_gitproject="$(git rev-parse --show-toplevel 2>/dev/null | awk -F'/' '{print $NF}')"
-#	fi
-#	if [[ -r "${PWD}/CVS/Repository" ]]; then
-#		# fetch cvs project name (if any)
-#		_cvsproject="$(awk -F'/' '{print $1}' "${PWD}/CVS/Repository" 2>/dev/null)"
-#		printf "%s*%s" "${_cvsproject}" "$(hostname -s)"
-#	elif [[ -n "${_gitproject}" ]]; then
-#		printf "%s*%s" "${_gitproject}" "$(hostname -s)"
-#	else
-#		# else just print the hostname
-#		printf "%s" "$(hostname -s)"
-#	fi
-#}
 
 ## terminal settings
 # fix backspace on old TERMs
@@ -54,7 +38,6 @@ if [[ -x "$(/usr/bin/which lynx 2>/dev/null)" ]] && [[ -r "${HOME}/.lynxrc" ]]; 
 	fi
 fi
 #export MUTTRC=${path_to_mutt_gpg}
-#export PS1='$(_ps1)$ '
 if [[ -r "${HOME}/.pythonrc" ]]; then
 	export PYTHONSTARTUP="${HOME}/.pythonrc"
 fi
@@ -63,9 +46,6 @@ export VISUAL=vi
 
 
 ## aliases
-if [[ -x "$(/usr/bin/which 2048 2>/dev/null)" ]]; then
-	alias 2048='2048 -c'
-fi
 if [[ -x "$(/usr/bin/which abook 2>/dev/null)" ]]; then
 	alias abook='abook --config ${HOME}/.abookrc --datafile ${HOME}/.addresses'
 fi
@@ -87,8 +67,8 @@ if [[ -x "$(/usr/bin/which kpcli 2>/dev/null)" ]]; then
 	alias kpcli='kpcli --histfile=/dev/null --readonly'
 fi
 alias l='ls -1F'
-alias la='ls -lhFa'
-alias larth='ls -larthF'
+alias la='ls -Flah'
+alias larth='ls -Flarth'
 alias less='less -MR'
 alias listening='fstat -n | grep internet'
 alias ll='ls -lhF'
@@ -111,16 +91,11 @@ if [[ -x "$(/usr/bin/which nvim 2>/dev/null)" ]]; then
 	alias vi=nvim
 	alias view='nvim --cmd "let no_plugin_maps = 1" -c "runtime! macros/less.vim" -m -M -R -n --'
 	alias vim=nvim
-	alias vimlite='nvim -u NONE -i NONE'
 	alias vimdiff='nvim -d -c "color blue" --'
 else
 	alias view='less -MR'
 	alias vim=vi
-	alias vimlite='vim -u NONE -i NONE'
 fi
-#if [[ -x "$(/usr/bin/which curl 2>/dev/null)" ]]; then
-#	alias weather='curl -4k https://wttr.in/?m'
-#fi
 alias which='/usr/bin/which'
 
 # kaomoji
@@ -134,22 +109,6 @@ alias woohoo='echo \\\(ˆ˚ˆ\)/'
 
 
 ## daemons
-## gpg-agent
-#if ! pgrep -U "${USER}" -f "gpg-agent --daemon --quiet" >/dev/null 2>&1; then
-#	# if not running but socket exists, delete
-#	if [[ -S "${HOME}/.gnupg/S.gpg-agent" ]]; then
-#		/bin/rm "${HOME}/.gnupg/S.gpg-agent"
-#	elif [[ -n ${XDG_RUNTIME_DIR} ]] && [[ -S "${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent" ]]; then
-#		/bin/rm "${XDG_RUNTIME_DIR}/gnupg/S.gpg-agent"
-#	fi
-#	if [[ -x "$(/usr/bin/which gpg-agent 2>/dev/null)" ]]; then
-#		if [[ ! -d "${HOME}/.gnupg" ]]; then
-#			mkdir -m 0700 -p "${HOME}/.gnupg"
-#		fi
-#		eval $(gpg-agent --daemon --quiet 2>/dev/null)
-#	fi
-#fi
-
 # ssh-agent
 if [[ -z "${SSH_AUTH_SOCK}" ]] || [[ -n "$(echo "${SSH_AUTH_SOCK}" | grep -E "^/run/user/$(id -u)/keyring/ssh$")" ]]; then
 	# create ~/.ssh if missing - some operating systems don't include this in /etc/skel
@@ -180,7 +139,7 @@ if [[ "$(uname)" == "Linux" ]]; then
 	export MANWIDTH=80
 	if [[ -L "/bin" ]]; then
 		# some Linux have /bin -> /usr/bin
-		export PATH=/bin:/sbin
+		export PATH=/usr/local/bin:/bin:/sbin
 	fi
 	export QUOTING_STYLE=literal
 	unset LS_COLORS
@@ -197,7 +156,8 @@ if [[ "$(uname)" == "Linux" ]]; then
 		alias ftp=tnftp
 	fi
 	alias l='ls -1F --color=never'
-	alias la='ls -lhFa --color=never'
+	alias la='ls -Flah --color=never'
+	alias larth='ls -Flarth --color=never'
 	# linux doesn't have fstat
 	if [[ -x "$(/usr/bin/which netstat 2>/dev/null)" ]]; then
 		alias listening='netstat -launt | grep LISTEN'
@@ -207,7 +167,7 @@ if [[ "$(uname)" == "Linux" ]]; then
 	alias ll='ls -lhF --color=never'
 	alias ls='ls -F --color=never'
 	# linux ps lists kernel threads amongst procs.. deselect those
-	# .. it's a bit hacky, but seems to work
+	# .. it's a bit hacky, but seems to work and is much more readable
 	# ref: https://unix.stackexchange.com/a/78585
 	alias psaux='ps auw --ppid 2 -p 2 --deselect'
 	if [[ -x "$(/usr/bin/which sshfs 2>/dev/null)" ]]; then
@@ -302,7 +262,7 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == '-oksh' ]] || [[ "${0}" == 'ksh' ]]; t
 	set -A complete_search_1 -- alpine arxiv centos cve fedora mathworld mbug nws rfc rhbz thesaurus wayback webster wikipedia wiktionary
 	set -A complete_ssh_1 -- ${HOST_LIST}
 	set -A complete_telnet_1 -- ${HOST_LIST}
-	set -A complete_telnet_2 -- 22 25 80 443 465 587
+	set -A complete_telnet_2 -- 22 25 80
 	if [[ -x "$(/usr/bin/which toot 2>&1)" ]]; then
 		set -A complete_toot_1 -- block follow instance mute notifications post tui unblock unfollow unmute upload whoami whois
 		set -A complete_toot_2 -- --help
