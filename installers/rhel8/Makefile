@@ -47,7 +47,9 @@ install:
 	# chrony time daemon
 	sudo install -C -Z -o root -g root -m 0444 chrony.conf /etc/chrony.conf
 	# firefox
-	sudo install -C -Z -o root -g root -m 0444 firefox.json /usr/lib64/firefox/distribution/policies.json
+	if [[ -d /usr/lib64/firefox/distribution ]]; then sudo install -C -Z -o root -g root -m 0444 firefox.json /usr/lib64/firefox/distribution/policies.json; fi
+	# google-chrome
+	if [[ ! -f /usr/bin/google-chrome ]]; then sudo yum -qy install https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm; fi
 	# mlocate
 	sudo systemctl --quiet enable --now mlocate-updatedb.timer
 	# NetworkManager
