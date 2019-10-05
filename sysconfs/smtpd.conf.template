@@ -16,14 +16,11 @@ pki fq.dn key "/etc/ssl/private/fq.dn.key"
 # filters
 filter check-fcrdns phase connect match ! fcrdns disconnect "550 relay denied"
 filter all_filters chain { check-fcrdns }
+filter "dkimsign" proc-exec "filter-dkimsign -d fq.dn -s ersa19 -c relaxed/relaxed -k /etc/mail/dkim/private.key" user _dkimsign group _dkimsign
 
 # open ports
-listen on lo0
+listen on lo0 filter "dkimsign"
 listen on egress port 25 tls-require pki fq.dn filter all_filters
-
-# tag outbound messages with dkim
-listen on lo0 port 10028 tag DKIM
-action dkim_out relay host smtp://127.0.0.1:10027
 
 # message routing rules ("actions")
 action "deliver-mbox" mbox alias <aliases>
@@ -37,5 +34,4 @@ match from local for local action deliver-mbox
 match from any for domain domain1.com action deliver-domain1
 match from any for domain domain2.com action deliver-domain2
 match from any for domain listserv.com action deliver-listserv
-match tag DKIM for any action outbound
-match from local for any action dkim_out
+match from local for any action outbound
