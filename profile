@@ -845,17 +845,22 @@ shacompare() {
 sysinfo() {
 	if [[ "$(uname)" == 'Linux' ]]; then
 		cpu="$(grep '^model name' /proc/cpuinfo | uniq | awk -F': ' '{print $NF}')"
-		disk_query="$(/usr/bin/df -h -x aufs -x tmpfs -x overlay -x devtmpfs -x udf --total 2>/dev/null | awk '{print $2, $3, $5}' | tail -n1)"
+		disk_query="$(/usr/bin/df -h -x aufs -x tmpfs -x overlay -x devtmpfs -x udf -x nfs -x cifs --total 2>/dev/null | awk '{print $2, $3, $5}' | tail -n1)"
 		distro="$(grep PRETTY_NAME /etc/os-release | awk -F'"' '{print $2}')"
 		if [[ -z "${distro}" ]]; then
 			distro='Linux'
 		fi
-		gpu="$(nvidia-smi -q 2>/dev/null | awk -F':' '/Product Name/ {gsub(/: /,":"); print $2}' | sed ':a;N;$!ba;s/\n/, /g')"
+		gpu="$(nvidia-smi -q 2>/dev/null | awk -F':' '/Product Name/ {gsub(/: /,":"); print "Nvidia", $2}' | sed ':a;N;$!ba;s/\n/, /g')"
 		if [[ -z "${gpu}" ]]; then
 			gpu="$(glxinfo 2>/dev/null | awk '/OpenGL renderer string/ { sub(/OpenGL renderer string: /,""); print }')"
 		fi
 		kernel="$(uname -r)"
 		memory_query="$(/usr/bin/free -b | grep -E "^Mem:" | awk '{ print $2,$3 }')"
+	elif [[ "$(uname)" == 'NetBSD' ]]; then
+		cpu="$(sysctl -n machdep.cpu_brand)"
+		distro='NetBSD'
+		kernel="$(uname -rm)"
+		memory_query="$(echo "$(sysctl -n hw.pagesize) $(sysctl -n hw.usermem64) $(vmstat -s | awk '/pages active$/ {print $1}')" | awk '{ print $2, $1 * $3 }')"
 	elif [[ "$(uname)" == 'OpenBSD' ]]; then
 		cpu="$(sysctl -n hw.model)"
 		disk_query="$(/bin/df -Pk 2>/dev/null | awk '/^\// {total+=$2; used+=$3}END{printf("%.1fGiB %.1fGiB %d%%\n", total/1048576, used/1048576, used*100/total)}')"
@@ -866,7 +871,7 @@ sysinfo() {
 	else
 		cpu='unknown cpu model'
 		distro="$(uname)"
-		kernel="$(uname -rvm)"
+		kernel="$(uname -rm)"
 		memory_query='1 0'
 	fi
 	disk_total="$(echo "${disk_query}" | awk '{print $1}')"
