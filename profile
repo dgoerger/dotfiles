@@ -1,7 +1,7 @@
 # ~/.profile
 
 ### all operating systems and shells
-## PATH and PS1
+## PATH
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/games:/usr/local/bin
 
 ## terminal settings
@@ -166,6 +166,7 @@ if [[ "$(uname)" == "Linux" ]]; then
 	fi
 	alias ll='ls -lhF --color=never'
 	alias ls='ls -F --color=never'
+	alias mtop='top -sE m -o "%MEM"'
 	# linux ps lists kernel threads amongst procs.. deselect those
 	# .. it's a bit hacky, but seems to work and is much more readable
 	# ref: https://unix.stackexchange.com/a/78585
@@ -175,6 +176,7 @@ if [[ "$(uname)" == "Linux" ]]; then
 	fi
 	alias sha256='sha256sum --tag'
 	alias sha512='sha512sum --tag'
+	alias top='top -sE m'
 	if [[ -x "$(/usr/bin/which tree 2>/dev/null)" ]]; then
 		alias tree='tree -N'
 	fi
@@ -186,7 +188,7 @@ if [[ "$(uname)" == "Linux" ]]; then
 elif [[ "$(uname)" == 'NetBSD' ]]; then
 	export CC=clang
 	export CXX=clang++
-	export MANPATH=/usr/pkg/man:/usr/pkg/share/man:/usr/share/man:/usr/pkg/X11R7/man:/usr/local/man
+	export MANPATH=${HOME}/man:/usr/pkg/man:/usr/pkg/share/man:/usr/share/man:/usr/pkg/X11R7/man:/usr/local/man
 	export PATH=${HOME}/bin:/usr/pkg/bin:$PATH
 
 	alias pkgsrc='lynx "https://ftp.netbsd.org/pub/pkgsrc/packages/NetBSD/x86_64/$(uname -r)/All/"'
@@ -217,7 +219,7 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == '-oksh' ]] || [[ "${0}" == 'ksh' ]]; t
 	set -A complete_dig_1 -- ${HOST_LIST}
 	set -A complete_git_1 -- add bisect blame checkout clone commit diff log mv pull push rebase reset revert rm stash status submodule
 	if [[ -x "$(/usr/bin/which got 2>/dev/null)" ]]; then
-		set -A complete_got_1 -- add backout blame branch checkout cherrypick commit diff histedit import init log rebase ref rm revert stage status tag tree unstage update
+		set -A complete_got_1 -- add backout blame branch checkout cherrypick commit diff histedit import init integrate log rebase ref rm revert stage status tag tree unstage update
 	fi
 	set -A complete_host_1 -- ${HOST_LIST}
 	if [[ -x "$(/usr/bin/which ifconfig 2>/dev/null)" ]]; then
@@ -394,15 +396,6 @@ colours() {
 	}'
 }
 alias colors=colours
-
-# deduplify() deduplicate text files while preserving line order
-deduplify() {
-	if [[ -r "${1}" ]]; then
-		awk '!visited[$0]++' "${1}"
-	else
-		echo "Cannot open file ${1}" && return 1
-	fi
-}
 
 # def()
 if [[ -x "$(/usr/bin/which wn 2>/dev/null)" ]] && [[ -x "$(/usr/bin/which pandoc 2>/dev/null)" ]]; then
@@ -772,7 +765,6 @@ search() {
 		if [[ -z "${query}" ]]; then
 			lynx "https://www.ietf.org/standards/rfcs/"
 		else
-			#lynx "https://www.rfc-editor.org/search/rfc_search_detail.php?rfc=${query}&pubstatus%5B%5D=Any&pub_date_type=any"
 			lynx "https://tools.ietf.org/rfc/rfc${query}.txt"
 		fi
 	elif [[ "${1}" == 'rhbz' ]]; then
@@ -845,7 +837,7 @@ shacompare() {
 			echo "The two files are NOT sha512-identical."
 		fi
 	else
-			echo -e 'Usage: shacompare FILE1 FILE2\n' && return 1
+		echo -e 'Usage: shacompare FILE1 FILE2\n' && return 1
 	fi
 }
 
