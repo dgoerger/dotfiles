@@ -544,6 +544,15 @@ if [[ -x "$(/usr/bin/which pandoc 2>/dev/null)" ]] && [[ -x "$(/usr/bin/which ly
 	}
 fi
 
+# fd() find files
+fd() {
+        if [[ "${#}" != '1' ]]; then
+                echo -e "Usage:\n    fd FILENAME\n"
+        else
+                find . -iname "*${1}*"
+        fi
+}
+
 # photo_import()
 if [[ -x "$(/usr/bin/which exiv2 2>/dev/null)" ]]; then
 	_import_photo() {
