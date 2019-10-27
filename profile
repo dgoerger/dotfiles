@@ -397,7 +397,7 @@ colours() {
 }
 alias colors=colours
 
-# def()
+# def() define a word
 if [[ -x "$(/usr/bin/which wn 2>/dev/null)" ]] && [[ -x "$(/usr/bin/which pandoc 2>/dev/null)" ]]; then
 	def() {
 		if [[ $# -eq 1 ]]; then
@@ -414,7 +414,7 @@ if [[ -x "$(/usr/bin/which wn 2>/dev/null)" ]] && [[ -x "$(/usr/bin/which pandoc
 	}
 fi
 
-# diff()
+# diff() with syntax highlighting
 diff() {
 	# nota bene: [[ -t 1 ]] => "is output to stdout", for example, versus a pipe or a file
 	if [[ -t 1 ]] && [[ "${#}" -eq 2 ]] && [[ -r "${1}" ]] && [[ -r "${2}" ]]; then
@@ -537,7 +537,7 @@ if [[ -x "$(/usr/bin/which pandoc 2>/dev/null)" ]] && [[ -x "$(/usr/bin/which ly
 	}
 fi
 
-# fd() find files
+# fd() find files and directories
 fd() {
         if [[ "${#}" != '1' ]]; then
                 echo -e "Usage:\n    fd FILENAME\n"
@@ -546,7 +546,7 @@ fd() {
         fi
 }
 
-# photo_import()
+# photo_import() import photos from an SD card
 if [[ -x "$(/usr/bin/which exiv2 2>/dev/null)" ]]; then
 	_import_photo() {
 		DATETIME="$(exiv2 -pt -qK Exif.Photo.DateTimeOriginal "${1}" 2>/dev/null | awk '{print $(NF-1)}' | sed 's/\:/\//g' | sort -u)"
@@ -587,7 +587,7 @@ if [[ -x "$(/usr/bin/which exiv2 2>/dev/null)" ]]; then
 	}
 fi
 
-# pomodoro()
+# pomodoro() timer
 if [[ -x "$(/usr/bin/which tmux 2>/dev/null)" ]]; then
 	# GNOME3 - libnotify "toaster" popup
 	if [[ -x "$(/usr/bin/which notify-send 2>/dev/null)" ]] && [[ -n "${DESKTOP_SESSION}" ]]; then
@@ -634,7 +634,7 @@ pwgen() {
 	fi
  }
 
-# search()
+# search() the web
 search() {
 	# try to guess preferred language from $LANG
 	if [[ -n "${LANG}" ]]; then
@@ -839,6 +839,60 @@ shacompare() {
 	else
 		echo -e 'Usage: shacompare FILE1 FILE2\n' && return 1
 	fi
+}
+
+# sysinfo() system profiler
+sysinfo() {
+	if [[ "$(uname)" == 'Linux' ]]; then
+		cpu="$(grep '^model name' /proc/cpuinfo | uniq | awk -F': ' '{print $NF}')"
+		disk_query="$(/usr/bin/df -h -x aufs -x tmpfs -x overlay -x devtmpfs -x udf --total 2>/dev/null | awk '{print $2, $3, $5}' | tail -n1)"
+		distro="$(grep PRETTY_NAME /etc/os-release | awk -F'"' '{print $2}')"
+		if [[ -z "${distro}" ]]; then
+			distro='Linux'
+		fi
+		gpu="$(nvidia-smi -q 2>/dev/null | awk -F':' '/Product Name/ {gsub(/: /,":"); print $2}' | sed ':a;N;$!ba;s/\n/, /g')"
+		if [[ -z "${gpu}" ]]; then
+			gpu="$(glxinfo 2>/dev/null | awk '/OpenGL renderer string/ { sub(/OpenGL renderer string: /,""); print }')"
+		fi
+		kernel="$(uname -r)"
+		memory_query="$(/usr/bin/free -b | grep -E "^Mem:" | awk '{ print $2,$3 }')"
+	elif [[ "$(uname)" == 'OpenBSD' ]]; then
+		cpu="$(sysctl -n hw.model)"
+		disk_query="$(/bin/df -Pk 2>/dev/null | awk '/^\// {total+=$2; used+=$3}END{printf("%.1fGiB %.1fGiB %d%%\n", total/1048576, used/1048576, used*100/total)}')"
+		distro='OpenBSD'
+		gpu="$(/usr/X11R6/bin/glxinfo 2>/dev/null | awk '/OpenGL renderer string/ { sub(/OpenGL renderer string: /,""); print }')"
+		kernel="$(uname -rvm)"
+		memory_query="$(echo "$(sysctl -n hw.pagesize) $(sysctl -n hw.usermem) $(vmstat -s | awk '/pages active$/ {print $1}')" | awk '{ print $2, $1 * $3 }')"
+	else
+		cpu='unknown cpu model'
+		distro="$(uname)"
+		kernel="$(uname -rvm)"
+		memory_query='1 0'
+	fi
+	disk_total="$(echo "${disk_query}" | awk '{print $1}')"
+	disk_used="$(echo "${disk_query}" | awk '{print $2}')"
+	disk_percent_used="$(echo "${disk_query}" | awk '{print $3}')"
+	memory_percent_used=$(echo "${memory_query}" | awk '{print $2/$1*100}' | awk -F'.' '{print $1}')
+	memory_total=$(echo "${memory_query}" | awk '{print $1/1024^2}' | awk -F'.' '{print $1}')
+	memory_used=$(echo "${memory_query}" | awk '{print $2/1024^2}' | awk -F'.' '{print $1}')
+	uptime="$(uptime | awk '{print $3, $4}' | sed 's/\,//g')"
+	if [[ "$(echo ${uptime} | awk -F':' '{print $1}')" != "${uptime}" ]]; then
+		uptime="$(echo ${uptime} | awk -F':' '{print $1}') hour(s)"
+	fi
+	printf "\n\t%s@%s\n\n" "${USER}" "${HOSTNAME}"
+	printf "OS:\t\t%s\n" "${distro}"
+	printf "Kernel:\t\t%s\n" "${kernel}"
+	printf "Uptime:\t\t%s\n" "${uptime}"
+	#printf "Packages:\t\n"
+	printf "Shell:\t\t%s\n" "${SHELL}"
+	if [[ -n "${disk_used}" ]]; then
+		printf "Disk:\t\t%s / %s (%s)\n" "${disk_used}" "${disk_total}" "${disk_percent_used}"
+	fi
+	printf "CPU:\t\t%s\n" "${cpu}"
+	if [[ -n "${gpu}" ]]; then
+		printf "GPU:\t\t%s\n" "${gpu}"
+	fi
+	printf "RAM:\t\t%sMiB / %sMiB (%s%%)\n" "${memory_used}" "${memory_total}" "${memory_percent_used}"
 }
 
 # touchmode() touch + set the mode of a new file
