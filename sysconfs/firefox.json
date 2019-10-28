@@ -20,7 +20,10 @@
 			"Enabled": false
 		},
 		"EnableTrackingProtection": {
-			"Value": true
+			"Value": true,
+			"Locked": true,
+			"Cryptomining": true,
+			"Fingerprinting": true
 		},
 		"Extensions": {
 			"Install": [
@@ -45,6 +48,7 @@
 		"NewTabPage": false,
 		"NoDefaultBookmarks": true,
 		"OfferToSaveLogins": false,
+		"PasswordManagerEnabled": false,
 		"SanitizeOnShutdown": true,
 		"SearchBar": false,
 		"SearchEngines": {
