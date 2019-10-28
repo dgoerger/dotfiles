@@ -870,6 +870,7 @@ sysinfo() {
 		memory_query="$(/usr/bin/free -b | grep -E "^Mem:" | awk '{ print $2,$3 }')"
 	elif [[ "$(uname)" == 'NetBSD' ]]; then
 		cpu="$(sysctl -n machdep.cpu_brand)"
+		disk_query="$(/bin/df -Pk 2>/dev/null | awk '/^\// {total+=$2; used+=$3}END{printf("%.1fGiB %.1fGiB %d%%\n", total/1048576, used/1048576, used*100/total)}')"
 		distro='NetBSD'
 		host="$(echo "$(sysctl -n machdep.dmi.system-vendor) $(sysctl -n machdep.dmi.system-product)")"
 		kernel="$(uname -rm)"
