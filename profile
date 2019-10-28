@@ -865,7 +865,7 @@ sysinfo() {
 		if [[ -z "${gpu}" ]]; then
 			gpu="$(glxinfo 2>/dev/null | awk '/OpenGL renderer string/ { sub(/OpenGL renderer string: /,""); print }')"
 		fi
-		host="$(cat /sys/devices/virtual/dmi/id/sys_vendor /sys/devices/virtual/dmi/id/product_name)"
+		host="$(echo "$(cat /sys/devices/virtual/dmi/id/sys_vendor) $(cat /sys/devices/virtual/dmi/id/product_name)")"
 		kernel="$(uname -r)"
 		memory_query="$(/usr/bin/free -b | grep -E "^Mem:" | awk '{ print $2,$3 }')"
 	elif [[ "$(uname)" == 'NetBSD' ]]; then
