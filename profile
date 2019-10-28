@@ -296,6 +296,9 @@ certcheck() {
 	if [[ -n "${1}" ]]; then
 		if getent hosts "${1}" >/dev/null 2>&1; then
 			FQDN="${1}"
+		elif host "${1}" >/dev/null 2>&1; then
+			# fallback - macOS doesn't have getent(1)
+			FQDN="${1}"
 		else
 			echo "Cannot find ${1} in DNS." && return 1
 		fi
