@@ -851,6 +851,7 @@ sysinfo() {
 		disk_query="$(df -H /System/Volumes/Data 2>/dev/null | tail -n1 | awk '{print $2, $3, $5}')"
 		distro='macOS'
 		gpu="$(system_profiler SPDisplaysDataType | awk -F': ' '/^\ *Chipset Model:/ {print $2}' | awk '{ printf "%s / ", $0 }' | sed -e 's/\/ $//g')"
+		host="$(sysctl -n hw.model)"
 		kernel="$(uname -rm)"
 		memory_query="$(echo "$(echo "$(sysctl -n hw.memsize)" / 1024^2 | bc) $(vm_stat | grep ' active' | awk '{ print $3 }' | sed 's/\.//')")"
 	elif [[ "$(uname)" == 'Linux' ]]; then
@@ -864,11 +865,13 @@ sysinfo() {
 		if [[ -z "${gpu}" ]]; then
 			gpu="$(glxinfo 2>/dev/null | awk '/OpenGL renderer string/ { sub(/OpenGL renderer string: /,""); print }')"
 		fi
+		host="$(cat /sys/devices/virtual/dmi/id/sys_vendor /sys/devices/virtual/dmi/id/product_name)"
 		kernel="$(uname -r)"
 		memory_query="$(/usr/bin/free -b | grep -E "^Mem:" | awk '{ print $2,$3 }')"
 	elif [[ "$(uname)" == 'NetBSD' ]]; then
 		cpu="$(sysctl -n machdep.cpu_brand)"
 		distro='NetBSD'
+		host="$(echo "$(sysctl -n machdep.dmi.system-vendor) $(sysctl -n machdep.dmi.system-product)")"
 		kernel="$(uname -rm)"
 		memory_query="$(echo "$(sysctl -n hw.pagesize) $(sysctl -n hw.usermem64) $(vmstat -s | awk '/pages active$/ {print $1}')" | awk '{ print $2, $1 * $3 }')"
 	elif [[ "$(uname)" == 'OpenBSD' ]]; then
@@ -876,11 +879,13 @@ sysinfo() {
 		disk_query="$(/bin/df -Pk 2>/dev/null | awk '/^\// {total+=$2; used+=$3}END{printf("%.1fGiB %.1fGiB %d%%\n", total/1048576, used/1048576, used*100/total)}')"
 		distro='OpenBSD'
 		gpu="$(/usr/X11R6/bin/glxinfo 2>/dev/null | awk '/OpenGL renderer string/ { sub(/OpenGL renderer string: /,""); print }')"
+		host="$(echo "$(sysctl -n hw.vendor) $(sysctl -n hw.product)")"
 		kernel="$(uname -rvm)"
 		memory_query="$(echo "$(sysctl -n hw.pagesize) $(sysctl -n hw.usermem) $(vmstat -s | awk '/pages active$/ {print $1}')" | awk '{ print $2, $1 * $3 }')"
 	else
-		cpu='unknown cpu model'
+		cpu='unknown'
 		distro="$(uname)"
+		host='unknown'
 		kernel="$(uname -rm)"
 		memory_query='1 0'
 	fi
@@ -899,12 +904,13 @@ sysinfo() {
 	printf "Kernel:\t\t%s\n" "${kernel}"
 	printf "Uptime:\t\t%s\n" "${uptime}"
 	printf "Shell:\t\t%s\n" "${SHELL}"
-	if [[ -n "${disk_used}" ]]; then
-		printf "Disk:\t\t%s / %s (%s)\n" "${disk_used}" "${disk_total}" "${disk_percent_used}"
-	fi
+	printf "Host:\t\t%s\n" "${host}"
 	printf "CPU:\t\t%s\n" "${cpu}"
 	if [[ -n "${gpu}" ]]; then
 		printf "GPU:\t\t%s\n" "${gpu}"
+	fi
+	if [[ -n "${disk_used}" ]]; then
+		printf "Disk:\t\t%s / %s (%s)\n" "${disk_used}" "${disk_total}" "${disk_percent_used}"
 	fi
 	printf "RAM:\t\t%sMiB / %sMiB (%s%%)\n" "${memory_used}" "${memory_total}" "${memory_percent_used}"
 }
