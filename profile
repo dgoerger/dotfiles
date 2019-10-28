@@ -848,15 +848,15 @@ shacompare() {
 sysinfo() {
 	if [[ "$(uname)" == 'Darwin' ]]; then
 		cpu="$(sysctl -n machdep.cpu.brand_string)"
-		disk_query="$(df -H / 2>/dev/null | tail -n1 | awk '{print $2, $3, $5}')"
+		disk_query="$(df -H /System/Volumes/Data 2>/dev/null | tail -n1 | awk '{print $2, $3, $5}')"
 		distro='macOS'
 		gpu="$(system_profiler SPDisplaysDataType | awk -F': ' '/^\ *Chipset Model:/ {print $2}' | awk '{ printf "%s / ", $0 }' | sed -e 's/\/ $//g')"
 		kernel="$(uname -rm)"
 		memory_query="$(echo "$(echo "$(sysctl -n hw.memsize)" / 1024^2 | bc) $(vm_stat | grep ' active' | awk '{ print $3 }' | sed 's/\.//')")"
 	elif [[ "$(uname)" == 'Linux' ]]; then
 		cpu="$(grep '^model name' /proc/cpuinfo | uniq | awk -F': ' '{print $NF}')"
-		disk_query="$(/usr/bin/df -h -x aufs -x tmpfs -x overlay -x devtmpfs -x udf -x nfs -x cifs --total 2>/dev/null | awk '{print $2, $3, $5}' | tail -n1)"
-		distro="$(grep PRETTY_NAME /etc/os-release | awk -F'"' '{print $2}')"
+		disk_query="$(/bin/df -h -x aufs -x tmpfs -x overlay -x devtmpfs -x udf -x nfs -x cifs --total 2>/dev/null | awk '{print $2, $3, $5}' | tail -n1)"
+		distro="$(grep PRETTY_NAME /etc/os-release 2>/dev/null | awk -F'"' '{print $2}')"
 		if [[ -z "${distro}" ]]; then
 			distro='Linux'
 		fi
