@@ -934,9 +934,9 @@ touchmode() {
 if [[ "${SHELL}" != '/bin/ash' ]]; then
 	set -o emacs
 fi
-if [[ -x "$(/usr/bin/which fortune 2>/dev/null)" ]]; then
-	fortune -a
-fi
+#if [[ -x "$(/usr/bin/which fortune 2>/dev/null)" ]]; then
+#	fortune -a
+#fi
 if [[ -r "${HOME}/.profile.local" ]]; then
 	. "${HOME}/.profile.local"
 fi
