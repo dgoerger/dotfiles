@@ -245,6 +245,9 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == '-oksh' ]] || [[ "${0}" == 'ksh' ]]; t
 	if [[ -x "$(/usr/bin/which mtr 2>/dev/null)" ]]; then
 		set -A complete_mtr_1 -- ${HOST_LIST}
 	fi
+	if [[ -x "$(/usr/bin/which ncdu 2>/dev/null)" ]]; then
+		set -A complete_ncdu_1 -- -ex -rex
+	fi
 	if [[ -x "$(/usr/bin/which nmap 2>/dev/null)" ]]; then
 		set -A complete_nmap_1 -- ${HOST_LIST}
 	fi
