@@ -85,6 +85,7 @@ alias rm='rm -i'
 if [[ -x "$(/usr/bin/which openrsync 2>/dev/null)" ]]; then
 	alias rsync=openrsync
 fi
+alias stat='stat -x'
 alias tm='tmux new-session -A -s tm'
 if [[ -x "$(/usr/bin/which nvim 2>/dev/null)" ]]; then
 	# prefer neovim > vim if available
@@ -176,6 +177,7 @@ if [[ "$(uname)" == "Linux" ]]; then
 	fi
 	alias sha256='sha256sum --tag'
 	alias sha512='sha512sum --tag'
+	unalias stat
 	alias top='top -sE m'
 	if [[ -x "$(/usr/bin/which tree 2>/dev/null)" ]]; then
 		alias tree='tree -N'
