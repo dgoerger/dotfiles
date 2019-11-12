@@ -77,6 +77,13 @@ set wrap = 80
 #set imap_user='ebony.way@example.com'
 #set smtp_authenticators = 'login'
 #set smtp_url = 'smtps://ebony.way@example.com@smtp.example.com:465/'
+## oauth2 tokens
+# oauth2.py source: https://github.com/google/gmail-oauth2-tools
+# oauth2.py guide: http://mutt.org/doc/manual/#oauth + https://luxing.im/mutt-integration-with-gmail-using-oauth/
+#set imap_authenticators="oauthbearer"
+#set imap_oauth_refresh_command="/usr/local/libexec/oauth2.py --quiet --user='ebony.way@example.com' --client_id='123456789[...].apps.googleusercontent.com' --client_secret='limpid_tears_of_blood' --refresh_token='drakko_malfoy' 2>/dev/null"
+#set smtp_authenticators="oauthbearer"
+#set smtp_oauth_refresh_command="/usr/local/libexec/oauth2.py --quiet --user='ebony.way@example.com' --client_id='123456789[...].apps.googleusercontent.com' --client_secret='limpid_tears_of_blood' --refresh_token='drakko_malfoy' 2>/dev/null"
 ## passwords
 #set imap_pass='STOPFLAMMINGDASTORYPREPZOK'
 #set smtp_pass='STOPFLAMMINGDASTORYPREPZOK'
