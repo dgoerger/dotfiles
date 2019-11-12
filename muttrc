@@ -32,7 +32,7 @@ attachments -A application/x-pkcs7-.*
 attachments +I text/plain
 attachments -A message/external-body
 attachments -I message/external-body
-auto_view text/html
+auto_view text/html text/calendar application/ics application/vnd.openxmlformats-officedocument.wordprocessingml.document
 bind editor <Tab> complete-query
 bind generic,alias,attach,browser,editor,index,compose,pager,pgp,postpone ':' noop
 folder-hook . "exec collapse-all"
