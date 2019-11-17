@@ -167,7 +167,7 @@ if [[ "$(uname)" == "Linux" ]]; then
 	fi
 	alias ll='ls -lhF --color=never'
 	alias ls='ls -F --color=never'
-	alias mtop='top -sE m -o "%MEM"'
+	alias mtop='top -s -o "%MEM"'
 	# linux ps lists kernel threads amongst procs.. deselect those
 	# .. it's a bit hacky, but seems to work and is much more readable
 	# ref: https://unix.stackexchange.com/a/78585
@@ -178,7 +178,7 @@ if [[ "$(uname)" == "Linux" ]]; then
 	alias sha256='sha256sum --tag'
 	alias sha512='sha512sum --tag'
 	unalias stat
-	alias top='top -sE m'
+	alias top='top -s'
 	if [[ -x "$(/usr/bin/which tree 2>/dev/null)" ]]; then
 		alias tree='tree -N'
 	fi
