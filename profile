@@ -207,7 +207,12 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
 	}
 	if [[ -r /etc/installurl ]]; then
 		# shortcut to check snapshot availability - especially useful during release/freeze
-		alias checksnaps='/usr/local/bin/lynx "$(cat /etc/installurl)/snapshots/$(uname -m)"'
+		# .. or package updates to -stable
+		if [[ -z "$(sysctl kern.version | grep '\-current')" ]]; then
+			alias checksnaps='/usr/local/bin/lynx "$(cat /etc/installurl)/$(uname -r)/packages-stable/$(uname -m)"'
+		else
+			alias checksnaps='/usr/local/bin/lynx "$(cat /etc/installurl)/snapshots/$(uname -m)"'
+		fi
 	fi
 fi
 
