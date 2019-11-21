@@ -295,6 +295,20 @@ fi
 
 
 ### functions
+# arxifetch() download papers from arXiv by document ID
+arxifetch() {
+	if [[ $# -eq 1 ]]; then
+	        title="$(curl -s "https://arxiv.org/abs/${1}" | awk -F'"' '/meta\ name.*citation_title/ {print $4}')"
+	        if [[ ! -z "${title}" ]]; then
+	                curl -Lso "${title} - ${1}.pdf" "https://arxiv.org/pdf/${1}" && \
+	                        echo "Downloaded file '${title} - ${1}.pdf'."
+	        else
+	                echo "ERROR: arXiv document ID '${1}' not found." && return 1
+	        fi
+	else
+	        echo 'usage:\n\n    arxifetch $ARXIV_ID' && return 1
+	fi
+}
 # certcheck() verify tls certificates
 certcheck() {
 	# set default options
