@@ -755,12 +755,11 @@ search() {
 		fi
 	elif [[ "${1}" == 'linux' ]]; then
 		shift
-		if [[ "$#" == '0' ]]; then
-			lynx "https://linux.die.net/man/"
-		elif [[ "$#" == '2' ]]; then
-			lynx "https://linux.die.net/man/${1}/${2}"
+		query="$(_escape_html "$@")"
+		if [[ -z "${query}" ]]; then
+			lynx "https://manpages.debian.org/"
 		else
-			echo -e 'usage:\n\n    search linux SECTION MANUAL' && return 1
+			lynx "https://manpages.debian.org/jump?q=${query}"
 		fi
 	elif [[ "${1}" == 'mathworld' ]]; then
 		shift
