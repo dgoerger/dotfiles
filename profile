@@ -280,7 +280,7 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == '-oksh' ]] || [[ "${0}" == 'ksh' ]]; t
 	set -A complete_sftp_1 -- -p
 	set -A complete_sftp_2 -- ${HOST_LIST}
 	set -A complete_sftp_3 -- ${HOST_LIST}
-	set -A complete_search_1 -- alpine arxiv centos cve fedora mathworld mbug nws rfc rhbz thesaurus wayback webster wikipedia wiktionary
+	set -A complete_search_1 -- alpine arxiv centos cve fedora mandragonflybsd manfreebsd manlinux manopenbsd mathworld mbug nws rfc rhbz thesaurus wayback webster wikipedia wiktionary
 	set -A complete_ssh_1 -- ${HOST_LIST}
 	set -A complete_telnet_1 -- ${HOST_LIST}
 	set -A complete_telnet_2 -- 22 25 80
@@ -753,13 +753,37 @@ search() {
 		else
 			lynx "https://www.gutenberg.org/catalog/world/results?&title=${query}"
 		fi
-	elif [[ "${1}" == 'linux' ]]; then
+	elif [[ "${1}" == 'mandragonflybsd' ]]; then
+		shift
+		query="$(_escape_html "$@")"
+		if [[ -z "${query}" ]]; then
+			lynx "https://man.dragonflybsd.org/"
+		else
+			lynx "https://man.dragonflybsd.org/?section=ANY&command=${query}"
+		fi
+	elif [[ "${1}" == 'manfreebsd' ]]; then
+		shift
+		query="$(_escape_html "$@")"
+		if [[ -z "${query}" ]]; then
+			lynx "https://www.freebsd.org/cgi/man.cgi"
+		else
+			lynx "https://www.freebsd.org/cgi/man.cgi?sektion=0&manpath=FreeBSD%2012.1-RELEASE&arch=default&format=ascii&query=${query}"
+		fi
+	elif [[ "${1}" == 'manlinux' ]]; then
 		shift
 		query="$(_escape_html "$@")"
 		if [[ -z "${query}" ]]; then
 			lynx "https://manpages.debian.org/"
 		else
 			lynx "https://manpages.debian.org/jump?q=${query}"
+		fi
+	elif [[ "${1}" == 'manopenbsd' ]]; then
+		shift
+		query="$(_escape_html "$@")"
+		if [[ -z "${query}" ]]; then
+			lynx "https://man.openbsd.org/"
+		else
+			lynx "https://man.openbsd.org/?sec=0&arch=default&manpath=OpenBSD-current&query=${query}"
 		fi
 	elif [[ "${1}" == 'mathworld' ]]; then
 		shift
