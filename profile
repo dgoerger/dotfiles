@@ -773,9 +773,11 @@ search() {
 		shift
 		query="$(_escape_html "$@")"
 		if [[ -z "${query}" ]]; then
-			lynx "https://manpages.debian.org/"
+			#lynx "https://manpages.debian.org/"
+			lynx "https://manpag.es/"
 		else
-			lynx "https://manpages.debian.org/jump?q=${query}"
+			#lynx "https://manpages.debian.org/jump?q=${query}"
+			lynx "https://manpag.es/search?dist=centos8&section=&name=${query}"
 		fi
 	elif [[ "${1}" == 'manopenbsd' ]]; then
 		shift
