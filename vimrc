@@ -2,8 +2,12 @@
 " ref: (n)vim's built-in ':help option' documentation system
 "
 """ general usability
-colorscheme elflord		" default colorscheme is unreadable on a dark console
-let skip_defaults_vim=1		" don't source global defaults in absence of ~/.vimrc
+if filereadable(expand("$VIMRUNTIME/colors/elflord.vim"))
+	colorscheme elflord	" default colorscheme is unreadable on a dark console
+end
+if has('skip_defaults_vim')
+	let skip_defaults_vim=1	" don't source global defaults in absence of ~/.vimrc
+endif
 set directory=${HOME}/.vim.d//	" keep swapfiles tidy in their own directory
 set ignorecase			" ignore case when searching
 set mouse=i			" enable the mouse in Insert mode
@@ -14,7 +18,9 @@ if has('shada')
 endif
 set smartcase			" if ':set ignorecase', use strict case with CAPS
 set spelllang=en_ca		" enable spellcheck with ':set spell'
-set termguicolors		" enable truecolor support
+if has('nvim')
+	set termguicolors	" enable truecolor support in neovim
+endif
 set viminfo="NONE"		" don't save search history
 
 """ indentation schema
