@@ -708,7 +708,7 @@ search() {
 	if [[ "${1}" == 'alpine' ]]; then
 		shift
 		query="$(_escape_html "$@")"
-		if [[ -z "{query}" ]]; then
+		if [[ -z "${query}" ]]; then
 			lynx "https://pkgs.alpinelinux.org/packages"
 		else
 			lynx "https://pkgs.alpinelinux.org/packages?name=${query}&branch=edge"
