@@ -309,6 +309,7 @@ arxifetch() {
 	        echo 'usage:\n\n    arxifetch $ARXIV_ID' && return 1
 	fi
 }
+
 # certcheck() verify tls certificates
 certcheck() {
 	# set default options
@@ -563,6 +564,29 @@ if [[ -x "$(/usr/bin/which pandoc 2>/dev/null)" ]] && [[ -x "$(/usr/bin/which ly
 		fi
 	}
 fi
+
+# fat32san() sanitize file/folder names for FAT32 filesystems
+fat32san() {
+	# illegal chars =>   : " ? < > | \ / *
+	# FIXME: this strategy isn't safe for removing '/' from a filename
+	#        as it's the path directory separator, so do not handle
+	#        that char for now
+	_rename() {
+		mv "${1}" "$(echo "${1}" | tr -d '\:\"\?\<\>\|\\\*')"
+        }
+	if [[ "${#}" != '1' ]] || [[ ! -d "${1}" ]]; then
+		echo -e "Usage:\n    fat32san /path/to/sanitize"
+	else
+		find "${1}" -name '*\:*' | while read -r FILE; do _rename "${FILE}"; done
+		find "${1}" -name '*\"*' | while read -r FILE; do _rename "${FILE}"; done
+		find "${1}" -name '*\?*' | while read -r FILE; do _rename "${FILE}"; done
+		find "${1}" -name '*\<*' | while read -r FILE; do _rename "${FILE}"; done
+		find "${1}" -name '*\>*' | while read -r FILE; do _rename "${FILE}"; done
+		find "${1}" -name '*\|*' | while read -r FILE; do _rename "${FILE}"; done
+		find "${1}" -name '*\\*' | while read -r FILE; do _rename "${FILE}"; done
+		find "${1}" -name '*\**' | while read -r FILE; do _rename "${FILE}"; done
+	fi
+}
 
 # fd() find files and directories
 fd() {
