@@ -220,7 +220,7 @@ fi
 # ksh tab completions
 if [[ "${0}" == '-ksh' ]] || [[ "${0}" == '-oksh' ]] || [[ "${0}" == 'ksh' ]]; then
 	# OpenBSD/NetBSD compatibility
-	export HOST_LIST=$(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts)
+	export HOST_LIST=$(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts | sort -u)
 
 	set -A complete_diff_1 -- -u
 	set -A complete_dig_1 -- ${HOST_LIST}
