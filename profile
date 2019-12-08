@@ -280,7 +280,7 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == '-oksh' ]] || [[ "${0}" == 'ksh' ]]; t
 	set -A complete_sftp_1 -- -p
 	set -A complete_sftp_2 -- ${HOST_LIST}
 	set -A complete_sftp_3 -- ${HOST_LIST}
-	set -A complete_search_1 -- alpine arxiv centos cve fedora mandragonflybsd manfreebsd manlinux manopenbsd mathworld mbug nws rfc rhbz thesaurus wayback webster wikipedia wiktionary
+	set -A complete_search_1 -- alpine arxiv centos cve fedora github_issues mandragonflybsd manfreebsd manlinux manopenbsd mathworld mbug nws rfc rhbz thesaurus wayback webster wikipedia wiktionary
 	set -A complete_ssh_1 -- ${HOST_LIST}
 	set -A complete_telnet_1 -- ${HOST_LIST}
 	set -A complete_telnet_2 -- 22 25 80
@@ -768,6 +768,16 @@ search() {
 			lynx "https://koji.fedoraproject.org/koji"
 		else
 			lynx "https://koji.fedoraproject.org/koji/search?match=glob&type=package&terms=${query}"
+		fi
+	elif [[ "${1}" == 'github_issues' ]]; then
+		shift
+		project="${1}"
+		shift
+		query="$(_escape_html "$@")"
+		if [[ -z "${query}" ]]; then
+			lynx "https://github.com/${project}"
+		else
+			lynx "https://github.com/${project}/search?o=desc&q=${query}&s=created&type=Issues"
 		fi
 	elif [[ "${1}" == 'gutenberg' ]]; then
 		shift
