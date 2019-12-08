@@ -27,6 +27,7 @@ install:
 	sudo systemctl --quiet disable --now ModemManager
 	sudo systemctl --quiet disable --now rpcbind
 	sudo systemctl --quiet disable --now rpcbind.socket
+	sudo systemctl --quiet disable --now systemd-resolved.service
 	sudo systemctl --quiet mask fprintd
 	sudo systemctl --quiet mask geoclue
 	sudo systemctl --quiet mask rpcbind
