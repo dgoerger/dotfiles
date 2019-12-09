@@ -172,6 +172,7 @@ if [[ "$(uname)" == "Linux" ]]; then
 	# .. it's a bit hacky, but seems to work and is much more readable
 	# ref: https://unix.stackexchange.com/a/78585
 	alias psaux='ps auw --ppid 2 -p 2 --deselect'
+	alias psfaux='ps fauw --ppid 2 -p 2 --deselect'
 	if [[ -x "$(/usr/bin/which sshfs 2>/dev/null)" ]]; then
 		alias sshfs='sshfs -o no_readahead,idmap=user'
 	fi
