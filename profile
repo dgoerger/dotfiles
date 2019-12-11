@@ -73,6 +73,7 @@ alias less='less -MR'
 alias listening='fstat -n | grep internet'
 alias ll='ls -lhF'
 alias ls='ls -F'
+alias mtop='top -o res'
 alias mv='mv -i'
 if [[ -x "$(/usr/bin/which newsboat 2>/dev/null)" ]]; then
 	alias news='newsboat -q'
@@ -169,7 +170,7 @@ if [[ "$(uname)" == "Linux" ]]; then
 	fi
 	alias ll='ls -lhF --color=never'
 	alias ls='ls -F --color=never'
-	alias mtop='top -s -o "%MEM"'
+	alias mtop='top -s -o "RES"'
 	alias pscpu='ps u -Aww --sort -pcpu,-vsz,-pmem,-rss'
 	alias psmem='ps u -Aww --sort -vsz,-pmem,-rss,-pcpu'
 	if [[ ! -x "$(/usr/bin/which pstree 2>/dev/null)" ]]; then
