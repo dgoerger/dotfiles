@@ -170,8 +170,8 @@ if [[ "$(uname)" == "Linux" ]]; then
 	alias ll='ls -lhF --color=never'
 	alias ls='ls -F --color=never'
 	alias mtop='top -s -o "%MEM"'
-	alias pscpu='ps u -Aww --sort -pcpu,-pmem,-rss'
-	alias psmem='ps u -Aww --sort -pmem,-rss,-pcpu'
+	alias pscpu='ps u -Aww --sort -pcpu,-vsz,-pmem,-rss'
+	alias psmem='ps u -Aww --sort -vsz,-pmem,-rss,-pcpu'
 	if [[ ! -x "$(/usr/bin/which pstree 2>/dev/null)" ]]; then
 		# linux ps lists kernel threads amongst procs.. deselect those
 		# .. it's a bit hacky, but seems to work and is much more readable
