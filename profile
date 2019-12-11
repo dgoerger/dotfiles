@@ -31,11 +31,11 @@ export LC_ALL="en_CA.UTF-8"
 export LESSSECURE=1
 export LESSHISTFILE=-
 if [[ -r "${HOME}/.lynxrc" ]]; then
-	export LYNX_CFG="${HOME}/.lynxrc"
-	alias lynx='COLUMNS=80 lynx -useragent "Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101 Firefox/68.0" 2>/dev/null'
 	if [[ -r "${HOME}/.elynxrc" ]]; then
 		alias elynx='COLUMNS=80 lynx -cfg=~/.elynxrc -useragent "Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101 Firefox/68.0" 2>/dev/null'
 	fi
+	export LYNX_CFG="${HOME}/.lynxrc"
+	alias lynx='COLUMNS=80 lynx -useragent "Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101 Firefox/68.0" 2>/dev/null'
 fi
 #export MUTTRC=${path_to_mutt_gpg}
 if [[ -r "${HOME}/.pythonrc" ]]; then
