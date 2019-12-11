@@ -77,6 +77,8 @@ alias mv='mv -i'
 if [[ -x "$(/usr/bin/which newsboat 2>/dev/null)" ]]; then
 	alias news='newsboat -q'
 fi
+alias pscpu='ps -Auww'
+alias psmem='ps -Amuww'
 if [[ -x "$(/usr/bin/which python3 2>/dev/null)" ]]; then
 	alias py=python3
 	alias python=python3
@@ -171,8 +173,9 @@ if [[ "$(uname)" == "Linux" ]]; then
 	# linux ps lists kernel threads amongst procs.. deselect those
 	# .. it's a bit hacky, but seems to work and is much more readable
 	# ref: https://unix.stackexchange.com/a/78585
-	alias psaux='ps auw --ppid 2 -p 2 --deselect'
-	alias psfaux='ps fauw --ppid 2 -p 2 --deselect'
+	alias pscpu='ps u -Aww --sort -pcpu,-pmem,-rss'
+	alias psmem='ps u -Aww --sort -pmem,-rss,-pcpu'
+	alias pstree='ps u -Haww --ppid 2 -p 2 --deselect'
 	if [[ -x "$(/usr/bin/which sshfs 2>/dev/null)" ]]; then
 		alias sshfs='sshfs -o no_readahead,idmap=user'
 	fi
