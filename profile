@@ -175,7 +175,9 @@ if [[ "$(uname)" == "Linux" ]]; then
 	# ref: https://unix.stackexchange.com/a/78585
 	alias pscpu='ps u -Aww --sort -pcpu,-pmem,-rss'
 	alias psmem='ps u -Aww --sort -pmem,-rss,-pcpu'
-	alias pstree='ps u -Haww --ppid 2 -p 2 --deselect'
+	if [[ ! -x "$(/usr/bin/which pstree 2>/dev/null)" ]]; then
+		alias pstree='ps u -Haww --ppid 2 -p 2 --deselect'
+	fi
 	if [[ -x "$(/usr/bin/which sshfs 2>/dev/null)" ]]; then
 		alias sshfs='sshfs -o no_readahead,idmap=user'
 	fi
