@@ -216,9 +216,25 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
 		# shortcut to check snapshot availability - especially useful during release/freeze
 		# .. or package updates to -stable
 		if [[ -z "$(sysctl kern.version | grep '\-current')" ]]; then
-			alias checksnaps='/usr/local/bin/lynx "$(cat /etc/installurl)/$(uname -r)/packages-stable/$(uname -m)"'
+			checkupdates() {
+				local _patchfile="$(mktemp /tmp/checkupdates.XXXXXXXXXX)"
+				ftp -VMo "${_patchfile}" "$(cat /etc/installurl)/syspatch/$(uname -r)/$(uname -m)/SHA256"
+				if [[ "$(echo "(syspatch$(/bin/ls -rth /var/syspatch/ | tail -n 1).tgz)")" != "$(tail -n 1 "${_patchfile}" | awk '{print $2}')" ]]; then
+					printf "%s\n" "Updates are available via syspatch(8)."
+				else
+					printf "%s\n" "System is up-to-date."
+				fi
+			}
 		else
-			alias checksnaps='/usr/local/bin/lynx "$(cat /etc/installurl)/snapshots/$(uname -m)"'
+			checkupdates() {
+				local _snapfile="$(mktemp /tmp/checkupdates.XXXXXXXXXX)"
+				ftp -VMo "${_snapfile}" "$(cat /etc/installurl)/snapshots/$(uname -m)/SHA256"
+				if [[ "$(sha512 -q ${_snapfile})" != "$(sha512 -q /var/db/installed.SHA256)" ]]; then
+					printf "%s\n" "Updates are available via sysupgrade(8)."
+				else
+					printf "%s\n" "System is up-to-date."
+				fi
+			}
 		fi
 	fi
 fi
@@ -257,7 +273,8 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == '-oksh' ]] || [[ "${0}" == 'ksh' ]]; t
 		set -A complete_mosh_5 -- attach
 	fi
 	if [[ -x "$(/usr/bin/which mtr 2>/dev/null)" ]]; then
-		set -A complete_mtr_1 -- ${HOST_LIST}
+		set -A complete_mtr_1 -- -wbz
+		set -A complete_mtr_2 -- ${HOST_LIST}
 	fi
 	if [[ -x "$(/usr/bin/which ncdu 2>/dev/null)" ]]; then
 		set -A complete_ncdu_1 -- -ex -rex
