@@ -228,9 +228,15 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
 		else
 			checkupdates() {
 				local _snapfile="$(mktemp /tmp/checkupdates.XXXXXXXXXX)"
+				local _snapdate="$(mktemp /tmp/checkupdates.XXXXXXXXXX)"
 				ftp -VMo "${_snapfile}" "$(cat /etc/installurl)/snapshots/$(uname -m)/SHA256"
+				ftp -VMo "${_snapdate}" "$(cat /etc/installurl)/snapshots/$(uname -m)/BUILDINFO"
 				if [[ "$(sha512 -q ${_snapfile})" != "$(sha512 -q /var/db/installed.SHA256)" ]]; then
-					printf "%s\n" "Updates are available via sysupgrade(8)."
+					printf "%s\n\n" "Updates are available via sysupgrade(8)."
+					if [[ "$(file -b ${_snapdate})" == 'ASCII text' ]]; then
+						printf "%s%s\n" "Running: " "$(TZ='Canada/Mountain' date -z 'Canada/Mountain' -jf "%a %b %e %H:%M:%S %Y" "$(sysctl -n kern.version | head -n 1 | awk -F': ' '{print $NF}' | sed 's/MST//' | sed 's/MDT//')" +"%Y%m%d %H:%M:%S")"
+						printf "%s%s\n" "Upgrade: " "$(TZ=UTC date -z 'Canada/Mountain' -jf "%a %b %e %H:%M:%S %Z %Y" "$(awk -F ' - ' '{print $NF}' "${_snapdate}")" +"%Y%m%d %H:%M:%S")"
+					fi
 				else
 					printf "%s\n" "System is up-to-date."
 				fi
