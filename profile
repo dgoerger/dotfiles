@@ -1050,6 +1050,21 @@ touchmode() {
 	fi
 }
 
+whattimeisitin() {
+	local usage="$(echo -e 'Usage:\n\n    whattimeisitin CITY')"
+	if [[ "${#}" == '0' ]]; then
+		printf "%s\n" "${usage}"
+	fi
+	local sanitized_input="$(echo $@ | sed 's/\ /_/g')"
+	local zone="$(grep -im1 "\/${sanitized_input}" /usr/share/zoneinfo/zone.tab | awk '{print $3}')"
+	if [[ -z "${zone}" ]]; then
+		printf "%s '%s'.\n\n" "Unable to find IANA time zone identifier for" "${sanitized_input}"
+		return 1
+	else
+		printf "%s: %s\n\n" "${zone}" "$(TZ=${zone} date)"
+	fi
+}
+
 ### source profile-local files
 if [[ "${SHELL}" != '/bin/ash' ]]; then
 	set -o emacs
