@@ -88,6 +88,7 @@ alias rm='rm -i'
 if [[ -x "$(/usr/bin/which openrsync 2>/dev/null)" ]]; then
 	alias rsync=openrsync
 fi
+alias sha512='sha512 -q'
 alias stat='stat -x'
 alias tm='tmux new-session -A -s tm'
 if [[ -x "$(/usr/bin/which nvim 2>/dev/null)" ]]; then
@@ -182,8 +183,10 @@ if [[ "$(uname)" == "Linux" ]]; then
 	if [[ -x "$(/usr/bin/which sshfs 2>/dev/null)" ]]; then
 		alias sshfs='sshfs -o no_readahead,idmap=user'
 	fi
-	alias sha256='sha256sum --tag'
-	alias sha512='sha512sum --tag'
+	unalias sha512
+	function sha512 {
+		sha512sum --tag "${1}" | awk '{print $NF}'
+	}
 	unalias stat
 	alias top='top -s'
 	if [[ -x "$(/usr/bin/which tree 2>/dev/null)" ]]; then
@@ -203,7 +206,10 @@ elif [[ "$(uname)" == 'NetBSD' ]]; then
 	alias pkgsrc='lynx "https://ftp.netbsd.org/pub/pkgsrc/packages/NetBSD/x86_64/$(uname -r)/All/"'
 	alias py=/usr/pkg/bin/python3
 	alias python=/usr/pkg/bin/python3
-	alias sha512='cksum -a SHA512'
+	unalias sha512
+	function sha512 {
+		cksum -a SHA512 "${1}" | awk '{print $NF}'
+	}
 	alias vi=/usr/pkg/bin/vim
 
 elif [[ "$(uname)" == 'OpenBSD' ]]; then
@@ -328,69 +334,70 @@ fi
 # arxifetch() download papers from arXiv by document ID
 arxifetch() {
 	if [[ $# -eq 1 ]]; then
-	        title="$(curl -s "https://arxiv.org/abs/${1}" | awk -F'"' '/meta\ name.*citation_title/ {print $4}')"
+		# FIXME: don't depend on curl(1)
+		local title="$(curl -Ls "https://arxiv.org/abs/${1}" | awk -F'"' '/meta\ name.*citation_title/ {print $4}')"
 	        if [[ ! -z "${title}" ]]; then
 	                curl -Lso "${title} - ${1}.pdf" "https://arxiv.org/pdf/${1}" && \
-	                        echo "Downloaded file '${title} - ${1}.pdf'."
+	                        printf "Downloaded file '%s - %s.pdf'.\n" "${title}" "${1}"
 	        else
-	                echo "ERROR: arXiv document ID '${1}' not found." && return 1
+	                printf "ERROR: arXiv document ID '%s' not found.\n" "${1}" && return 1
 	        fi
 	else
-	        echo 'usage:\n\n    arxifetch $ARXIV_ID' && return 1
+	        printf 'usage:\n    arxifetch ARXIV_ID\n' && return 1
 	fi
 }
 
 # certcheck() verify tls certificates
 certcheck() {
 	# set default options
-	EXPIRY_THRESHOLD_WARNING=15
-	EXPIRY_THRESHOLD_CRITICAL=5
-	PORT=443
+	local EXPIRY_THRESHOLD_WARNING=15
+	local EXPIRY_THRESHOLD_CRITICAL=5
+	local PORT=443
 
 	# set FQDN (required)
 	if [[ -n "${1}" ]]; then
 		if getent hosts "${1}" >/dev/null 2>&1; then
-			FQDN="${1}"
+			local FQDN="${1}"
 		elif host "${1}" >/dev/null 2>&1; then
 			# fallback - macOS doesn't have getent(1)
-			FQDN="${1}"
+			local FQDN="${1}"
 		else
-			echo "Cannot find ${1} in DNS." && return 1
+			printf "Cannot find %s in DNS.\n" "${1}" && return 1
 		fi
 	else
-		echo "Please specify an FQDN to query." && return 1
+		printf 'Please specify an FQDN to query.\n' && return 1
 	fi
 
 	# set PORT (optional)
 	if [[ -n "${2}" ]]; then
 		case ${2} in
-			''|*[!0-9]*) echo 'port must be an integer' && return 1 ;;
-			*) PORT="${2}" ;;
+			''|*[!0-9]*) printf 'port must be an integer\n' && return 1 ;;
+			*) local PORT="${2}" ;;
 		esac
 	fi
 
 	# set protocol-specific flags as necessary
 	if [[ "${PORT}" == '25' ]] || [[ "${PORT}" == '587' ]]; then
 		# protocol == starttls (smtp/25, smtp-submission/587)
-		PROTOCOL_FLAGS="-starttls smtp"
+		local PROTOCOL_FLAGS="-starttls smtp"
 	elif [[ "${PORT}" == '5222' ]] || [[ "${PORT}" == '5269' ]]; then
 		# protocol == starttls (xmpp-client/5222, xmpp-server/5269)
-		PROTOCOL_FLAGS="-starttls xmpp"
+		local PROTOCOL_FLAGS="-starttls xmpp"
 	else
 		# protocol == tls+sni (https/443, smtps/465, ldaps/636, xmpps/5223, https-tomcat/8443, etc)
-		PROTOCOL_FLAGS="-servername ${FQDN}"
+		local PROTOCOL_FLAGS="-servername ${FQDN}"
 	fi
 
 	# query cert status
-	QUERY="$(echo Q | openssl s_client ${PROTOCOL_FLAGS} -connect "${FQDN}:${PORT}" 2>/dev/null)"
-	CERTIFICATE_AUTHORITY="$(echo "${QUERY}" | awk -F'CN=' '/^issuer=/ {print $2}')"
-	ROOT_AUTHORITY="$(echo "${QUERY}" | grep -E '^Certificate chain$' -A4 | tail -n1 | awk -F'CN=' '/i:/ {print $2}')"
-	TLS_PROTOCOL="$(echo "${QUERY}" | awk '/Protocol  :/ {print $NF}')"
-	TLS_CIPHER="$(echo "${QUERY}" | awk '/Cipher    :/ {print $NF}')"
-	EXPIRY_DATE="$(echo "${QUERY}" | openssl x509 -noout -enddate 2>/dev/null | awk -F'=' '/notAfter/ {print $2}')"
-	CHAIN_OF_TRUST_STATUS="$(echo "${QUERY}" | awk '/Verify return code:/ {print $4}')"
+	local QUERY="$(echo Q | openssl s_client ${PROTOCOL_FLAGS} -connect "${FQDN}:${PORT}" 2>/dev/null)"
+	local CERTIFICATE_AUTHORITY="$(echo "${QUERY}" | awk -F'CN=' '/^issuer=/ {print $2}')"
+	local ROOT_AUTHORITY="$(echo "${QUERY}" | grep -E '^Certificate chain$' -A4 | tail -n1 | awk -F'CN=' '/i:/ {print $2}')"
+	local TLS_PROTOCOL="$(echo "${QUERY}" | awk '/Protocol  :/ {print $NF}')"
+	local TLS_CIPHER="$(echo "${QUERY}" | awk '/Cipher    :/ {print $NF}')"
+	local EXPIRY_DATE="$(echo "${QUERY}" | openssl x509 -noout -enddate 2>/dev/null | awk -F'=' '/notAfter/ {print $2}')"
+	local CHAIN_OF_TRUST_STATUS="$(echo "${QUERY}" | awk '/Verify return code:/ {print $4}')"
 	# note - this doesn't take wildcard certificates into consideration
-	VALID_FOR_DOMAIN="$(echo "${QUERY}" | openssl x509 -text | grep "DNS:${FQDN}")"
+	local VALID_FOR_DOMAIN="$(echo "${QUERY}" | openssl x509 -text | grep "DNS:${FQDN}")"
 
 	# error if we can't find a certificate
 	if [[ -z "${EXPIRY_DATE}" ]]; then
@@ -399,7 +406,7 @@ certcheck() {
 
 	# print certificate authority info
 	if [[ -z "${ROOT_AUTHORITY}" ]]; then
-		ROOT_AUTHORITY='??'
+		local ROOT_AUTHORITY='??'
 	fi
 	echo "Issuer: ${CERTIFICATE_AUTHORITY} -> ${ROOT_AUTHORITY}"
 
@@ -410,21 +417,21 @@ certcheck() {
 
 	# calculate the number of days to expiry
 	if [[ "$(uname)" == 'Linux' ]]; then
-		SECONDS_TO_EXPIRY="$(echo "$(date --date="${EXPIRY_DATE}" +%s) - $(date +%s)" | bc -l)"
+		local SECONDS_TO_EXPIRY="$(echo "$(date --date="${EXPIRY_DATE}" +%s) - $(date +%s)" | bc -l)"
 	else
-		SECONDS_TO_EXPIRY="$(echo "$(date -jf "%b %e %H:%M:%S %Y %Z" "${EXPIRY_DATE}" +%s) - $(date +%s)" | bc -l)"
+		local SECONDS_TO_EXPIRY="$(echo "$(date -jf "%b %e %H:%M:%S %Y %Z" "${EXPIRY_DATE}" +%s) - $(date +%s)" | bc -l)"
 	fi
-	DAYS_TO_EXPIRY="$(echo "scale=0; ${SECONDS_TO_EXPIRY} / 86400" | bc -l)"
+	local DAYS_TO_EXPIRY="$(echo "scale=0; ${SECONDS_TO_EXPIRY} / 86400" | bc -l)"
 
 	# set status based on expiry thresholds
 	if [[ "${SECONDS_TO_EXPIRY}" -lt '0' ]]; then
-		STATUS="CRITICAL - ${FQDN}:${PORT} is already expired"
+		local STATUS="CRITICAL - ${FQDN}:${PORT} is already expired"
 	elif [[ "${DAYS_TO_EXPIRY}" -le "${EXPIRY_THRESHOLD_CRITICAL}" ]]; then
-		STATUS="CRITICAL - ${FQDN}:${PORT} expires in ${DAYS_TO_EXPIRY} day(s)"
+		local STATUS="CRITICAL - ${FQDN}:${PORT} expires in ${DAYS_TO_EXPIRY} day(s)"
 	elif [[ "${DAYS_TO_EXPIRY}" -le "${EXPIRY_THRESHOLD_WARNING}" ]]; then
-		STATUS="WARNING - ${FQDN}:${PORT} expires in ${DAYS_TO_EXPIRY} day(s)"
+		local STATUS="WARNING - ${FQDN}:${PORT} expires in ${DAYS_TO_EXPIRY} day(s)"
 	else
-		STATUS="OK - ${FQDN}:${PORT} expires in ${DAYS_TO_EXPIRY} day(s)"
+		local STATUS="OK - ${FQDN}:${PORT} expires in ${DAYS_TO_EXPIRY} day(s)"
 	fi
 
 	echo "Cipher: ${TLS_CIPHER} (${TLS_PROTOCOL})"
@@ -464,10 +471,10 @@ if [[ -x "$(/usr/bin/which wn 2>/dev/null)" ]] && [[ -x "$(/usr/bin/which pandoc
 			elif [[ -x "$(/usr/bin/which wtf 2>/dev/null)" ]]; then
 				wtf "${1}"
 			else
-				echo "No definition found for ${1}."
+				printf "No definition found for %s.\n" "${1}"
 			fi
 		else
-			echo "Usage: 'def WORD'" && return 1
+			printf "usage:\n    def WORD\n" && return 1
 		fi
 	}
 fi
@@ -499,7 +506,7 @@ if [[ -x "$(/usr/bin/which mpv 2>/dev/null)" ]]; then
 		if [[ $# -eq 0 ]]; then
 			mpv cdda://
 		else
-			echo "Usage: 'audiocd' (play whole disk) ['audiocd INT' (play track #INT) doesn't work yet]" && return 1
+			echo "usage: 'audiocd' (play whole disk) ['audiocd INT' (play track #INT) doesn't work yet]" && return 1
 		fi
 	}
 	dvd() {
@@ -512,11 +519,11 @@ if [[ -x "$(/usr/bin/which mpv 2>/dev/null)" ]]; then
 				*) mpv --audio-normalize-downmix=yes "dvdread://${1}" ;;
 			esac
 		else
-			echo "Usage: 'dvd INT', where INT is the chapter number." && return 1
+			echo "usage: 'dvd INT', where INT is the chapter number." && return 1
 		fi
 	}
 	radio() {
-		usage='Usage:  radio stream_name\n'
+		usage='usage:  radio stream_name\n'
 		if [[ $# -eq 1 ]]; then
 			case ${1} in
 				## via https://www.radio-browser.info
@@ -579,17 +586,14 @@ fi
 # ereader()
 if [[ -x "$(/usr/bin/which pandoc 2>/dev/null)" ]] && [[ -x "$(/usr/bin/which lynx 2>/dev/null)" ]]; then
 	ereader() {
-		usage='Usage: ereader file.epub\n'
 		if [[ $# -ne 1 ]]; then
-			echo -e "${usage}" && return 1
+			printf 'usage:\n    ereader file.epub\n' && return 1
 		elif [[ "${1}" = '-h' ]] || [[ "${1}" = '--help' ]]; then
-			echo -e "${usage}" && return 0
-		elif echo "${1}" | grep -Evq '\.(epub|html|txt)$'; then
-			echo -e "${usage}" && return 1
+			printf 'usage:\n    ereader file.epub\n' && return 0
 		elif ! ls "${1}" >/dev/null 2>&1; then
-			echo 'ERROR: file not found' && return 1
+			printf 'ERROR: file not found\n' && return 1
 		else
-			echo 'Reformatting.. (might take a moment)'
+			printf 'Reformatting.. (this might take a moment)\n'
 			pandoc -t html "${1}" | lynx -stdin
 		fi
 	}
@@ -605,7 +609,7 @@ fat32san() {
 		mv "${1}" "$(echo "${1}" | tr -d '\:\"\?\<\>\|\\\*')"
         }
 	if [[ "${#}" != '1' ]] || [[ ! -d "${1}" ]]; then
-		echo -e "Usage:\n    fat32san /path/to/sanitize"
+		printf "usage:\n    fat32san /path/to/sanitize\n"
 	else
 		find "${1}" -name '*\:*' | while read -r FILE; do _rename "${FILE}"; done
 		find "${1}" -name '*\"*' | while read -r FILE; do _rename "${FILE}"; done
@@ -621,7 +625,7 @@ fat32san() {
 # fd() find files and directories
 fd() {
         if [[ "${#}" != '1' ]]; then
-                echo -e "Usage:\n    fd FILENAME\n"
+                printf "usage:\n    fd FILENAME\n"
         else
                 find . -iname "*${1}*"
         fi
@@ -630,9 +634,9 @@ fd() {
 # photo_import() import photos from an SD card
 if [[ -x "$(/usr/bin/which exiv2 2>/dev/null)" ]]; then
 	_import_photo() {
-		DATETIME="$(exiv2 -pt -qK Exif.Photo.DateTimeOriginal "${1}" 2>/dev/null | awk '{print $(NF-1)}' | sed 's/\:/\//g' | sort -u)"
-		FILENAME="$(echo "${1}" | awk -F"/" '{print $NF}' | tr '[:upper:]' '[:lower:]')"
-		PHOTO_DIR="${HOME}/Pictures"
+		local DATETIME="$(exiv2 -pt -qK Exif.Photo.DateTimeOriginal "${1}" 2>/dev/null | awk '{print $(NF-1)}' | sed 's/\:/\//g' | sort -u)"
+		local FILENAME="$(echo "${1}" | awk -F"/" '{print $NF}' | tr '[:upper:]' '[:lower:]')"
+		local PHOTO_DIR="${HOME}/Pictures"
 
 		# sanity checks
 		if [[ -z "${DATETIME}" ]]; then
@@ -661,7 +665,7 @@ if [[ -x "$(/usr/bin/which exiv2 2>/dev/null)" ]]; then
 		# This script will search recursively for exif metadata in supported
 		#   files within the current directory, and copy images to
 		#   $PHOTO_DIR/$YYYY/$MM/$DD
-		FILETYPES="jpg jpeg"
+		local FILETYPES="jpg jpeg"
 		for x in ${FILETYPES}; do
 			find . -type f -iname "*.${x}" | while read -r photo; do _import_photo "${photo}"; done
 		done
@@ -673,28 +677,28 @@ if [[ -x "$(/usr/bin/which tmux 2>/dev/null)" ]]; then
 	# GNOME3 - libnotify "toaster" popup
 	if [[ -x "$(/usr/bin/which notify-send 2>/dev/null)" ]] && [[ -n "${DESKTOP_SESSION}" ]]; then
 		pomodoro() {
-			usage='Usage: pomodoro [minutes] [message]\n'
+			local usage='usage: pomodoro [minutes] [message]\n'
 			if [[ $# -ne 2 ]]; then
 				echo -e "${usage}" && return 1
 			else
-				message="${2}"
+				local message="${2}"
 			fi
 			case ${1} in
 				''|*[!0-9]*) echo "Error: \${1} must be an integer." && return 1 ;;
-				*) delay=${1} ;;
+				*) local delay=${1} ;;
 			esac
 			tmux new -d "sleep $(echo "${delay}*60" | bc -l); notify-send POMODORO \"${message}\" --icon=dialog-warning-symbolic --urgency=critical"
 		}
 	# headless!
 	elif [[ -x "$(/usr/bin/which leave 2>/dev/null)" ]]; then
 		pomodoro() {
-			usage='Usage: pomodoro [minutes]\n\n  .. or just use leave(1)!\n'
+			local usage='usage: pomodoro [minutes]\n\n  .. or just use leave(1)!\n'
 			if [[ $# -ne 1 ]]; then
 				echo -e "${usage}" && return 1
 			fi
 			case ${1} in
 				''|*[!0-9]*) echo "Error: \${1} must be an integer." && return 1 ;;
-				*) delay=${1} ;;
+				*) local delay=${1} ;;
 			esac
 			leave "+${1}"
 		}
@@ -711,7 +715,7 @@ pwgen() {
 			*) </dev/urandom tr -cd '[:alnum:]' | fold -w "${1}" | head -n1
 		esac
 	else
-		echo "Usage: pwgen [INT], where INT defaults to 30." && return 1
+		printf "usage:\n    pwgen [INT]\n" && return 1
 	fi
  }
 
@@ -719,9 +723,9 @@ pwgen() {
 search() {
 	# try to guess preferred language from $LANG
 	if [[ -n "${LANG}" ]]; then
-		lang="$(echo "${LANG}" | cut -c1-2)"
+		local lang="$(echo "${LANG}" | cut -c1-2)"
 	else
-		lang='en'
+		local lang='en'
 	fi
 
 	# escape characters for URL-encoding
@@ -761,7 +765,7 @@ search() {
 	# surf the netz raw
 	if [[ "${1}" == 'alpine' ]]; then
 		shift
-		query="$(_escape_html "$@")"
+		local query="$(_escape_html "$@")"
 		if [[ -z "${query}" ]]; then
 			lynx "https://pkgs.alpinelinux.org/packages"
 		else
@@ -769,7 +773,7 @@ search() {
 		fi
 	elif [[ "${1}" == 'arxiv' ]]; then
 		shift
-		query="$(_escape_html "$@")"
+		local query="$(_escape_html "$@")"
 		if [[ -z "${query}" ]]; then
 			lynx "https://arxiv.org/"
 		else
@@ -777,7 +781,7 @@ search() {
 		fi
 	elif [[ "${1}" == 'centos' ]]; then
 		shift
-		query="$(_escape_html "$@")"
+		local query="$(_escape_html "$@")"
 		if [[ -z "${query}" ]]; then
 			lynx "https://koji.mbox.centos.org/koji/"
 		else
@@ -785,7 +789,7 @@ search() {
 		fi
 	elif [[ "${1}" == 'cve' ]]; then
 		shift
-		query="$(_escape_html "$@")"
+		local query="$(_escape_html "$@")"
 		if [[ -z "${query}" ]]; then
 			lynx "http://cve.mitre.org"
 		else
@@ -793,7 +797,7 @@ search() {
 		fi
 	elif [[ "${1}" == 'fedora' ]]; then
 		shift
-		query="$(_escape_html "$@")"
+		local query="$(_escape_html "$@")"
 		if [[ -z "${query}" ]]; then
 			lynx "https://koji.fedoraproject.org/koji"
 		else
@@ -803,7 +807,7 @@ search() {
 		shift
 		project="${1}"
 		shift
-		query="$(_escape_html "$@")"
+		local query="$(_escape_html "$@")"
 		if [[ -z "${query}" ]]; then
 			lynx "https://github.com/${project}"
 		else
@@ -811,7 +815,7 @@ search() {
 		fi
 	elif [[ "${1}" == 'gutenberg' ]]; then
 		shift
-		query="$(_escape_html "$@")"
+		local query="$(_escape_html "$@")"
 		if [[ -z "${query}" ]]; then
 			lynx "https://www.gutenberg.org/"
 		else
@@ -819,7 +823,7 @@ search() {
 		fi
 	elif [[ "${1}" == 'mandragonflybsd' ]]; then
 		shift
-		query="$(_escape_html "$@")"
+		local query="$(_escape_html "$@")"
 		if [[ -z "${query}" ]]; then
 			lynx "https://man.dragonflybsd.org/"
 		else
@@ -827,7 +831,7 @@ search() {
 		fi
 	elif [[ "${1}" == 'manfreebsd' ]]; then
 		shift
-		query="$(_escape_html "$@")"
+		local query="$(_escape_html "$@")"
 		if [[ -z "${query}" ]]; then
 			lynx "https://www.freebsd.org/cgi/man.cgi"
 		else
@@ -835,17 +839,15 @@ search() {
 		fi
 	elif [[ "${1}" == 'manlinux' ]]; then
 		shift
-		query="$(_escape_html "$@")"
+		local query="$(_escape_html "$@")"
 		if [[ -z "${query}" ]]; then
-			#lynx "https://manpages.debian.org/"
 			lynx "https://manpag.es/"
 		else
-			#lynx "https://manpages.debian.org/jump?q=${query}"
 			lynx "https://manpag.es/search?dist=centos8&section=&name=${query}"
 		fi
 	elif [[ "${1}" == 'manopenbsd' ]]; then
 		shift
-		query="$(_escape_html "$@")"
+		local query="$(_escape_html "$@")"
 		if [[ -z "${query}" ]]; then
 			lynx "https://man.openbsd.org/"
 		else
@@ -853,7 +855,7 @@ search() {
 		fi
 	elif [[ "${1}" == 'mathworld' ]]; then
 		shift
-		query="$(_escape_html "$@")"
+		local query="$(_escape_html "$@")"
 		if [[ -z "${query}" ]]; then
 			lynx "http://mathworld.wolfram.com/"
 		else
@@ -861,7 +863,7 @@ search() {
 		fi
 	elif [[ "${1}" == 'mbug' ]]; then
 		shift
-		query="$(_escape_html "$@")"
+		local query="$(_escape_html "$@")"
 		if [[ -z "${query}" ]]; then
 			lynx "https://bugzilla.mozilla.org/"
 		else
@@ -869,7 +871,7 @@ search() {
 		fi
 	elif [[ "${1}" == 'nws' ]]; then
 		shift
-		query="$(_escape_html "$@")"
+		local query="$(_escape_html "$@")"
 		if [[ -z "${query}" ]]; then
 			lynx "https://www.weather.gov/"
 		else
@@ -877,7 +879,7 @@ search() {
 		fi
 	elif [[ "${1}" == 'rfc' ]]; then
 		shift
-		query="$(_escape_html "$@")"
+		local query="$(_escape_html "$@")"
 		if [[ -z "${query}" ]]; then
 			lynx "https://www.ietf.org/standards/rfcs/"
 		else
@@ -885,7 +887,7 @@ search() {
 		fi
 	elif [[ "${1}" == 'rhbz' ]]; then
 		shift
-		query="$(_escape_html "$@")"
+		local query="$(_escape_html "$@")"
 		if [[ -z "${query}" ]]; then
 			lynx "https://bugzilla.redhat.com/"
 		else
@@ -893,7 +895,7 @@ search() {
 		fi
 	elif [[ "${1}" == 'thesaurus' ]]; then
 		shift
-		query="$(_escape_html "$@")"
+		local query="$(_escape_html "$@")"
 		if [[ -z "${query}" ]]; then
 			lynx "https://en.oxforddictionaries.com/english-thesaurus"
 		else
@@ -901,7 +903,7 @@ search() {
 		fi
 	elif [[ "${1}" == 'wayback' ]]; then
 		shift
-		query="$(_escape_html "$@")"
+		local query="$(_escape_html "$@")"
 		if [[ -z "${query}" ]]; then
 			lynx "https://www.archive.org/"
 		else
@@ -909,7 +911,7 @@ search() {
 		fi
 	elif [[ "${1}" == 'webster' ]]; then
 		shift
-		query="$(_escape_html "$@")"
+		local query="$(_escape_html "$@")"
 		if [[ -z "${query}" ]]; then
 			lynx "https://www.merriam-webster.com/dictionary.htm"
 		else
@@ -917,7 +919,7 @@ search() {
 		fi
 	elif [[ "${1}" == 'wikipedia' ]]; then
 		shift
-		query="$(_escape_html "$@")"
+		local query="$(_escape_html "$@")"
 		if [[ -z "${query}" ]]; then
 			lynx "https://${lang}.wikipedia.org/wiki/"
 		else
@@ -925,14 +927,14 @@ search() {
 		fi
 	elif [[ "${1}" == 'wiktionary' ]]; then
 		shift
-		query="$(_escape_html "$@")"
+		local query="$(_escape_html "$@")"
 		if [[ -z "${query}" ]]; then
 			lynx "https://${lang}.wiktionary.org/wiki/"
 		else
 			lynx "https://${lang}.wiktionary.org/wiki/index.php?search=${query}&go=Go"
 		fi
 	else
-		query="$(_escape_html "$@")"
+		local query="$(_escape_html "$@")"
 		if [[ -z "${query}" ]]; then
 			lynx "https://www.duckduckgo.com/lite/"
 		else
@@ -944,74 +946,74 @@ search() {
 # shacompare() sha512 file comparison
 shacompare() {
 	if [[ $# == 2 ]] && [[ -r "${1}" ]] && [[ -r "${2}" ]]; then
-		file1="$(sha512 "${1}" | awk '{print $NF}')"
-		file2="$(sha512 "${2}" | awk '{print $NF}')"
+		local file1="$(sha512 "${1}")"
+		local file2="$(sha512 "${2}")"
 
 		if [[ "${file1}" == "${file2}" ]]; then
-			echo "The two files are sha512-identical."
+			printf 'The two files are sha512-identical.\n'
 		else
-			echo "The two files are NOT sha512-identical."
+			printf 'The two files are NOT sha512-identical.\n'
 		fi
 	else
-		echo -e 'Usage: shacompare FILE1 FILE2\n' && return 1
+		printf 'usage:\n    shacompare FILE1 FILE2\n' && return 1
 	fi
 }
 
 # sysinfo() system profiler
 sysinfo() {
 	if [[ "$(uname)" == 'Darwin' ]]; then
-		cpu="$(sysctl -n machdep.cpu.brand_string)"
-		disk_query="$(df -H /System/Volumes/Data 2>/dev/null | tail -n1 | awk '{print $2, $3, $5}')"
-		distro='macOS'
-		gpu="$(system_profiler SPDisplaysDataType | awk -F': ' '/^\ *Chipset Model:/ {print $2}' | awk '{ printf "%s / ", $0 }' | sed -e 's/\/ $//g')"
-		host="$(sysctl -n hw.model)"
-		kernel="$(uname -rm)"
-		memory_query="$(echo "$(echo "$(sysctl -n hw.memsize)" / 1024^2 | bc) $(vm_stat | grep ' active' | awk '{ print $3 }' | sed 's/\.//')")"
+		local cpu="$(sysctl -n machdep.cpu.brand_string)"
+		local disk_query="$(df -H /System/Volumes/Data 2>/dev/null | tail -n1 | awk '{print $2, $3, $5}')"
+		local distro='macOS'
+		local gpu="$(system_profiler SPDisplaysDataType | awk -F': ' '/^\ *Chipset Model:/ {print $2}' | awk '{ printf "%s / ", $0 }' | sed -e 's/\/ $//g')"
+		local host="$(sysctl -n hw.model)"
+		local kernel="$(uname -rm)"
+		local memory_query="$(echo "$(echo "$(sysctl -n hw.memsize)" / 1024^2 | bc) $(vm_stat | grep ' active' | awk '{ print $3 }' | sed 's/\.//')")"
 	elif [[ "$(uname)" == 'Linux' ]]; then
-		cpu="$(grep '^model name' /proc/cpuinfo | uniq | awk -F': ' '{print $NF}')"
-		disk_query="$(/bin/df -h -x aufs -x tmpfs -x overlay -x devtmpfs -x udf -x nfs -x cifs --total 2>/dev/null | awk '{print $2, $3, $5}' | tail -n1)"
-		distro="$(grep PRETTY_NAME /etc/os-release 2>/dev/null | awk -F'"' '{print $2}')"
+		local cpu="$(grep '^model name' /proc/cpuinfo | uniq | awk -F': ' '{print $NF}')"
+		local disk_query="$(/bin/df -h -x aufs -x tmpfs -x overlay -x devtmpfs -x udf -x nfs -x cifs --total 2>/dev/null | awk '{print $2, $3, $5}' | tail -n1)"
+		local distro="$(grep PRETTY_NAME /etc/os-release 2>/dev/null | awk -F'"' '{print $2}')"
 		if [[ -z "${distro}" ]]; then
-			distro='Linux'
+			local distro='Linux'
 		fi
-		gpu="$(nvidia-smi -q 2>/dev/null | awk -F':' '/Product Name/ {gsub(/: /,":"); print "Nvidia", $2}' | sed ':a;N;$!ba;s/\n/, /g')"
+		local gpu="$(nvidia-smi -q 2>/dev/null | awk -F':' '/Product Name/ {gsub(/: /,":"); print "Nvidia", $2}' | sed ':a;N;$!ba;s/\n/, /g')"
 		if [[ -z "${gpu}" ]]; then
-			gpu="$(glxinfo 2>/dev/null | awk '/OpenGL renderer string/ { sub(/OpenGL renderer string: /,""); print }')"
+			local gpu="$(glxinfo 2>/dev/null | awk '/OpenGL renderer string/ { sub(/OpenGL renderer string: /,""); print }')"
 		fi
-		host="$(echo "$(cat /sys/devices/virtual/dmi/id/sys_vendor) $(cat /sys/devices/virtual/dmi/id/product_name)")"
-		kernel="$(uname -r)"
-		memory_query="$(/usr/bin/free -b | grep -E "^Mem:" | awk '{ print $2,$3 }')"
+		local host="$(echo "$(cat /sys/devices/virtual/dmi/id/sys_vendor) $(cat /sys/devices/virtual/dmi/id/product_name)")"
+		local kernel="$(uname -r)"
+		local memory_query="$(/usr/bin/free -b | grep -E "^Mem:" | awk '{ print $2,$3 }')"
 	elif [[ "$(uname)" == 'NetBSD' ]]; then
-		cpu="$(sysctl -n machdep.cpu_brand)"
-		disk_query="$(/bin/df -Pk 2>/dev/null | awk '/^\// {total+=$2; used+=$3}END{printf("%.1fGiB %.1fGiB %d%%\n", total/1048576, used/1048576, used*100/total)}')"
-		distro='NetBSD'
-		host="$(echo "$(sysctl -n machdep.dmi.system-vendor) $(sysctl -n machdep.dmi.system-product)")"
-		kernel="$(uname -rm)"
-		memory_query="$(echo "$(sysctl -n hw.pagesize) $(sysctl -n hw.usermem64) $(vmstat -s | awk '/pages active$/ {print $1}')" | awk '{ print $2, $1 * $3 }')"
+		local cpu="$(sysctl -n machdep.cpu_brand)"
+		local disk_query="$(/bin/df -Pk 2>/dev/null | awk '/^\// {total+=$2; used+=$3}END{printf("%.1fGiB %.1fGiB %d%%\n", total/1048576, used/1048576, used*100/total)}')"
+		local distro='NetBSD'
+		local host="$(echo "$(sysctl -n machdep.dmi.system-vendor) $(sysctl -n machdep.dmi.system-product)")"
+		local kernel="$(uname -rm)"
+		local memory_query="$(echo "$(sysctl -n hw.pagesize) $(sysctl -n hw.usermem64) $(vmstat -s | awk '/pages active$/ {print $1}')" | awk '{ print $2, $1 * $3 }')"
 	elif [[ "$(uname)" == 'OpenBSD' ]]; then
-		cpu="$(sysctl -n hw.model)"
-		disk_query="$(/bin/df -Pk 2>/dev/null | awk '/^\// {total+=$2; used+=$3}END{printf("%.1fGiB %.1fGiB %d%%\n", total/1048576, used/1048576, used*100/total)}')"
-		distro='OpenBSD'
-		gpu="$(/usr/X11R6/bin/glxinfo 2>/dev/null | awk '/OpenGL renderer string/ { sub(/OpenGL renderer string: /,""); print }')"
-		host="$(echo "$(sysctl -n hw.vendor) $(sysctl -n hw.product)")"
-		kernel="$(uname -rvm)"
-		memory_query="$(echo "$(sysctl -n hw.pagesize) $(sysctl -n hw.usermem) $(vmstat -s | awk '/pages active$/ {print $1}')" | awk '{ print $2, $1 * $3 }')"
+		local cpu="$(sysctl -n hw.model)"
+		local disk_query="$(/bin/df -Pk 2>/dev/null | awk '/^\// {total+=$2; used+=$3}END{printf("%.1fGiB %.1fGiB %d%%\n", total/1048576, used/1048576, used*100/total)}')"
+		local distro='OpenBSD'
+		local gpu="$(/usr/X11R6/bin/glxinfo 2>/dev/null | awk '/OpenGL renderer string/ { sub(/OpenGL renderer string: /,""); print }')"
+		local host="$(echo "$(sysctl -n hw.vendor) $(sysctl -n hw.product)")"
+		local kernel="$(uname -rvm)"
+		local memory_query="$(echo "$(sysctl -n hw.pagesize) $(sysctl -n hw.usermem) $(vmstat -s | awk '/pages active$/ {print $1}')" | awk '{ print $2, $1 * $3 }')"
 	else
-		cpu='unknown'
-		distro="$(uname)"
-		host='unknown'
-		kernel="$(uname -rm)"
-		memory_query='1 0'
+		local cpu='unknown'
+		local distro="$(uname)"
+		local host='unknown'
+		local kernel="$(uname -rm)"
+		local memory_query='1 0'
 	fi
-	disk_total="$(echo "${disk_query}" | awk '{print $1}')"
-	disk_used="$(echo "${disk_query}" | awk '{print $2}')"
-	disk_percent_used="$(echo "${disk_query}" | awk '{print $3}')"
-	memory_percent_used=$(echo "${memory_query}" | awk '{print $2/$1*100}' | awk -F'.' '{print $1}')
-	memory_total=$(echo "${memory_query}" | awk '{print $1/1024^2}' | awk -F'.' '{print $1}')
-	memory_used=$(echo "${memory_query}" | awk '{print $2/1024^2}' | awk -F'.' '{print $1}')
-	uptime="$(uptime | awk '{print $3, $4}' | sed 's/\,//g')"
+	local disk_total="$(echo "${disk_query}" | awk '{print $1}')"
+	local disk_used="$(echo "${disk_query}" | awk '{print $2}')"
+	local disk_percent_used="$(echo "${disk_query}" | awk '{print $3}')"
+	local memory_percent_used=$(echo "${memory_query}" | awk '{print $2/$1*100}' | awk -F'.' '{print $1}')
+	local memory_total=$(echo "${memory_query}" | awk '{print $1/1024^2}' | awk -F'.' '{print $1}')
+	local memory_used=$(echo "${memory_query}" | awk '{print $2/1024^2}' | awk -F'.' '{print $1}')
+	local uptime="$(uptime | awk '{print $3, $4}' | sed 's/\,//g')"
 	if [[ "$(echo ${uptime} | awk -F':' '{print $1}')" != "${uptime}" ]]; then
-		uptime="$(echo ${uptime} | awk -F':' '{print $1}') hour(s)"
+		local uptime="$(echo ${uptime} | awk -F':' '{print $1}') hour(s)"
 	fi
 	printf "\n\t%s@%s\n\n" "${LOGNAME}" "${HOSTNAME}"
 	printf "OS:\t\t%s\n" "${distro}"
@@ -1033,11 +1035,11 @@ sysinfo() {
 touchmode() {
 	if [[ $# == 2 ]]; then
 		case "${1}" in
-			''|*[!0-9]*) echo 'MODE must be an integer' && return 1 ;;
-			*) MODE="${1}" ;;
+			''|*[!0-9]*) printf 'MODE must be an integer\n' && return 1 ;;
+			*) local MODE="${1}" ;;
 		esac
 		if [[ -f "${2}" ]]; then
-			echo 'File already exists.' && return 1
+			printf 'File already exists.\n' && return 1
 		else
 			if [[ "$(uname)" == 'Linux' ]]; then
 				install -Z -C -m "${MODE}" /dev/null "${2}"
@@ -1046,14 +1048,13 @@ touchmode() {
 			fi
 		fi
 	else
-		echo -e 'usage:\n        touchmode MODE /path/to/file' && return 1
+		printf 'usage:\n    touchmode MODE /path/to/file\n' && return 1
 	fi
 }
 
 whattimeisitin() {
-	local usage="$(echo -e 'Usage:\n\n    whattimeisitin CITY')"
 	if [[ "${#}" == '0' ]]; then
-		printf "%s\n" "${usage}"
+		printf 'usage:\n    whattimeisitin CITY\n'
 	fi
 	local sanitized_input="$(echo $@ | sed 's/\ /_/g')"
 	local zone="$(grep -im1 "\/${sanitized_input}" /usr/share/zoneinfo/zone.tab | awk '{print $3}')"
