@@ -123,10 +123,10 @@ if [[ -z "${SSH_AUTH_SOCK}" ]] || [[ -n "$(echo "${SSH_AUTH_SOCK}" | grep -E "^/
 		touch "${HOME}/.ssh/known_hosts"
 	fi
 	# if ssh-agent isn't running OR GNOME Keyring controls the socket
-	export SSH_AUTH_SOCK="${HOME}/.ssh/${USER}@${HOSTNAME}.socket"
+	export SSH_AUTH_SOCK="${HOME}/.ssh/${LOGNAME}@${HOSTNAME}.socket"
 	if [[ ! -S "${SSH_AUTH_SOCK}" ]]; then
 		eval $(ssh-agent -s -a "${SSH_AUTH_SOCK}" >/dev/null)
-	elif ! pgrep -U "${USER}" -f "ssh-agent -s -a ${SSH_AUTH_SOCK}" >/dev/null 2>&1; then
+	elif ! pgrep -U "${LOGNAME}" -f "ssh-agent -s -a ${SSH_AUTH_SOCK}" >/dev/null 2>&1; then
 		if [[ -S "${SSH_AUTH_SOCK}" ]]; then
 			# if proc isn't running but the socket exists, remove and restart
 			/bin/rm "${SSH_AUTH_SOCK}"
@@ -1013,7 +1013,7 @@ sysinfo() {
 	if [[ "$(echo ${uptime} | awk -F':' '{print $1}')" != "${uptime}" ]]; then
 		uptime="$(echo ${uptime} | awk -F':' '{print $1}') hour(s)"
 	fi
-	printf "\n\t%s@%s\n\n" "${USER}" "${HOSTNAME}"
+	printf "\n\t%s@%s\n\n" "${LOGNAME}" "${HOSTNAME}"
 	printf "OS:\t\t%s\n" "${distro}"
 	printf "Kernel:\t\t%s\n" "${kernel}"
 	printf "Uptime:\t\t%s\n" "${uptime}"
