@@ -94,13 +94,12 @@ alias tm='tmux new-session -A -s tm'
 if [[ -x "$(/usr/bin/which nvim 2>/dev/null)" ]]; then
 	# prefer neovim > vim if available
 	alias vi=nvim
-	alias view='nvim --cmd "let no_plugin_maps = 1" -c "runtime! macros/less.vim" -m -M -R -n --'
 	alias vim=nvim
 	alias vimdiff='nvim -d -c "color blue" --'
 else
-	alias view='less -MR'
 	alias vim=vi
 fi
+alias view='less -MR'
 alias which='/usr/bin/which'
 
 # kaomoji
@@ -219,10 +218,9 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
 		/usr/bin/man -k any="${1}"
 	}
 	if [[ -r /etc/installurl ]]; then
-		# shortcut to check snapshot availability - especially useful during release/freeze
-		# .. or package updates to -stable
 		if [[ -z "$(sysctl kern.version | grep '\-current')" ]]; then
 			checkupdates() {
+				# on -stable, check if there are available syspatches
 				local _patchfile="$(mktemp /tmp/checkupdates.XXXXXXXXXX)"
 				ftp -VMo "${_patchfile}" "$(cat /etc/installurl)/syspatch/$(uname -r)/$(uname -m)/SHA256"
 				if [[ "$(echo "(syspatch$(/bin/ls -rth /var/syspatch/ | tail -n 1).tgz)")" != "$(tail -n 1 "${_patchfile}" | awk '{print $2}')" ]]; then
@@ -233,6 +231,7 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
 			}
 		else
 			checkupdates() {
+				# on -current, check if there's a newer snap available
 				local _snapfile="$(mktemp /tmp/checkupdates.XXXXXXXXXX)"
 				local _snapdate="$(mktemp /tmp/checkupdates.XXXXXXXXXX)"
 				ftp -VMo "${_snapfile}" "$(cat /etc/installurl)/snapshots/$(uname -m)/SHA256"
@@ -273,7 +272,7 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == '-oksh' ]] || [[ "${0}" == 'ksh' ]]; t
 		set -A complete_man_1 -- $(cat /usr/local/etc/manuals.list)
 	fi
 	if pgrep sndio >/dev/null 2>&1; then
-		set -A complete_mixerctl_1 -- $(mixerctl | cut -d= -f 1)
+		set -A complete_mixerctl_1 -- $(mixerctl 2>/dev/null | cut -d= -f 1)
 		alias voldown='mixerctl outputs.master=-5,-5'
 		alias volup='mixerctl outputs.master=+5,+5'
 	fi
@@ -501,72 +500,42 @@ diff() {
 if [[ -x "$(/usr/bin/which mpv 2>/dev/null)" ]]; then
 	audiocd() {
 		if [[ "$(uname)" == 'OpenBSD' ]] && [[ ! -r /dev/rcd0c ]]; then
-			echo 'Cannot read /dev/rcd0c. Try: chgrp wheel /dev/rcd0c' && return 1
+			printf 'Cannot read /dev/rcd0c. Try: chgrp wheel /dev/rcd0c\n' && return 1
 		fi
 		if [[ $# -eq 0 ]]; then
 			mpv cdda://
 		else
-			echo "usage: 'audiocd' (play whole disk) ['audiocd INT' (play track #INT) doesn't work yet]" && return 1
+			printf 'usage:\n    audiocd\n' && return 1
 		fi
 	}
 	dvd() {
 		if [[ "$(uname)" == 'OpenBSD' ]] && [[ ! -r /dev/rcd0c ]]; then
-			echo 'Cannot read /dev/rcd0c. Try: chgrp wheel /dev/rcd0c' && return 1
+			printf 'Cannot read /dev/rcd0c. Try: chgrp wheel /dev/rcd0c\n' && return 1
 		fi
 		if [[ $# -eq 1 ]]; then
 			case ${1} in
-				''|*[!0-9]*) echo "Error: \${1} must be an integer." && return 1 ;;
+				''|*[!0-9]*) printf "Error: \${1} must be an integer.\n" && return 1 ;;
 				*) mpv --audio-normalize-downmix=yes "dvdread://${1}" ;;
 			esac
 		else
-			echo "usage: 'dvd INT', where INT is the chapter number." && return 1
+			printf 'usage:\n    dvd INT, where INT is the chapter number.\n' && return 1
 		fi
 	}
 	radio() {
-		usage='usage:  radio stream_name\n'
 		if [[ $# -eq 1 ]]; then
 			case ${1} in
 				## via https://www.radio-browser.info
-				# SDF.org
-				anon) mpv "http://anonradio.net:8000/anonradio" ;;
 				# Deutschland: Antenne1 Stuttgart
 				antenne1) mpv "http://81.201.157.218/a1stg/livestream2.mp3" ;;
-				# United Kingdom: BBC
-				bbc1) mpv "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio1_mf_p" ;;
-				bbc2) mpv "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio2_mf_p" ;;
-				bbc3) mpv "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio3_mf_p" ;;
-				bbc4) mpv "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio4fm_mf_p" ;;
-				bbc5) mpv "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio5live_mf_p" ;;
-				bbcworld) mpv "http://as-hls-ww-live.bbcfmt.hs.llnwd.net/pool_27/live/bbc_world_service/bbc_world_service.isml/bbc_world_service-audio%3d96000.norewind.m3u8" ;;
-				# Canada: CBC Winnipeg
-				cbw) mpv "http://cbc_r1_wpg.akacast.akamaistream.net/7/831/451661/v1/rc.akacast.akamaistream.net/cbc_r1_wpg" ;;
-				# Deutschland: FC-Köln
-				effzeh) mpv "http://mp3.fckoeln.c.nmdn.net/fckoeln/livestream01.mp3" ;;
-				# USA: ESPN
-				espn) mpv "http://espn-network.akacast.akamaistream.net/7/245/126490/v1/espn.akacast.akamaistream.net/espn-network" ;;
-				# USA: Fox Sports
-				foxsports) mpv "http://c5icyelb.prod.playlists.ihrhls.com/5227_icy" ;;
 				# Canada: Radio-Canada Montréal (français)
 				ici) mpv "http://2QMTL0.akacast.akamaistream.net/7/953/177387/v1/rc.akacast.akamaistream.net/2QMTL0" ;;
 				ici-musique) mpv "http://7qmtl0.akacast.akamaistream.net/7/445/177407/v1/rc.akacast.akamaistream.net/7QMTL0" ;;
 				# USA: Prairie Public Radio (North Dakota)
 				kdsu) mpv "https://18433.live.streamtheworld.com/KCNDHD3_SC" ;;
-				# USA: The Fan Sports Radio (North Dakota)
-				knfl) mpv "https://18813.live.streamtheworld.com:3690/KVOXAMAAC_SC" ;;
 				# USA: Minnesota Public Radio
 				mpr) mpv "https://current.stream.publicradio.org/kcmp.mp3" ;;
-				# USA: NBC Sports
-				nbcsports) mpv "http://icy3.abacast.com/dialglobal-nbcsportsmp3-48" ;;
-				# Deutschland: Schwul
-				pride1) mpv "http://stream.pride1.de:8000/;stream.mp3" ;;
+				# Deutschland: Queerlive
 				queerlive) mpv "https://queerlive.stream.laut.fm/queerlive" ;;
-				# Deutschland: Schlager
-				schlager) mpv "http://85.25.217.30/schlagerparadies" ;;
-				# Deutschland: SWR3
-				swr3) mpv "http://swr-swr3-live.cast.addradio.de/swr/swr3/live/mp3/128/stream.mp3" ;;
-				# United Kingdom: talkSports
-				talksport) mpv "https://radio.talksport.com/stream?awparams=platform:ts-web&amsparams=playerid:ts-web" ;;
-				talksport2) mpv "https://radio.talksport.com/stream2?awparams=platform:ts-web&amsparams=playerid:ts-web" ;;
 				# USA: NPR WGBH Boston
 				wgbh) mpv "http://audio.wgbh.org:8000" ;;
 				# USA: Monroe independent radio station
@@ -575,10 +544,10 @@ if [[ -x "$(/usr/bin/which mpv 2>/dev/null)" ]]; then
 				wnyc) mpv "http://fm939.wnyc.org/wnycfm" ;;
 				# USA: Y94 top hits (Fargo, North Dakota)
 				y94) mpv "https://16693.live.streamtheworld.com/KOYYFMAAC_SC" ;;
-				*) echo -e "Error: unknown stream" && return 1 ;;
+				*) printf 'Error: unknown stream\n' && return 1 ;;
 			esac
 		else
-			echo -e "${usage}" && return 1
+			printf 'usage:\n    radio STREAM\n' && return 1
 		fi
 	}
 fi
@@ -1070,9 +1039,6 @@ whattimeisitin() {
 if [[ "${SHELL}" != '/bin/ash' ]]; then
 	set -o emacs
 fi
-#if [[ -x "$(/usr/bin/which fortune 2>/dev/null)" ]]; then
-#	fortune -a
-#fi
 if [[ -r "${HOME}/.profile.local" ]]; then
 	. "${HOME}/.profile.local"
 fi
