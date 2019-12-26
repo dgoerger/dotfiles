@@ -311,7 +311,7 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == '-oksh' ]] || [[ "${0}" == 'ksh' ]]; t
 	set -A complete_sftp_1 -- -p
 	set -A complete_sftp_2 -- ${HOST_LIST}
 	set -A complete_sftp_3 -- ${HOST_LIST}
-	set -A complete_search_1 -- alpine arxiv centos cve fedora github_issues mandragonflybsd manfreebsd manlinux manopenbsd mathworld mbug nws rfc rhbz thesaurus wayback webster wikipedia wiktionary
+	set -A complete_search_1 -- alpine arxiv centos cve debian fedora github_issues mandragonflybsd manfreebsd manlinux manopenbsd mathworld mbug nws rfc rhbz thesaurus wayback webster wikipedia wiktionary
 	set -A complete_ssh_1 -- ${HOST_LIST}
 	set -A complete_telnet_1 -- ${HOST_LIST}
 	set -A complete_telnet_2 -- 22 25 80
@@ -759,6 +759,14 @@ search() {
 			lynx "http://cve.mitre.org"
 		else
 			lynx "http://cve.mitre.org/cgi-bin/cvename.cgi?name=${query}"
+		fi
+	elif [[ "${1}" == 'debian' ]]; then
+		shift
+		local query="$(_escape_html "$@")"
+		if [[ -z "${query}" ]]; then
+			lynx "https://packages.debian.org/"
+		else
+			lynx "https://packages.debian.org/search?keywords=${query}&searchon=names&suite=stable&section=all"
 		fi
 	elif [[ "${1}" == 'fedora' ]]; then
 		shift
