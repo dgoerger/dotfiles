@@ -149,9 +149,7 @@ if [[ "$(uname)" == "Linux" ]]; then
 	unset LS_COLORS
 
 	# aliases
-	if [[ -x "$(/usr/bin/which bc 2>/dev/null)" ]]; then
-		alias bc='bc -ql'
-	fi
+	alias bc='bc -ql'
 	alias df='df -h -xtmpfs -xdevtmpfs'
 	alias doas=/usr/bin/sudo #mostly-compatible
 	alias free='free -h'
