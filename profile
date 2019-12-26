@@ -387,8 +387,8 @@ certcheck() {
 
 	# query cert status
 	local QUERY="$(echo Q | openssl s_client ${PROTOCOL_FLAGS} -connect "${FQDN}:${PORT}" 2>/dev/null)"
-	local CERTIFICATE_AUTHORITY="$(echo "${QUERY}" | awk -F'CN=' '/^issuer=/ {print $2}')"
-	local ROOT_AUTHORITY="$(echo "${QUERY}" | grep -E '^Certificate chain$' -A4 | tail -n1 | awk -F'CN=' '/i:/ {print $2}')"
+	local CERTIFICATE_AUTHORITY="$(echo "${QUERY}" | sed 's/\ =\ /=/g' | awk -F'CN=' '/^issuer=/ {print $2}')"
+	local ROOT_AUTHORITY="$(echo "${QUERY}" | grep -E '^Certificate chain$' -A4 | tail -n1 | sed 's/\ =\ /=/g' | awk -F'CN=' '/i:/ {print $2}')"
 	local TLS_PROTOCOL="$(echo "${QUERY}" | awk '/Protocol  :/ {print $NF}')"
 	local TLS_CIPHER="$(echo "${QUERY}" | awk '/Cipher    :/ {print $NF}')"
 	local EXPIRY_DATE="$(echo "${QUERY}" | openssl x509 -noout -enddate 2>/dev/null | awk -F'=' '/notAfter/ {print $2}')"
