@@ -814,9 +814,9 @@ search() {
 		shift
 		local query="$(_escape_html "$@")"
 		if [[ -z "${query}" ]]; then
-			lynx "https://manpag.es/"
+			lynx "https://www.mankier.com/"
 		else
-			lynx "https://manpag.es/search?dist=centos8&section=&name=${query}"
+			lynx "https://www.mankier.com/?q=${query}"
 		fi
 	elif [[ "${1}" == 'manopenbsd' ]]; then
 		shift
