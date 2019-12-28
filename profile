@@ -69,7 +69,7 @@ fi
 alias l='ls -1F'
 alias la='ls -Flah'
 alias larth='ls -Flarth'
-alias less='less -MR'
+alias less='less -iLMR'
 alias listening='fstat -n | grep internet'
 alias ll='ls -lhF'
 alias ls='ls -F'
@@ -99,7 +99,7 @@ if [[ -x "$(/usr/bin/which nvim 2>/dev/null)" ]]; then
 else
 	alias vim=vi
 fi
-alias view='less -MR'
+alias view='less -iLMR'
 alias which='/usr/bin/which'
 
 # kaomoji
