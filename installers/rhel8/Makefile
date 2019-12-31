@@ -51,6 +51,10 @@ install:
 	if [[ -d /usr/lib64/firefox/distribution ]]; then sudo install -C -Z -o root -g root -m 0444 firefox.json /usr/lib64/firefox/distribution/policies.json; fi
 	# google-chrome
 	if [[ ! -f /usr/bin/google-chrome ]]; then sudo yum -qy install https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm; fi
+	# mandb/makewhatis
+	sudo install -C -Z -o root -g root -m 0444 makewhatis.timer /etc/systemd/system/makewhatis.timer
+	sudo systemctl --quiet daemon-reload
+	sudo systemctl --quiet enable makewhatis.timer
 	# mlocate
 	sudo systemctl --quiet enable --now mlocate-updatedb.timer
 	# NetworkManager

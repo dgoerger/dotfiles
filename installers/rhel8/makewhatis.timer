@@ -1,0 +1,12 @@
+[Unit]
+Description=Refresh the man(1) database
+ConditionKernelCommandLine=!rd.live.image
+Wants=local-fs.target
+
+[Timer]
+OnBootSec=15min
+OnUnitInactiveSec=1d
+Unit=man-db-cache-update.service
+
+[Install]
+WantedBy=multi-user.target
