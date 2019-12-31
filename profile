@@ -145,6 +145,9 @@ if [[ "$(uname)" == "Linux" ]]; then
 		# some Linux have /bin -> /usr/bin
 		export PATH=/usr/local/bin:/bin:/sbin
 	fi
+	if [[ -d "${HOME}/bin" ]]; then
+		export PATH=${HOME}/bin:${PATH}
+	fi
 	export QUOTING_STYLE=literal
 	unset LS_COLORS
 
@@ -196,7 +199,7 @@ elif [[ "$(uname)" == 'NetBSD' ]]; then
 	export CC=clang
 	export CXX=clang++
 	export MANPATH=${HOME}/man:/usr/pkg/man:/usr/pkg/share/man:/usr/share/man:/usr/pkg/X11R7/man:/usr/local/man
-	export PATH=${HOME}/bin:/usr/pkg/bin:$PATH
+	export PATH=${HOME}/bin:/usr/pkg/bin:${PATH}
 
 	alias pkgsrc='lynx "https://ftp.netbsd.org/pub/pkgsrc/packages/NetBSD/x86_64/$(uname -r)/All/"'
 	alias py=/usr/pkg/bin/python3
