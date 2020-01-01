@@ -174,6 +174,7 @@ if [[ "$(uname)" == "Linux" ]]; then
 	fi
 	alias ll='ls -lhF --color=never'
 	alias ls='ls -F --color=never'
+	alias man='man --nh --nj'
 	alias mtop='top -s -o "RES"'
 	alias pscpu='ps -awwo user,pid,pcpu,pmem,vsz,rss,tname,stat,start_time,cputime,command --sort -pcpu,-vsz,-pmem,-rss --ppid 2 -p 2 --deselect'
 	alias psjob='ps -awwo user,pid,ppid,pri,nice,stat,tname,wchan,cputime,command --ppid 2 -p 2 --deselect'
