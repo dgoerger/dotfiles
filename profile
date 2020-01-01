@@ -322,6 +322,7 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == '-oksh' ]] || [[ "${0}" == 'ksh' ]]; t
 	set -A complete_sftp_3 -- ${HOST_LIST}
 	set -A complete_search_1 -- alpine arxiv centos cve debian fedora github_issues mandragonflybsd manfreebsd manlinux manopenbsd mathworld mbug nws rfc rhbz thesaurus wayback webster wikipedia wiktionary
 	set -A complete_ssh_1 -- ${HOST_LIST}
+	set -A complete_systat_1 -- buckets cpu ifstat iostat malloc mbufs netstat nfsclient nfsserver pf pigs pool pcache queues rules sensors states swap vmstat uvm
 	set -A complete_telnet_1 -- ${HOST_LIST}
 	set -A complete_telnet_2 -- 22 25 80
 	if [[ -x "$(/usr/bin/which toot 2>&1)" ]]; then
