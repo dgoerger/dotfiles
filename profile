@@ -96,7 +96,9 @@ if [[ -x "$(/usr/bin/which nvim 2>/dev/null)" ]]; then
 	alias vi=nvim
 	alias vim=nvim
 	alias vimdiff='nvim -d -c "color blue" --'
-else
+elif [[ ! -x "$(/usr/bin/which vim 2>/dev/null)" ]]; then
+	# if vim isn't installed, alias it to vi(1)
+	# .. but if it is installed, don't inherit '-nu NONE' on Linux
 	alias vim=vi
 fi
 alias view='less -iLMR'
@@ -182,6 +184,12 @@ if [[ "$(uname)" == "Linux" ]]; then
 	if [[ ! -x "$(/usr/bin/which pstree 2>/dev/null)" ]]; then
 		alias pstree='ps -Hawwo user,pid,pcpu,pmem,vsz,rss,tname,stat,start_time,cputime,command --ppid 2 -p 2 --deselect'
 	fi
+	if [[ -x "$(/usr/bin/which sar 2>/dev/null)" ]]; then
+		alias sarcpu='sar -hqu'
+		alias sarmem='sar -BHhrSW'
+		alias sarnet='sar -n DEV'
+		alias sarnfs='sar -n NFS'
+	fi
 	if [[ -x "$(/usr/bin/which sshfs 2>/dev/null)" ]]; then
 		alias sshfs='sshfs -o no_readahead,idmap=user'
 	fi
@@ -191,8 +199,9 @@ if [[ "$(uname)" == "Linux" ]]; then
 	}
 	unalias stat
 	systat() {
-		printf "%s\n\n" "systat(1) isn't available for Linux. Maybe try atop(1)?"
+		printf "%s\n\n" "systat(1) isn't available for Linux. Maybe sar(1) or atop(1)?"
 	}
+	alias vi='vi -nu NONE --noplugin'
 	alias top='top -s'
 	if [[ -x "$(/usr/bin/which tree 2>/dev/null)" ]]; then
 		alias tree='tree -N'
