@@ -152,6 +152,9 @@ if [[ "$(uname)" == "Linux" ]]; then
 	unset LS_COLORS
 
 	# aliases
+	if [[ -x "$(/usr/bin/which atop 2>/dev/null)" ]]; then
+		alias atop='atop -fx'
+	fi
 	alias bc='bc -ql'
 	alias df='df -h -xtmpfs -xdevtmpfs'
 	alias doas=/usr/bin/sudo #mostly-compatible
@@ -186,6 +189,9 @@ if [[ "$(uname)" == "Linux" ]]; then
 		sha512sum --tag "${1}" | awk '{print $NF}'
 	}
 	unalias stat
+	systat() {
+		printf "%s\n\n" "systat(1) isn't available for Linux. Maybe try atop(1)?"
+	}
 	alias top='top -s'
 	if [[ -x "$(/usr/bin/which tree 2>/dev/null)" ]]; then
 		alias tree='tree -N'
