@@ -150,6 +150,7 @@ if [[ "$(uname)" == "Linux" ]]; then
 	if [[ -d "${HOME}/bin" ]]; then
 		export PATH=${HOME}/bin:${PATH}
 	fi
+	export PS1="${HOSTNAME}$ "
 	export QUOTING_STYLE=literal
 	unset LS_COLORS
 
