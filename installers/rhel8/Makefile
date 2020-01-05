@@ -40,6 +40,7 @@ install:
 	if [[ ! -f /etc/yum.repos.d/epel.repo ]]; then sudo yum -qy install epel-release 2>/dev/null || sudo yum -qy install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm; fi
 	## install useful utilities
 	sudo yum -qy install atop gdb ncdu podman-docker qemu-img sysstat tmux
+	sudo systemctl --quiet enable atop.service
 	# install GNOME extensions and Tweaks
 	sudo yum -qy install gnome-shell-extension-dash-to-dock gnome-shell-extension-native-window-placement gnome-shell-extension-no-hot-corner gnome-tweaks
 	# enable flatpaks from Flathub.org
