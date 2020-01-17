@@ -5,3 +5,17 @@ Description=update the DNS blocklist
 Type=oneshot
 User=root
 ExecStart=/usr/local/sbin/dnsblock
+# systemd security options
+MemoryDenyWriteExecute=true
+NoNewPrivileges=true
+PrivateDevices=true
+PrivateTmp=true
+PrivateUsers=true
+ProtectControlGroups=true
+ProtectHome=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+ProtectSystem=full
+ReadWritePaths=/usr/local/etc
+RestrictRealtime=true
+SystemCallArchitectures=native
