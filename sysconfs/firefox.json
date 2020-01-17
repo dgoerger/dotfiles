@@ -49,6 +49,16 @@
 		"NoDefaultBookmarks": true,
 		"OfferToSaveLogins": false,
 		"PasswordManagerEnabled": false,
+		"Preferences": {
+			"browser.cache.disk.enable": false,
+			"browser.safebrowsing.phishing.enabled": false,
+			"browser.safebrowsing.malware.enabled": false,
+			"extensions.htmlaboutaddons.recommendations.enabled": false,
+			"geo.enabled": false,
+			"media.peerconnection.enabled": false,
+			"network.IDN_show_punycode": true,
+			"places.history.enabled": false
+		},
 		"SanitizeOnShutdown": true,
 		"SearchBar": false,
 		"SearchEngines": {
