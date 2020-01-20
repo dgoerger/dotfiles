@@ -24,6 +24,7 @@ install:
 	sudo systemctl --quiet disable --now cups.service
 	sudo systemctl --quiet disable --now cups.socket
 	sudo systemctl --quiet disable --now cups.path
+	sudo systemctl --quiet disable --now kdump
 	sudo systemctl --quiet disable --now ModemManager
 	sudo systemctl --quiet disable --now rpcbind
 	sudo systemctl --quiet disable --now rpcbind.socket
@@ -67,6 +68,10 @@ install:
 	# polkit authorization policies
 	sudo install -C -Z -o root -g root -m 0444 polkit_permit-usbs.rules /etc/polkit-1/rules.d/15-permit-usbs.rules
 	sudo install -C -Z -o root -g root -m 0444 polkit_prohibit-shutdown.rules /etc/polkit-1/rules.d/55-prohibit-shutdown.rules
+	# tmpfs on /tmp
+	sudo install -C -Z -o root -g root -m 0444 tmp.mount /etc/systemd/system/tmp.mount
+	sudo systemctl --quiet daemon-reload
+	sudo systemctl --quiet enable tmp.mount
 	# tuned(8), see tuned-profiles(7)
 	sudo tuned-adm profile latency-performance
 	# unbound(8) DNS caching resolver
