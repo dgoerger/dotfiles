@@ -10,8 +10,9 @@ nvidia:
 	# note: dkms is in the EPEL repository
 	sudo yum -qy install dkms elfutils-libelf-devel kernel-devel
 	sudo systemctl enable --now dkms
+	sudo mkdir -p /usr/local/tmp
 	if [[ ! -f /usr/local/src/nvidia-440.44.run ]]; then sudo curl -sLo /usr/local/src/nvidia-440.44.run 'https://us.download.nvidia.com/XFree86/Linux-x86_64/440.44/NVIDIA-Linux-x86_64-440.44.run'; fi
-	if [[ ! -d /var/lib/dkms/nvidia/440.44 ]]; then sudo sh /usr/local/src/nvidia-440.44.run --accept-license --no-questions --dkms --silent; fi
+	if [[ ! -d /var/lib/dkms/nvidia/440.44 ]]; then sudo sh /usr/local/src/nvidia-440.44.run --accept-license --no-questions --dkms --tmpdir /usr/local/tmp --silent; fi
 
 install:
 	## remove and disable unnecessary things
