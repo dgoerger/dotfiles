@@ -2,6 +2,6 @@
 auto-execute *.c c-mode
 auto-execute *.md auto-fill-mode
 auto-execute /tmp/mutt* auto-fill-mode
-make-backup-files
+backup-to-home-directory
 column-number-mode
 set-fill-column 70
