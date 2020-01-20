@@ -170,24 +170,20 @@ if [[ "$(uname)" == "Linux" ]]; then
 	alias la='ls -Flah --color=never'
 	alias larth='ls -Flarth --color=never'
 	# linux doesn't have fstat
-	if [[ -x "$(/usr/bin/which netstat 2>/dev/null)" ]]; then
-		alias listening='netstat -launt | grep LISTEN'
-	else
-		alias listening='ss -tuna'
-	fi
+	alias listening='ss -lntu'
 	alias ll='ls -lhF --color=never'
 	alias ls='ls -F --color=never'
 	alias man='man --nh --nj'
 	alias mtop='top -s -o "RES"'
-	alias pscpu='ps -awwo user,pid,pcpu,pmem,vsz,rss,tname,stat,start_time,cputime,command --sort -pcpu,-vsz,-pmem,-rss --ppid 2 -p 2 --deselect'
-	alias psjob='ps -awwo user,pid,ppid,pri,nice,stat,tname,wchan,cputime,command --ppid 2 -p 2 --deselect'
-	alias psmem='ps -awwo user,pid,stat,cputime,majflt,vsz,rss,trs,pcpu,pmem,command --sort -vsz,-rss,-pcpu --ppid 2 -p 2 --deselect'
+	alias pscpu='ps -Awwo user,pid,pcpu,pmem,vsz,rss,tname,stat,start_time,cputime,command --sort -pcpu,-vsz,-pmem,-rss'
+	alias psjob='ps -Awwo user,pid,ppid,pri,nice,stat,tname,wchan,cputime,command --sort ppid,pid'
+	alias psmem='ps -Awwo user,pid,stat,cputime,majflt,vsz,rss,trs,pcpu,pmem,command --sort -vsz,-rss,-pcpu'
 	if [[ ! -x "$(/usr/bin/which pstree 2>/dev/null)" ]]; then
-		alias pstree='ps -Hawwo user,pid,pcpu,pmem,vsz,rss,tname,stat,start_time,cputime,command --ppid 2 -p 2 --deselect'
+		alias pstree='ps -HAwwo user,pid,pcpu,pmem,vsz,rss,tname,stat,start_time,cputime,command'
 	fi
 	if [[ -x "$(/usr/bin/which sar 2>/dev/null)" ]]; then
-		alias sarcpu='sar -hqu'
-		alias sarmem='sar -BHhrSW'
+		alias sarcpu='sar -qu'
+		alias sarmem='sar -BHrS'
 		alias sarnet='sar -n DEV'
 		alias sarnfs='sar -n NFS'
 	fi
@@ -216,16 +212,13 @@ elif [[ "$(uname)" == 'NetBSD' ]]; then
 	export CC=clang
 	export CXX=clang++
 	export MANPATH=${HOME}/man:/usr/pkg/man:/usr/pkg/share/man:/usr/share/man:/usr/pkg/X11R7/man:/usr/local/man
-	export PATH=${HOME}/bin:/usr/pkg/bin:${PATH}
+	export PATH=${HOME}/bin:${PATH}
 
 	alias pkgsrc='lynx "https://ftp.netbsd.org/pub/pkgsrc/packages/NetBSD/x86_64/$(uname -r)/All/"'
-	alias py=/usr/pkg/bin/python3
-	alias python=/usr/pkg/bin/python3
 	unalias sha512
 	function sha512 {
 		cksum -a SHA512 "${1}" | awk '{print $NF}'
 	}
-	alias vi=/usr/pkg/bin/vim
 
 elif [[ "$(uname)" == 'OpenBSD' ]]; then
 	# aliases
