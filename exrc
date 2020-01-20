@@ -1,4 +1,4 @@
-" ~/.exrc, see ex(1)
+" ~/.exrc, see vi(1)
 "
 " enable autoindent
 set autoindent
@@ -8,6 +8,8 @@ set extended
 set flash
 " case-insensitive regex, lowercase input only
 set iclower
+" disable mesg
+set nomesg
 " display row/column in the status bar
 set ruler
 " incremental search
