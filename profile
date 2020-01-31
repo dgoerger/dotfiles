@@ -324,7 +324,7 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == '-oksh' ]] || [[ "${0}" == 'ksh' ]]; t
 	set -A complete_sftp_1 -- -p
 	set -A complete_sftp_2 -- ${HOST_LIST}
 	set -A complete_sftp_3 -- ${HOST_LIST}
-	set -A complete_search_1 -- alpine arxiv centos cve debian fedora github_issues mandragonflybsd manfreebsd manlinux manopenbsd mathworld mbug nws rfc rhbz thesaurus wayback webster wikipedia wiktionary
+	set -A complete_search_1 -- alpine arxiv centos cve debian fedora github_issues mandragonflybsd manfreebsd manillumos manlinux manminix mannetbsd manopenbsd mathworld mbug nws rfc rhbz thesaurus wayback webster wikipedia wiktionary
 	set -A complete_ssh_1 -- ${HOST_LIST}
 	set -A complete_systat_1 -- buckets cpu ifstat iostat malloc mbufs netstat nfsclient nfsserver pf pigs pool pcache queues rules sensors states swap vmstat uvm
 	set -A complete_telnet_1 -- ${HOST_LIST}
@@ -824,6 +824,14 @@ search() {
 		else
 			lynx "https://www.freebsd.org/cgi/man.cgi?sektion=0&manpath=FreeBSD%2012.1-RELEASE&arch=default&format=ascii&query=${query}"
 		fi
+	elif [[ "${1}" == 'manillumos' ]]; then
+		shift
+		local query="$(_escape_html "$@")"
+		if [[ -z "${query}" ]]; then
+			lynx "https://illumos.org/man"
+		else
+			lynx "https://illumos.org/man/${query}"
+		fi
 	elif [[ "${1}" == 'manlinux' ]]; then
 		shift
 		local query="$(_escape_html "$@")"
@@ -831,6 +839,23 @@ search() {
 			lynx "https://www.mankier.com/"
 		else
 			lynx "https://www.mankier.com/?q=${query}"
+		fi
+	elif [[ "${1}" == 'manminix' ]]; then
+		shift
+		local query="$(_escape_html "$@")"
+		if [[ -z "${query}" ]]; then
+			lynx "https://man.minix3.org/cgi-bin/man.cgi"
+		else
+			lynx "https://man.minix3.org/cgi-bin/man.cgi?query=${query}&apropos=0&sektion=0&manpath=Minix&arch=default&format=html"
+		fi
+	elif [[ "${1}" == 'mannetbsd' ]]; then
+		shift
+		local query="$(_escape_html "$@")"
+		if [[ -z "${query}" ]]; then
+			# unofficial
+			lynx "https://netbsd.gw.com/cgi-bin/man-cgi"
+		else
+			lynx "https://netbsd.gw.com/cgi-bin/man-cgi?${query}++NetBSD-current"
 		fi
 	elif [[ "${1}" == 'manopenbsd' ]]; then
 		shift
