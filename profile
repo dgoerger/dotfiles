@@ -78,6 +78,9 @@ alias mv='mv -i'
 if [[ -x "$(/usr/bin/which newsboat 2>/dev/null)" ]]; then
 	alias news='newsboat -q'
 fi
+if [[ -x "$(/usr/bin/which nnn 2>/dev/null)" ]]; then
+	alias nnn='nnn -AdHoR'
+fi
 alias pscpu='ps -Awwu'
 alias psjob='ps -Awwo user,pid,ppid,pri,nice,stat,tt,wchan,time,command'
 alias psmem='ps -Awwv'
