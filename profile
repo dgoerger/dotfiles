@@ -19,9 +19,6 @@ export GIT_AUTHOR_EMAIL="$(getent passwd "${LOGNAME}" | cut -d: -f1)@users.norep
 export GIT_AUTHOR_NAME="$(getent passwd "${LOGNAME}" | cut -d: -f5 | cut -d, -f1)"
 export GIT_COMMITTER_EMAIL=${GIT_AUTHOR_EMAIL}
 export GIT_COMMITTER_NAME=${GIT_AUTHOR_NAME}
-if [[ -x "$(/usr/bin/which got 2>/dev/null)" ]]; then
-	export GOT_AUTHOR="${GIT_AUTHOR_NAME} <${GIT_AUTHOR_EMAIL}>"
-fi
 export HISTCONTROL=ignoredups
 export HISTFILE=${HOME}/.history
 export HISTSIZE=20736
@@ -46,7 +43,7 @@ export VISUAL=vi
 
 
 ## aliases
-if [[ -x "$(/usr/bin/which abook 2>/dev/null)" ]]; then
+if command -v abook >/dev/null; then
 	alias abook='abook --config ${HOME}/.abookrc --datafile ${HOME}/.addresses'
 fi
 alias bc='bc -l'
@@ -54,16 +51,16 @@ if [[ -x "$(/usr/bin/which cabal 2>/dev/null)" ]] && [[ -d /usr/local/cabal/buil
 	alias cabal='env TMPDIR=/usr/local/cabal/build/ cabal'
 fi
 alias cal='cal -m'
-if [[ -x "$(/usr/bin/which calendar 2>/dev/null)" ]]; then
+if command -v calendar >/dev/null; then
 	alias calendar='calendar -f ${HOME}/.calendar'
 fi
 alias cp='cp -i'
-if [[ -x "$(/usr/bin/which cvs 2>/dev/null)" ]]; then
+if command -v cvs >/dev/null; then
 	alias cvsup='cvs -q up -PdA'
 fi
 alias df='df -h'
 alias free='top | grep -E "^Memory"'
-if [[ -x "$(/usr/bin/which kpcli 2>/dev/null)" ]]; then
+if command -v kpcli >/dev/null; then
 	alias kpcli='kpcli --histfile=/dev/null --readonly'
 fi
 alias l='ls -1F'
@@ -75,31 +72,28 @@ alias ll='ls -lhF'
 alias ls='ls -F'
 alias mtop='top -o res'
 alias mv='mv -i'
-if [[ -x "$(/usr/bin/which newsboat 2>/dev/null)" ]]; then
+if command -v newsboat >/dev/null; then
 	alias news='newsboat -q'
 fi
-if [[ -x "$(/usr/bin/which nnn 2>/dev/null)" ]]; then
+if command -v nnn >/dev/null; then
 	alias nnn='nnn -AdHoR'
 fi
 alias pscpu='ps -Awwu'
 alias psjob='ps -Awwo user,pid,ppid,pri,nice,stat,tt,wchan,time,command'
 alias psmem='ps -Awwv'
-if [[ -x "$(/usr/bin/which python3 2>/dev/null)" ]]; then
+if command -v python3 >/dev/null; then
 	alias py=python3
 fi
 alias rm='rm -i'
-if [[ -x "$(/usr/bin/which openrsync 2>/dev/null)" ]]; then
-	alias rsync=openrsync
-fi
 alias sha512='sha512 -q'
 alias stat='stat -x'
 alias tm='tmux new-session -A -s tm'
-if [[ -x "$(/usr/bin/which nvim 2>/dev/null)" ]]; then
+if command -v nvim >/dev/null; then
 	# prefer neovim > vim if available
 	alias vi=nvim
 	alias vim=nvim
 	alias vimdiff='nvim -d -c "color blue" --'
-elif [[ ! -x "$(/usr/bin/which vim 2>/dev/null)" ]]; then
+elif command -v vim >/dev/null; then
 	# if vim isn't installed, alias it to vi(1)
 	# .. but if it is installed, don't inherit '-nu NONE' on Linux
 	alias vim=vi
@@ -158,14 +152,14 @@ if [[ "$(uname)" == "Linux" ]]; then
 	unset LS_COLORS
 
 	# aliases
-	if [[ -x "$(/usr/bin/which atop 2>/dev/null)" ]]; then
+	if command -v atop >/dev/null; then
 		alias atop='atop -fx'
 	fi
 	alias bc='bc -ql'
 	alias df='df -h -xtmpfs -xdevtmpfs'
 	alias doas=/usr/bin/sudo #mostly-compatible
 	alias free='free -h'
-	if [[ -x "$(/usr/bin/which tnftp 2>/dev/null)" ]]; then
+	if command -v tnftp >/dev/null; then
 		# BSD ftp has support for wget-like functionality
 		alias ftp=tnftp
 	fi
@@ -181,16 +175,16 @@ if [[ "$(uname)" == "Linux" ]]; then
 	alias pscpu='ps -Awwo user,pid,pcpu,pmem,vsz,rss,tname,stat,start_time,cputime,command --sort -pcpu,-vsz,-pmem,-rss'
 	alias psjob='ps -Awwo user,pid,ppid,pri,nice,stat,tname,wchan,cputime,command --sort ppid,pid'
 	alias psmem='ps -Awwo user,pid,stat,cputime,majflt,vsz,rss,trs,pcpu,pmem,command --sort -vsz,-rss,-pcpu'
-	if [[ ! -x "$(/usr/bin/which pstree 2>/dev/null)" ]]; then
+	if command -v pstree >/dev/null; then
 		alias pstree='ps -HAwwo user,pid,pcpu,pmem,vsz,rss,tname,stat,start_time,cputime,command'
 	fi
-	if [[ -x "$(/usr/bin/which sar 2>/dev/null)" ]]; then
+	if command -v sar >/dev/null; then
 		alias sarcpu='sar -qu'
 		alias sarmem='sar -BHrS'
 		alias sarnet='sar -n DEV'
 		alias sarnfs='sar -n NFS'
 	fi
-	if [[ -x "$(/usr/bin/which sshfs 2>/dev/null)" ]]; then
+	if command -v sshfs >/dev/null; then
 		alias sshfs='sshfs -o no_readahead,idmap=user'
 	fi
 	unalias sha512
@@ -203,7 +197,7 @@ if [[ "$(uname)" == "Linux" ]]; then
 	}
 	alias vi='vi -nu NONE --noplugin'
 	alias top='top -s'
-	if [[ -x "$(/usr/bin/which tree 2>/dev/null)" ]]; then
+	if command -v tree >/dev/null; then
 		alias tree='tree -N'
 	fi
 	if [[ -z "$(whence whence 2>/dev/null)" ]]; then
@@ -271,11 +265,11 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == '-oksh' ]] || [[ "${0}" == 'ksh' ]]; t
 	set -A complete_diff_1 -- -u
 	set -A complete_dig_1 -- ${HOST_LIST}
 	set -A complete_git_1 -- add bisect blame checkout clone commit diff log mv pull push rebase reset revert rm stash status submodule
-	if [[ -x "$(/usr/bin/which got 2>/dev/null)" ]]; then
+	if command -v got >/dev/null; then
 		set -A complete_got_1 -- add backout blame branch checkout cherrypick commit diff histedit import init integrate log rebase ref rm revert stage status tag tree unstage update
 	fi
 	set -A complete_host_1 -- ${HOST_LIST}
-	if [[ -x "$(/usr/bin/which ifconfig 2>/dev/null)" ]]; then
+	if command -v ifconfig >/dev/null; then
 		set -A complete_ifconfig_1 -- $(ifconfig | awk -F':' '/^[a-z]/ {print $1}')
 	fi
 	set -A complete_kill_1 -- -9 -HUP -INFO -KILL -TERM
@@ -288,21 +282,21 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == '-oksh' ]] || [[ "${0}" == 'ksh' ]]; t
 		alias voldown='mixerctl outputs.master=-5,-5'
 		alias volup='mixerctl outputs.master=+5,+5'
 	fi
-	if [[ -x "$(/usr/bin/which mosh 2>/dev/null)" ]]; then
+	if command -v mosh >/dev/null; then
 		set -A complete_mosh_1 -- -4 -6
 		set -A complete_mosh_2 -- ${HOST_LIST}
 		set -A complete_mosh_3 -- --
 		set -A complete_mosh_4 -- tmux
 		set -A complete_mosh_5 -- attach
 	fi
-	if [[ -x "$(/usr/bin/which mtr 2>/dev/null)" ]]; then
+	if command -v mtr >/dev/null; then
 		set -A complete_mtr_1 -- -wbz
 		set -A complete_mtr_2 -- ${HOST_LIST}
 	fi
-	if [[ -x "$(/usr/bin/which ncdu 2>/dev/null)" ]]; then
+	if command -v ncdu >/dev/null; then
 		set -A complete_ncdu_1 -- -ex -rex
 	fi
-	if [[ -x "$(/usr/bin/which nmap 2>/dev/null)" ]]; then
+	if command -v nmap >/dev/null; then
 		set -A complete_nmap_1 -- ${HOST_LIST}
 	fi
 	set -A complete_openssl_1 -- ciphers s_client verify version x509
@@ -314,7 +308,7 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == '-oksh' ]] || [[ "${0}" == 'ksh' ]]; t
 		set -A complete_rcctl_1 -- disable enable get ls order set
 		set -A complete_rcctl_2 -- $(rcctl ls all)
 	fi
-	if [[ -x "$(/usr/bin/which rmapi 2>/dev/null)" ]]; then
+	if command -v rmapi >/dev/null; then
 		set -A complete_rmapi_1 -- help put version
 	fi
 	#set -A complete_rsync_1 -- -HhLPSprtv
@@ -332,7 +326,7 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == '-oksh' ]] || [[ "${0}" == 'ksh' ]]; t
 	set -A complete_systat_1 -- buckets cpu ifstat iostat malloc mbufs netstat nfsclient nfsserver pf pigs pool pcache queues rules sensors states swap vmstat uvm
 	set -A complete_telnet_1 -- ${HOST_LIST}
 	set -A complete_telnet_2 -- 22 25 80
-	if [[ -x "$(/usr/bin/which toot 2>&1)" ]]; then
+	if command -v toot >/dev/null; then
 		set -A complete_toot_1 -- block follow instance mute notifications post tui unblock unfollow unmute upload whoami whois
 		set -A complete_toot_2 -- --help
 	fi
@@ -480,7 +474,7 @@ if [[ -x "$(/usr/bin/which wn 2>/dev/null)" ]] && [[ -x "$(/usr/bin/which pandoc
 		if [[ $# -eq 1 ]]; then
 			if [[ -n "$(wn "${1}" -over)" ]]; then
 				wn "${1}" -over | pandoc -t plain -
-			elif [[ -x "$(/usr/bin/which wtf 2>/dev/null)" ]]; then
+			elif command -v wtf >/dev/null; then
 				wtf "${1}"
 			else
 				printf "No definition found for %s.\n" "${1}"
@@ -510,7 +504,7 @@ diff() {
 }
 
 # dvd() and radio()
-if [[ -x "$(/usr/bin/which mpv 2>/dev/null)" ]]; then
+if command -v mpv >/dev/null; then
 	audiocd() {
 		if [[ "$(uname)" == 'OpenBSD' ]] && [[ ! -r /dev/rcd0c ]]; then
 			printf 'Cannot read /dev/rcd0c. Try: chgrp wheel /dev/rcd0c\n' && return 1
@@ -614,7 +608,7 @@ fd() {
 }
 
 # photo_import() import photos from an SD card
-if [[ -x "$(/usr/bin/which exiv2 2>/dev/null)" ]]; then
+if command -v exiv2 >/dev/null; then
 	_import_photo() {
 		local DATETIME="$(exiv2 -pt -qK Exif.Photo.DateTimeOriginal "${1}" 2>/dev/null | awk '{print $(NF-1)}' | sed 's/\:/\//g' | sort -u)"
 		local FILENAME="$(echo "${1}" | awk -F"/" '{print $NF}' | tr '[:upper:]' '[:lower:]')"
@@ -655,7 +649,7 @@ if [[ -x "$(/usr/bin/which exiv2 2>/dev/null)" ]]; then
 fi
 
 # pomodoro() timer
-if [[ -x "$(/usr/bin/which tmux 2>/dev/null)" ]]; then
+if command -v tmux >/dev/null; then
 	# GNOME3 - libnotify "toaster" popup
 	if [[ -x "$(/usr/bin/which notify-send 2>/dev/null)" ]] && [[ -n "${DESKTOP_SESSION}" ]]; then
 		pomodoro() {
@@ -672,7 +666,7 @@ if [[ -x "$(/usr/bin/which tmux 2>/dev/null)" ]]; then
 			tmux new -d "sleep $(echo "${delay}*60" | bc -l); notify-send POMODORO \"${message}\" --icon=dialog-warning-symbolic --urgency=critical"
 		}
 	# headless!
-	elif [[ -x "$(/usr/bin/which leave 2>/dev/null)" ]]; then
+	elif command -v leave >/dev/null; then
 		pomodoro() {
 			local usage='usage: pomodoro [minutes]\n\n  .. or just use leave(1)!\n'
 			if [[ $# -ne 1 ]]; then
@@ -1087,4 +1081,9 @@ if [[ "${SHELL}" != '/bin/ash' ]]; then
 fi
 if [[ -r "${HOME}/.profile.local" ]]; then
 	. "${HOME}/.profile.local"
+fi
+
+### got(1)
+if command -v got >/dev/null; then
+	export GOT_AUTHOR="${GIT_AUTHOR_NAME} <${GIT_AUTHOR_EMAIL}>"
 fi
