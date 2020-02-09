@@ -277,11 +277,6 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == '-oksh' ]] || [[ "${0}" == 'ksh' ]]; t
 	if [[ -r /usr/local/etc/manuals.list ]]; then
 		set -A complete_man_1 -- $(cat /usr/local/etc/manuals.list)
 	fi
-	if pgrep sndio >/dev/null 2>&1; then
-		set -A complete_mixerctl_1 -- $(mixerctl 2>/dev/null | cut -d= -f 1)
-		alias voldown='mixerctl outputs.master=-5,-5'
-		alias volup='mixerctl outputs.master=+5,+5'
-	fi
 	if command -v mosh >/dev/null; then
 		set -A complete_mosh_1 -- -4 -6
 		set -A complete_mosh_2 -- ${HOST_LIST}
@@ -1021,8 +1016,8 @@ sysinfo() {
 	local memory_total=$(echo "${memory_query}" | awk '{print $1/1024^2}' | awk -F'.' '{print $1}')
 	local memory_used=$(echo "${memory_query}" | awk '{print $2/1024^2}' | awk -F'.' '{print $1}')
 	local uptime="$(uptime | awk '{print $3, $4}' | sed 's/\,//g')"
-	if [[ "$(echo ${uptime} | awk -F':' '{print $1}')" != "${uptime}" ]]; then
-		local uptime="$(echo ${uptime} | awk -F':' '{print $1}') hour(s)"
+	if [[ "$(echo "${uptime}" | awk -F':' '{print $1}')" != "${uptime}" ]]; then
+		local uptime="$(echo "${uptime}" | awk -F':' '{print $1}') hour(s)"
 	fi
 	printf "\n\t%s@%s\n\n" "${LOGNAME}" "${HOSTNAME}"
 	printf "OS:\t\t%s\n" "${distro}"
