@@ -15,7 +15,7 @@ umask 077
 ## environment variables
 unset ENV
 export BROWSER=lynx
-export GIT_AUTHOR_EMAIL="$(getent passwd "${LOGNAME}" | cut -d: -f1)@users.noreply.github.com"
+export GIT_AUTHOR_EMAIL="${LOGNAME}@users.noreply.github.com"
 export GIT_AUTHOR_NAME="$(getent passwd "${LOGNAME}" | cut -d: -f5 | cut -d, -f1)"
 export GIT_COMMITTER_EMAIL=${GIT_AUTHOR_EMAIL}
 export GIT_COMMITTER_NAME=${GIT_AUTHOR_NAME}
@@ -34,7 +34,6 @@ if [[ -r "${HOME}/.lynxrc" ]]; then
 	export LYNX_CFG="${HOME}/.lynxrc"
 	alias lynx='COLUMNS=80 lynx -useragent "Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101 Firefox/68.0" 2>/dev/null'
 fi
-#export MUTTRC=${path_to_mutt_gpg}
 if [[ -r "${HOME}/.pythonrc" ]]; then
 	export PYTHONSTARTUP="${HOME}/.pythonrc"
 fi
@@ -43,7 +42,7 @@ export VISUAL=vi
 
 
 ## aliases
-if command -v abook >/dev/null; then
+if command -v abook >/dev/null && [[ -r "${HOME}/.abookrc" ]] && [[ -r "${HOME}/.addresses" ]]; then
 	alias abook='abook --config ${HOME}/.abookrc --datafile ${HOME}/.addresses'
 fi
 alias bc='bc -l'
@@ -51,7 +50,7 @@ if command -v cabal >/dev/null && [[ -d /usr/local/cabal/build ]] && [[ -w /usr/
 	alias cabal='env TMPDIR=/usr/local/cabal/build/ cabal'
 fi
 alias cal='cal -m'
-if command -v calendar >/dev/null; then
+if command -v calendar >/dev/null && [[ -r "${HOME}/.calendar" ]]; then
 	alias calendar='calendar -f ${HOME}/.calendar'
 fi
 alias cp='cp -i'
@@ -59,16 +58,17 @@ if command -v cvs >/dev/null; then
 	alias cvsup='cvs -q up -PdA'
 fi
 alias df='df -h'
+alias fetch='ftp -Vo'
 alias free='top | grep -E "^Memory"'
 if command -v kpcli >/dev/null; then
 	alias kpcli='kpcli --histfile=/dev/null --readonly'
 fi
 alias l='ls -1F'
-alias la='ls -Flah'
-alias larth='ls -Flarth'
+alias la='ls -aFhl'
+alias larth='ls -aFhlrt'
 alias less='less -iLMR'
 alias listening='fstat -n | grep internet'
-alias ll='ls -lhF'
+alias ll='ls -Fhl'
 alias ls='ls -F'
 alias mtop='top -o res'
 alias mv='mv -i'
@@ -93,10 +93,6 @@ if command -v nvim >/dev/null; then
 	alias vi=nvim
 	alias vim=nvim
 	alias vimdiff='nvim -d -c "color blue" --'
-elif command -v vim >/dev/null; then
-	# if vim isn't installed, alias it to vi(1)
-	# .. but if it is installed, don't inherit '-nu NONE' on Linux
-	alias vim=vi
 fi
 alias view='less -iLMR'
 alias which='/usr/bin/which'
@@ -156,26 +152,26 @@ if [[ "$(uname)" == "Linux" ]]; then
 		alias atop='atop -fx'
 	fi
 	alias bc='bc -ql'
-	alias df='df -h -xtmpfs -xdevtmpfs'
 	alias doas=/usr/bin/sudo #mostly-compatible
+	alias fetch='curl -Lso'
 	alias free='free -h'
 	if command -v tnftp >/dev/null; then
 		# BSD ftp has support for wget-like functionality
 		alias ftp=tnftp
 	fi
 	alias l='ls -1F --color=never'
-	alias la='ls -Flah --color=never'
-	alias larth='ls -Flarth --color=never'
+	alias la='ls -aFhl --color=never'
+	alias larth='ls -aFhlrt --color=never'
 	# linux doesn't have fstat
 	alias listening='ss -lntu'
-	alias ll='ls -lhF --color=never'
+	alias ll='ls -Fhl --color=never'
 	alias ls='ls -F --color=never'
 	alias man='man --nh --nj'
 	alias mtop='top -s -o "RES"'
 	alias pscpu='ps -Awwo user,pid,pcpu,pmem,vsz,rss,tname,stat,start_time,cputime,command --sort -pcpu,-vsz,-pmem,-rss'
 	alias psjob='ps -Awwo user,pid,ppid,pri,nice,stat,tname,wchan,cputime,command --sort ppid,pid'
 	alias psmem='ps -Awwo user,pid,stat,cputime,majflt,vsz,rss,trs,pcpu,pmem,command --sort -vsz,-rss,-pcpu'
-	if command -v pstree >/dev/null; then
+	if ! command -v pstree >/dev/null; then
 		alias pstree='ps -HAwwo user,pid,pcpu,pmem,vsz,rss,tname,stat,start_time,cputime,command'
 	fi
 	if command -v sar >/dev/null; then
@@ -229,7 +225,7 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
 				# on -stable, check if there are available syspatches
 				local _patchfile="$(mktemp /tmp/checkupdates.XXXXXXXXXX)"
 				ftp -VMo "${_patchfile}" "$(cat /etc/installurl)/syspatch/$(uname -r)/$(uname -m)/SHA256"
-				if [[ "$(echo "(syspatch$(/bin/ls -rth /var/syspatch/ | tail -n 1).tgz)")" != "$(tail -n 1 "${_patchfile}" | awk '{print $2}')" ]]; then
+				if [[ "$(echo "(syspatch$(/bin/ls -hrt /var/syspatch/ | tail -n 1).tgz)")" != "$(tail -n 1 "${_patchfile}" | awk '{print $2}')" ]]; then
 					printf "%s\n" "Updates are available via syspatch(8)."
 				else
 					printf "%s\n" "System is up-to-date."
@@ -277,13 +273,6 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == '-oksh' ]] || [[ "${0}" == 'ksh' ]]; t
 	if [[ -r /usr/local/etc/manuals.list ]]; then
 		set -A complete_man_1 -- $(cat /usr/local/etc/manuals.list)
 	fi
-	if command -v mosh >/dev/null; then
-		set -A complete_mosh_1 -- -4 -6
-		set -A complete_mosh_2 -- ${HOST_LIST}
-		set -A complete_mosh_3 -- --
-		set -A complete_mosh_4 -- tmux
-		set -A complete_mosh_5 -- attach
-	fi
 	if command -v mtr >/dev/null; then
 		set -A complete_mtr_1 -- -wbz
 		set -A complete_mtr_2 -- ${HOST_LIST}
@@ -291,14 +280,10 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == '-oksh' ]] || [[ "${0}" == 'ksh' ]]; t
 	if command -v ncdu >/dev/null; then
 		set -A complete_ncdu_1 -- -ex -rex
 	fi
-	if command -v nmap >/dev/null; then
-		set -A complete_nmap_1 -- ${HOST_LIST}
-	fi
 	set -A complete_openssl_1 -- ciphers s_client verify version x509
 	set -A complete_openssl_2 -- -h
 	set -A complete_ping_1 -- ${HOST_LIST}
 	set -A complete_ping6_1 -- ${HOST_LIST}
-	set -A complete_ps_1 -- -auxw
 	if [[ "$(uname)" == 'OpenBSD' ]] && [[ -r /etc/rc.d ]]; then
 		set -A complete_rcctl_1 -- disable enable get ls order set
 		set -A complete_rcctl_2 -- $(rcctl ls all)
@@ -315,7 +300,6 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == '-oksh' ]] || [[ "${0}" == 'ksh' ]]; t
 	set -A complete_scp_3 -- ${HOST_LIST}
 	set -A complete_sftp_1 -- -p
 	set -A complete_sftp_2 -- ${HOST_LIST}
-	set -A complete_sftp_3 -- ${HOST_LIST}
 	set -A complete_search_1 -- alpine arxiv centos cve debian fedora github_issues mandragonflybsd manfreebsd manillumos manlinux manminix mannetbsd manopenbsd mathworld mbug nws rfc rhbz thesaurus wayback webster wikipedia wiktionary
 	set -A complete_ssh_1 -- ${HOST_LIST}
 	set -A complete_systat_1 -- buckets cpu ifstat iostat malloc mbufs netstat nfsclient nfsserver pf pigs pool pcache queues rules sensors states swap vmstat uvm
@@ -335,10 +319,9 @@ fi
 # arxifetch() download papers from arXiv by document ID
 arxifetch() {
 	if [[ $# -eq 1 ]]; then
-		# FIXME: don't depend on curl(1)
-		local title="$(curl -Ls "https://arxiv.org/abs/${1}" | awk -F'"' '/meta\ name.*citation_title/ {print $4}')"
+		local title="$(fetch - "https://arxiv.org/abs/${1}" | awk -F'"' '/meta\ name.*citation_title/ {print $4}')"
 	        if [[ ! -z "${title}" ]]; then
-	                curl -Lso "${title} - ${1}.pdf" "https://arxiv.org/pdf/${1}" && \
+	                fetch "${title} - ${1}.pdf" "https://arxiv.org/pdf/${1}" && \
 	                        printf "Downloaded file '%s - %s.pdf'.\n" "${title}" "${1}"
 	        else
 	                printf "ERROR: arXiv document ID '%s' not found.\n" "${1}" && return 1
@@ -484,14 +467,14 @@ fi
 diff() {
 	# nota bene: [[ -t 1 ]] => "is output to stdout", for example, versus a pipe or a file
 	if [[ -t 1 ]] && [[ "${#}" -eq 2 ]] && [[ -r "${1}" ]] && [[ -r "${2}" ]]; then
-		/usr/bin/diff "${1}" "${2}" | awk '/^[1-9]/ {printf "\033[0;36m%s\033[0;0m\n", $0}
-			/^</ {printf "\033[0;31m%s\033[0;0m\n", $0}
-			/^>/ {printf "\033[0;32m%s\033[0;0m\n", $0}
+		/usr/bin/diff "${1}" "${2}" | awk '/^[1-9]/ {printf "\033[0;96m%s\033[0;0m\n", $0}
+			/^</ {printf "\033[0;91m%s\033[0;0m\n", $0}
+			/^>/ {printf "\033[0;92m%s\033[0;0m\n", $0}
 			/^-/ {printf "\033[0;0m%s\n", $0}'
 	elif [[ -t 1 ]] && [[ "${#}" -eq 3 ]] && [[ "${1}" == '-u' ]] && [[ -r "${2}" ]] && [[ -r "${3}" ]]; then
-		/usr/bin/diff -u "${2}" "${3}" | awk '/^\@/ {printf "\033[0;36m%s\033[0;0m\n", $0}
-			/^\-/ {printf "\033[0;31m%s\033[0;0m\n", $0}
-			/^\+/ {printf "\033[0;32m%s\033[0;0m\n", $0}
+		/usr/bin/diff -u "${2}" "${3}" | awk '/^\@/ {printf "\033[0;96m%s\033[0;0m\n", $0}
+			/^\-/ {printf "\033[0;91m%s\033[0;0m\n", $0}
+			/^\+/ {printf "\033[0;92m%s\033[0;0m\n", $0}
 			/^\ / {printf "\033[0;0m%s\033[0;0m\n", $0}'
 	else
 		/usr/bin/diff "$@"
@@ -527,8 +510,6 @@ if command -v mpv >/dev/null; then
 		if [[ $# -eq 1 ]]; then
 			case ${1} in
 				## via https://www.radio-browser.info
-				# Deutschland: Antenne1 Stuttgart
-				antenne1) mpv "http://81.201.157.218/a1stg/livestream2.mp3" ;;
 				# Canada: Radio-Canada Montréal (français)
 				ici) mpv "http://2QMTL0.akacast.akamaistream.net/7/953/177387/v1/rc.akacast.akamaistream.net/2QMTL0" ;;
 				ici-musique) mpv "http://7qmtl0.akacast.akamaistream.net/7/445/177407/v1/rc.akacast.akamaistream.net/7QMTL0" ;;
@@ -544,8 +525,6 @@ if command -v mpv >/dev/null; then
 				wmnr) mpv "http://amber.streamguys.com:6050/live.m3u" ;;
 				# USA: NPR WNYC New York City
 				wnyc) mpv "http://fm939.wnyc.org/wnycfm" ;;
-				# USA: Y94 top hits (Fargo, North Dakota)
-				y94) mpv "https://16693.live.streamtheworld.com/KOYYFMAAC_SC" ;;
 				*) printf 'Error: unknown stream\n' && return 1 ;;
 			esac
 		else
