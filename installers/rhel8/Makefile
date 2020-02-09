@@ -90,4 +90,7 @@ install:
 	# sudo
 	sudo install -C -Z -o root -g root -m 0444 sudoers /etc/sudoers
 
+# manual:
+# echo 'tmpfs /dev/shm tmpfs defaults,noatime,noexec,size=512M 0 0' >> /etc/fstab
+
 all: check install nvidia
