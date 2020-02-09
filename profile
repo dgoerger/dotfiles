@@ -47,7 +47,7 @@ if command -v abook >/dev/null; then
 	alias abook='abook --config ${HOME}/.abookrc --datafile ${HOME}/.addresses'
 fi
 alias bc='bc -l'
-if [[ -x "$(/usr/bin/which cabal 2>/dev/null)" ]] && [[ -d /usr/local/cabal/build ]] && [[ -w /usr/local/cabal/build ]]; then
+if command -v cabal >/dev/null && [[ -d /usr/local/cabal/build ]] && [[ -w /usr/local/cabal/build ]]; then
 	alias cabal='env TMPDIR=/usr/local/cabal/build/ cabal'
 fi
 alias cal='cal -m'
@@ -242,9 +242,9 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
 				local _snapdate="$(mktemp /tmp/checkupdates.XXXXXXXXXX)"
 				ftp -VMo "${_snapfile}" "$(cat /etc/installurl)/snapshots/$(uname -m)/SHA256"
 				ftp -VMo "${_snapdate}" "$(cat /etc/installurl)/snapshots/$(uname -m)/BUILDINFO"
-				if [[ "$(sha512 -q ${_snapfile})" != "$(sha512 -q /var/db/installed.SHA256)" ]]; then
+				if [[ "$(sha512 -q "${_snapfile}")" != "$(sha512 -q /var/db/installed.SHA256)" ]]; then
 					printf "%s\n\n" "Updates are available via sysupgrade(8)."
-					if [[ "$(file -b ${_snapdate})" == 'ASCII text' ]]; then
+					if [[ "$(file -b "${_snapdate}")" == 'ASCII text' ]]; then
 						printf "%s%s\n" "Running: " "$(TZ='Canada/Mountain' date -z 'Canada/Mountain' -jf "%a %b %e %H:%M:%S %Y" "$(sysctl -n kern.version | head -n 1 | awk -F': ' '{print $NF}' | sed 's/MST//' | sed 's/MDT//')" +"%Y%m%d %H:%M:%S")"
 						printf "%s%s\n" "Upgrade: " "$(TZ=UTC date -z 'Canada/Mountain' -jf "%a %b %e %H:%M:%S %Z %Y" "$(awk -F ' - ' '{print $NF}' "${_snapdate}")" +"%Y%m%d %H:%M:%S")"
 					fi
@@ -469,7 +469,7 @@ colours() {
 alias colors=colours
 
 # def() define a word
-if [[ -x "$(/usr/bin/which wn 2>/dev/null)" ]] && [[ -x "$(/usr/bin/which pandoc 2>/dev/null)" ]]; then
+if command -v wn >/dev/null && command -v pandoc >/dev/null; then
 	def() {
 		if [[ $# -eq 1 ]]; then
 			if [[ -n "$(wn "${1}" -over)" ]]; then
@@ -560,7 +560,7 @@ if command -v mpv >/dev/null; then
 fi
 
 # ereader()
-if [[ -x "$(/usr/bin/which pandoc 2>/dev/null)" ]] && [[ -x "$(/usr/bin/which lynx 2>/dev/null)" ]]; then
+if command -v pandoc >/dev/null && command -v lynx >/dev/null; then
 	ereader() {
 		if [[ $# -ne 1 ]]; then
 			printf 'usage:\n    ereader file.epub\n' && return 1
@@ -651,7 +651,7 @@ fi
 # pomodoro() timer
 if command -v tmux >/dev/null; then
 	# GNOME3 - libnotify "toaster" popup
-	if [[ -x "$(/usr/bin/which notify-send 2>/dev/null)" ]] && [[ -n "${DESKTOP_SESSION}" ]]; then
+	if command -v notify-send >/dev/null && [[ -n "${DESKTOP_SESSION}" ]]; then
 		pomodoro() {
 			local usage='usage: pomodoro [minutes] [message]\n'
 			if [[ $# -ne 2 ]]; then
@@ -971,7 +971,7 @@ shacompare() {
 # sysinfo() system profiler
 sysinfo() {
 	if [[ "$(uname)" == 'Darwin' ]]; then
-		local cpu="$(sysctl -n machdep.cpu.brand_string)"
+		local cpu="$(echo "$(sysctl -n hw.logicalcpu)"cpu: "$(sysctl -n machdep.cpu.brand_string)")"
 		local disk_query="$(df -H /System/Volumes/Data 2>/dev/null | tail -n1 | awk '{print $2, $3, $5}')"
 		local distro='macOS'
 		local gpu="$(system_profiler SPDisplaysDataType | awk -F': ' '/^\ *Chipset Model:/ {print $2}' | awk '{ printf "%s / ", $0 }' | sed -e 's/\/ $//g')"
@@ -979,7 +979,7 @@ sysinfo() {
 		local kernel="$(uname -rm)"
 		local memory_query="$(echo "$(echo "$(sysctl -n hw.memsize)" / 1024^2 | bc) $(vm_stat | grep ' active' | awk '{ print $3 }' | sed 's/\.//')")"
 	elif [[ "$(uname)" == 'Linux' ]]; then
-		local cpu="$(grep '^model name' /proc/cpuinfo | uniq | awk -F': ' '{print $NF}')"
+		local cpu="$(echo "$(lscpu | awk '/^CPU\(s\):/ {print $NF}')"cpu: "$(grep '^model name' /proc/cpuinfo | uniq | awk -F': ' '{print $NF}' | tr -s " ")")"
 		local disk_query="$(/bin/df -h -x aufs -x tmpfs -x overlay -x devtmpfs -x udf -x nfs -x cifs --total 2>/dev/null | awk '{print $2, $3, $5}' | tail -n1)"
 		local distro="$(grep PRETTY_NAME /etc/os-release 2>/dev/null | awk -F'"' '{print $2}')"
 		if [[ -z "${distro}" ]]; then
@@ -993,14 +993,14 @@ sysinfo() {
 		local kernel="$(uname -r)"
 		local memory_query="$(/usr/bin/free -b | grep -E "^Mem:" | awk '{ print $2,$3 }')"
 	elif [[ "$(uname)" == 'NetBSD' ]]; then
-		local cpu="$(sysctl -n machdep.cpu_brand)"
+		local cpu="$(echo "$(sysctl -n hw.ncpuonline)"cpu: "$(sysctl -n machdep.cpu_brand | tr -s " ")")"
 		local disk_query="$(/bin/df -Pk 2>/dev/null | awk '/^\// {total+=$2; used+=$3}END{printf("%.1fGiB %.1fGiB %d%%\n", total/1048576, used/1048576, used*100/total)}')"
 		local distro='NetBSD'
 		local host="$(echo "$(sysctl -n machdep.dmi.system-vendor) $(sysctl -n machdep.dmi.system-product)")"
 		local kernel="$(uname -rm)"
 		local memory_query="$(echo "$(sysctl -n hw.pagesize) $(sysctl -n hw.usermem64) $(vmstat -s | awk '/pages active$/ {print $1}')" | awk '{ print $2, $1 * $3 }')"
 	elif [[ "$(uname)" == 'OpenBSD' ]]; then
-		local cpu="$(sysctl -n hw.model)"
+		local cpu="$(echo "$(sysctl -n hw.ncpuonline)"cpu: "$(sysctl -n hw.model)")"
 		local disk_query="$(/bin/df -Pk 2>/dev/null | awk '/^\// {total+=$2; used+=$3}END{printf("%.1fGiB %.1fGiB %d%%\n", total/1048576, used/1048576, used*100/total)}')"
 		local distro='OpenBSD'
 		local gpu="$(/usr/X11R6/bin/glxinfo 2>/dev/null | awk '/OpenGL renderer string/ { sub(/OpenGL renderer string: /,""); print }')"
