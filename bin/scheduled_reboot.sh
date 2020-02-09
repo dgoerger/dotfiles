@@ -1,9 +1,6 @@
-#!/bin/bash
+#!/bin/ksh
 #
-# TODO: non-portable use of GNU 'ps' - on *BSD always returns "ttys=''"
-#
-# TODO: non-portable reliance on machinectl
-
+# TODO: graphical notifications currently only support Linux
 
 ## prep broadcast
 # fetch REBOOT_DELAY (in minutes) if passed in as an argument
@@ -18,10 +15,10 @@ if [[ -z "${REBOOT_DELAY}" ]]; then
 fi
 
 # bsd vs gnu `date`...
-if [[ "$(uname)" == 'OpenBSD' ]]; then
-	REBOOT_TIME="$(date -r "$(echo "$(date +%s)" + "${REBOOT_DELAY}*60" | bc -l)" +%H:%M)"
-elif [[ "$(uname)" == 'Linux' ]]; then
+if [[ "$(uname)" == 'Linux' ]]; then
 	REBOOT_TIME="$(date --date="${REBOOT_DELAY} minutes" +%H:%M)"
+elif [[ "$(uname)" == 'NetBSD' ]] || [[ "$(uname)" == 'OpenBSD' ]]; then
+	REBOOT_TIME="$(date -r "$(echo "$(date +%s)" + "${REBOOT_DELAY}*60" | bc -l)" +%H:%M)"
 else
 	echo 'Unsupported operating system.'
 	return 1
@@ -39,13 +36,7 @@ REBOOT_WALL_MESSAGE='Pending reboot - please save your work and log out.'
 
 ## notify graphical users
 notify() {
-	if [[ "$(uname)" == 'OpenBSD' ]]; then
-		# FIXME - doesn't work
-		x_users="$(ps -p "$(pgrep -f Xsession)" -O user | awk '{print $2}' | grep -Ev "^USER$" | uniq)"
-		for x_user in ${x_users}; do
-			su -l "${x_user}" /usr/local/bin/notify-send "${REBOOT_GRAPHICAL_BANNER}" "${REBOOT_GRAPHICAL_MESSAGE}" --icon=dialog-warning-symbolic --urgency=critical
-		done
-	elif [[ "$(uname)" == 'Linux' ]]; then
+	if [[ "$(uname)" == 'Linux' ]]; then
 		# notifications don't work if SELinux is enforcing
 		if /usr/sbin/sestatus 2>/dev/null | grep -qE "Current mode.*enforcing" 2>/dev/null; then
 			return 0
@@ -77,16 +68,16 @@ notify() {
 }
 
 detect_pending_reboot() {
-	if [[ "$(uname)" == 'OpenBSD' ]]; then
-		if pgrep shutdown >/dev/null 2>&1; then
+	if [[ "$(uname)" == 'Linux' ]]; then
+		# reboot has been moved to the session / logind per https://utcc.utoronto.ca/~cks/space/blog/linux/SystemdVersionOfShutdown
+		result=$(qdbus --literal --system org.freedesktop.login1 /org/freedesktop/login1 org.freedesktop.DBus.Properties.Get org.freedesktop.login1.Manager ScheduledShutdown | awk -F'"' '{print $2}')
+		if [[ "${result}" == 'reboot' ]]; then
 			return 0
 		else
 			return 1
 		fi
-	elif [[ "$(uname)" == 'Linux' ]]; then
-		# reboot has been moved to the session / logind per https://utcc.utoronto.ca/~cks/space/blog/linux/SystemdVersionOfShutdown
-		result=$(qdbus --literal --system org.freedesktop.login1 /org/freedesktop/login1 org.freedesktop.DBus.Properties.Get org.freedesktop.login1.Manager ScheduledShutdown | awk -F'"' '{print $2}')
-		if [[ "${result}" == 'reboot' ]]; then
+	elif [[ "$(uname)" == 'OpenBSD' ]]; then
+		if pgrep shutdown >/dev/null 2>&1; then
 			return 0
 		else
 			return 1
@@ -101,10 +92,10 @@ while detect_pending_reboot; do
 	# User matrix:
 	# 1) logged in before shutdown command is issued (x < T)
 	# 2) logged in between shutdown command and pre-reboot lockdown (T < x < R - 5)
-	# 3) no users can log in when (R - 5 < x < R) - see `man 8 shutdown`
+	# 3) no users can log in when (R - 5 < x < R)
 	#
 	# Shell/SSH notifications:
-	# - these broadcast every minute for free via `wall` thanks to `shutdown`
+	# - these broadcast every minute for free via wall(1) thanks to shutdown(8)
 	#
 	# Graphical notifications:
 	# 1) first group receives initial notification (but might appreciate a reminder)
