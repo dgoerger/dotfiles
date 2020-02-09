@@ -10,13 +10,10 @@ PRIVOXY_TMP="$(mktemp)"
 PRIVOXY_CONF='/etc/privoxy/dnsblock.action'
 
 case "$(uname)" in
-	OpenBSD) FETCHER='/usr/bin/ftp -VMo' ;;
-	Linux) FETCHER='/usr/bin/curl -sLo' ;;
+	Linux) FETCH="/usr/bin/curl -Lso ${SRC} ${UPSTREAM_HOSTS_FILE}" ;;
+	OpenBSD) FETCH="/usr/bin/ftp -Vo ${SRC} ${UPSTREAM_HOSTS_FILE}" ;;
 	*) echo 'ERROR: Unsupported OS' && return 1 ;;
 esac
-
-# globbing sucks
-export FETCH="${FETCHER} ${SRC} ${UPSTREAM_HOSTS_FILE}"
 
 # first verify we can reach upstream
 if ${FETCH} 2>/dev/null; then
@@ -58,6 +55,7 @@ if ${FETCH} 2>/dev/null; then
 		# if unbound-checkconf fails AND there is no backup blocklist.. remove the new blocklist
 		rm "${BLOCKLIST_FILE}"
 		touch "${BLOCKLIST_FILE}"
+		chmod 0444 "${BLOCKLIST_FILE}"
 	fi
 
 	if [[ -d /etc/privoxy ]]; then
@@ -86,11 +84,12 @@ if ${FETCH} 2>/dev/null; then
 			# if privoxy --config-test fails AND there is no backup blocklist.. remove the new blocklist
 			rm "${PRIVOXY_CONF}"
 			touch "${PRIVOXY_CONF}"
+			chmod 0444 "${PRIVOXY_CONF}"
 		fi
 	fi
 
 	rm "${TMP}" "${SRC}"
 else
-	echo "ERROR: Upstream blocklist is unreachable via ${FETCHER}."
+	echo 'ERROR: Upstream blocklist is unreachable.'
 	return 1
 fi

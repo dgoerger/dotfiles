@@ -16,7 +16,7 @@ TMPFILE="$(mktemp)"
 CONFFILE="/usr/local/etc/manuals.list"
 
 if [[ "$(uname)" == 'OpenBSD' ]]; then
-	export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/games:/usr/local/bin:/usr/X11R6/bin
+	export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/games:/usr/local/bin:/usr/local/sbin:/usr/X11R6/bin
 	# why is section 1 filled with so much junk?
 	man -M /usr/share/man:/usr/local/man:/usr/X11R6/man -s 1 -k Nm~. | cut -d\( -f1 | while read -r COMMAND; do if [[ -x "$(/usr/bin/which "${COMMAND}" 2>/dev/null)" ]]; then echo "${COMMAND}"; fi; done >> "${TMPFILE}"
 	#man -M /usr/share/man -s 2 -k Nm~. | cut -d\( -f1 >> "${TMPFILE}"
