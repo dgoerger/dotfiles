@@ -1,5 +1,5 @@
 # Red Hat Enterprise Linux 8: Workstation
-# Last tested: 19 September 2019
+# Last tested: 11 February 2020
 
 check:
 	sudo sshd -t -f sshd_config
@@ -11,8 +11,8 @@ nvidia:
 	sudo yum -qy install dkms elfutils-libelf-devel kernel-devel
 	sudo systemctl enable --now dkms
 	sudo mkdir -p /usr/local/tmp
-	if [[ ! -f /usr/local/src/nvidia-440.44.run ]]; then sudo curl -sLo /usr/local/src/nvidia-440.44.run 'https://us.download.nvidia.com/XFree86/Linux-x86_64/440.44/NVIDIA-Linux-x86_64-440.44.run'; fi
-	if [[ ! -d /var/lib/dkms/nvidia/440.44 ]]; then sudo sh /usr/local/src/nvidia-440.44.run --accept-license --no-questions --dkms --tmpdir /usr/local/tmp --silent; fi
+	if [[ ! -f /usr/local/src/nvidia-440.59.run ]]; then sudo curl -sLo /usr/local/src/nvidia-440.59.run 'https://us.download.nvidia.com/XFree86/Linux-x86_64/440.59/NVIDIA-Linux-x86_64-440.59.run'; fi
+	if [[ ! -d /var/lib/dkms/nvidia/440.59 ]]; then sudo sh /usr/local/src/nvidia-440.59.run --accept-license --no-questions --dkms --tmpdir /usr/local/tmp --silent; fi
 
 install:
 	## remove and disable unnecessary things
