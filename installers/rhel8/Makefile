@@ -8,7 +8,7 @@ check:
 
 nvidia:
 	# note: dkms is in the EPEL repository
-	sudo yum -qy install dkms elfutils-libelf-devel kernel-devel
+	sudo yum -qy install dkms elfutils-libelf-devel kernel-devel libglvnd-devel
 	sudo systemctl enable --now dkms
 	sudo mkdir -p /usr/local/tmp
 	if [[ ! -f /usr/local/src/nvidia-440.59.run ]]; then sudo curl -sLo /usr/local/src/nvidia-440.59.run 'https://us.download.nvidia.com/XFree86/Linux-x86_64/440.59/NVIDIA-Linux-x86_64-440.59.run'; fi
@@ -41,7 +41,7 @@ install:
 	## enable EPEL
 	if [[ ! -f /etc/yum.repos.d/epel.repo ]]; then sudo yum -qy install epel-release 2>/dev/null || sudo yum -qy install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm; fi
 	## install useful utilities
-	sudo yum -qy install atop bpftrace gdb mg ncdu podman-docker qemu-img sysstat tmux
+	sudo yum -qy install atop bpftrace gdb mg ncdu nnn podman-docker qemu-img sysstat tmux
 	sudo systemctl --quiet enable atop.service
 	# install GNOME extensions and Tweaks
 	sudo yum -qy install gnome-shell-extension-dash-to-dock gnome-shell-extension-native-window-placement gnome-shell-extension-no-hot-corner gnome-tweaks
