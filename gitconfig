@@ -1,5 +1,8 @@
 # ~/.gitconfig, see git-config(1)
 
+[alias]
+	st = status --branch --porcelain
+	url = remote get-url --all origin
 [apply]
 	whitespace = fix
 [branch]
