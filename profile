@@ -76,7 +76,7 @@ if command -v newsboat >/dev/null; then
 	alias news='newsboat -q'
 fi
 if command -v nnn >/dev/null; then
-	alias nnn='nnn -AdHoR'
+	alias nnn='nnn -AdeHoR'
 fi
 alias pscpu='ps -Awwu'
 alias psjob='ps -Awwo user,pid,ppid,pri,nice,stat,tt,wchan,time,command'
