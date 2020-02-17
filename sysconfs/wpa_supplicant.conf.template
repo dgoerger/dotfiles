@@ -10,11 +10,25 @@ ctrl_interface_group=wheel
 
 ap_scan=0
 
+### ethernet ###
+network={
+	key_mgmt=IEEE8021X
+	eap=PEAP
+	eapol_flags=0
+	ca_cert="/etc/ssl/cert.pem"
+	identity="username@example.edu"
+	password="CHANGME"
+	phase1="peaplabel=0"
+	phase2="auth=MSCHAPV2"
+}
+
+### wifi ###
 network={
 	ssid="eduroam"
 	scan_ssid=1
 	key_mgmt=WPA-EAP
 	eap=PEAP
+	ca_cert="/etc/ssl/cert.pem"
 	identity="username@example.edu"
 	password="CHANGME"
 	phase1="peaplabel=0"
