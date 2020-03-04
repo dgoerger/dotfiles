@@ -6,6 +6,11 @@
 	},
 	"policies": {
 		"CaptivePortal": false,
+		"Cookies": {
+			"AcceptThirdParty": "from-visited",
+			"ExpireAtSessionEnd": true,
+			"RejectTracker": true
+		},
 		"DisableFeedbackCommands": true,
 		"DisableFirefoxAccounts": true,
 		"DisableFirefoxScreenshots": true,
@@ -14,11 +19,15 @@
 		"DisableFormHistory": true,
 		"DisableMasterPasswordCreation": true,
 		"DisablePocket": true,
+		"DisableProfileImport": true,
 		"DisableSetDesktopBackground": true,
 		"DisableTelemetry": true,
+		"DisplayBookmarksToolbar": false,
 		"DNSOverHTTPS": {
-			"Enabled": false
+			"Enabled": false,
+			"Locked": true
 		},
+		"DontCheckDefaultBrowser": true,
 		"EnableTrackingProtection": {
 			"Value": true,
 			"Locked": true,
@@ -27,40 +36,66 @@
 		},
 		"Extensions": {
 			"Install": [
-				"https://addons.mozilla.org/firefox/downloads/file/1669416.xpi",
-				"https://addons.mozilla.org/firefox/downloads/file/1671300.xpi",
-				"https://addons.mozilla.org/firefox/downloads/file/1189923.xpi",
-				"https://addons.mozilla.org/firefox/downloads/file/1672871.xpi",
-				"https://addons.mozilla.org/firefox/downloads/file/1193322.xpi",
-				"https://addons.mozilla.org/firefox/downloads/file/909656.xpi",
-				"https://addons.mozilla.org/firefox/downloads/file/1199801.xpi",
-				"https://addons.mozilla.org/firefox/downloads/file/3049798.xpi",
-				"https://addons.mozilla.org/firefox/downloads/file/3043038.xpi"
+				"https://addons.mozilla.org/firefox/downloads/latest/css-exfil-protection/latest.xpi",
+				"https://addons.mozilla.org/firefox/downloads/latest/decentraleyes/latest.xpi",
+				"https://addons.mozilla.org/firefox/downloads/latest/dont-touch-my-tabs/latest.xpi",
+				"https://addons.mozilla.org/firefox/downloads/latest/https-everywhere/latest.xpi",
+				"https://addons.mozilla.org/firefox/downloads/latest/noscript/latest.xpi",
+				"https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi",
+				"https://addons.mozilla.org/firefox/downloads/latest/umatrix/latest.xpi"
 			]
 		},
+		"ExtensionUpdate": true,
 		"FirefoxHome": {
 			"Highlights": false,
+			"Locked": true,
 			"Pocket": false,
+			"Search": false,
 			"Snippets": false,
 			"TopSites": false
 		},
+		"Homepage": {
+			"StartPage": "none"
+		},
+		"ImportEnterpriseRoots": false,
 		"NetworkPrediction": false,
 		"NewTabPage": false,
 		"NoDefaultBookmarks": true,
 		"OfferToSaveLogins": false,
 		"PasswordManagerEnabled": false,
+		"Permissions": {
+			"Camera": {
+				"BlockNewRequests": true
+			},
+			"Microphone": {
+				"BlockNewRequests": true
+			},
+			"Location": {
+				"BlockNewRequests": true
+			},
+			"Notifications": {
+				"BlockNewRequests": true
+			}
+		},
 		"Preferences": {
 			"browser.cache.disk.enable": false,
+			"browser.newtabpage.activity-stream.default.sites": "",
 			"browser.safebrowsing.phishing.enabled": false,
 			"browser.safebrowsing.malware.enabled": false,
+			"extensions.getAddons.showPane": false,
 			"extensions.htmlaboutaddons.recommendations.enabled": false,
 			"geo.enabled": false,
+			"media.eme.enabled": false,
+			"media.gmp-gmpopenh264.enabled": false,
+			"media.gmp-widevinecdm.enabled": false,
 			"media.peerconnection.enabled": false,
 			"network.IDN_show_punycode": true,
-			"places.history.enabled": false
+			"places.history.enabled": false,
+			"print.save_print_settings": false,
+			"security.ssl.errorReporting.enabled": false
 		},
 		"SanitizeOnShutdown": true,
-		"SearchBar": false,
+		"SearchBar": "unified",
 		"SearchEngines": {
 			"Add": [
 				{
