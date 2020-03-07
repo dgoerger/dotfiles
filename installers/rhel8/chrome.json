@@ -2,7 +2,7 @@
 	"__comment": {
 		"__compat": "NIX-ONLY",
 		"__docs": "https://cloud.google.com/docs/chrome-enterprise/policies/",
-		"__usage": "Set globally for new AND old profiles at /etc/chromium/policies/managed/policy.json"
+		"__usage": "Set globally for new AND old profiles at /etc/opt/chrome/policies/managed/policy.json"
 	},
 	"AllowFileSelectionDialogs": true,
 	"AllowOutdatedPlugins": false,
@@ -19,7 +19,6 @@
 	"CloudPrintProxyEnabled": false,
 	"CloudPrintSubmitEnabled": false,
 	"DefaultBrowserSettingEnabled": false,
-	"DefaultCookiesSetting": 4,
 	"DefaultGeolocationSetting": 2,
 	"DefaultSearchProviderEnabled": true,
 	"DefaultSearchProviderName": "DuckDuckGo",
@@ -36,7 +35,6 @@
 		"ldpochfccmkkmhdbclfhpagapcfdljkj;https://clients2.google.com/service/update2/crx",
 		"ibeemfhcbbikonfajhamlkdgedmekifo;https://clients2.google.com/service/update2/crx"
 	],
-	"ForceEphemeralProfiles": true,
 	"HideWebStoreIcon": true,
 	"HomepageLocation": "https://duckduckgo.com/?kae=t&kac=-1&kaj=m&kam=osm&kak=-1&kax=-1&kv=-1&kaq=-1&kap=-1&kg=g",
 	"ImportAutofillFormData": false,
