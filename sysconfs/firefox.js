@@ -25,6 +25,9 @@ pref("browser.display.use_system_colors", false);
 // enable dark theme
 pref("extensions.activeThemeID", "firefox-compact-dark@mozilla.org");
 
+// don't auto-hide the address bar in full-screen mode
+pref("browser.fullscreen.autohide", false);
+
 // resolves OpenBSD OOM error when asm.js tries to alloc 8gb
 pref("javascript.options.asmjs", false);
 
