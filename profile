@@ -152,6 +152,13 @@ if [[ "$(uname)" == "Linux" ]]; then
 		alias atop='atop -fx'
 	fi
 	alias bc='bc -ql'
+	if [[ -r /etc/alpine-release ]]; then
+		alias checkupdates='apk list -u'
+	elif [[ -r /etc/debian_version ]]; then
+		alias checkupdates='apt list --upgradeable'
+	elif [[ -r /etc/redhat-release ]]; then
+		alias checkupdates='yum -q check-update'
+	fi
 	alias doas=/usr/bin/sudo #mostly-compatible
 	alias fetch='curl -Lso'
 	alias free='free -h'
