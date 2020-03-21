@@ -724,7 +724,7 @@ rename() {
 	fi
 
 	# batch rename
-	/bin/ls "${@}" | while read -r oldname; do
+	/bin/ls -- "${@}" | while read -r oldname; do
 		local newname="$(echo "${oldname}" | sed -E "${regex}")"
 
 		# sanity checks
