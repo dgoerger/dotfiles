@@ -674,7 +674,82 @@ pwgen() {
 	else
 		printf "usage:\n    pwgen [INT]\n" && return 1
 	fi
- }
+}
+
+# rename() files
+rename() {
+	# options handling, if any
+	if [[ "${1}" == '-h' ]]; then
+		printf "usage:\n    rename [-nv] "REGEX" filename(s)\n" && return 0
+	elif [[ "${1}" == '-n' ]]; then
+		if [[ $# -gt 1 ]]; then
+			local noop=1
+			shift
+		else
+			printf "usage:\n    rename [-nv] "REGEX" filename(s)\n" && return 1
+		fi
+	elif [[ "${1}" == '-v' ]]; then
+		if [[ $# -gt 1 ]]; then
+			local verbose=1
+			shift
+		else
+			printf "usage:\n    rename [-nv] "REGEX" filename(s)\n" && return 1
+		fi
+	elif [[ "${1}" == '-nv' ]] || [[ "${1}" == '-vn' ]]; then
+		if [[ $# -gt 1 ]]; then
+			local noop=1
+			local verbose=1
+			shift
+		else
+			printf "usage:\n    rename [-nv] "REGEX" filename(s)\n" && return 1
+		fi
+	elif [[ "${1}" == '-V' ]]; then
+		printf "rename() ksh function defined in ~/.profile\n" && return 0
+	fi
+
+	# verify the passed regex is recognised by sed(1)
+	if echo test_string | sed -E "${1}" >/dev/null 2>&1; then
+		local regex="${1}"
+		shift
+	else
+		printf "ERROR: sed(1) doesn't recognise extended regex '%s'.\n" "${1}" && return 1
+	fi
+
+	# verify input file(s) exist
+	if ! /bin/ls "${@}" >/dev/null 2>&1; then
+		printf "ERROR: unable to stat file(s) '%s'.\n" "${@}" && return 1
+	fi
+
+	# batch rename
+	/bin/ls "${@}" | while read -r oldname; do
+		local newname="$(echo "${oldname}" | sed -E "${regex}")"
+
+		# sanity checks
+		if echo "${oldname}" | grep -q '/'; then
+			printf "WARNING: source file contains directory path character '/', skipping '%s'\n" "${oldname}"
+			continue
+		elif echo "${newname}" | grep -q '/'; then
+			printf "WARNING: destination file contains directory path character '/', skipping '%s'\n" "${newname}"
+			continue
+		elif [[ "${newname}" == "${oldname}" ]]; then
+			continue
+		elif [[ -r "${newname}" ]]; then
+			printf "WARNING: destination file '%s' already exists, skipping.\n" "${newname}"
+			continue
+		fi
+
+		# perform the rename
+		if [[ "${noop}" == '1' ]] && [[ "${verbose}" == '1' ]]; then
+			printf "%s -> %s\n" "${oldname}" "${newname}"
+		elif [[ "${noop}" == '1' ]]; then
+			continue
+		elif [[ "${verbose}" == '1' ]]; then
+			/bin/mv -v -- "${oldname}" "${newname}"
+		else
+			/bin/mv -- "${oldname}" "${newname}"
+		fi
+	done
+}
 
 # search() the web
 search() {
