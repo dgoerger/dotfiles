@@ -679,7 +679,7 @@ pwgen() {
 # rename() files
 rename() {
 	# options handling, if any
-	if [[ "${1}" == '-h' ]]; then
+	if [[ "${#}" == '0' ]] || [[ "${1}" == '-h' ]]; then
 		printf "usage:\n    rename [-nv] "REGEX" filename(s)\n" && return 0
 	elif [[ "${1}" == '-n' ]]; then
 		if [[ $# -gt 1 ]]; then
