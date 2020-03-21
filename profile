@@ -716,6 +716,9 @@ rename() {
 	fi
 
 	# verify input file(s) exist
+	if [[ -z "${@}" ]]; then
+		printf "usage:\n    rename [-nv] "REGEX" filename(s)\n" && return 1
+	fi
 	if ! /bin/ls "${@}" >/dev/null 2>&1; then
 		printf "ERROR: unable to stat file(s) '%s'.\n" "${@}" && return 1
 	fi
