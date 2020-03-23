@@ -37,6 +37,7 @@ fi
 if [[ -r "${HOME}/.pythonrc" ]]; then
 	export PYTHONSTARTUP="${HOME}/.pythonrc"
 fi
+export SAVEHIST=20736
 export TZ='US/Eastern'
 export VISUAL=vi
 
@@ -260,8 +261,8 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
 fi
 
 
-# ksh tab completions
-if [[ "${0}" == '-ksh' ]] || [[ "${0}" == '-oksh' ]] || [[ "${0}" == 'ksh' ]]; then
+# ksh/zsh tab completions
+if [[ "${0}" == '-ksh' ]] || [[ "${0}" == '-oksh' ]]; then
 	# OpenBSD/NetBSD compatibility
 	export HOST_LIST=$(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts | sort -u)
 
@@ -319,6 +320,14 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == '-oksh' ]] || [[ "${0}" == 'ksh' ]]; t
 	set -A complete_tmux_1 -- attach list-commands list-sessions list-windows new-session new-window source
 	set -A complete_traceroute_1 -- ${HOST_LIST}
 	set -A complete_traceroute6_1 -- ${HOST_LIST}
+elif [[ "${0}" == '-zsh' ]]; then
+	autoload -Uz compinit
+	compinit -d ~/.cache/zsh/zcompdump-$ZSH_VERSION
+
+	# while here, set zsh history opts
+	set -o hist_expire_dups_first
+	set -o hist_ignore_dups
+	set -o inc_append_history
 fi
 
 
