@@ -262,7 +262,7 @@ fi
 
 
 # ksh/zsh tab completions
-if [[ "${0}" == '-ksh' ]] || [[ "${0}" == '-oksh' ]]; then
+if [[ "${0}" == '-ksh' ]] || [[ "${0}" == 'ksh' ]] || [[ "${0}" == '-oksh' ]] || [[ "${0}" == 'oksh' ]]; then
 	# OpenBSD/NetBSD compatibility
 	export HOST_LIST=$(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts | sort -u)
 
@@ -320,7 +320,7 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == '-oksh' ]]; then
 	set -A complete_tmux_1 -- attach list-commands list-sessions list-windows new-session new-window source
 	set -A complete_traceroute_1 -- ${HOST_LIST}
 	set -A complete_traceroute6_1 -- ${HOST_LIST}
-elif [[ "${0}" == '-zsh' ]]; then
+elif [[ "${0}" == '-zsh' ]] || [[ "${0}" == 'zsh' ]]; then
 	autoload -Uz compinit
 	compinit -d ~/.cache/zsh/zcompdump-$ZSH_VERSION
 
