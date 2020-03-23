@@ -93,6 +93,7 @@ install:
 	sudo install -C -Z -o root -g root -m 0444 sudoers /etc/sudoers
 	# zsh
 	sudo install -C -Z -o root -g root -m 0600 zshrc /etc/skel/.zshrc
+	sudo install -C -Z -o root -g root -m 0444 default_useradd /etc/default/useradd
 
 # manual:
 # echo 'tmpfs /dev/shm tmpfs defaults,noatime,noexec,size=512M 0 0' >> /etc/fstab
