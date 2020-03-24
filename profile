@@ -146,7 +146,7 @@ if [[ "$(uname)" == "Linux" ]]; then
 	fi
 	if [[ "${0}" == '-zsh' ]] || [[ "${0}" == 'zsh' ]]; then
 		export PROMPT='%m%% '
-	elif [[ "${0} == '-bash' ]] || [[ "${0}" == 'bash' ]]; then
+	elif [[ "${0}" == '-bash' ]] || [[ "${0}" == 'bash' ]]; then
 		export PS1="\h$ "
 	fi
 	export QUOTING_STYLE=literal
