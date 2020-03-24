@@ -261,7 +261,7 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
 fi
 
 
-# ksh/zsh tab completions
+# ksh tab completions
 if [[ "${0}" == '-ksh' ]] || [[ "${0}" == 'ksh' ]] || [[ "${0}" == '-oksh' ]] || [[ "${0}" == 'oksh' ]]; then
 	# OpenBSD/NetBSD compatibility
 	export HOST_LIST=$(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts | sort -u)
@@ -320,14 +320,6 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == 'ksh' ]] || [[ "${0}" == '-oksh' ]] ||
 	set -A complete_tmux_1 -- attach list-commands list-sessions list-windows new-session new-window source
 	set -A complete_traceroute_1 -- ${HOST_LIST}
 	set -A complete_traceroute6_1 -- ${HOST_LIST}
-elif [[ "${0}" == '-zsh' ]] || [[ "${0}" == 'zsh' ]]; then
-	autoload -Uz compinit
-	compinit -d ~/.cache/zsh/zcompdump-$ZSH_VERSION
-
-	# while here, set zsh history opts
-	set -o hist_expire_dups_first
-	set -o hist_ignore_dups
-	set -o inc_append_history
 fi
 
 
