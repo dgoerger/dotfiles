@@ -24,6 +24,7 @@ set -o local_options
 set -o local_traps
 set -o no_auto_menu
 set -o posix_aliases
+set -o posix_argzero
 set -o posix_builtins
 set -o posix_identifiers
 set -o sh_word_split

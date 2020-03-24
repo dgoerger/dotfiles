@@ -144,7 +144,11 @@ if [[ "$(uname)" == "Linux" ]]; then
 	if [[ -d "${HOME}/bin" ]]; then
 		export PATH=${HOME}/bin:${PATH}
 	fi
-	export PS1="${HOSTNAME}$ "
+	if [[ "${0}" == '-zsh' ]] || [[ "${0}" == 'zsh' ]]; then
+		export PROMPT='%m%% '
+	elif [[ "${0} == '-bash' ]] || [[ "${0}" == 'bash' ]]; then
+		export PS1="\h$ "
+	fi
 	export QUOTING_STYLE=literal
 	unset LS_COLORS
 
