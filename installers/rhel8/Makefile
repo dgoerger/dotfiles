@@ -41,7 +41,7 @@ install:
 	## enable EPEL
 	if [[ ! -f /etc/yum.repos.d/epel.repo ]]; then sudo yum -qy install epel-release 2>/dev/null || sudo yum -qy install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm; fi
 	## install useful utilities
-	sudo yum -qy install atop bpftrace gdb mg ncdu nmap nnn podman-docker qemu-img sysstat tmux zsh
+	sudo yum -qy install atop bpftrace gdb mg ncdu nmap nnn podman-docker qemu-img sysstat tmux
 	sudo systemctl --quiet enable atop.service
 	# install GNOME extensions and Tweaks
 	sudo yum -qy install gnome-shell-extension-dash-to-dock gnome-shell-extension-native-window-placement gnome-shell-extension-no-hot-corner gnome-tweaks
@@ -92,8 +92,11 @@ install:
 	# sudo
 	sudo install -C -Z -o root -g root -m 0444 sudoers /etc/sudoers
 	# zsh
+	sudo yum -qy install zsh
 	sudo install -C -Z -o root -g root -m 0600 zshrc /etc/skel/.zshrc
+	sudo install -C -Z -o root -g root -m 0600 zshrc /root/.zshrc
 	sudo install -C -Z -o root -g root -m 0444 default_useradd /etc/default/useradd
+	if ! getent passwd root | grep -qE "^root.*/bin/zsh$"; then sudo usermod -s/bin/zsh root; fi
 
 # manual:
 # echo 'tmpfs /dev/shm tmpfs defaults,noatime,noexec,size=512M 0 0' >> /etc/fstab
