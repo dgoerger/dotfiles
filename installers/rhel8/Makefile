@@ -96,7 +96,7 @@ install:
 	sudo install -C -Z -o root -g root -m 0600 zshrc /etc/skel/.zshrc
 	sudo install -C -Z -o root -g root -m 0600 zshrc /root/.zshrc
 	sudo install -C -Z -o root -g root -m 0444 default_useradd /etc/default/useradd
-	if ! getent passwd root | grep -qE "^root.*/bin/zsh$"; then sudo usermod -s/bin/zsh root; fi
+	if ! grep -qE "^root.*/bin/zsh" /etc/passwd; then sudo usermod -s/bin/zsh root; fi
 
 # manual:
 # echo 'tmpfs /dev/shm tmpfs defaults,noatime,noexec,size=512M 0 0' >> /etc/fstab

@@ -13,9 +13,10 @@ set -o hist_ignore_dups
 set -o hist_reduce_blanks
 set -o inc_append_history
 
-# misc opts
+# misc opts for compatibility with other shells
 set -o append_create
 set -o bsd_echo
+set -o complete_aliases
 set -o interactive_comments
 set -o ksh_arrays
 set -o ksh_option_print
