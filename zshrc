@@ -13,6 +13,20 @@ set -o hist_ignore_dups
 set -o hist_reduce_blanks
 set -o inc_append_history
 
+# misc opts
+set -o append_create
+set -o bsd_echo
+set -o interactive_comments
+set -o ksh_arrays
+set -o ksh_option_print
+set -o local_options
+set -o local_traps
+set -o no_auto_menu
+set -o posix_aliases
+set -o posix_builtins
+set -o posix_identifiers
+set -o sh_word_split
+
 if [[ -r ${HOME}/.profile ]]; then
 	. ${HOME}/.profile
 fi
