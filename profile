@@ -37,7 +37,7 @@ fi
 if [[ -r "${HOME}/.pythonrc" ]]; then
 	export PYTHONSTARTUP="${HOME}/.pythonrc"
 fi
-export SAVEHIST=20736
+export SAVEHIST=${HISTSIZE}
 export TZ='US/Eastern'
 export VISUAL=vi
 
