@@ -216,8 +216,10 @@ if [[ "$(uname)" == "Linux" ]]; then
 elif [[ "$(uname)" == 'NetBSD' ]]; then
 	export CC=clang
 	export CXX=clang++
+	export HTOPRC=/dev/null
 	export MANPATH=${HOME}/man:/usr/pkg/man:/usr/pkg/share/man:/usr/share/man:/usr/pkg/X11R7/man:/usr/local/man
 	export PATH=${HOME}/bin:${PATH}
+	export PS1="${HOSTNAME}$ "
 
 	alias pkgsrc='lynx "https://ftp.netbsd.org/pub/pkgsrc/packages/NetBSD/x86_64/$(uname -r)/All/"'
 	unalias sha512
@@ -266,8 +268,7 @@ fi
 
 
 # ksh tab completions
-if [[ "${0}" == '-ksh' ]] || [[ "${0}" == 'ksh' ]] || [[ "${0}" == '-oksh' ]] || [[ "${0}" == 'oksh' ]]; then
-	# OpenBSD/NetBSD compatibility
+if [[ "${0}" == '-ksh' ]] || [[ "${0}" == 'ksh' ]]; then
 	export HOST_LIST=$(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts | sort -u)
 
 	set -A complete_diff_1 -- -u
