@@ -1085,6 +1085,13 @@ sysinfo() {
 	local memory_percent_used=$(echo "${memory_query}" | awk '{print $2/$1*100}' | awk -F'.' '{print $1}')
 	local memory_total=$(echo "${memory_query}" | awk '{print $1/1024^2}' | awk -F'.' '{print $1}')
 	local memory_used=$(echo "${memory_query}" | awk '{print $2/1024^2}' | awk -F'.' '{print $1}')
+	case "${SHELL##*/}" in
+		bash) local shell_version="${BASH_VERSION}" ;;
+		ksh) local shell_version="$(echo ${KSH_VERSION} | awk '{print $3}')" ;;
+		tcsh) local shell_version"${tcsh}" ;;
+		zsh) local shell_version="${ZSH_VERSION}" ;;
+		*) ;;
+	esac
 	local uptime="$(uptime | awk '{print $3, $4}' | sed 's/\,//g')"
 	if [[ "$(echo "${uptime}" | awk -F':' '{print $1}')" != "${uptime}" ]]; then
 		local uptime="$(echo "${uptime}" | awk -F':' '{print $1}') hour(s)"
@@ -1093,7 +1100,11 @@ sysinfo() {
 	printf "OS:\t\t%s\n" "${distro}"
 	printf "Kernel:\t\t%s\n" "${kernel}"
 	printf "Uptime:\t\t%s\n" "${uptime}"
-	printf "Shell:\t\t%s\n" "${SHELL}"
+	if [[ -z "${shell_version}" ]]; then
+		printf "Shell:\t\t%s\n" "${SHELL}"
+	else
+		printf "Shell:\t\t%s (%s)\n" "${SHELL}" "${shell_version}"
+	fi
 	printf "Host:\t\t%s\n" "${host}"
 	printf "CPU:\t\t%s\n" "${cpu}"
 	if [[ -n "${gpu}" ]]; then
