@@ -1043,6 +1043,15 @@ sysinfo() {
 		local host="$(sysctl -n hw.model)"
 		local kernel="$(uname -rm)"
 		local memory_query="$(echo "$(echo "$(sysctl -n hw.memsize)" / 1024^2 | bc) $(vm_stat | grep ' active' | awk '{ print $3 }' | sed 's/\.//')")"
+	elif [[ "$(uname)" == 'FreeBSD' ]]; then
+		local cpu_speed="$(sysctl -n hw.clockrate)"
+		local cpu="$(echo "$(sysctl -n hw.ncpu)"cpu: "${cpu_speed:0:1}.${cpu_speed:1}GHz")"
+		local disk_query="$(/bin/df -chl | awk '/^total/ {print $2, $3, $4}' | tail -n1)"
+		local distro='FreeBSD'
+		local gpu="$(pciconf -lv | grep -B 4 -F "VGA" | grep -F "device" | awk -F"'" '{print $2}')"
+		local host="$(sysctl -n hw.model)"
+		local kernel="$(uname -r)"
+		local memory_query="$(echo "$(sysctl -n hw.pagesize) $(sysctl -n hw.usermem) $(vmstat -s | awk '/pages active$/ {print $1}')" | awk '{ print $2, $1 * $3 }')"
 	elif [[ "$(uname)" == 'Linux' ]]; then
 		local cpu="$(echo "$(lscpu | awk '/^CPU\(s\):/ {print $NF}')"cpu: "$(grep '^model name' /proc/cpuinfo | uniq | awk -F': ' '{print $NF}' | tr -s " ")")"
 		local disk_query="$(/bin/df -h -x aufs -x tmpfs -x overlay -x devtmpfs -x udf -x nfs -x cifs --total 2>/dev/null | awk '{print $2, $3, $5}' | tail -n1)"
