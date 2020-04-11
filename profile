@@ -344,6 +344,21 @@ arxifetch() {
 	fi
 }
 
+# pubmedfetch() download papers from PubMed by PMCID
+pubmedfetch() {
+	if [[ $# -eq 1 ]]; then
+		local title="$(fetch - "https://www.ncbi.nlm.nih.gov/pmc/articles/${1}/" | awk -F"<|>" '/<title>/ {print $3}')"
+		if [[ ! -z "${title}" ]]; then
+			fetch "${title} - ${1}.epub" "https://www.ncbi.nlm.nih.gov/pmc/articles/${1}/epub/" && \
+				printf "Downloaded file '%s - %s.epub'.\n" "${title}" "${1}"
+		else
+			printf "ERROR: PubMed Central document ID '%s' not found.\n" "${1}" && return 1
+		fi
+	else
+		printf 'usage:\n    pubmedfetch PMCID\n' && return 1
+	fi
+}
+
 # certcheck() verify tls certificates
 certcheck() {
 	# set default options
