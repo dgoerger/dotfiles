@@ -332,7 +332,7 @@ fi
 # arxifetch() download papers from arXiv by document ID
 arxifetch() {
 	if [[ $# -eq 1 ]]; then
-		local title="$(fetch - "https://arxiv.org/abs/${1}" | awk -F'"' '/meta\ name.*citation_title/ {print $4}')"
+		local title="$(fetch - "https://arxiv.org/abs/${1}" | awk -F'"' '/meta\ name.*citation_title/ {print $4}' | sed 's/\///g')"
 	        if [[ ! -z "${title}" ]]; then
 	                fetch "${title} - ${1}.pdf" "https://arxiv.org/pdf/${1}" && \
 	                        printf "Downloaded file '%s - %s.pdf'.\n" "${title}" "${1}"
@@ -344,10 +344,25 @@ arxifetch() {
 	fi
 }
 
+# bioarxifetch() download papers from bioRxiv by doi + revision number
+bioarxifetch() {
+	if [[ $# -eq 1 ]]; then
+		local title="$(fetch - "https://www.biorxiv.org/content/10.1101/${1}" | awk -F'"' '/DC\.Title/ {print $4}' | sed 's/\///g')"
+		if [[ ! -z "${title}" ]]; then
+			fetch "${title} - ${1}.pdf" "https://www.biorxiv.org/content/10.1101/${1}.full.pdf" && \
+				printf "Downloaded file '%s - %s.pdf'.\n" "${title}" "${1}"
+		else
+			printf "ERROR: bioRxiv doi + revision number '%s' not found.\n" "${1}" && return 1
+		fi
+	else
+		printf 'usage:\n    bioarxifetch DOIvN\n' && return 1
+	fi
+}
+
 # pubmedfetch() download papers from PubMed by PMCID
 pubmedfetch() {
 	if [[ $# -eq 1 ]]; then
-		local title="$(fetch - "https://www.ncbi.nlm.nih.gov/pmc/articles/${1}/" | awk -F"<|>" '/<title>/ {print $3}')"
+		local title="$(fetch - "https://www.ncbi.nlm.nih.gov/pmc/articles/${1}/" | awk -F"<|>" '/<title>/ {print $3}' | sed 's/\///g')"
 		if [[ ! -z "${title}" ]]; then
 			fetch "${title} - ${1}.epub" "https://www.ncbi.nlm.nih.gov/pmc/articles/${1}/epub/" && \
 				printf "Downloaded file '%s - %s.epub'.\n" "${title}" "${1}"
