@@ -234,7 +234,7 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
 		/usr/bin/man -k any="${1}"
 	}
 	if [[ -r /etc/installurl ]]; then
-		if [[ -z "$(sysctl kern.version | grep '\-current')" ]]; then
+		if [[ -z "$(sysctl kern.version | grep -E "\-(current|beta)")" ]]; then
 			checkupdates() {
 				# on -stable, check if there are available syspatches
 				local _patchfile="$(mktemp /tmp/checkupdates.XXXXXXXXXX)"
