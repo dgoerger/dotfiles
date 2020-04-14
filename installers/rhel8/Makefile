@@ -81,7 +81,7 @@ install:
 	sudo yum -qy install unbound
 	sudo install -C -Z -o root -g root -m 0444 unbound.conf /etc/unbound/unbound.conf
 	sudo touch /usr/local/etc/blocklist.conf
-	echo "nameserver 127.0.0.1" | sudo tee /etc/resolv.conf >/dev/null 2>&1 || true
+	echo "nameserver ::1" | sudo tee /etc/resolv.conf >/dev/null 2>&1 || true
 	sudo chattr +i /etc/resolv.conf
 	sudo systemctl --quiet enable --now unbound
 	sudo install -C -Z -o root -g root -m 0544 dnsblock.sh /usr/local/sbin/dnsblock
