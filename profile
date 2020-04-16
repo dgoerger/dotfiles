@@ -221,6 +221,7 @@ elif [[ "$(uname)" == 'NetBSD' ]]; then
 	export PATH=${HOME}/bin:${PATH}
 	export PS1="${HOSTNAME}$ "
 
+	alias apropos='/usr/bin/apropos -l'
 	alias pkgsrc='lynx "https://ftp.netbsd.org/pub/pkgsrc/packages/NetBSD/x86_64/$(uname -r)/All/"'
 	unalias sha512
 	function sha512 {
@@ -622,6 +623,19 @@ fd() {
         else
                 find . -iname "*${1}*"
         fi
+}
+
+# lm() list manuals
+lm() {
+	if [[ "$(/bin/ls -i /usr/bin/mandoc 2>/dev/null | awk '{print $1}')" == "$(/bin/ls -i /usr/bin/apropos 2>/dev/null | awk '{print $1}')" ]]; then
+		# mandoc's apropos
+		/usr/bin/apropos -S "$(uname -m)" "$@" | sed 's/\,.*(/(/' | sed 's/\(.*\)(\(.*\)) * - /man \2 \1   # /' | awk '{sub("   #","\t\t#"); print}'
+	elif [[ "$(uname)" == 'NetBSD' ]]; then
+		/usr/bin/apropos -l "$@" | awk -F' - ' '{print $1, "-", $2}' | sed 's/\(.*\)(\(.*\)) * - /man \2 \1   # /' | awk '{sub("   #","\t\t#"); print}'
+	else
+		# gnu/man-db apropos
+		/usr/bin/apropos -l "$@" | sed 's/\(.*\) (\(.*\)) * - /man \2 \1   # /' | awk '{sub("   #","\t\t#"); print}'
+	fi
 }
 
 # photo_import() import photos from an SD card
