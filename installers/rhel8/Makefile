@@ -101,5 +101,6 @@ install:
 # manual:
 # echo 'tmpfs /dev/shm tmpfs defaults,noatime,noexec,size=512M 0 0' >> /etc/fstab
 # echo 'kernel.yama.ptrace_scope = 2' > /etc/sysctl.d/10-default-yama-scope.conf
+# echo 'kernel.unprivileged_bpf_disabled=1' >> /etc/sysctl.conf
 
 all: check install nvidia
