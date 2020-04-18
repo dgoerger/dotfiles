@@ -145,7 +145,7 @@ if [[ "$(uname)" == "Linux" ]]; then
 		export PATH=${HOME}/bin:${PATH}
 	fi
 	if [[ "${0}" == '-zsh' ]] || [[ "${0}" == 'zsh' ]]; then
-		export PROMPT='%m%% '
+		export PROMPT='%m$ '
 	elif [[ "${0}" == '-bash' ]] || [[ "${0}" == 'bash' ]]; then
 		export PS1="\h$ "
 	fi
