@@ -10,6 +10,7 @@ set -o ksh_option_print
 set -o local_options
 set -o local_traps
 set -o no_auto_menu
+set -o null_glob
 set -o posix_aliases
 set -o posix_argzero
 set -o posix_builtins
