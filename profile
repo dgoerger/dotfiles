@@ -147,7 +147,7 @@ if [[ "$(uname)" == "Darwin" ]]; then
 	alias mtop='top -o mem'
 	alias pscpu='ps -Awwro user,pid,%cpu,%mem,vsz,rss,tty,stat,start,time,command'
 	unalias sha512
-	sha512() {
+	function sha512 {
 		shasum -a 512 "${1}" | awk '{print $1}'
 	}
 
