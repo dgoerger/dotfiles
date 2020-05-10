@@ -137,8 +137,10 @@ fi
 if [[ "$(uname)" == "Darwin" ]]; then
 	export MANWIDTH=80
 	export PROMPT='%m$ '
+
 	alias bc='bc -ql'
 	alias cal='cal -h'
+	alias dns_reset='sudo killall -HUP mDNSResponder'
 	alias fetch='curl -Lso'
 	alias free='top -l 1 -s 0 | grep PhysMem'
 	alias listening='netstat -an | grep LISTEN'
@@ -646,6 +648,8 @@ lm() {
 	if [[ "$(/bin/ls -i /usr/bin/mandoc 2>/dev/null | awk '{print $1}')" == "$(/bin/ls -i /usr/bin/apropos 2>/dev/null | awk '{print $1}')" ]]; then
 		# mandoc's apropos
 		/usr/bin/apropos -S "$(uname -m)" "$@" | sed 's/\,.*(/(/' | sed 's/\(.*\)(\(.*\)) * - /man \2 \1   # /' | awk '{sub("   #","\t\t#"); print}'
+	elif [[ "$(uname)" == 'Darwin' ]]; then
+		/usr/bin/apropos "$@" | sed 's/\(.*\)(\(.*\)) * - /man \2 \1   # /' | awk '{sub("   #","\t\t#"); print}'
 	elif [[ "$(uname)" == 'NetBSD' ]]; then
 		/usr/bin/apropos -l "$@" | awk -F' - ' '{print $1, "-", $2}' | sed 's/\(.*\)(\(.*\)) * - /man \2 \1   # /' | awk '{sub("   #","\t\t#"); print}'
 	else
@@ -731,11 +735,11 @@ fi
 # pwgen() random password generator
 pwgen() {
 	if [[ $# == 0 ]]; then
-		</dev/urandom tr -cd '[:alnum:]' | fold -w 30 | head -n1
+		</dev/urandom LC_ALL=C tr -cd '[:alnum:]' | fold -w 30 | head -n1
 	elif [[ $# == 1 ]]; then
 		case ${1} in
 			''|*[!0-9]*) echo "Error: \${1} must be an integer." && return 1 ;;
-			*) </dev/urandom tr -cd '[:alnum:]' | fold -w "${1}" | head -n1
+			*) </dev/urandom LC_ALL=C tr -cd '[:alnum:]' | fold -w "${1}" | head -n1
 		esac
 	else
 		printf "usage:\n    pwgen [INT]\n" && return 1
@@ -1102,7 +1106,7 @@ sysinfo() {
 		local gpu="$(system_profiler SPDisplaysDataType | awk -F': ' '/^\ *Chipset Model:/ {print $2}' | awk '{ printf "%s / ", $0 }' | sed -e 's/\/ $//g')"
 		local host="$(sysctl -n hw.model)"
 		local kernel="$(uname -rm)"
-		local memory_query="$(echo "$(echo "$(sysctl -n hw.memsize)" / 1024^2 | bc) $(vm_stat | grep ' active' | awk '{ print $3 }' | sed 's/\.//')")"
+		local memory_query="$(echo "$(echo "$(sysctl -n hw.memsize)" | bc) $(vm_stat | grep ' active' | awk '{ print $3*4*1024 }')")"
 	elif [[ "$(uname)" == 'FreeBSD' ]]; then
 		local cpu_speed="$(sysctl -n hw.clockrate)"
 		local cpu="$(echo "$(sysctl -n hw.ncpu)"cpu: "${cpu_speed:0:1}.${cpu_speed:1}GHz")"
