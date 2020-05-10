@@ -134,7 +134,22 @@ fi
 
 
 ### OS-specific overrides
-if [[ "$(uname)" == "Linux" ]]; then
+if [[ "$(uname)" == "Darwin" ]]; then
+	export MANWIDTH=80
+	export PROMPT='%m$ '
+	alias bc='bc -ql'
+	alias cal='cal -h'
+	alias fetch='curl -Lso'
+	alias free='top -l 1 -s 0 | grep PhysMem'
+	alias listening='netstat -an | grep LISTEN'
+	alias mtop='top -o mem'
+	alias pscpu='ps -Awwro user,pid,%cpu,%mem,vsz,rss,tty,stat,start,time,command'
+	unalias sha512
+	sha512() {
+		shasum -a 512 "${1}" | awk '{print $1}'
+	}
+
+elif [[ "$(uname)" == "Linux" ]]; then
 	# env
 	export HTOPRC=/dev/null
 	export MANWIDTH=80
