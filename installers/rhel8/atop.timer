@@ -1,0 +1,11 @@
+[Unit]
+Description=atop
+ConditionKernelCommandLine=!rd.live.image
+After=time-sync.target
+
+[Timer]
+OnCalendar=daily
+Unit=atop.service
+
+[Install]
+WantedBy=multi-user.target

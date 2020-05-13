@@ -11,8 +11,8 @@ nvidia:
 	sudo yum -qy install dkms elfutils-libelf-devel kernel-devel libglvnd-devel
 	sudo systemctl enable --now dkms
 	sudo mkdir -p /usr/local/tmp
-	if [[ ! -f /usr/local/src/nvidia-440.64.run ]]; then sudo curl -sLo /usr/local/src/nvidia-440.64.run 'https://us.download.nvidia.com/XFree86/Linux-x86_64/440.64/NVIDIA-Linux-x86_64-440.64.run'; fi
-	if [[ ! -d /var/lib/dkms/nvidia/440.64 ]]; then sudo sh /usr/local/src/nvidia-440.64.run --accept-license --no-questions --dkms --tmpdir /usr/local/tmp --silent; fi
+	if [[ ! -f /usr/local/src/nvidia-440.82.run ]]; then sudo curl -sLo /usr/local/src/nvidia-440.82.run 'https://us.download.nvidia.com/XFree86/Linux-x86_64/440.82/NVIDIA-Linux-x86_64-440.82.run'; fi
+	if [[ ! -d /var/lib/dkms/nvidia/440.82 ]]; then sudo sh /usr/local/src/nvidia-440.82.run --accept-license --no-questions --dkms --tmpdir /usr/local/tmp --silent; fi
 
 install:
 	## remove and disable unnecessary things
@@ -41,8 +41,11 @@ install:
 	## enable EPEL
 	if [[ ! -f /etc/yum.repos.d/epel.repo ]]; then sudo yum -qy install epel-release 2>/dev/null || sudo yum -qy install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm; fi
 	## install useful utilities
-	sudo yum -qy install atop bpftrace gdb mg ncdu nmap nnn podman-docker qemu-img sysstat tmux
+	sudo yum -qy install atop bpftrace gdb mg ncdu nmap podman-docker qemu-img sysstat tmux
 	sudo systemctl --quiet enable atop.service
+	sudo install -C -Z -o root -g root -m 0444 atop.timer /etc/systemd/system/atop.timer
+	sudo systemctl --quiet daemon-reload
+	sudo systemctl --quiet enable --now atop.timer
 	# install GNOME extensions and Tweaks
 	sudo yum -qy install gnome-shell-extension-dash-to-dock gnome-shell-extension-native-window-placement gnome-shell-extension-no-hot-corner gnome-tweaks
 	# enable flatpaks from Flathub.org
