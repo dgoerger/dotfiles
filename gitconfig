@@ -1,15 +1,26 @@
 # ~/.gitconfig, see git-config(1)
 
 [alias]
+	branches = branch -av
 	st = status --branch --porcelain
+	tags = tag -l
 	url = remote get-url --all origin
 [apply]
 	whitespace = fix
 [branch]
 	autosetuprebase = always
 [color]
-	ui = true
+	ui = auto
+[diff]
+	algorithm = histogram
+[grep]
+	lineNumber = true
+	patternType = extended
+[log]
+	date = iso8601
 [mergetool]
 	prompt = false
 [push]
 	default = simple
+[rebase]
+	autoSquash = true
