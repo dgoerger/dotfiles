@@ -78,12 +78,8 @@ alias mv='mv -i'
 if command -v newsboat >/dev/null; then
 	alias news='newsboat -q'
 fi
-if command -v nnn >/dev/null; then
-	alias nnn='nnn -AdeHoR'
-fi
-alias pscpu='ps -Awwu'
-alias psjob='ps -Awwo user,pid,ppid,pri,nice,stat,tt,wchan,time,command'
-alias psmem='ps -Awwv'
+alias pscpu='ps -Awwro user,pid,ppid,%cpu,%mem,vsz,rss,state,wchan,start,time,command'
+alias psmem='ps -Awwmo pid,state,time,pagein,vsz,rss,tsiz,%cpu,%mem,command'
 if command -v python3 >/dev/null; then
 	alias py=python3
 fi
@@ -135,24 +131,27 @@ fi
 
 
 ### OS-specific overrides
-if [[ "$(uname)" == "Darwin" ]]; then
+if [[ "$(uname)" == 'Darwin' ]]; then
 	export MANWIDTH=80
 	export PROMPT='%m$ '
 
 	alias bc='bc -ql'
-	alias cal='cal -h'
+	alias cal='/usr/bin/ncal -C'
 	alias dns_reset='sudo killall -HUP mDNSResponder'
 	alias fetch='curl -Lso'
 	alias free='top -l 1 -s 0 | grep PhysMem'
 	alias listening='netstat -an | grep LISTEN'
 	alias mtop='top -o mem'
-	alias pscpu='ps -Awwro user,pid,%cpu,%mem,vsz,rss,tty,stat,start,time,command'
 	unalias sha512
 	function sha512 {
 		shasum -a 512 "${1}" | awk '{print $1}'
 	}
 
-elif [[ "$(uname)" == "Linux" ]]; then
+elif [[ "$(uname)" == 'FreeBSD' ]]; then
+	alias cal='/usr/bin/ncal -C'
+	alias free='top | grep -E "^Mem"
+
+elif [[ "$(uname)" == 'Linux' ]]; then
 	# env
 	export HTOPRC=/dev/null
 	export MANWIDTH=80
@@ -186,10 +185,6 @@ elif [[ "$(uname)" == "Linux" ]]; then
 	alias doas=/usr/bin/sudo #mostly-compatible
 	alias fetch='curl -Lso'
 	alias free='free -h'
-	if command -v tnftp >/dev/null; then
-		# BSD ftp has support for wget-like functionality
-		alias ftp=tnftp
-	fi
 	alias l='ls -1F --color=never'
 	alias la='ls -aFhl --color=never'
 	alias larth='ls -aFhlrt --color=never'
@@ -199,9 +194,8 @@ elif [[ "$(uname)" == "Linux" ]]; then
 	alias ls='ls -F --color=never'
 	alias man='man --nh --nj'
 	alias mtop='top -s -o "RES"'
-	alias pscpu='ps -Awwo user,pid,pcpu,pmem,vsz,rss,tname,stat,start_time,cputime,command --sort -pcpu,-vsz,-pmem,-rss'
-	alias psjob='ps -Awwo user,pid,ppid,pri,nice,stat,tname,wchan,cputime,command --sort ppid,pid'
-	alias psmem='ps -Awwo user,pid,stat,cputime,majflt,vsz,rss,trs,pcpu,pmem,command --sort -vsz,-rss,-pcpu'
+	alias pscpu='ps -Awwo user,pid,ppid,pcpu,pmem,vsz:10,rss:8,stat,start_time,cputime,comm --sort -pcpu,-vsz,-pmem,-rss'
+	alias psmem='ps -Awwo pid,stat,cputime,majflt,vsz:10,rss:8,trs:8,pcpu,pmem,comm --sort -vsz,-rss,-pcpu'
 	if ! command -v pstree >/dev/null; then
 		alias pstree='ps -HAwwo user,pid,pcpu,pmem,vsz,rss,tname,stat,start_time,cputime,command'
 	fi
@@ -577,6 +571,9 @@ if command -v mpv >/dev/null; then
 				ici-musique) mpv "http://7qmtl0.akacast.akamaistream.net/7/445/177407/v1/rc.akacast.akamaistream.net/7QMTL0" ;;
 				# USA: Prairie Public Radio (North Dakota)
 				kdsu) mpv "https://18433.live.streamtheworld.com/KCNDHD3_SC" ;;
+				# Germany: Radio Köln
+				koln) mpv "http://radiokoeln-ais-edge-3004.fra-eco.cdn.addradio.net/radiokoeln/live/mp3/high" ;;
+				kolnfc) mpv "http://fckoeln-ice-edge-1006.fra-eco.cdn.addradio.net/fckoeln/live/mp3/high" ;;
 				# USA: Minnesota Public Radio
 				mpr) mpv "https://current.stream.publicradio.org/kcmp.mp3" ;;
 				# Deutschland: Queerlive
