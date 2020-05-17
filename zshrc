@@ -25,18 +25,6 @@ set -o hist_reduce_blanks
 set -o inc_append_history
 
 
-## keybindings
-bindkey "${terminfo[khome]}" beginning-of-line
-bindkey "${terminfo[kend]}" end-of-line
-if [[ ${+terminfo[smkx]} && ${+terminfo[rmkx]} ]]; then
-	autoload -Uz add-zle-hook-widget
-	function zle_application_mode_start { echoti smkx }
-	function zle_application_mode_stop { echoti rmkx }
-	add-zle-hook-widget -Uz zle-line-init zle_application_mode_start
-	add-zle-hook-widget -Uz zle-line-finish zle_application_mode_stop
-fi
-
-
 ## tab-completion
 autoload -Uz compinit
 if [[ ! -d "${HOME}/.cache/zsh" ]]; then

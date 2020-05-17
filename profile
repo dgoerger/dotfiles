@@ -15,6 +15,7 @@ umask 077
 ## environment variables
 unset ENV
 export BROWSER=lynx
+export EDITOR=vi
 export GIT_AUTHOR_EMAIL="${LOGNAME}@users.noreply.github.com"
 export GIT_AUTHOR_NAME="$(getent passwd "${LOGNAME}" | cut -d: -f5 | cut -d, -f1)"
 export GIT_COMMITTER_EMAIL=${GIT_AUTHOR_EMAIL}
@@ -38,8 +39,8 @@ if [[ -r "${HOME}/.pythonrc" ]]; then
 	export PYTHONSTARTUP="${HOME}/.pythonrc"
 fi
 export SAVEHIST=${HISTSIZE}
-export TZ='US/Eastern'
-export VISUAL=vi
+export TZ='America/New_York'
+export VISUAL=${EDITOR}
 
 
 ## aliases
@@ -221,13 +222,12 @@ elif [[ "$(uname)" == "Linux" ]]; then
 	systat() {
 		printf "%s\n\n" "systat(1) isn't available for Linux. Maybe sar(1) or atop(1)?"
 	}
-	alias vi='vi -nu NONE --noplugin'
 	alias top='top -s'
 	if command -v tree >/dev/null; then
 		alias tree='tree -N'
 	fi
 	if [[ -z "$(whence whence 2>/dev/null)" ]]; then
-		# whence exists in ksh, but not in bash
+		# whence exists in ksh and zsh, but not in bash
 		alias whence='(alias; declare -f) | /usr/bin/which --tty-only --read-alias --read-functions --show-tilde --show-dot'
 	fi
 
@@ -641,21 +641,6 @@ fd() {
         else
                 find . -iname "*${1}*"
         fi
-}
-
-# lm() list manuals
-lm() {
-	if [[ "$(/bin/ls -i /usr/bin/mandoc 2>/dev/null | awk '{print $1}')" == "$(/bin/ls -i /usr/bin/apropos 2>/dev/null | awk '{print $1}')" ]]; then
-		# mandoc's apropos
-		/usr/bin/apropos -S "$(uname -m)" "$@" | sed 's/\,.*(/(/' | sed 's/\(.*\)(\(.*\)) * - /man \2 \1   # /' | awk '{sub("   #","\t\t#"); print}'
-	elif [[ "$(uname)" == 'Darwin' ]]; then
-		/usr/bin/apropos "$@" | sed 's/\(.*\)(\(.*\)) * - /man \2 \1   # /' | awk '{sub("   #","\t\t#"); print}'
-	elif [[ "$(uname)" == 'NetBSD' ]]; then
-		/usr/bin/apropos -l "$@" | awk -F' - ' '{print $1, "-", $2}' | sed 's/\(.*\)(\(.*\)) * - /man \2 \1   # /' | awk '{sub("   #","\t\t#"); print}'
-	else
-		# gnu/man-db apropos
-		/usr/bin/apropos -l "$@" | sed 's/\(.*\) (\(.*\)) * - /man \2 \1   # /' | awk '{sub("   #","\t\t#"); print}'
-	fi
 }
 
 # photo_import() import photos from an SD card
