@@ -11,10 +11,10 @@ Unless otherwise noted, these confs and scripts should work correctly
 on OpenBSD-current, with versions tagged corresponding with each
 release.
 
-I test things periodically on the latest versions of Fedora and
-CentOS Linux; but if package versions fall behind, I typically roll
-forward on OpenBSD, and wait to update installed Linux copies until
-after an OS upgrade.
+I test things periodically on the latest versions of Fedora, CentOS, 
+Debian, and macOS; but if package versions fall behind, I typically
+roll forward on OpenBSD, and wait to update installed copies on other
+operating systems until after an OS upgrade.
 
 
 Testing
