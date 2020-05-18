@@ -1,5 +1,5 @@
 # Red Hat Enterprise Linux 8: Workstation
-# Last tested: 11 February 2020
+# Last tested: 2020-05-17
 
 check:
 	sudo sshd -t -f sshd_config
