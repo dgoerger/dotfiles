@@ -42,10 +42,6 @@ install:
 	if [[ ! -f /etc/yum.repos.d/epel.repo ]]; then sudo yum -qy install epel-release 2>/dev/null || sudo yum -qy install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm; fi
 	## install useful utilities
 	sudo yum -qy install atop bpftrace gdb mg ncdu nmap podman-docker qemu-img sysstat tmux
-	sudo systemctl --quiet enable atop.service
-	sudo install -C -Z -o root -g root -m 0444 atop.timer /etc/systemd/system/atop.timer
-	sudo systemctl --quiet daemon-reload
-	sudo systemctl --quiet enable --now atop.timer
 	# install GNOME extensions and Tweaks
 	sudo yum -qy install gnome-shell-extension-dash-to-dock gnome-shell-extension-native-window-placement gnome-shell-extension-no-hot-corner gnome-tweaks
 	# enable flatpaks from Flathub.org
@@ -53,8 +49,6 @@ install:
 	## copy confs
 	# chrony time daemon
 	sudo install -C -Z -o root -g root -m 0444 chrony.conf /etc/chrony.conf
-	# firefox
-	if [[ -d /usr/lib64/firefox/distribution ]]; then sudo install -C -Z -o root -g root -m 0444 firefox.json /usr/lib64/firefox/distribution/policies.json; fi
 	# google-chrome
 	if [[ ! -f /usr/bin/google-chrome ]]; then sudo yum -qy install https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm; fi
 	sudo mkdir -p /etc/opt/chrome/policies/managed

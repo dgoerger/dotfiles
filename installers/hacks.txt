@@ -1,6 +1,7 @@
-### Lenovo Yoga 3
-echo "blacklist ideapad_laptop" | sudo tee /etc/modprobe.d/lenovo_wifi.conf
-
 ### Zotac box with Nvidia card
 # append to /etc/default/grub, GRUB_CMDLINE_LINUX:
 # 'nouveau.modeset=0 rd.driver.blacklist=nouveau nvidia-drm.modeset=1 pci=nomsi,noaer nosmt'
+
+### Linode
+# https://www.linode.com/docs/tools-reference/custom-kernels-distros/install-a-custom-distribution-on-a-linode/
+# installer disk: 400MB
