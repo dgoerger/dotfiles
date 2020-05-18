@@ -149,7 +149,7 @@ if [[ "$(uname)" == 'Darwin' ]]; then
 
 elif [[ "$(uname)" == 'FreeBSD' ]]; then
 	alias cal='/usr/bin/ncal -C'
-	alias free='top | grep -E "^Mem"
+	alias free='top | grep -E "^Mem"'
 
 elif [[ "$(uname)" == 'Linux' ]]; then
 	# env
