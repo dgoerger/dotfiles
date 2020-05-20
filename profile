@@ -172,7 +172,7 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 
 	# aliases
 	if command -v atop >/dev/null; then
-		alias atop='atop -fx'
+		alias atop='atop -f'
 	fi
 	alias bc='bc -ql'
 	if [[ -r /etc/alpine-release ]]; then
