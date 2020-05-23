@@ -78,8 +78,8 @@ alias mv='mv -i'
 if command -v newsboat >/dev/null; then
 	alias news='newsboat -q'
 fi
-alias pscpu='ps -Awwro user,pid,ppid,%cpu,%mem,vsz,rss,state,wchan,start,time,command'
-alias psmem='ps -Awwmo pid,state,time,pagein,vsz,rss,tsiz,%cpu,%mem,command'
+alias pscpu='ps -Awwro user,pid,ppid,nice,%cpu,%mem,vsz,rss,state,wchan,time,comm'
+alias psmem='ps -Awwmo pid,state,time,pagein,vsz,rss,tsiz,%cpu,%mem,comm'
 if command -v python3 >/dev/null; then
 	alias py=python3
 fi
@@ -194,7 +194,7 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 	alias ls='ls -F --color=never'
 	alias man='man --nh --nj'
 	alias mtop='top -s -o "RES"'
-	alias pscpu='ps -Awwo user,pid,ppid,pcpu,pmem,vsz:10,rss:8,stat,start_time,cputime,comm --sort -pcpu,-vsz,-pmem,-rss'
+	alias pscpu='ps -Awwo user,pid,ppid,nice,pcpu,pmem,vsz:10,rss:8,stat,cputime,comm --sort -pcpu,-vsz,-pmem,-rss'
 	alias psmem='ps -Awwo pid,stat,cputime,majflt,vsz:10,rss:8,trs:8,pcpu,pmem,comm --sort -vsz,-rss,-pcpu'
 	if ! command -v pstree >/dev/null; then
 		alias pstree='ps -HAwwo user,pid,pcpu,pmem,vsz,rss,tname,stat,start_time,cputime,command'
