@@ -7,6 +7,8 @@ export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/games:/usr/local/bin
 ## terminal settings
 # fix backspace on old TERMs
 #stty erase '^?' echoe
+# disable terminal flow control (ctrl+s/ctrl+q)
+stty -ixon
 # SIGINFO: see signal(3)
 stty status ^T 2>/dev/null
 umask 077
