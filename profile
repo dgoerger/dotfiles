@@ -85,6 +85,7 @@ alias psmem='ps -Awwmo pid,state,time,pagein,vsz,rss,tsiz,%cpu,%mem,comm'
 if command -v python3 >/dev/null; then
 	alias py=python3
 fi
+alias rgrep='grep -rIns --'
 alias rm='rm -i'
 alias sha512='sha512 -q'
 alias stat='stat -x'
@@ -110,7 +111,7 @@ alias woohoo='echo \\\(ˆ˚ˆ\)/'
 
 ## daemons
 # ssh-agent
-if [[ -z "${SSH_AUTH_SOCK}" ]] || [[ -n "$(echo "${SSH_AUTH_SOCK}" | grep -E "^/run/user/$(id -u)/keyring/ssh$")" ]]; then
+if [[ -z "${SSH_AUTH_SOCK}" ]] || [[ -n "$(echo "${SSH_AUTH_SOCK}" | grep -E "^/run/user/$(id -u)/keyring/ssh$")" ]] || [[ -n "$(echo "${SSH_AUTH_SOCK}" | grep -E "^/private/tmp/com.apple.launchd.*/Listeners$")" ]]; then
 	# create ~/.ssh if missing - some operating systems don't include this in /etc/skel
 	if [[ ! -d "${HOME}/.ssh" ]]; then
 		mkdir -m 0700 "${HOME}/.ssh"
