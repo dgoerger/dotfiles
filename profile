@@ -181,6 +181,9 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 	if [[ -r /etc/alpine-release ]]; then
 		alias checkupdates='apk list -u'
 	elif [[ -r /etc/debian_version ]]; then
+		if [[ -x /usr/bin/ncal ]]; then
+			alias cal='/usr/bin/ncal -bM'
+		fi
 		alias checkupdates='apt list --upgradeable'
 	elif [[ -r /etc/redhat-release ]]; then
 		alias checkupdates='yum -q check-update'
