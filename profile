@@ -332,7 +332,7 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == 'ksh' ]]; then
 	set -A complete_scp_3 -- ${HOST_LIST}
 	set -A complete_sftp_1 -- -p
 	set -A complete_sftp_2 -- ${HOST_LIST}
-	set -A complete_search_1 -- alpine arxiv centos cve debian fedora github_issues mandragonflybsd manfreebsd manillumos manlinux manminix mannetbsd manopenbsd mathworld mbug nws rfc rhbz thesaurus wayback webster wikipedia wiktionary
+	set -A complete_search_1 -- alpine arxiv centos cve debian debian_tracker fedora github_issues mandragonflybsd manfreebsd manillumos manlinux manminix mannetbsd manopenbsd mathworld mbug nws rfc rhbz thesaurus wayback webster wikipedia wiktionary
 	set -A complete_ssh_1 -- ${HOST_LIST}
 	set -A complete_systat_1 -- buckets cpu ifstat iostat malloc mbufs netstat nfsclient nfsserver pf pigs pool pcache queues rules sensors states swap vmstat uvm
 	set -A complete_telnet_1 -- ${HOST_LIST}
@@ -895,6 +895,14 @@ search() {
 			lynx "https://packages.debian.org/"
 		else
 			lynx "https://packages.debian.org/search?keywords=${query}&searchon=names&suite=stable&section=all"
+		fi
+	elif [[ "${1}" == 'debian_tracker' ]]; then
+		shift
+		local query="$(_escape_html "$@")"
+		if [[ -z "${query}" ]]; then
+			lynx "https://tracker.debian.org/"
+		else
+			lynx "https://tracker.debian.org/search?package_name=${query}"
 		fi
 	elif [[ "${1}" == 'fedora' ]]; then
 		shift
