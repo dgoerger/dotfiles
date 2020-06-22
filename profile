@@ -1215,6 +1215,8 @@ whattimeisitin() {
 ### source profile-local files
 if [[ "${SHELL}" != '/bin/ash' ]]; then
 	set -o emacs
+	# disable job control (^Z)
+	set +m
 fi
 if [[ -r "${HOME}/.profile.local" ]]; then
 	. "${HOME}/.profile.local"
