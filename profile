@@ -85,6 +85,7 @@ alias psmem='ps -Awwmo pid,state,time,pagein,vsz,rss,tsiz,%cpu,%mem,comm'
 if command -v python3 >/dev/null; then
 	alias py=python3
 fi
+alias realpath='readlink -f'
 alias rgrep='grep -rIns --'
 alias rm='rm -i'
 alias sha512='sha512 -q'
@@ -145,6 +146,7 @@ if [[ "$(uname)" == 'Darwin' ]]; then
 	alias free='top -l 1 -s 0 | grep PhysMem'
 	alias listening='netstat -an | grep LISTEN'
 	alias mtop='top -o mem'
+	alias realpath='readlink'
 	unalias sha512
 	function sha512 {
 		shasum -a 512 "${1}" | awk '{print $1}'
@@ -204,6 +206,7 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 	if ! command -v pstree >/dev/null; then
 		alias pstree='ps -HAwwo user,pid,pcpu,pmem,vsz,rss,tname,stat,start_time,cputime,command'
 	fi
+	alias realpath='readlink -ev'
 	if command -v sar >/dev/null; then
 		alias sarcpu='sar -qu'
 		alias sarmem='sar -BHrS'
@@ -238,6 +241,7 @@ elif [[ "$(uname)" == 'NetBSD' ]]; then
 	alias apropos='/usr/bin/apropos -l'
 	alias listening='netstat -anf inet | grep -Ev "(ESTABLISHED|TIME_WAIT|FIN_WAIT_1|FIN_WAIT_2)$"'
 	alias pkgsrc='lynx "https://ftp.netbsd.org/pub/pkgsrc/packages/NetBSD/x86_64/$(uname -r)/All/"'
+	alias realpath='readlink -fv'
 	unalias sha512
 	function sha512 {
 		cksum -a SHA512 "${1}" | awk '{print $NF}'
