@@ -72,7 +72,7 @@ alias l='ls -1F'
 alias la='ls -aFhl'
 alias larth='ls -aFhlrt'
 alias less='less -iLMR'
-alias listening='fstat -n | grep internet'
+alias listening='netstat -lnp tcp && netstat -lnp udp'
 alias ll='ls -Fhl'
 alias ls='ls -F'
 alias mtop='top -o res'
@@ -194,7 +194,6 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 	alias l='ls -1F --color=never'
 	alias la='ls -aFhl --color=never'
 	alias larth='ls -aFhlrt --color=never'
-	# linux doesn't have fstat
 	alias listening='ss -lntu'
 	alias ll='ls -Fhl --color=never'
 	alias ls='ls -F --color=never'
@@ -219,9 +218,6 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 		sha512sum --tag "${1}" | awk '{print $NF}'
 	}
 	unalias stat
-	systat() {
-		printf "%s\n\n" "systat(1) isn't available for Linux. Maybe sar(1) or atop(1)?"
-	}
 	alias top='top -s'
 	if command -v tree >/dev/null; then
 		alias tree='tree -N'
@@ -240,6 +236,7 @@ elif [[ "$(uname)" == 'NetBSD' ]]; then
 	export PS1="${HOSTNAME}$ "
 
 	alias apropos='/usr/bin/apropos -l'
+	alias listening='netstat -anf inet | grep -Ev "(ESTABLISHED|TIME_WAIT|FIN_WAIT_1|FIN_WAIT_2)$"'
 	alias pkgsrc='lynx "https://ftp.netbsd.org/pub/pkgsrc/packages/NetBSD/x86_64/$(uname -r)/All/"'
 	unalias sha512
 	function sha512 {
@@ -644,6 +641,29 @@ fd() {
         else
                 find . -iname "*${1}*"
         fi
+}
+
+# ldd() list dynamic dependencies
+ldd() {
+	if [[ "$(uname)" == 'Darwin' ]]; then
+		otool -L "${1}"
+	else
+		printf "%s:\n" "${1}"
+		if [[ -r "${1}" ]]; then
+			if /usr/bin/file -b "${1}" 2>/dev/null | grep -qE "^ELF"; then
+				local dlibs="$(/usr/bin/objdump -p "${1}" | awk '/\ NEEDED\ / {print "\t" $2}' | sort -u)"
+				if [[ -z "${dlibs}" ]]; then
+					printf "not a dynamic executable\n"
+				else
+					printf "%s\n" "${dlibs}"
+				fi
+			else
+				printf "not an ELF executable\n"
+			fi
+		else
+			printf "no such file or directory\n"
+		fi
+	fi
 }
 
 # photo_import() import photos from an SD card
