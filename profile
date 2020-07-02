@@ -141,7 +141,7 @@ if [[ "$(uname)" == 'Darwin' ]]; then
 
 	alias bc='bc -ql'
 	alias cal='/usr/bin/ncal -C'
-	alias dns_reset='sudo killall -HUP mDNSResponder'
+	alias dns_reset='sudo killall -HUP mDNSResponder; sudo killall mDNSResponderHelper; sudo dscacheutil -flushcache'
 	alias fetch='curl -Lso'
 	alias free='top -l 1 -s 0 | grep PhysMem'
 	alias listening='netstat -an | grep LISTEN'
