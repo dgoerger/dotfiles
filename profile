@@ -68,6 +68,9 @@ alias df='df -h'
 alias dush='du -sh * .??* 2>/dev/null | sort -hr'
 alias fetch='ftp -Vo'
 alias free='top | grep -E "^Memory"'
+if command -v git >/dev/null; then
+	alias ggrep='git grep'
+fi
 if command -v kpcli >/dev/null; then
 	alias kpcli='kpcli --histfile=/dev/null --readonly'
 fi
