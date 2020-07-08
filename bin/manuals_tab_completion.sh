@@ -12,6 +12,8 @@
 #     and are thus filtered out (e.g. perl* and git-*)
 #   - sections 2, 3, 3p, 4, and 9 are omitted for brevity
 
+set -euo pipefail
+
 TMPFILE="$(mktemp)"
 CONFFILE="/usr/local/etc/manuals.list"
 

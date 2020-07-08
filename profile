@@ -4,6 +4,9 @@
 ## PATH
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/games:/usr/local/bin
 
+# quick exit for non-interactive shells
+if [[ ${-} != *i* ]]; then return; fi
+
 ## terminal settings
 # fix backspace on old TERMs
 #stty erase '^?' echoe

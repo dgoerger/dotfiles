@@ -1,5 +1,7 @@
 #!/bin/ksh
 
+set -euo pipefail
+
 TMPFILE="$(mktemp -t pf.XXXXXX)"
 CONF="/usr/local/etc/pf_blocklist.conf"
 chown root:_pkgfetch "${TMPFILE}"

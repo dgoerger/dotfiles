@@ -1,5 +1,7 @@
 #!/bin/ksh
 
+set -euo pipefail
+
 cp -p /bsd.booted /obsd || FAIL=1
 cp -p /bsd.rd /obsd.rd || FAIL=1
 

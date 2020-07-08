@@ -2,6 +2,8 @@
 #
 # TODO: graphical notifications currently only support Linux
 
+set -euo pipefail
+
 ## prep broadcast
 # fetch REBOOT_DELAY (in minutes) if passed in as an argument
 case ${1} in

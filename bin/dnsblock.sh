@@ -1,5 +1,7 @@
 #!/bin/ksh
 
+set -euo pipefail
+
 UPSTREAM_HOSTS_FILE='https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-porn/hosts'
 
 TMP="$(mktemp)"
