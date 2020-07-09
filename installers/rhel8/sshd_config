@@ -5,9 +5,6 @@ UsePAM yes
 PrintMotd no
 # $ sudo ln /usr/libexec/openssh/sftp-server /usr/libexec/sftp-server
 
-# IPv6-only
-AddressFamily inet6
-
 ## Authentication
 PermitRootLogin no
 PubkeyAuthentication yes
