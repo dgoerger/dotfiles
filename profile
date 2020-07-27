@@ -81,6 +81,9 @@ alias less='less -iLMR'
 alias listening='netstat -lnp tcp && netstat -lnp udp'
 alias ll='ls -Fhl'
 alias ls='ls -F'
+if command -v mutt >/dev/null; then
+	alias mail=mutt
+fi
 alias mtop='top -o res'
 alias mv='mv -i'
 if command -v newsboat >/dev/null; then
@@ -359,14 +362,14 @@ fi
 arxifetch() {
 	if [[ $# -eq 1 ]]; then
 		local title="$(fetch - "https://arxiv.org/abs/${1}" | awk -F'"' '/meta\ name.*citation_title/ {print $4}' | sed 's/\///g')"
-	        if [[ ! -z "${title}" ]]; then
-	                fetch "${title} - ${1}.pdf" "https://arxiv.org/pdf/${1}" && \
-	                        printf "Downloaded file '%s - %s.pdf'.\n" "${title}" "${1}"
-	        else
-	                printf "ERROR: arXiv document ID '%s' not found.\n" "${1}" && return 1
-	        fi
+		if [[ ! -z "${title}" ]]; then
+			fetch "${title} - ${1}.pdf" "https://arxiv.org/pdf/${1}" && \
+				printf "Downloaded file '%s - %s.pdf'.\n" "${title}" "${1}"
+		else
+			printf "ERROR: arXiv document ID '%s' not found.\n" "${1}" && return 1
+		fi
 	else
-	        printf 'usage:\n    arxifetch ARXIV_ID\n' && return 1
+		printf 'usage:\n    arxifetch ARXIV_ID\n' && return 1
 	fi
 }
 
@@ -629,7 +632,7 @@ fat32san() {
 	#        that char for now
 	_rename() {
 		mv "${1}" "$(echo "${1}" | tr -d '\:\"\?\<\>\|\\\*')"
-        }
+	}
 	if [[ "${#}" != '1' ]] || [[ ! -d "${1}" ]]; then
 		printf "usage:\n    fat32san /path/to/sanitize\n"
 	else
@@ -646,11 +649,11 @@ fat32san() {
 
 # fd() find files and directories
 fd() {
-        if [[ "${#}" != '1' ]]; then
-                printf "usage:\n    fd FILENAME\n"
-        else
-                find . -iname "*${1}*"
-        fi
+	if [[ "${#}" != '1' ]]; then
+		printf "usage:\n    fd FILENAME\n"
+	else
+		find . -iname "*${1}*"
+	fi
 }
 
 # ldd() list dynamic dependencies
@@ -840,6 +843,51 @@ rename() {
 			/bin/mv -- "${oldname}" "${newname}"
 		fi
 	done
+}
+
+scp() {
+	if [[ $# == 1 ]]; then
+		# simple fetch
+		sftp -fp "${1}"
+	elif [[ $# != 2 ]]; then
+		printf "Wrong number of arguments (expected 1 or 2).\n" && return 1
+	else
+		local arg1_domain_test="$(printf "%s" "${1}" | awk -F':' '/:/ {print $1}')"
+		local arg2_domain_test="$(printf "%s" "${2}" | awk -F':' '/:/ {print $1}')"
+		if [[ -n "${arg1_domain_test}" ]]; then
+			if getent hosts "${arg1_domain_test}" >/dev/null 2>&1; then
+				local REMOTE="${1}"
+			else
+				printf "ERROR: host not found\n" && return 1
+			fi
+			if [[ -r "${2}" ]]; then
+				printf "ERROR: destination file already exists\n" && return 1
+			else
+				local LOCAL_FILE="${2}"
+			fi
+			# simple fetch
+			sftp -fp "${REMOTE}" "${LOCAL_FILE}"
+		elif [[ -n "${arg2_domain_test}" ]]; then
+			if getent hosts "${arg2_domain_test}" >/dev/null 2>&1; then
+				local REMOTE="${2}"
+			else
+				printf "ERROR: host not found\n" && return 1
+			fi
+			if [[ -r "${1}" ]]; then
+				local LOCAL_FILE="${1}"
+			else
+				printf "ERROR: source file not found\n" && return 1
+			fi
+			# simple put
+			printf "put %s" "${LOCAL_FILE}" | sftp -fp "${REMOTE}"
+		else
+			printf "ERROR: incorrect syntax\n"
+			printf "    scp REMOTE:SOURCE\n"
+			printf "    scp REMOTE:SOURCE LOCAL_DESTINATION\n"
+			printf "    scp LOCAL_SOURCE REMOTE:DESTINATION\n"
+			return 1
+		fi
+	fi
 }
 
 # search() the web
