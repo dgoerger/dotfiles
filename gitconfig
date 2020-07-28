@@ -16,6 +16,8 @@
 [grep]
 	lineNumber = true
 	patternType = extended
+[init]
+	defaultBranch = main
 [log]
 	date = iso8601
 [mergetool]
