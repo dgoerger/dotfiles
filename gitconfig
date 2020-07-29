@@ -2,13 +2,15 @@
 
 [alias]
 	branches = branch -av
+	contributors = shortlog -ens
+	remotes = remote get-url --all origin
 	st = status --branch --porcelain
 	tags = tag -l
-	url = remote get-url --all origin
 [apply]
 	whitespace = fix
 [branch]
 	autosetuprebase = always
+	sort = -committerdate
 [color]
 	ui = auto
 [diff]
