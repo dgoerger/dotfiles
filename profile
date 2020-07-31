@@ -1185,7 +1185,7 @@ sysinfo() {
 		local cpu_speed="$(sysctl -n hw.clockrate)"
 		local cpu="$(echo "$(sysctl -n hw.ncpu)"cpu: "${cpu_speed:0:1}.${cpu_speed:1}GHz")"
 		local disk_query="$(/bin/df -chl | awk '/^total/ {print $2, $3, $4}' | tail -n1)"
-		local distro='FreeBSD'
+		local distro="$(uname -sm)"
 		local gpu="$(pciconf -lv | grep -B 4 -F "VGA" | grep -F "device" | awk -F"'" '{print $2}')"
 		local host="$(sysctl -n hw.model)"
 		local kernel="$(uname -r)"
@@ -1195,7 +1195,7 @@ sysinfo() {
 		local disk_query="$(/bin/df -h -x aufs -x tmpfs -x overlay -x devtmpfs -x udf -x nfs -x cifs --total 2>/dev/null | awk '{print $2, $3, $5}' | tail -n1)"
 		local distro="$(grep PRETTY_NAME /etc/os-release 2>/dev/null | awk -F'"' '{print $2}')"
 		if [[ -z "${distro}" ]]; then
-			local distro='Linux'
+			local distro="$(uname -sm)"
 		fi
 		local gpu="$(nvidia-smi -q 2>/dev/null | awk -F':' '/Product Name/ {gsub(/: /,":"); print "Nvidia", $2}' | sed ':a;N;$!ba;s/\n/, /g')"
 		if [[ -z "${gpu}" ]]; then
@@ -1207,23 +1207,23 @@ sysinfo() {
 	elif [[ "$(uname)" == 'NetBSD' ]]; then
 		local cpu="$(echo "$(sysctl -n hw.ncpuonline)"cpu: "$(sysctl -n machdep.cpu_brand | tr -s " ")")"
 		local disk_query="$(/bin/df -Pk 2>/dev/null | awk '/^\// {total+=$2; used+=$3}END{printf("%.1fGiB %.1fGiB %d%%\n", total/1048576, used/1048576, used*100/total)}')"
-		local distro='NetBSD'
+		local distro="$(uname -sm)"
 		local host="$(echo "$(sysctl -n machdep.dmi.system-vendor) $(sysctl -n machdep.dmi.system-product)")"
-		local kernel="$(uname -rm)"
+		local kernel="$(sysctl -n kern.version | head -n1 | awk '{print $2, "(" $NF, $6, $7 ")"}')"
 		local memory_query="$(echo "$(sysctl -n hw.pagesize) $(sysctl -n hw.usermem64) $(vmstat -s | awk '/pages active$/ {print $1}')" | awk '{ print $2, $1 * $3 }')"
 	elif [[ "$(uname)" == 'OpenBSD' ]]; then
 		local cpu="$(echo "$(sysctl -n hw.ncpuonline)"cpu: "$(sysctl -n hw.model)")"
 		local disk_query="$(/bin/df -Pk 2>/dev/null | awk '/^\// {total+=$2; used+=$3}END{printf("%.1fGiB %.1fGiB %d%%\n", total/1048576, used/1048576, used*100/total)}')"
-		local distro='OpenBSD'
+		local distro="$(uname -sm)"
 		local gpu="$(/usr/X11R6/bin/glxinfo 2>/dev/null | awk '/OpenGL renderer string/ { sub(/OpenGL renderer string: /,""); print }')"
 		local host="$(echo "$(sysctl -n hw.vendor) $(sysctl -n hw.product)")"
-		local kernel="$(uname -rvm)"
+		local kernel="$(sysctl -n kern.version | head -n1 | awk '{print $2, "(" $NF, $6, $7 ")"}')"
 		local memory_query="$(echo "$(sysctl -n hw.pagesize) $(sysctl -n hw.usermem) $(vmstat -s | awk '/pages active$/ {print $1}')" | awk '{ print $2, $1 * $3 }')"
 	else
 		local cpu='unknown'
-		local distro="$(uname)"
+		local distro="$(uname -sm)"
 		local host='unknown'
-		local kernel="$(uname -rm)"
+		local kernel="$(uname -r)"
 		local memory_query='1 0'
 	fi
 	local disk_total="$(echo "${disk_query}" | awk '{print $1}')"
@@ -1234,8 +1234,6 @@ sysinfo() {
 	local memory_used=$(echo "${memory_query}" | awk '{print $2/1024^2}' | awk -F'.' '{print $1}')
 	case "${SHELL##*/}" in
 		bash) local shell_version="${BASH_VERSION}" ;;
-		ksh) local shell_version="$(echo ${KSH_VERSION} | awk '{print $3}')" ;;
-		tcsh) local shell_version"${tcsh}" ;;
 		zsh) local shell_version="${ZSH_VERSION}" ;;
 		*) ;;
 	esac
