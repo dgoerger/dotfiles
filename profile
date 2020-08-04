@@ -91,6 +91,7 @@ if command -v newsboat >/dev/null; then
 fi
 alias pscpu='ps -Awwro user,pid,ppid,nice,%cpu,%mem,vsz,rss,state,wchan,time,comm'
 alias psmem='ps -Awwmo pid,state,time,pagein,vsz,rss,tsiz,%cpu,%mem,comm'
+alias pssec='ps -Awwo pid,state,user,etime,rtable,comm,pledge'
 if command -v python3 >/dev/null; then
 	alias py=python3
 fi
@@ -155,6 +156,7 @@ if [[ "$(uname)" == 'Darwin' ]]; then
 	alias free='top -l 1 -s 0 | grep PhysMem'
 	alias listening='netstat -an | grep LISTEN'
 	alias mtop='top -o mem'
+	alias pssec='ps -Awo pid,state,user,etime,comm'
 	alias realpath='readlink'
 	unalias sha512
 	function sha512 {
@@ -164,6 +166,7 @@ if [[ "$(uname)" == 'Darwin' ]]; then
 elif [[ "$(uname)" == 'FreeBSD' ]]; then
 	alias cal='/usr/bin/ncal -C'
 	alias free='top | grep -E "^Mem"'
+	alias pssec='ps -Awo pid,state,user,etime,comm,jail'
 
 elif [[ "$(uname)" == 'Linux' ]]; then
 	# env
@@ -212,6 +215,7 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 	alias mtop='top -s -o "RES"'
 	alias pscpu='ps -Awwo user,pid,ppid,nice,pcpu,pmem,vsz:10,rss:8,stat,cputime,comm --sort -pcpu,-vsz,-pmem,-rss'
 	alias psmem='ps -Awwo pid,stat,cputime,majflt,vsz:10,rss:8,trs:8,pcpu,pmem,comm --sort -vsz,-rss,-pcpu'
+	alias pssec='ps -Awo pid,stat,user,etime,comm,cgname'
 	if ! command -v pstree >/dev/null; then
 		alias pstree='ps -HAwwo user,pid,pcpu,pmem,vsz,rss,tname,stat,start_time,cputime,command'
 	fi
@@ -250,6 +254,7 @@ elif [[ "$(uname)" == 'NetBSD' ]]; then
 	alias apropos='/usr/bin/apropos -l'
 	alias listening='netstat -anf inet | grep -Ev "(ESTABLISHED|TIME_WAIT|FIN_WAIT_1|FIN_WAIT_2)$"'
 	alias pkgsrc='lynx "https://ftp.netbsd.org/pub/pkgsrc/packages/NetBSD/x86_64/$(uname -r)/All/"'
+	alias pssec='ps -Awo pid,state,user,etime,comm'
 	alias realpath='readlink -fv'
 	unalias sha512
 	function sha512 {
