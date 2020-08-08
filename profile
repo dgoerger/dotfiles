@@ -98,6 +98,9 @@ fi
 alias realpath='readlink -f'
 alias rgrep='grep -rIns --'
 alias rm='rm -i'
+if ! command -v rsync >/dev/null && command -v openrsync >/dev/null; then
+	alias rsync="$(command -v openrsync)"
+fi
 alias sha512='sha512 -q'
 alias stat='stat -x'
 alias tm='tmux new-session -A -s tm'
@@ -324,8 +327,9 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == 'ksh' ]]; then
 		set -A complete_mtr_1 -- -wbz
 		set -A complete_mtr_2 -- ${HOST_LIST}
 	fi
+	set -A complete_nc_1 -- -c -cv -cvTprotocols=tlsv1.3 -v ${HOST_LIST}
 	if command -v ncdu >/dev/null; then
-		set -A complete_ncdu_1 -- -ex -rex
+		set -A complete_ncdu_1 -- -x -rx
 	fi
 	set -A complete_openssl_1 -- ciphers s_client verify version x509
 	set -A complete_openssl_2 -- -h
@@ -342,16 +346,13 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == 'ksh' ]]; then
 	set -A complete_rsync_1 -- -prtv
 	set -A complete_rsync_2 -- ${HOST_LIST}
 	set -A complete_rsync_3 -- ${HOST_LIST}
-	set -A complete_scp_1 -- -p
+	set -A complete_scp_1 -- ${HOST_LIST}
 	set -A complete_scp_2 -- ${HOST_LIST}
-	set -A complete_scp_3 -- ${HOST_LIST}
 	set -A complete_sftp_1 -- -p
 	set -A complete_sftp_2 -- ${HOST_LIST}
 	set -A complete_search_1 -- alpine arxiv centos cve debian debian_tracker fedora github_issues mandragonflybsd manfreebsd manillumos manlinux manminix mannetbsd manopenbsd mathworld mbug nws rfc rhbz thesaurus wayback webster wikipedia wiktionary
 	set -A complete_ssh_1 -- ${HOST_LIST}
 	set -A complete_systat_1 -- buckets cpu ifstat iostat malloc mbufs netstat nfsclient nfsserver pf pigs pool pcache queues rules sensors states swap vmstat uvm
-	set -A complete_telnet_1 -- ${HOST_LIST}
-	set -A complete_telnet_2 -- 22 25 80
 	if command -v toot >/dev/null; then
 		set -A complete_toot_1 -- block follow instance mute notifications post tui unblock unfollow unmute upload whoami whois
 		set -A complete_toot_2 -- --help
@@ -850,49 +851,87 @@ rename() {
 	done
 }
 
+# scp() reimplementation based on sftp(1)
 scp() {
 	if [[ $# == 1 ]]; then
-		# simple fetch
-		sftp -fp "${1}"
-	elif [[ $# != 2 ]]; then
-		printf "Wrong number of arguments (expected 1 or 2).\n" && return 1
-	else
-		local arg1_domain_test="$(printf "%s" "${1}" | awk -F':' '/:/ {print $1}')"
-		local arg2_domain_test="$(printf "%s" "${2}" | awk -F':' '/:/ {print $1}')"
-		if [[ -n "${arg1_domain_test}" ]]; then
+		if [[ "${1}" == '-h' ]]; then
+			printf "usage:\n"
+			printf "    scp REMOTE:SOURCE\n"
+			printf "    scp REMOTE:SOURCE LOCAL_DESTINATION\n"
+			printf "    scp LOCAL_SOURCE REMOTE:DESTINATION\n"
+			return 0
+		elif [[ "${1}" == '-V' ]]; then
+			printf "scp() reimplementation based on sftp(1)\n"
+			return 0
+		else
+			# simple fetch
+			sftp -p "${1}"
+			return $?
+		fi
+	elif [[ $# == 2 ]]; then
+		if printf "%s" "${1}" | grep -q '@'; then
+			local arg1_domain_test="$(printf "%s" "${1}" | awk -F'@' '{print $2}' | awk -F':' '{print $1}')"
+		else
+			local arg1_domain_test="$(printf "%s" "${1}" | awk -F':' '{print $1}')"
+		fi
+		if printf "%s" "${2}" | grep -q '@'; then
+			if printf "%s" "${2}" | grep -q ':'; then
+				local arg2_domain_test="$(printf "%s" "${2}" | awk -F'@' '{print $2}' | awk -F':' '{print $1}')"
+			else
+				local arg2_domain_test="$(printf "%s" "${2}" | awk -F'@' '{print $2}')"
+			fi
+		else
+			if printf "%s" "${2}" | grep -q ':'; then
+				local arg2_domain_test="$(printf "%s" "${2}" | awk -F':' '{print $1}')"
+			else
+				local arg2_domain_test="${2}"
+			fi
+		fi
+		if [[ ! -r "${1}" ]] && [[ -n "${arg1_domain_test}" ]]; then
 			if getent hosts "${arg1_domain_test}" >/dev/null 2>&1; then
 				local REMOTE="${1}"
 			else
-				printf "ERROR: host not found\n" && return 1
+				printf "ssh: Could not resolve hostname %s: no address associated with name" "${arg1_domain_test}"
+				return 1
 			fi
-			if [[ -r "${2}" ]]; then
-				printf "ERROR: destination file already exists\n" && return 1
+			if [[ -r "${2}" ]] && [[ "${2}" != '.' ]]; then
+				printf "scp: destination file already exists, refusing to overwrite\n"
+				return 1
 			else
 				local LOCAL_FILE="${2}"
 			fi
 			# simple fetch
-			sftp -fp "${REMOTE}" "${LOCAL_FILE}"
-		elif [[ -n "${arg2_domain_test}" ]]; then
-			if getent hosts "${arg2_domain_test}" >/dev/null 2>&1; then
+			sftp -p "${REMOTE}" "${LOCAL_FILE}"
+			return $?
+		elif [[ ! -r "${2}" ]]; then
+			if getent hosts "${2}" >/dev/null 2>&1; then
 				local REMOTE="${2}"
+				local REMOTE_DEST="."
+			elif getent hosts "${arg2_domain_test}" >/dev/null 2>&1; then
+				local REMOTE="${arg2_domain_test}"
+				local REMOTE_DEST="$(printf "%s" "${2}" | awk -F':' '{print $2}')"
 			else
-				printf "ERROR: host not found\n" && return 1
+				printf "ssh: Could not resolve hostname %s: no address associated with name" "${arg1_domain_test}"
+				return 1
 			fi
 			if [[ -r "${1}" ]]; then
 				local LOCAL_FILE="${1}"
 			else
-				printf "ERROR: source file not found\n" && return 1
+				printf "scp: source file not found\n"
+				return 1
 			fi
 			# simple put
-			printf "put %s" "${LOCAL_FILE}" | sftp -fp "${REMOTE}"
+			printf "put %s %s" "${LOCAL_FILE}" "${REMOTE_DEST}" | sftp -p "${REMOTE}"
+			return $?
 		else
-			printf "ERROR: incorrect syntax\n"
-			printf "    scp REMOTE:SOURCE\n"
-			printf "    scp REMOTE:SOURCE LOCAL_DESTINATION\n"
-			printf "    scp LOCAL_SOURCE REMOTE:DESTINATION\n"
-			return 1
+			printf "scp: incorrect syntax\n\n"
 		fi
 	fi
+	printf "usage:\n"
+	printf "    scp REMOTE:SOURCE\n"
+	printf "    scp REMOTE:SOURCE LOCAL_DESTINATION\n"
+	printf "    scp LOCAL_SOURCE REMOTE:DESTINATION\n"
+	return 1
 }
 
 # search() the web
