@@ -1,18 +1,16 @@
 #!/bin/ksh
 
-set -euo pipefail
+set -eo pipefail
 
-TMPFILE="$(mktemp -t pf.XXXXXX)"
 CONF="/etc/pf.conf.deny"
+TMPFILE="$(mktemp -t pf.XXXXXX)"
+
 chown root:_pkgfetch "${TMPFILE}"
 chmod 0660 "${TMPFILE}"
 
 if [[ "$(uname)" != 'OpenBSD' ]]; then
-	echo 'ERROR: Unsupported OS' && return 1
+	printf 'ERROR: Unsupported OS\n' && return 1
 fi
-
-# kludge to avoid a race condition with the dnsblock script reloading unwind(8)/unbound(8)
-sleep 90
 
 # download IP blocklists and parse
 /usr/bin/su -s/bin/sh _pkgfetch -c "/usr/bin/ftp -Vo - https://www.binarydefense.com/banlist.txt \
@@ -40,5 +38,5 @@ if pfctl -nf /etc/pf.conf 2>/dev/null; then
 	pfctl -f /etc/pf.conf
 else
 	mv "${CONF}.bak" "${CONF}"
-	echo "Invalid PF syntax, backing out blocklist update, please verify." | mailx -s "pf: failed to verify updated blocklist" root
+	printf "Invalid PF syntax, backing out blocklist update, please verify.\n" | mailx -s "pf: failed to verify updated blocklist" root
 fi
