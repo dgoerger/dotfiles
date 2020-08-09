@@ -16,6 +16,6 @@ ProtectHome=true
 ProtectKernelModules=true
 ProtectKernelTunables=true
 ProtectSystem=full
-ReadWritePaths=/usr/local/etc
+ReadWritePaths=/etc
 RestrictRealtime=true
 SystemCallArchitectures=native

@@ -3,7 +3,7 @@
 set -euo pipefail
 
 TMPFILE="$(mktemp -t pf.XXXXXX)"
-CONF="/usr/local/etc/pf_blocklist.conf"
+CONF="/etc/pf.conf.deny"
 chown root:_pkgfetch "${TMPFILE}"
 chmod 0660 "${TMPFILE}"
 

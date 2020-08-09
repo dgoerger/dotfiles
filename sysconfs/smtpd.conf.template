@@ -2,9 +2,9 @@
 
 # aliases / valid addresses
 table aliases file:/etc/mail/aliases
-table domain1 file:/usr/local/etc/domain1
-table domain2 file:/usr/local/etc/domain2
-table listserv file:/usr/local/etc/listserv
+table domain1 file:/etc/mail/aliases.domain1
+table domain2 file:/etc/mail/aliases.domain2
+table listserv file:/etc/mail/aliases.listserv
 
 # message restrictions
 smtp max-message-size 50M

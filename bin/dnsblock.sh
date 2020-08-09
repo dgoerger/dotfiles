@@ -4,10 +4,9 @@ set -euo pipefail
 
 UPSTREAM_HOSTS_FILE='https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-porn/hosts'
 
+BLOCKLIST_FILE='/etc/unwind.conf.deny'
 SRC="$(mktemp)"
 TMP="$(mktemp)"
-CONF_DIR='/usr/local/etc'
-BLOCKLIST_FILE="${CONF_DIR}/blocklist.conf"
 
 case "$(uname)" in
 	Linux) FETCH="/usr/bin/curl -sLo ${SRC} ${UPSTREAM_HOSTS_FILE}" ;;
@@ -20,18 +19,16 @@ if ${FETCH} 2>/dev/null; then
 	if pgrep -xu _unwind unwind >/dev/null 2>&1; then
 		# build for unwind(8)
 		awk '$1 == "0.0.0.0" {print $2}' "${SRC}" | tee "${TMP}" >/dev/null 2>&1
+		# ref: https://support.mozilla.org/en-US/kb/canary-domain-use-application-dnsnet
+		printf 'use-application-dns.net\n | tee -a "${TMP}" >/dev/null 2>&1
 	else
 		# build for unbound(8)
 		awk '$1 == "0.0.0.0" {print "local-zone: \""$2"\" always_refuse"}' "${SRC}" | tee "${TMP}" >/dev/null 2>&1
-		# ref: https://support.mozilla.org/en-US/kb/configuring-networks-disable-dns-over-https
-		echo 'local-zone: "use-application-dns.net" always_nxdomain' | tee -a "${TMP}" >/dev/null 2>&1
+		printf 'local-zone: "use-application-dns.net" always_refuse\n' | tee -a "${TMP}" >/dev/null 2>&1
 	fi
 	# create a backup of any existing, working blocklist
 	if [[ -f "${BLOCKLIST_FILE}" ]]; then
 		cp -p "${BLOCKLIST_FILE}" "${BLOCKLIST_FILE}.bak"
-	elif [[ ! -d "${CONF_DIR}" ]]; then
-		# if this is a first-run, ensure the destination dir exists
-		mkdir -p "${CONF_DIR}"
 	fi
 	# copy in the new blocklist
 	cp "${TMP}" "${BLOCKLIST_FILE}"
