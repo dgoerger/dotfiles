@@ -23,8 +23,6 @@ export BROWSER=lynx
 export EDITOR=vi
 export GIT_AUTHOR_EMAIL="${LOGNAME}@users.noreply.github.com"
 export GIT_AUTHOR_NAME="$(getent passwd "${LOGNAME}" | cut -d: -f5 | cut -d, -f1)"
-export GIT_COMMITTER_EMAIL=${GIT_AUTHOR_EMAIL}
-export GIT_COMMITTER_NAME=${GIT_AUTHOR_NAME}
 export HISTCONTROL=ignoredups
 export HISTFILE=${HOME}/.history
 export HISTSIZE=20736
@@ -68,11 +66,8 @@ alias df='df -h'
 alias dush='du -sh * .??* 2>/dev/null | sort -hr'
 alias fetch='ftp -Vo'
 alias free='top | grep -E "^Memory"'
-if command -v git >/dev/null; then
-	alias ggrep='git grep'
-fi
 if command -v kpcli >/dev/null; then
-	alias kpcli='kpcli --histfile=/dev/null --readonly'
+	alias kpcli='kpcli --histfile=/dev/null --readonly --kdb'
 fi
 alias l='ls -1F'
 alias la='ls -aFhl'
@@ -104,12 +99,6 @@ fi
 alias sha512='sha512 -q'
 alias stat='stat -x'
 alias tm='tmux new-session -A -s tm'
-if command -v nvim >/dev/null; then
-	# prefer neovim > vim if available
-	alias vi=nvim
-	alias vim=nvim
-	alias vimdiff='nvim -d -c "color blue" --'
-fi
 alias view='less -iLMR'
 alias which='/usr/bin/which'
 
@@ -219,9 +208,6 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 	alias pscpu='ps -Awwo user,pid,ppid,nice,pcpu,pmem,vsz:10,rss:8,stat,cputime,comm --sort -pcpu,-vsz,-pmem,-rss'
 	alias psmem='ps -Awwo pid,stat,cputime,majflt,vsz:10,rss:8,trs:8,pcpu,pmem,comm --sort -vsz,-rss,-pcpu'
 	alias pssec='ps -Awo pid,stat,user,etime,comm,cgname'
-	if ! command -v pstree >/dev/null; then
-		alias pstree='ps -HAwwo user,pid,pcpu,pmem,vsz,rss,tname,stat,start_time,cputime,command'
-	fi
 	alias realpath='readlink -ev'
 	if command -v sar >/dev/null; then
 		alias sarcpu='sar -qu'
@@ -229,19 +215,13 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 		alias sarnet='sar -n DEV'
 		alias sarnfs='sar -n NFS'
 	fi
-	if command -v sshfs >/dev/null; then
-		alias sshfs='sshfs -o no_readahead,idmap=user'
-	fi
 	unalias sha512
 	function sha512 {
 		sha512sum --tag "${1}" | awk '{print $NF}'
 	}
 	unalias stat
 	alias top='top -s'
-	if command -v tree >/dev/null; then
-		alias tree='tree -N'
-	fi
-	if [[ -z "$(whence whence 2>/dev/null)" ]]; then
+	if [[ -z "$(whence whence 2>/dev/null)" ]] && [[ ! -r /etc/debian_version ]]; then
 		# whence exists in ksh and zsh, but not in bash
 		alias whence='(alias; declare -f) | /usr/bin/which --tty-only --read-alias --read-functions --show-tilde --show-dot'
 	fi
@@ -311,28 +291,19 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == 'ksh' ]]; then
 	set -A complete_diff_1 -- -u
 	set -A complete_dig_1 -- ${HOST_LIST}
 	set -A complete_git_1 -- add bisect blame checkout clone commit diff log mv pull push rebase reset revert rm stash status submodule
-	if command -v got >/dev/null; then
-		set -A complete_got_1 -- add backout blame branch checkout cherrypick commit diff histedit import init integrate log rebase ref rm revert stage status tag tree unstage update
-	fi
 	set -A complete_host_1 -- ${HOST_LIST}
 	if command -v ifconfig >/dev/null; then
 		set -A complete_ifconfig_1 -- $(ifconfig | awk -F':' '/^[a-z]/ {print $1}')
 	fi
 	set -A complete_kill_1 -- -9 -HUP -INFO -KILL -TERM
-	set -A complete_kpcli_1 -- --kdb
 	if [[ -r /usr/local/etc/manuals.list ]]; then
 		set -A complete_man_1 -- $(cat /usr/local/etc/manuals.list)
 	fi
-	if command -v mtr >/dev/null; then
-		set -A complete_mtr_1 -- -wbz
-		set -A complete_mtr_2 -- ${HOST_LIST}
-	fi
 	set -A complete_nc_1 -- -c -cv -cvTprotocols=tlsv1.3 -v ${HOST_LIST}
 	if command -v ncdu >/dev/null; then
-		set -A complete_ncdu_1 -- -x -rx
+		set -A complete_ncdu_1 -- -rx -x
 	fi
 	set -A complete_openssl_1 -- ciphers s_client verify version x509
-	set -A complete_openssl_2 -- -h
 	set -A complete_ping_1 -- ${HOST_LIST}
 	set -A complete_ping6_1 -- ${HOST_LIST}
 	if [[ "$(uname)" == 'OpenBSD' ]] && [[ -r /etc/rc.d ]]; then
@@ -343,14 +314,11 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == 'ksh' ]]; then
 		set -A complete_rmapi_1 -- help put version
 	fi
 	#set -A complete_rsync_1 -- -HhLPSprtv
-	set -A complete_rsync_1 -- -prtv
-	set -A complete_rsync_2 -- ${HOST_LIST}
-	set -A complete_rsync_3 -- ${HOST_LIST}
 	set -A complete_scp_1 -- ${HOST_LIST}
 	set -A complete_scp_2 -- ${HOST_LIST}
 	set -A complete_sftp_1 -- -p
 	set -A complete_sftp_2 -- ${HOST_LIST}
-	set -A complete_search_1 -- alpine arxiv centos cve debian debian_tracker fedora github_issues mandragonflybsd manfreebsd manillumos manlinux manminix mannetbsd manopenbsd mathworld mbug nws rfc rhbz thesaurus wayback webster wikipedia wiktionary
+	set -A complete_search_1 -- alpine arxiv centos cve debian fedora mandebian mandragonflybsd manfreebsd manillumos manlinux mannetbsd manopenbsd mbug nws rfc rhbz thesaurus wikipedia wiktionary
 	set -A complete_ssh_1 -- ${HOST_LIST}
 	set -A complete_systat_1 -- buckets cpu ifstat iostat malloc mbufs netstat nfsclient nfsserver pf pigs pool pcache queues rules sensors states swap vmstat uvm
 	if command -v toot >/dev/null; then
@@ -1014,14 +982,6 @@ search() {
 		shift
 		local query="$(_escape_html "$@")"
 		if [[ -z "${query}" ]]; then
-			lynx "https://packages.debian.org/"
-		else
-			lynx "https://packages.debian.org/search?keywords=${query}&searchon=names&suite=stable&section=all"
-		fi
-	elif [[ "${1}" == 'debian_tracker' ]]; then
-		shift
-		local query="$(_escape_html "$@")"
-		if [[ -z "${query}" ]]; then
 			lynx "https://tracker.debian.org/"
 		else
 			lynx "https://tracker.debian.org/search?package_name=${query}"
@@ -1034,16 +994,6 @@ search() {
 		else
 			lynx "https://koji.fedoraproject.org/koji/search?match=glob&type=package&terms=${query}"
 		fi
-	elif [[ "${1}" == 'github_issues' ]]; then
-		shift
-		project="${1}"
-		shift
-		local query="$(_escape_html "$@")"
-		if [[ -z "${query}" ]]; then
-			lynx "https://github.com/${project}"
-		else
-			lynx "https://github.com/${project}/search?o=desc&q=${query}&s=created&type=Issues"
-		fi
 	elif [[ "${1}" == 'gutenberg' ]]; then
 		shift
 		local query="$(_escape_html "$@")"
@@ -1051,6 +1001,14 @@ search() {
 			lynx "https://www.gutenberg.org/"
 		else
 			lynx "https://www.gutenberg.org/catalog/world/results?&title=${query}"
+		fi
+	elif [[ "${1}" == 'mandebian' ]]; then
+		shift
+		local query="$(_escape_html "$@")"
+		if [[ -z "${query}" ]]; then
+			lynx "https://manpages.debian.org/"
+		else
+			lynx "https://manpages.debian.org/jump?q=${query}"
 		fi
 	elif [[ "${1}" == 'mandragonflybsd' ]]; then
 		shift
@@ -1084,14 +1042,6 @@ search() {
 		else
 			lynx "https://www.mankier.com/?q=${query}"
 		fi
-	elif [[ "${1}" == 'manminix' ]]; then
-		shift
-		local query="$(_escape_html "$@")"
-		if [[ -z "${query}" ]]; then
-			lynx "https://man.minix3.org/cgi-bin/man.cgi"
-		else
-			lynx "https://man.minix3.org/cgi-bin/man.cgi?query=${query}&apropos=0&sektion=0&manpath=Minix&arch=default&format=html"
-		fi
 	elif [[ "${1}" == 'mannetbsd' ]]; then
 		shift
 		local query="$(_escape_html "$@")"
@@ -1108,14 +1058,6 @@ search() {
 			lynx "https://man.openbsd.org/"
 		else
 			lynx "https://man.openbsd.org/?sec=0&arch=default&manpath=OpenBSD-current&query=${query}"
-		fi
-	elif [[ "${1}" == 'mathworld' ]]; then
-		shift
-		local query="$(_escape_html "$@")"
-		if [[ -z "${query}" ]]; then
-			lynx "http://mathworld.wolfram.com/"
-		else
-			lynx "http://mathworld.wolfram.com/search/?query=${query}&x=0&y=0"
 		fi
 	elif [[ "${1}" == 'mbug' ]]; then
 		shift
@@ -1156,22 +1098,6 @@ search() {
 			lynx "https://en.oxforddictionaries.com/english-thesaurus"
 		else
 			lynx "https://en.oxforddictionaries.com/thesaurus/${query}"
-		fi
-	elif [[ "${1}" == 'wayback' ]]; then
-		shift
-		local query="$(_escape_html "$@")"
-		if [[ -z "${query}" ]]; then
-			lynx "https://www.archive.org/"
-		else
-			lynx "https://www.archive.org/searchresults.php?mediatype=web&Submit=Take+Me+Back&search=${query}"
-		fi
-	elif [[ "${1}" == 'webster' ]]; then
-		shift
-		local query="$(_escape_html "$@")"
-		if [[ -z "${query}" ]]; then
-			lynx "https://www.merriam-webster.com/dictionary.htm"
-		else
-			lynx "https://www.merriam-webster.com/dictionary/${query}"
 		fi
 	elif [[ "${1}" == 'wikipedia' ]]; then
 		shift
@@ -1315,11 +1241,7 @@ touchmode() {
 		if [[ -f "${2}" ]]; then
 			printf 'File already exists.\n' && return 1
 		else
-			if [[ "$(uname)" == 'Linux' ]]; then
-				install -Z -C -m "${MODE}" /dev/null "${2}"
-			else
-				install -C -m "${MODE}" /dev/null "${2}"
-			fi
+			install -C -m "${MODE}" /dev/null "${2}"
 		fi
 	else
 		printf 'usage:\n    touchmode MODE /path/to/file\n' && return 1
@@ -1350,7 +1272,9 @@ if [[ -r "${HOME}/.profile.local" ]]; then
 	. "${HOME}/.profile.local"
 fi
 
-### got(1)
+### git variables
+export GIT_COMMITTER_EMAIL=${GIT_AUTHOR_EMAIL}
+export GIT_COMMITTER_NAME=${GIT_AUTHOR_NAME}
 if command -v got >/dev/null; then
 	export GOT_AUTHOR="${GIT_AUTHOR_NAME} <${GIT_AUTHOR_EMAIL}>"
 fi
