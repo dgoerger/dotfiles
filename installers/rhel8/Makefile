@@ -49,6 +49,11 @@ install:
 	## copy confs
 	# chrony time daemon
 	sudo install -C -Z -o root -g root -m 0444 chrony.conf /etc/chrony.conf
+	# dconf
+	sudo mkdir -p -m 0755 /etc/dconf/db/gdm.d
+	sudo install -C -Z -o root -g root -m 0444 dconf_gdm_profile /etc/dconf/profile/gdm
+	sudo install -C -Z -o root -g root -m 0444 dconf_gdm_settings /etc/dconf/db/gdm.d/00_gdm_settings
+	sudo install -C -Z -o root -g root -m 0444 dconf_user_settings /etc/dconf/db/site.d/00_user_settings
 	# google-chrome
 	if [[ ! -f /usr/bin/google-chrome ]]; then sudo yum -qy install https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm; fi
 	sudo mkdir -p /etc/opt/chrome/policies/managed
@@ -77,7 +82,7 @@ install:
 	# unbound(8) DNS caching resolver
 	sudo yum -qy install unbound
 	sudo install -C -Z -o root -g root -m 0444 unbound.conf /etc/unbound/unbound.conf
-	sudo touch /usr/local/etc/blocklist.conf
+	sudo touch /etc/unwind.conf.deny
 	echo "nameserver ::1" | sudo tee /etc/resolv.conf >/dev/null 2>&1 || true
 	sudo chattr +i /etc/resolv.conf
 	sudo systemctl --quiet enable --now unbound

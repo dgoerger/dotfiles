@@ -1,0 +1,6 @@
+[org/gnome/login-screen]
+disable-user-list=true
+disable-restart-buttons=true
+
+[org/gnome/desktop/interface]
+clock-show-date=true

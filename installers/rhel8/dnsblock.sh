@@ -20,7 +20,7 @@ if ${FETCH} 2>/dev/null; then
 		# build for unwind(8)
 		awk '$1 == "0.0.0.0" {print $2}' "${SRC}" | tee "${TMP}" >/dev/null 2>&1
 		# ref: https://support.mozilla.org/en-US/kb/canary-domain-use-application-dnsnet
-		printf 'use-application-dns.net\n | tee -a "${TMP}" >/dev/null 2>&1
+		printf 'use-application-dns.net\n' | tee -a "${TMP}" >/dev/null 2>&1
 	else
 		# build for unbound(8)
 		awk '$1 == "0.0.0.0" {print "local-zone: \""$2"\" always_refuse"}' "${SRC}" | tee "${TMP}" >/dev/null 2>&1
