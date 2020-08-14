@@ -39,15 +39,17 @@ folder-hook . "exec collapse-all"
 macro index,pager  a "<pipe-message>abook --config ${HOME}/.abookrc --datafile ${HOME}/.addresses --add-email-quiet<return>" "add this sender to abook"
 mime_lookup application/octet-stream
 set attribution = "%{%A, %Y%m%d %R%z}, %n wrote:"
+set collapse_unread = no
 set date_format = "%Y%m%d"
 set delete = 'yes'
-set editor = 'nvim -u ${HOME}/.vimrc'
-#set editor = 'mg'
+#set editor = 'nvim -u ${HOME}/.vimrc'
+set editor = 'mg'
 set fast_reply
 set forward_format = '%s'
 set imap_keepalive = 300
 set include
 set index_format = "%2C | %Z [%d] %-25.25F (%-4.4c) %s"
+set maildir_header_cache_verify = no
 set mark_old = no
 set markers = no
 set pager_context = 10
