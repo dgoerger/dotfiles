@@ -1169,7 +1169,7 @@ sysinfo() {
 		fi
 		local gpu="$(nvidia-smi -q 2>/dev/null | awk -F':' '/Product Name/ {gsub(/: /,":"); print "Nvidia", $2}' | sed ':a;N;$!ba;s/\n/, /g')"
 		if [[ -z "${gpu}" ]]; then
-			local gpu="$(glxinfo 2>/dev/null | awk '/OpenGL renderer string/ { sub(/OpenGL renderer string: /,""); print }')"
+			local gpu="$(glxinfo -B 2>/dev/null | awk '/OpenGL renderer string/ { sub(/OpenGL renderer string: /,""); print }')"
 		fi
 		local host="$(echo "$(cat /sys/devices/virtual/dmi/id/sys_vendor) $(cat /sys/devices/virtual/dmi/id/product_name)")"
 		local kernel="$(echo "$(uname -m): $(uname -r | awk -F'-' '{print $1}')" | sed 's/x86_64/amd64/')"
@@ -1185,7 +1185,7 @@ sysinfo() {
 		local cpu="$(echo "$(sysctl -n hw.ncpuonline)"cpu: "$(sysctl -n hw.model)")"
 		local disk_query="$(/bin/df -Pk 2>/dev/null | awk '/^\// {total+=$2; used+=$3}END{printf("%.1fGiB %.1fGiB %d%%\n", total/1048576, used/1048576, used*100/total)}')"
 		local distro="$(sysctl -n kern.version | head -n1 | awk '{print $1, $2}')"
-		local gpu="$(/usr/X11R6/bin/glxinfo 2>/dev/null | awk '/OpenGL renderer string/ { sub(/OpenGL renderer string: /,""); print }')"
+		local gpu="$(/usr/X11R6/bin/glxinfo -B 2>/dev/null | awk '/OpenGL renderer string/ { sub(/OpenGL renderer string: /,""); print }')"
 		local host="$(echo "$(sysctl -n hw.vendor) $(sysctl -n hw.product)")"
 		local kernel="$(echo "$(uname -m): $(sysctl -n kern.version | head -n1 | awk '{print $NF, $6, $7}' | tr -d '()')")"
 		local memory_query="$(echo "$(sysctl -n hw.pagesize) $(sysctl -n hw.usermem) $(vmstat -s | awk '/pages active$/ {print $1}')" | awk '{ print $2, $1 * $3 }')"
