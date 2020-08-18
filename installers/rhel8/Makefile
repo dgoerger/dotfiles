@@ -11,8 +11,8 @@ nvidia:
 	sudo yum -qy install dkms elfutils-libelf-devel kernel-devel libglvnd-devel
 	sudo systemctl enable --now dkms
 	sudo mkdir -p /usr/local/tmp
-	if [[ ! -f /usr/local/src/nvidia-450.57.run ]]; then sudo curl -sLo /usr/local/src/nvidia-450.57.run 'https://us.download.nvidia.com/XFree86/Linux-x86_64/450.57/NVIDIA-Linux-x86_64-450.57.run'; fi
-	if [[ ! -d /var/lib/dkms/nvidia/450.57 ]]; then sudo sh /usr/local/src/nvidia-450.57.run --accept-license --no-questions --dkms --tmpdir /usr/local/tmp --silent; fi
+	if [[ ! -f /usr/local/src/nvidia-450.66.run ]]; then sudo curl -sLo /usr/local/src/nvidia-450.66.run 'https://us.download.nvidia.com/XFree86/Linux-x86_64/450.66/NVIDIA-Linux-x86_64-450.66.run'; fi
+	if [[ ! -d /var/lib/dkms/nvidia/450.66 ]]; then sudo sh /usr/local/src/nvidia-450.66.run --accept-license --no-questions --dkms --tmpdir /usr/local/tmp --silent; fi
 
 install:
 	## remove and disable unnecessary things
