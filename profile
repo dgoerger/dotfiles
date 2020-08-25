@@ -1141,6 +1141,24 @@ shacompare() {
 	fi
 }
 
+# smtpconnect() 'nc -c' but for SMTP StartTLS
+smtpconnect() {
+	if [[ $# == 1 ]] && [[ "${1}" == '-h' ]]; then
+		printf "usage:\n    smtpconnect HOSTNAME\n"
+		return 0
+	elif [[ $# == 1 ]]; then
+		if getent hosts "${1}" >/dev/null 2>&1; then
+			printf "ehlo %s\r\n" "$(hostname)" | openssl s_client -quiet -starttls smtp -connect "${1}:25" 2>/dev/null
+		else
+			printf "smtpconnect: cannot find host '%s' in DNS\n" "${1}"
+			return 1
+		fi
+	else
+		printf "usage:\n    smtpconnect HOSTNAME\n"
+		return 1
+	fi
+}
+
 # sysinfo() system profiler
 sysinfo() {
 	if [[ "$(uname)" == 'Darwin' ]]; then
@@ -1167,10 +1185,7 @@ sysinfo() {
 		if [[ -z "${distro}" ]]; then
 			local distro="$(uname -sm)"
 		fi
-		local gpu="$(nvidia-smi -q 2>/dev/null | awk -F':' '/Product Name/ {gsub(/: /,":"); print "Nvidia", $2}' | sed ':a;N;$!ba;s/\n/, /g')"
-		if [[ -z "${gpu}" ]]; then
-			local gpu="$(glxinfo -B 2>/dev/null | awk '/OpenGL renderer string/ { sub(/OpenGL renderer string: /,""); print }')"
-		fi
+		local gpu="$(lspci -mm | awk -F '\"|\" \"|\\(' '/"Display|"3D|"VGA/ {print $3, $4}' | awk -F'[' '{$1=""; print $0}' | sed 's/\]//g' | sed 's/^\ //g')"
 		local host="$(echo "$(cat /sys/devices/virtual/dmi/id/sys_vendor) $(cat /sys/devices/virtual/dmi/id/product_name)")"
 		local kernel="$(echo "$(uname -m): $(uname -r | awk -F'-' '{print $1}')" | sed 's/x86_64/amd64/')"
 		local memory_query="$(/usr/bin/free -b | grep -E "^Mem:" | awk '{ print $2,$3 }')"
