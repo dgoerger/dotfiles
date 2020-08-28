@@ -100,6 +100,7 @@ alias sha512='sha512 -q'
 alias stat='stat -x'
 alias tm='tmux new-session -A -s tm'
 alias view='less -iLMR'
+alias w='w -i'
 alias which='/usr/bin/which'
 
 # kaomoji
