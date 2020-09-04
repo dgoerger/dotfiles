@@ -2,7 +2,7 @@
 
 ### headers
 ignore *
-unignore from: subject to cc date user-agent
+unignore from subject to cc date user-agent
 hdr_order date from to cc subject
 
 ### colours
@@ -24,7 +24,7 @@ color body magenta default [-a-z_0-9.]+@[-a-z_0-9.]+
 color underline brightgreen default
 mono quoted bold
 
-### general
+### attachments
 alternative_order text/plain text/html
 attachments +A */.*
 attachments -A text/x-vcard application/pgp.*
@@ -33,45 +33,53 @@ attachments +I text/plain
 attachments -A message/external-body
 attachments -I message/external-body
 auto_view text/html text/calendar application/ics application/vnd.openxmlformats-officedocument.wordprocessingml.document
-bind editor <Tab> complete-query
-bind generic,alias,attach,browser,editor,index,compose,pager,pgp,postpone ':' noop
-folder-hook . "exec collapse-all"
-macro index,pager  a "<pipe-message>abook --config ${HOME}/.abookrc --datafile ${HOME}/.addresses --add-email-quiet<return>" "add this sender to abook"
 mime_lookup application/octet-stream
+
+### address book
+macro index,pager a "<pipe-message>abook --config ${HOME}/.abookrc --datafile ${HOME}/.addresses --add-email-quiet<return>" "add this sender to abook"
+set query_command= "abook --config ${HOME}/.abookrc --datafile ${HOME}/.addresses --mutt-query '%s'"
+
+### composing messages
 set attribution = "%{%A, %Y%m%d %R%z}, %n wrote:"
-set collapse_unread = no
-set date_format = "%Y%m%d"
-set delete = 'yes'
-#set editor = 'nvim -u ${HOME}/.vimrc'
 set editor = 'mg'
 set fast_reply
 set forward_format = '%s'
-set imap_keepalive = 300
 set include
+set send_charset = "utf-8"
+set smart_wrap
+set text_flowed = yes
+set wrap = 80
+
+### mailbox navigation
+set collapse_unread = no
+set date_format = "%Y%m%d"
 set index_format = "%2C | %Z [%d] %-25.25F (%-4.4c) %s"
-set maildir_header_cache_verify = no
-set mark_old = no
-set markers = no
+set sort = 'threads'
+set sort_aux = 'reverse-last-date-sent'
+set uncollapse_jump
+
+### reading mail
 set pager_context = 10
 set pager_index_lines = 10
 set pager_stop
-set query_command= "abook --config ${HOME}/.abookrc --datafile ${HOME}/.addresses --mutt-query '%s'"
+
+### misc
+bind editor <Tab> complete-query
+bind generic,alias,attach,browser,editor,index,compose,pager,pgp,postpone ':' noop
+set delete = 'yes'
+set imap_keepalive = 300
+set maildir_header_cache_verify = no
+set mark_old = no
+set markers = no
 set read_inc = 5000
-set send_charset = "utf-8"
 set sleep_time = 0
-set smart_wrap
-set sort = 'threads'
-set sort_aux = 'reverse-last-date-sent'
 set sort_browser = 'date'
 set ssl_force_tls = yes
 set ssl_starttls = yes
-set text_flowed = yes
 set timeout = 600
-set uncollapse_jump
-set wrap = 80
 
 ### custom
-# example config, recommended encrypt with GPG, e.g. using passphrase `gpg2 --symmetric`
+# example config: one might encrypt it with GPG, e.g. using a passphrase with `gpg2 --symmetric`
 ## whoami
 #set from = 'ebony.way@example.com'
 #set realname = 'Ebony Dark'ness Dementia Raven Way'
@@ -79,6 +87,7 @@ set wrap = 80
 #set imap_user='ebony.way@example.com'
 #set smtp_authenticators = 'login'
 #set smtp_url = 'smtps://ebony.way@example.com@smtp.example.com:465/'
+#set smtp_url = 'smtp://localhost:25'
 ## oauth2 tokens
 # oauth2.py source: https://github.com/google/gmail-oauth2-tools
 # oauth2.py guide: http://mutt.org/doc/manual/#oauth + https://luxing.im/mutt-integration-with-gmail-using-oauth/
@@ -92,6 +101,10 @@ set wrap = 80
 ## subscribe to LOCAL folders
 #set folder = '/var/mail/ebony'
 #set spoolfile = '/var/mail/ebony'
+## subscribe to MAILDIR folders
+#set mbox_type = Maildir
+#set folder = '~/Maildir'
+#set spoolfile = '~/Maildir'
 ## subscribe to REMOTE folders
 #set folder = 'imaps://imap.example.com:993/'
 #set spoolfile = '+INBOX'
