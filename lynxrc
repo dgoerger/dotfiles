@@ -20,6 +20,7 @@ FORCE_SSL_COOKIES_SECURE:TRUE
 HTTP_PROTOCOL:1.1
 LOCALE_CHARSET:TRUE
 MAKE_PSEUDO_ALTS_FOR_INLINES:FALSE
+NO_DOT_FILES:TRUE
 NO_PAUSE:TRUE
 NO_REFERER_HEADER:TRUE
 PREFERRED_CHARSET:utf-8
@@ -41,16 +42,14 @@ COLOR:6:yellow:default
 COLOR:7:magenta:cyan
 COLOR_STYLE:
 
-# proxy
-http_proxy:http://127.0.0.1:1080
-https_proxy:http://127.0.0.1:1080
-
-# block protocols which don't work with privoxy
+# protocol management
 RULE:Fail bibp:*
 RULE:Fail cso:*
 RULE:Fail finger:*
 RULE:Fail ftp:*
-#RULE:Fail gopher:*
+RULE:Fail gopher:*
+RULE:Fail http:*
+https_proxy:http://[::1]:3128
 RULE:Fail lynxexec:*
 RULE:Fail lynxprog:*
 RULE:Fail mailto:*

@@ -1,0 +1,47 @@
+## OpenBSD: /etc/tor/torrc
+## docs: man 1 tor
+#
+# Tor listens as a SOCKS5 proxy on IPv4 port 9050, unless otherwise
+# specified. Set to '0' to disable the SOCKS5 proxy.
+#
+SOCKSPort 0
+#
+# Tor can optionally listen as an HTTPS proxy. If unspecified or set
+# to '0', the HTTP CONNECT proxy is disabled.
+#
+HTTPTunnelPort [::1]:3128
+#
+# Logs go to stdout at level "notice" unless otherwise specified.
+#
+Log warn syslog
+#
+# Run tor as a daemon process (unix-only).
+#
+RunAsDaemon 1
+#
+# Enable Tor to function as an exit relay. Set to '0' to disallow
+# exit traffic.
+#
+ExitRelay 0
+#
+# Disallow initializing new processes. Set to '0' if you need to
+# exec transport plugins.
+#
+NoExec 1
+#
+# Prefer IPv6 entry node ports if a chosen entry node supports both
+# IPv4 and IPv6. This option is only used to break a tie.
+#
+ClientPreferIPv6ORPort 1
+#
+# Store runtime data in the following directory.
+#
+DataDirectory /var/tor
+#
+# Minimize disk writes where possible.
+#
+AvoidDiskWrites 1
+#
+# Revoke privileges.
+#
+User _tor
