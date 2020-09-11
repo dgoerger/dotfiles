@@ -222,10 +222,36 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 	}
 	unalias stat
 	alias top='top -s'
-	if [[ -z "$(whence whence 2>/dev/null)" ]] && [[ ! -r /etc/debian_version ]]; then
+	if [[ -z "$(whence whence 2>/dev/null)" ]]; then
 		# whence exists in ksh and zsh, but not in bash
-		alias whence='(alias; declare -f) | /usr/bin/which --tty-only --read-alias --read-functions --show-tilde --show-dot'
+		alias whence='command -v'
 	fi
+	function zless {
+		if [[ $# -eq 0 ]]; then
+			gzip -cdf 2>&1 | less
+			exit 0
+		fi
+
+		oterm=$(stty -g 2>/dev/null)
+		while test $# -ne 0; do
+			gzip -cdf "$1" 2>&1 | less
+			prev="$1"
+			shift
+			if tty -s && test -n "${oterm}" -a $# -gt 0; then
+				echo -n "$prev (END) - Next: $1 "
+				trap "stty ${oterm} 2>/dev/null" 0 1 2 3 13 15
+				stty cbreak -echo 2>/dev/null
+				REPLY=$(dd bs=1 count=1 2>/dev/null)
+				stty ${oterm} 2>/dev/null
+				trap - 0 1 2 3 13 15
+				echo
+				case "$REPLY" in
+					s) shift ;;
+					e|q) break ;;
+				esac
+			fi
+		done
+	}
 
 elif [[ "$(uname)" == 'NetBSD' ]]; then
 	export CC=clang
