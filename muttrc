@@ -74,8 +74,6 @@ set markers = no
 set read_inc = 5000
 set sleep_time = 0
 set sort_browser = 'date'
-set ssl_force_tls = yes
-set ssl_starttls = yes
 set timeout = 600
 
 ### custom
