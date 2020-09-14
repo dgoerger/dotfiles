@@ -1,6 +1,6 @@
 #!/bin/ksh
 
-set -eo pipefail
+set -efuo pipefail
 
 CONF="/etc/pf.conf.deny"
 TMPFILE="$(mktemp -t pf.XXXXXX)"
@@ -13,17 +13,14 @@ if [[ "$(uname)" != 'OpenBSD' ]]; then
 fi
 
 # download IP blocklists and parse
-/usr/bin/su -s/bin/sh _pkgfetch -c "/usr/bin/ftp -Vo - https://www.binarydefense.com/banlist.txt \
+/usr/bin/su -s/bin/ksh _pkgfetch -c "/usr/bin/ftp -Vo - https://www.binarydefense.com/banlist.txt \
 https://rules.emergingthreats.net/blockrules/compromised-ips.txt \
 https://rules.emergingthreats.net/fwrules/emerging-Block-IPs.txt \
 https://raw.githubusercontent.com/firehol/blocklist-ipsets/master/firehol_level1.netset \
-https://raw.githubusercontent.com/firehol/blocklist-ipsets/master/firehol_level2.netset | awk '/^[1-9].*[0-9]$/ {print $1}' | sort -uV > ${TMPFILE}"
+https://raw.githubusercontent.com/firehol/blocklist-ipsets/master/firehol_level2.netset | awk '/^[1-9].*[0-9]$/' | cut -d ' ' -f1 | sort -uV > ${TMPFILE}"
 
 # block Shodan
 /usr/bin/su -s/bin/sh _pkgfetch -c "/usr/bin/ftp -Vo - https://isc.sans.edu/api/threatlist/shodan/shodan.txt | grep -Eo '([[:digit:]]{1,3}\.){3}[[:digit:]]{1,3}' >> ${TMPFILE}"
-
-## nixspam.org
-#/usr/bin/su -s/bin/sh _pkgfetch -c "/usr/bin/ftp -Vo - http://www.dnsbl.manitu.net/download/nixspam-ip.dump.gz | /usr/bin/gzcat | grep -Eo '\ [1-9].*[0-9]' | sed 's/\ //g' | sort >> ${TMPFILE}"
 
 # copy into place
 if [[ -f "${CONF}" ]]; then

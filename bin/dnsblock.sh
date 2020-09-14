@@ -1,6 +1,6 @@
 #!/bin/ksh
 
-set -euo pipefail
+set -efuo pipefail
 
 UPSTREAM_HOSTS_FILE='https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-porn/hosts'
 
