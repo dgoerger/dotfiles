@@ -139,6 +139,10 @@ fi
 
 ### OS-specific overrides
 if [[ "$(uname)" == 'Darwin' ]]; then
+	# zsh tab completion
+	autoload -Uz compinit
+	compinit -D
+
 	export MANWIDTH=80
 	export PROMPT='%m$ '
 
@@ -181,6 +185,10 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 	unset LS_COLORS
 
 	# aliases
+	function apropos {
+		# man(1) default search order: 1,8,3,2,5,4,9,6,7
+		man -s 1,8,5,4,6,7 -wK "${@}" | awk -F'(/|\\.)' '{system("/usr/bin/whatis " $(NF-2))}'
+	}
 	if command -v atop >/dev/null; then
 		alias atop='atop -f'
 	fi

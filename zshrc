@@ -25,14 +25,6 @@ set -o hist_reduce_blanks
 set -o inc_append_history
 
 
-## tab-completion
-autoload -Uz compinit
-if [[ ! -d "${HOME}/.cache/zsh" ]]; then
-	mkdir -p "${HOME}/.cache/zsh"
-fi
-compinit -d "${HOME}/.cache/zsh/zcompdump-${ZSH_VERSION}"
-
-
 ## source shell-agnostic aliases and functions
 if [[ -r ${HOME}/.profile ]]; then
 	. ${HOME}/.profile
