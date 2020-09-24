@@ -12,8 +12,11 @@ if [[ ${-} != *i* ]]; then return; fi
 #stty erase '^?' echoe
 # disable terminal flow control (ctrl+s/ctrl+q)
 stty -ixon
+# disable job control (^Z)
+set +m
 # SIGINFO: see signal(3)
 stty status ^T 2>/dev/null
+# restrict umask (override in ~/.profile.local)
 umask 077
 
 
@@ -66,6 +69,9 @@ alias df='df -h'
 alias dush='du -sh * .??* 2>/dev/null | sort -hr'
 alias fetch='ftp -Vo'
 alias free='top | grep -E "^Memory"'
+if command -v grep >/dev/null; then
+	alias ggrep='git grep -in --'
+fi
 if command -v kpcli >/dev/null; then
 	alias kpcli='kpcli --histfile=/dev/null --readonly --kdb'
 fi
@@ -144,7 +150,6 @@ if [[ "$(uname)" == 'Darwin' ]]; then
 	compinit -D
 
 	export MANWIDTH=80
-	export PROMPT='%m$ '
 
 	alias bc='bc -ql'
 	alias cal='/usr/bin/ncal -C'
@@ -175,11 +180,6 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 	fi
 	if [[ -d "${HOME}/bin" ]]; then
 		export PATH=${HOME}/bin:${PATH}
-	fi
-	if [[ "${0}" == '-zsh' ]] || [[ "${0}" == 'zsh' ]]; then
-		export PROMPT='%m$ '
-	elif [[ "${0}" == '-bash' ]] || [[ "${0}" == 'bash' ]]; then
-		export PS1="\h$ "
 	fi
 	export QUOTING_STYLE=literal
 	unset LS_COLORS
@@ -235,15 +235,32 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 		alias whence='command -v'
 	fi
 	function zless {
+		local flags=
+		while test $# -ne 0; do
+			case "$1" in
+				--)
+					shift
+					break
+					;;
+				-*|+*)
+					flags="${flags} ${1}"
+					shift
+					;;
+				*)
+					break
+					;;
+			esac
+		done
+
 		if [[ $# -eq 0 ]]; then
-			gzip -cdf 2>&1 | less
+			gzip -cdf 2>&1 | less "${flags}"
 			exit 0
 		fi
 
 		oterm=$(stty -g 2>/dev/null)
 		while test $# -ne 0; do
-			gzip -cdf "$1" 2>&1 | less
-			prev="$1"
+			gzip -cdf "$1" 2>&1 | less "${flags}"
+			prev="${1}"
 			shift
 			if tty -s && test -n "${oterm}" -a $# -gt 0; then
 				echo -n "$prev (END) - Next: $1 "
@@ -379,36 +396,6 @@ arxifetch() {
 		fi
 	else
 		printf 'usage:\n    arxifetch ARXIV_ID\n' && return 1
-	fi
-}
-
-# bioarxifetch() download papers from bioRxiv by doi + revision number
-bioarxifetch() {
-	if [[ $# -eq 1 ]]; then
-		local title="$(fetch - "https://www.biorxiv.org/content/10.1101/${1}" | awk -F'"' '/DC\.Title/ {print $4}' | sed 's/\///g')"
-		if [[ ! -z "${title}" ]]; then
-			fetch "${title} - ${1}.pdf" "https://www.biorxiv.org/content/10.1101/${1}.full.pdf" && \
-				printf "Downloaded file '%s - %s.pdf'.\n" "${title}" "${1}"
-		else
-			printf "ERROR: bioRxiv doi + revision number '%s' not found.\n" "${1}" && return 1
-		fi
-	else
-		printf 'usage:\n    bioarxifetch DOIvN\n' && return 1
-	fi
-}
-
-# pubmedfetch() download papers from PubMed by PMCID
-pubmedfetch() {
-	if [[ $# -eq 1 ]]; then
-		local title="$(fetch - "https://www.ncbi.nlm.nih.gov/pmc/articles/${1}/" | awk -F"<|>" '/<title>/ {print $3}' | sed 's/\///g')"
-		if [[ ! -z "${title}" ]]; then
-			fetch "${title} - ${1}.epub" "https://www.ncbi.nlm.nih.gov/pmc/articles/${1}/epub/" && \
-				printf "Downloaded file '%s - %s.epub'.\n" "${title}" "${1}"
-		else
-			printf "ERROR: PubMed Central document ID '%s' not found.\n" "${1}" && return 1
-		fi
-	else
-		printf 'usage:\n    pubmedfetch PMCID\n' && return 1
 	fi
 }
 
@@ -950,7 +937,6 @@ search() {
 	_escape_html() {
 		echo "$@" | sed 's/%/%25/g;
 			s/+/%2B/g;
-#			s/ /+/g;
 			s/ /%20/g;
 			s/(/%28/g;
 			s/)/%29/g;
@@ -959,7 +945,6 @@ search() {
 			s/\$/%24/g;
 			s/&/%26/g;
 			s/,/%2C/g;
-#			s/\./%2E/g;
 			sx/x%2Fxg;
 			s/:/%3A/g;
 			s/;/%3B/g;
@@ -1160,16 +1145,13 @@ search() {
 	fi
 }
 
-# shacompare() sha512 file comparison
+# shacompare() file comparison
 shacompare() {
 	if [[ $# == 2 ]] && [[ -r "${1}" ]] && [[ -r "${2}" ]]; then
-		local file1="$(sha512 "${1}")"
-		local file2="$(sha512 "${2}")"
-
-		if [[ "${file1}" == "${file2}" ]]; then
-			printf 'The two files are sha512-identical.\n'
+		if cmp -s "${1}" "${2}"; then
+			printf 'The two files are identical.\n'
 		else
-			printf 'The two files are NOT sha512-identical.\n'
+			printf 'The two files are NOT identical.\n'
 		fi
 	else
 		printf 'usage:\n    shacompare FILE1 FILE2\n' && return 1
@@ -1312,12 +1294,10 @@ whattimeisitin() {
 	fi
 }
 
+### enable emacs keybindings
+set -o emacs
+
 ### source profile-local files
-if [[ "${SHELL}" != '/bin/ash' ]]; then
-	set -o emacs
-	# disable job control (^Z)
-	set +m
-fi
 if [[ -r "${HOME}/.profile.local" ]]; then
 	. "${HOME}/.profile.local"
 fi
