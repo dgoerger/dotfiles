@@ -41,8 +41,7 @@
 				"https://addons.mozilla.org/firefox/downloads/latest/dont-touch-my-tabs/latest.xpi",
 				"https://addons.mozilla.org/firefox/downloads/latest/https-everywhere/latest.xpi",
 				"https://addons.mozilla.org/firefox/downloads/latest/noscript/latest.xpi",
-				"https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi",
-				"https://addons.mozilla.org/firefox/downloads/latest/umatrix/latest.xpi"
+				"https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi"
 			]
 		},
 		"ExtensionUpdate": true,
@@ -78,21 +77,190 @@
 			}
 		},
 		"Preferences": {
-			"browser.cache.disk.enable": false,
-			"browser.newtabpage.activity-stream.default.sites": "",
-			"browser.safebrowsing.phishing.enabled": false,
-			"browser.safebrowsing.malware.enabled": false,
-			"extensions.getAddons.showPane": false,
-			"extensions.htmlaboutaddons.recommendations.enabled": false,
-			"geo.enabled": false,
-			"media.eme.enabled": false,
-			"media.gmp-gmpopenh264.enabled": false,
-			"media.gmp-widevinecdm.enabled": false,
-			"media.peerconnection.enabled": false,
-			"network.IDN_show_punycode": true,
-			"places.history.enabled": false,
-			"print.save_print_settings": false,
-			"security.ssl.errorReporting.enabled": false
+			"browser.backspace_action": {
+				"Value": 0,
+				"Status": "locked"
+			},
+			"browser.bookmarks.showRecentlyBookmarked": {
+				"Value": false,
+				"Status": "locked"
+			},
+			"browser.cache.disk.enable": {
+				"Value": false,
+				"Status": "locked"
+			},
+			"browser.ctrlTab.recentlyUsedOrder": {
+				"Value": false,
+				"Status": "locked"
+			},
+			"browser.display.use_system_colors": {
+				"Value": false,
+				"Status": "locked"
+			},
+			"browser.download.manager.addToRecentDocs": {
+				"Value": false,
+				"Status": "locked"
+			},
+			"browser.fixup.alternate.enabled": {
+				"Value": false,
+				"Status": "locked"
+			},
+			"browser.fullscreen.autohide": {
+				"Value": false,
+				"Status": "locked"
+			},
+			"browser.newtabpage.activity-stream.default.sites": {
+				"Value": "",
+				"Status": "locked"
+			},
+			"browser.onboarding.enabled": {
+				"Value": false,
+				"Status": "locked"
+			},
+			"browser.privatebrowsing.autostart": {
+				"Value": true,
+				"Status": "locked"
+			},
+			"browser.safebrowsing.enabled": {
+				"Value": false,
+				"Status": "locked"
+			},
+			"browser.safebrowsing.downloads.enabled": {
+				"Value": false,
+				"Status": "locked"
+			},
+			"browser.safebrowsing.downloads.remote.enabled": {
+				"Value": false,
+				"Status": "locked"
+			},
+			"browser.safebrowsing.malware.enabled": {
+				"Value": false,
+				"Status": "locked"
+			},
+			"browser.safebrowsing.phishing.enabled": {
+				"Value": false,
+				"Status": "locked"
+			},
+			"browser.safebrowsing.provider.mozilla.gethashURL": {
+				"Value": "NULL",
+				"Status": "locked"
+			},
+			"browser.safebrowsing.provider.mozilla.updateURL": {
+				"Value": "NULL",
+				"Status": "locked"
+			},
+			"browser.search.countryCode": {
+				"Value": "CA",
+				"Status": "locked"
+			},
+			"browser.search.region": {
+				"Value": "CA",
+				"Status": "locked"
+			},
+			"browser.send_pings": {
+				"Value": false,
+				"Status": "locked"
+			},
+			"browser.showQuitWarning": {
+				"Value": true,
+				"Status": "locked"
+			},
+			"browser.urlbar.oneOffSearches": {
+				"Value": false,
+				"Status": "locked"
+			},
+			"browser.urlbar.searchSuggestionsChoice": {
+				"Value": false,
+				"Status": "locked"
+			},
+			"dom.allow_cut_copy": {
+				"Value": false,
+				"Status": "locked"
+			},
+			"dom.event.clipboardevents.enabled": {
+				"Value": false,
+				"Status": "locked"
+			},
+			"dom.serviceWorkers.enabled": {
+				"Value": false,
+				"Status": "locked"
+			},
+			"extensions.activeThemeID": {
+				"Value": "firefox-compact-dark@mozilla.org",
+				"Status": "locked"
+			},
+			"extensions.allowPrivateBrowsingByDefault": {
+				"Value": true,
+				"Status": "locked"
+			},
+			"extensions.getAddons.showPane": {
+				"Value": false,
+				"Status": "locked"
+			},
+			"extensions.htmlaboutaddons.recommendations.enabled": {
+				"Value": false,
+				"Status": "locked"
+			},
+			"extensions.webservice.discoverURL": {
+				"Value": "NULL",
+				"Status": "locked"
+			},
+			"geo.enabled": {
+				"Value": false,
+				"Status": "locked"
+			},
+			"media.autoplay.default": {
+				"Value": 1,
+				"Status": "locked"
+			},
+			"media.eme.enabled": {
+				"Value": false,
+				"Status": "locked"
+			},
+			"media.gmp-gmpopenh264.enabled": {
+				"Value": false,
+				"Status": "locked"
+			},
+			"media.gmp-widevinecdm.enabled": {
+				"Value": false,
+				"Status": "locked"
+			},
+			"media.peerconnection.enabled": {
+				"Value": false,
+				"Status": "locked"
+			},
+			"network.IDN_show_punycode": {
+				"Value": true,
+				"Status": "locked"
+			},
+			"network.dnsCacheExpiration": {
+				"Value": 0,
+				"Status": "locked"
+			},
+			"network.http.referer.userControlPolicy": {
+				"Value": 2,
+				"Status": "locked"
+			},
+			"network.http.referer.XOriginTrimmingPolicy": {
+				"Value": 2,
+				"Status": "locked"
+			},
+			"places.history.enabled": {
+				"Value": false,
+				"Status": "locked"
+			},
+			"print.save_print_settings": {
+				"Value": false,
+				"Status": "locked"
+			},
+			"security.mixed_content.block_active_content": {
+				"Value": true,
+				"Status": "locked"
+			},
+			"security.ssl.errorReporting.enabled": {
+				"Value": false,
+				"Status": "locked"
+			}
 		},
 		"SanitizeOnShutdown": true,
 		"SearchBar": "unified",
