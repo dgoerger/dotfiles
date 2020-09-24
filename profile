@@ -147,7 +147,7 @@ fi
 if [[ "$(uname)" == 'Darwin' ]]; then
 	# zsh tab completion
 	autoload -Uz compinit
-	compinit -D
+	compinit -i -D
 
 	export MANWIDTH=80
 
