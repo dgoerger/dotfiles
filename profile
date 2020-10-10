@@ -279,16 +279,12 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 	}
 
 elif [[ "$(uname)" == 'NetBSD' ]]; then
-	export CC=clang
-	export CXX=clang++
 	export HTOPRC=/dev/null
-	export MANPATH=${HOME}/man:/usr/pkg/man:/usr/pkg/share/man:/usr/share/man:/usr/pkg/X11R7/man:/usr/local/man
-	export PATH=${HOME}/bin:${PATH}
 	export PS1="${HOSTNAME}$ "
 
 	alias apropos='/usr/bin/apropos -l'
 	alias listening='netstat -anf inet | grep -Ev "(ESTABLISHED|TIME_WAIT|FIN_WAIT_1|FIN_WAIT_2)$"'
-	alias pkgsrc='lynx "https://ftp.netbsd.org/pub/pkgsrc/packages/NetBSD/x86_64/$(uname -r)/All/"'
+	alias pkgsrc='ftp -Vo - "https://ftp.netbsd.org/pub/pkgsrc/packages/NetBSD/x86_64/$(uname -r)/All/" 2>/dev/null | less'
 	alias pssec='ps -Awo pid,state,user,etime,comm'
 	alias realpath='readlink -fv'
 	unalias sha512
