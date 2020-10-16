@@ -156,6 +156,14 @@ if [[ "$(uname)" == 'Darwin' ]]; then
 	alias dns_reset='sudo killall -HUP mDNSResponder; sudo killall mDNSResponderHelper; sudo dscacheutil -flushcache'
 	alias fetch='curl -Lso'
 	alias free='top -l 1 -s 0 | grep PhysMem'
+	getent() {
+		# implement just enough of getent(1) so that user functions work
+		if [[ "${#}" == '2' ]] && [[ "${1}" == 'hosts' ]]; then
+			host "${2}" | grep -qE "has( IPv6 | )address"
+			return $?
+		fi
+	}
+	alias ldd='otool -L'
 	alias listening='netstat -an | grep LISTEN'
 	alias mtop='top -o mem'
 	alias pssec='ps -Awo pid,state,user,etime,comm'
@@ -309,6 +317,7 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
 				else
 					printf "%s\n" "System is up-to-date."
 				fi
+				/bin/rm "${_patchfile}"
 			}
 		else
 			checkupdates() {
@@ -326,6 +335,8 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
 				else
 					printf "%s\n" "System is up-to-date."
 				fi
+				/bin/rm "${_snapfile}"
+				/bin/rm "${_snapdate}"
 			}
 		fi
 	fi
@@ -351,7 +362,6 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == 'ksh' ]]; then
 	if command -v ncdu >/dev/null; then
 		set -A complete_ncdu_1 -- -rx -x
 	fi
-	set -A complete_openssl_1 -- ciphers s_client verify version x509
 	set -A complete_ping_1 -- ${HOST_LIST}
 	set -A complete_ping6_1 -- ${HOST_LIST}
 	if [[ "$(uname)" == 'OpenBSD' ]] && [[ -r /etc/rc.d ]]; then
@@ -380,21 +390,6 @@ fi
 
 
 ### functions
-# arxifetch() download papers from arXiv by document ID
-arxifetch() {
-	if [[ $# -eq 1 ]]; then
-		local title="$(fetch - "https://arxiv.org/abs/${1}" | awk -F'"' '/meta\ name.*citation_title/ {print $4}' | sed 's/\///g')"
-		if [[ ! -z "${title}" ]]; then
-			fetch "${title} - ${1}.pdf" "https://arxiv.org/pdf/${1}" && \
-				printf "Downloaded file '%s - %s.pdf'.\n" "${title}" "${1}"
-		else
-			printf "ERROR: arXiv document ID '%s' not found.\n" "${1}" && return 1
-		fi
-	else
-		printf 'usage:\n    arxifetch ARXIV_ID\n' && return 1
-	fi
-}
-
 # certcheck() verify tls certificates
 certcheck() {
 	# set default options
@@ -405,9 +400,6 @@ certcheck() {
 	# set FQDN (required)
 	if [[ -n "${1}" ]]; then
 		if getent hosts "${1}" >/dev/null 2>&1; then
-			local FQDN="${1}"
-		elif host "${1}" >/dev/null 2>&1; then
-			# fallback - macOS doesn't have getent(1)
 			local FQDN="${1}"
 		else
 			printf "Cannot find %s in DNS.\n" "${1}" && return 1
@@ -428,9 +420,6 @@ certcheck() {
 	if [[ "${PORT}" == '25' ]] || [[ "${PORT}" == '587' ]]; then
 		# protocol == starttls (smtp/25, smtp-submission/587)
 		local PROTOCOL_FLAGS="-starttls smtp"
-	elif [[ "${PORT}" == '5222' ]] || [[ "${PORT}" == '5269' ]]; then
-		# protocol == starttls (xmpp-client/5222, xmpp-server/5269)
-		local PROTOCOL_FLAGS="-starttls xmpp"
 	else
 		# protocol == tls+sni (https/443, smtps/465, ldaps/636, xmpps/5223, https-tomcat/8443, etc)
 		local PROTOCOL_FLAGS="-servername ${FQDN}"
@@ -545,61 +534,6 @@ diff() {
 	fi
 }
 
-# dvd() and radio()
-if command -v mpv >/dev/null; then
-	audiocd() {
-		if [[ "$(uname)" == 'OpenBSD' ]] && [[ ! -r /dev/rcd0c ]]; then
-			printf 'Cannot read /dev/rcd0c. Try: chgrp wheel /dev/rcd0c\n' && return 1
-		fi
-		if [[ $# -eq 0 ]]; then
-			mpv cdda://
-		else
-			printf 'usage:\n    audiocd\n' && return 1
-		fi
-	}
-	dvd() {
-		if [[ "$(uname)" == 'OpenBSD' ]] && [[ ! -r /dev/rcd0c ]]; then
-			printf 'Cannot read /dev/rcd0c. Try: chgrp wheel /dev/rcd0c\n' && return 1
-		fi
-		if [[ $# -eq 1 ]]; then
-			case ${1} in
-				''|*[!0-9]*) printf "Error: \${1} must be an integer.\n" && return 1 ;;
-				*) mpv --audio-normalize-downmix=yes "dvdread://${1}" ;;
-			esac
-		else
-			printf 'usage:\n    dvd INT, where INT is the chapter number.\n' && return 1
-		fi
-	}
-	radio() {
-		if [[ $# -eq 1 ]]; then
-			case ${1} in
-				## via https://www.radio-browser.info
-				# Canada: Radio-Canada Montréal (français)
-				ici) mpv "http://2QMTL0.akacast.akamaistream.net/7/953/177387/v1/rc.akacast.akamaistream.net/2QMTL0" ;;
-				ici-musique) mpv "http://7qmtl0.akacast.akamaistream.net/7/445/177407/v1/rc.akacast.akamaistream.net/7QMTL0" ;;
-				# USA: Prairie Public Radio (North Dakota)
-				kdsu) mpv "https://18433.live.streamtheworld.com/KCNDHD3_SC" ;;
-				# Germany: Radio Köln
-				koln) mpv "http://radiokoeln-ais-edge-3004.fra-eco.cdn.addradio.net/radiokoeln/live/mp3/high" ;;
-				kolnfc) mpv "http://fckoeln-ice-edge-1006.fra-eco.cdn.addradio.net/fckoeln/live/mp3/high" ;;
-				# USA: Minnesota Public Radio
-				mpr) mpv "https://current.stream.publicradio.org/kcmp.mp3" ;;
-				# Deutschland: Queerlive
-				queerlive) mpv "https://queerlive.stream.laut.fm/queerlive" ;;
-				# USA: NPR WGBH Boston
-				wgbh) mpv "http://audio.wgbh.org:8000" ;;
-				# USA: Monroe independent radio station
-				wmnr) mpv "http://amber.streamguys.com:6050/live.m3u" ;;
-				# USA: NPR WNYC New York City
-				wnyc) mpv "http://fm939.wnyc.org/wnycfm" ;;
-				*) printf 'Error: unknown stream\n' && return 1 ;;
-			esac
-		else
-			printf 'usage:\n    radio STREAM\n' && return 1
-		fi
-	}
-fi
-
 # ereader()
 if command -v pandoc >/dev/null && command -v lynx >/dev/null; then
 	ereader() {
@@ -645,29 +579,6 @@ fd() {
 		printf "usage:\n    fd FILENAME\n"
 	else
 		find . -iname "*${1}*"
-	fi
-}
-
-# ldd() list dynamic dependencies
-ldd() {
-	if [[ "$(uname)" == 'Darwin' ]]; then
-		otool -L "${1}"
-	else
-		printf "%s:\n" "${1}"
-		if [[ -r "${1}" ]]; then
-			if /usr/bin/file -b "${1}" 2>/dev/null | grep -qE "^ELF"; then
-				local dlibs="$(/usr/bin/objdump -p "${1}" | awk '/\ NEEDED\ / {print "\t" $2}' | sort -u)"
-				if [[ -z "${dlibs}" ]]; then
-					printf "not a dynamic executable\n"
-				else
-					printf "%s\n" "${dlibs}"
-				fi
-			else
-				printf "not an ELF executable\n"
-			fi
-		else
-			printf "no such file or directory\n"
-		fi
 	fi
 }
 
@@ -1257,23 +1168,6 @@ sysinfo() {
 		printf "Disk:\t\t%s / %s (%s)\n" "${disk_used}" "${disk_total}" "${disk_percent_used}"
 	fi
 	printf "RAM:\t\t%sMiB / %sMiB (%s%%)\n" "${memory_used}" "${memory_total}" "${memory_percent_used}"
-}
-
-# touchmode() touch + set the mode of a new file
-touchmode() {
-	if [[ $# == 2 ]]; then
-		case "${1}" in
-			''|*[!0-9]*) printf 'MODE must be an integer\n' && return 1 ;;
-			*) local MODE="${1}" ;;
-		esac
-		if [[ -f "${2}" ]]; then
-			printf 'File already exists.\n' && return 1
-		else
-			install -C -m "${MODE}" /dev/null "${2}"
-		fi
-	else
-		printf 'usage:\n    touchmode MODE /path/to/file\n' && return 1
-	fi
 }
 
 whattimeisitin() {
