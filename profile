@@ -974,24 +974,6 @@ shacompare() {
 	fi
 }
 
-# smtpconnect() 'nc -c' but for SMTP StartTLS
-smtpconnect() {
-	if [[ $# == 1 ]] && [[ "${1}" == '-h' ]]; then
-		printf "usage:\n    smtpconnect HOSTNAME\n"
-		return 0
-	elif [[ $# == 1 ]]; then
-		if getent hosts "${1}" >/dev/null 2>&1; then
-			printf "ehlo %s\r\n" "$(hostname)" | openssl s_client -quiet -starttls smtp -connect "${1}:25" 2>/dev/null
-		else
-			printf "smtpconnect: cannot find host '%s' in DNS\n" "${1}"
-			return 1
-		fi
-	else
-		printf "usage:\n    smtpconnect HOSTNAME\n"
-		return 1
-	fi
-}
-
 # sysinfo() system profiler
 sysinfo() {
 	if [[ "$(uname)" == 'Darwin' ]]; then
