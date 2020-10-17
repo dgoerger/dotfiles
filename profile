@@ -299,6 +299,7 @@ elif [[ "$(uname)" == 'NetBSD' ]]; then
 	function sha512 {
 		cksum -a SHA512 "${1}" | awk '{print $NF}'
 	}
+	alias sysctl=/sbin/sysctl
 
 elif [[ "$(uname)" == 'OpenBSD' ]]; then
 	# aliases
