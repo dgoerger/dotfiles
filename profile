@@ -66,7 +66,7 @@ if command -v cvs >/dev/null; then
 	alias cvsup='cvs -q up -PdA'
 fi
 alias df='df -h'
-alias dush='du -sh * .??* 2>/dev/null | sort -hr'
+alias dush='du -had1 | sort -hr'
 alias fetch='ftp -Vo'
 alias free='top | grep -E "^Memory"'
 if command -v grep >/dev/null; then
