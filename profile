@@ -154,6 +154,7 @@ if [[ "$(uname)" == 'Darwin' ]]; then
 	alias bc='bc -ql'
 	alias cal='/usr/bin/ncal -C'
 	alias dns_reset='sudo killall -HUP mDNSResponder; sudo killall mDNSResponderHelper; sudo dscacheutil -flushcache'
+	alias dush='du -hd1 | sort -hr'
 	alias fetch='curl -Lso'
 	alias free='top -l 1 -s 0 | grep PhysMem'
 	getent() {
@@ -175,6 +176,7 @@ if [[ "$(uname)" == 'Darwin' ]]; then
 
 elif [[ "$(uname)" == 'FreeBSD' ]]; then
 	alias cal='/usr/bin/ncal -C'
+	alias dush='du -hd1 | sort -hr'
 	alias free='top | grep -E "^Mem"'
 	alias pssec='ps -Awo pid,state,user,etime,comm,jail'
 
@@ -407,19 +409,12 @@ colours() {
 		printf "\n";
 	}'
 }
-alias colors=colours
 
-# def() define a word
-if command -v wn >/dev/null && command -v pandoc >/dev/null; then
+# def() look up the definition of a word
+if command -v pandoc >/dev/null; then
 	def() {
 		if [[ $# -eq 1 ]]; then
-			if [[ -n "$(wn "${1}" -over)" ]]; then
-				wn "${1}" -over | pandoc -t plain -
-			elif command -v wtf >/dev/null; then
-				wtf "${1}"
-			else
-				printf "No definition found for %s.\n" "${1}"
-			fi
+			fetch - "https://en.wiktionary.org/wiki/${1}" | pandoc -f html -t plain | sed 's/\[.*\]//g' | sed -n '/^Translations/q;p'
 		else
 			printf "usage:\n    def WORD\n" && return 1
 		fi
