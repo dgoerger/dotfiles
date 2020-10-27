@@ -315,7 +315,7 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
 				# on -stable, check if there are available syspatches
 				local _patchfile="$(mktemp /tmp/checkupdates.XXXXXXXXXX)"
 				ftp -VMo "${_patchfile}" "$(cat /etc/installurl)/syspatch/$(uname -r)/$(uname -m)/SHA256"
-				if [[ "$(echo "(syspatch$(/bin/ls -hrt /var/syspatch/ | tail -n 1).tgz)")" != "$(tail -n 1 "${_patchfile}" | awk '{print $2}')" ]]; then
+				if [[ "$(echo "(syspatch$(/bin/ls -hrt /var/syspatch/ | tail -n 1).tgz)")" != "$(awk '!/^$/ {print $2}' "${_patchfile}" | tail -n 1)" ]]; then
 					printf "%s\n" "Updates are available via syspatch(8)."
 				else
 					printf "%s\n" "System is up-to-date."
