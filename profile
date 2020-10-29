@@ -293,6 +293,7 @@ elif [[ "$(uname)" == 'NetBSD' ]]; then
 	export PS1="${HOSTNAME}$ "
 
 	alias apropos='/usr/bin/apropos -l'
+	alias cal='/usr/bin/cal -d1'
 	alias listening='netstat -anf inet | grep -Ev "(ESTABLISHED|TIME_WAIT|FIN_WAIT_1|FIN_WAIT_2)$"'
 	alias pkgsrc='ftp -Vo - "https://ftp.netbsd.org/pub/pkgsrc/packages/NetBSD/x86_64/$(uname -r)/All/" 2>/dev/null | less'
 	alias pssec='ps -Awo pid,state,user,etime,comm'
