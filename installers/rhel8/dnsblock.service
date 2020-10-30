@@ -15,7 +15,6 @@ ProtectControlGroups=true
 ProtectHome=true
 ProtectKernelModules=true
 ProtectKernelTunables=true
-ProtectSystem=full
 ReadWritePaths=/etc
 RestrictRealtime=true
 SystemCallArchitectures=native
