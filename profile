@@ -290,6 +290,10 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 
 elif [[ "$(uname)" == 'NetBSD' ]]; then
 	export HTOPRC=/dev/null
+	export MANPATH=/usr/share/man:/usr/local/man
+	if [[ -d "${HOME}/bin" ]]; then
+		export PATH=${HOME}/bin:/usr/bin:/bin
+	fi
 	export PS1="${HOSTNAME}$ "
 
 	alias apropos='/usr/bin/apropos -l'
