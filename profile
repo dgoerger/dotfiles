@@ -122,22 +122,24 @@ alias woohoo='echo \\\(ˆ˚ˆ\)/'
 ## daemons
 # ssh-agent
 if [[ -z "${SSH_AUTH_SOCK}" ]] || [[ -n "$(echo "${SSH_AUTH_SOCK}" | grep -E "^/run/user/$(id -u)/keyring/ssh$")" ]] || [[ -n "$(echo "${SSH_AUTH_SOCK}" | grep -E "^/private/tmp/com.apple.launchd.*/Listeners$")" ]]; then
-	# create ~/.ssh if missing - some operating systems don't include this in /etc/skel
-	if [[ ! -d "${HOME}/.ssh" ]]; then
-		mkdir -m 0700 "${HOME}/.ssh"
-	fi
-	if [[ ! -f "${HOME}/.ssh/known_hosts" ]]; then
-		touch "${HOME}/.ssh/known_hosts"
-	fi
-	# if ssh-agent isn't running OR GNOME Keyring controls the socket
-	export SSH_AUTH_SOCK="${HOME}/.ssh/${LOGNAME}@${HOSTNAME}.socket"
-	if [[ ! -S "${SSH_AUTH_SOCK}" ]]; then
-		eval $(ssh-agent -s -a "${SSH_AUTH_SOCK}" >/dev/null)
-	elif ! pgrep -U "${LOGNAME}" -f "ssh-agent -s -a ${SSH_AUTH_SOCK}" >/dev/null 2>&1; then
-		if [[ -S "${SSH_AUTH_SOCK}" ]]; then
-			# if proc isn't running but the socket exists, remove and restart
-			/bin/rm "${SSH_AUTH_SOCK}"
+	if [[ -w "${HOME}/.ssh" ]]; then
+		# create ~/.ssh if missing - some operating systems don't include this in /etc/skel
+		if [[ ! -d "${HOME}/.ssh" ]]; then
+			mkdir -m 0700 "${HOME}/.ssh"
+		fi
+		if [[ ! -f "${HOME}/.ssh/known_hosts" ]]; then
+			touch "${HOME}/.ssh/known_hosts"
+		fi
+		# if ssh-agent isn't running OR GNOME Keyring controls the socket
+		export SSH_AUTH_SOCK="${HOME}/.ssh/${LOGNAME}@${HOSTNAME}.socket"
+		if [[ ! -S "${SSH_AUTH_SOCK}" ]]; then
 			eval $(ssh-agent -s -a "${SSH_AUTH_SOCK}" >/dev/null)
+		elif ! pgrep -U "${LOGNAME}" -f "ssh-agent -s -a ${SSH_AUTH_SOCK}" >/dev/null 2>&1; then
+			if [[ -S "${SSH_AUTH_SOCK}" ]]; then
+				# if proc isn't running but the socket exists, remove and restart
+				/bin/rm "${SSH_AUTH_SOCK}"
+				eval $(ssh-agent -s -a "${SSH_AUTH_SOCK}" >/dev/null)
+			fi
 		fi
 	fi
 fi
