@@ -418,10 +418,45 @@ colours() {
 }
 
 # def() look up the definition of a word
-if command -v pandoc >/dev/null; then
+if command -v curl >/dev/null; then
 	def() {
-		if [[ $# -eq 1 ]]; then
-			fetch - "https://en.wiktionary.org/wiki/${1}" | pandoc -f html -t plain | sed 's/\[.*\]//g' | sed -n '/^Translations/q;p'
+		if [[ $# -eq 2 ]]; then
+			if [[ "${1}" == 'cz' ]]; then
+				shift
+				curl "dict://dict.org/d:${1}:fd-ces-eng"
+			elif [[ "${1}" == 'de' ]]; then
+				shift
+				curl "dict://dict.org/d:${1}:fd-deu-eng"
+			elif [[ "${1}" == 'es' ]]; then
+				shift
+				curl "dict://dict.org/d:${1}:fd-spa-eng"
+			elif [[ "${1}" == 'fr' ]]; then
+				shift
+				curl "dict://dict.org/d:${1}:fd-fra-eng"
+			elif [[ "${1}" == 'hu' ]]; then
+				shift
+				curl "dict://dict.org/d:${1}:fd-hun-eng"
+			elif [[ "${1}" == 'it' ]]; then
+				shift
+				curl "dict://dict.org/d:${1}:fd-ita-eng"
+			elif [[ "${1}" == 'nl' ]]; then
+				shift
+				curl "dict://dict.org/d:${1}:fd-nld-eng"
+			elif [[ "${1}" == 'pl' ]]; then
+				shift
+				curl "dict://dict.org/d:${1}:fd-pol-eng"
+			elif [[ "${1}" == 'pt' ]]; then
+				shift
+				curl "dict://dict.org/d:${1}:fd-por-eng"
+			elif [[ "${1}" == 'se' ]]; then
+				shift
+				curl "dict://dict.org/d:${1}:fd-swe-eng"
+			else
+				printf "language code not recognised\n"
+				return 1
+			fi
+		elif [[ $# -eq 1 ]]; then
+			curl "dict://dict.org/d:${1}:gcide"
 		else
 			printf "usage:\n    def WORD\n" && return 1
 		fi
