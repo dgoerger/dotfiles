@@ -3,7 +3,15 @@
 # Linux nota bene:
 #UsePAM yes
 #PrintMotd no
-# $ sudo ln /usr/libexec/openssh/sftp-server /usr/libexec/sftp-server
+### sftp-server path compatibility patches
+## Arch
+# $ sudo mkdir -p /usr/libexec
+# $ sudo ln -s /usr/lib/ssh/sftp-server /usr/libexec/sftp-server
+## Debian
+# $ sudo mkdir -p /usr/libexec
+# $ sudo ln -s /usr/lib/openssh/sftp-server /usr/libexec/sftp-server
+## RHEL/Fedora
+# $ sudo ln -s /usr/libexec/openssh/sftp-server /usr/libexec/sftp-server
 
 
 ## Authentication
