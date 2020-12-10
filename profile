@@ -229,6 +229,9 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 	alias pscpu='ps -Awwo user,pid,ppid,nice,pcpu,pmem,vsz:10,rss:8,stat,cputime,comm --sort -pcpu,-vsz,-pmem,-rss'
 	alias psmem='ps -Awwo pid,stat,cputime,majflt,vsz:10,rss:8,trs:8,pcpu,pmem,comm --sort -vsz,-rss,-pcpu'
 	alias pssec='ps -Awo pid,stat,user,etime,comm,cgname'
+	if command -v pstree >/dev/null; then
+		alias pstreepid='pstree -supa'
+	fi
 	alias realpath='readlink -ev'
 	if command -v sar >/dev/null; then
 		alias sarcpu='sar -qu'
