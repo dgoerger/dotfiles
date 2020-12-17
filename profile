@@ -107,7 +107,6 @@ alias stat='stat -x'
 alias tm='tmux new-session -A -s tm'
 alias view='less -iLMR'
 alias w='w -i'
-alias which='/usr/bin/which'
 
 # kaomoji
 alias disapprove='echo '\''ಠ_ಠ'\'''
@@ -207,6 +206,8 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 	alias bc='bc -ql'
 	if [[ -r /etc/alpine-release ]]; then
 		alias checkupdates='apk list -u'
+	elif [[ -r /etc/arch-release ]]; then
+		alias checkupdates='pacman -Sup --print-format "%n %v"'
 	elif [[ -r /etc/debian_version ]]; then
 		if [[ -x /usr/bin/ncal ]]; then
 			alias cal='/usr/bin/ncal -bM'
@@ -214,7 +215,9 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 		alias checkupdates='apt list --upgradeable'
 	elif [[ -r /etc/redhat-release ]]; then
 		alias checkupdates='yum -q check-update'
+		alias which='/usr/bin/which'
 	fi
+	alias date='LC_ALL=C /bin/date'
 	alias doas=/usr/bin/sudo #mostly-compatible
 	alias fetch='curl -Lso'
 	alias free='free -h'
@@ -233,12 +236,6 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 		alias pstreepid='pstree -supa'
 	fi
 	alias realpath='readlink -ev'
-	if command -v sar >/dev/null; then
-		alias sarcpu='sar -qu'
-		alias sarmem='sar -BHrS'
-		alias sarnet='sar -n DEV'
-		alias sarnfs='sar -n NFS'
-	fi
 	unalias sha512
 	function sha512 {
 		sha512sum --tag "${1}" | awk '{print $NF}'
