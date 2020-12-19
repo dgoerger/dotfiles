@@ -260,6 +260,10 @@
 			"security.ssl.errorReporting.enabled": {
 				"Value": false,
 				"Status": "locked"
+			},
+			"spellchecker.dictionary": {
+				"Value": "en-CA",
+				"Status": "locked"
 			}
 		},
 		"SanitizeOnShutdown": true,
