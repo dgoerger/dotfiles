@@ -58,6 +58,9 @@
 	"SearchSuggestEnabled": false,
 	"SitePerProcess": true,
 	"SSLVersionMin": "tls1.2",
+	"SpellcheckLanguage": [
+		"en-CA"
+	],
 	"SpellCheckServiceEnabled": false,
 	"SyncDisabled": true,
 	"TranslateEnabled": false,
