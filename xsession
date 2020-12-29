@@ -11,8 +11,6 @@ fi
 if [[ -x /usr/local/bin/xwallpaper ]] && [[ -r ${HOME}/.config/wallpaper/current ]]; then
 	/usr/local/bin/xwallpaper --center ${HOME}/.config/wallpaper/current
 fi
-# always use UTF-8
-export LANG=en_CA.UTF-8
 # load ~/.profile in ksh(1) interactive shells
 export ENV=${HOME}/.profile
 # launch the calm window manager
