@@ -2,9 +2,9 @@
 " ref: (n)vim's built-in ':help option' documentation system
 "
 """ disable various things by default for greater speed
-syntax off
-filetype off
-filetype plugin indent off
+syntax on
+filetype on
+filetype plugin indent on
 set noloadplugins		" don't autoload unused plugins
 
 """ general usability

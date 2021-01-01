@@ -1,5 +1,2 @@
 # ~/.cvsrc
 diff -uNp
-update -PdA
-checkout -P
-rdiff -u
