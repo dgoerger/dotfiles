@@ -204,6 +204,26 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 		alias atop='atop -f'
 	fi
 	alias bc='bc -ql'
+	bpftrace_openat() {
+		if ! command -v bpftrace >/dev/null 2>&1; then
+			printf 'bpftrace(8) not installed, aborting...\n'
+			return 1
+		elif [[ -n "${1}" ]]; then
+			case "${1}" in
+				''|*[!0-9]*)
+					printf 'ERROR: pid must be an integer\n'
+					return 1
+					;;
+				*)
+					PID="${1}"
+					;;
+			esac
+			sudo bpftrace -e "tracepoint:syscalls:sys_enter_openat /pid == ${PID}/ { printf(\"%s %s\n\", comm, str(args->filename)); }"
+		else
+			printf 'usage\n    bpftrace_openat PID\n\n'
+			return 1
+		fi
+	}
 	if [[ -r /etc/alpine-release ]]; then
 		alias checkupdates='apk list -u'
 	elif [[ -r /etc/arch-release ]]; then
