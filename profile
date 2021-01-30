@@ -1045,7 +1045,7 @@ sysinfo() {
 	elif [[ "$(uname)" == 'FreeBSD' ]]; then
 		local cpu_speed="$(sysctl -n hw.clockrate)"
 		local cpu="$(echo "$(sysctl -n hw.ncpu)"cpu: "${cpu_speed:0:1}.${cpu_speed:1}GHz")"
-		local disk_query="$(/bin/df -chl | awk '/^total/ {print $2, $3, $4}' | tail -n1)"
+		local disk_query="$(/bin/df -chl | awk '/^total/ {print $2, $3, $5}' | tail -n1)"
 		local distro='FreeBSD'
 		local gpu="$(pciconf -lv | grep -B 4 -F "VGA" | grep -F "device" | awk -F"'" '{print $2}')"
 		local host="$(sysctl -n hw.model 2>/dev/null)"
