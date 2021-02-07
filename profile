@@ -406,7 +406,7 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == 'ksh' ]]; then
 	set -A complete_scp_2 -- ${HOST_LIST}
 	set -A complete_sftp_1 -- -p
 	set -A complete_sftp_2 -- ${HOST_LIST}
-	set -A complete_search_1 -- alpine arxiv centos cve debian fedora mandebian mandragonflybsd manfreebsd manillumos manlinux mannetbsd manopenbsd mbug nws rfc rhbz thesaurus wikipedia wiktionary
+	set -A complete_search_1 -- alpine arxiv centos cve debian fedora freebsd mandebian mandragonflybsd manfreebsd manillumos manlinux mannetbsd manopenbsd mbug nws rfc rhbz thesaurus ubuntu wikipedia wiktionary
 	set -A complete_ssh_1 -- ${HOST_LIST}
 	set -A complete_systat_1 -- buckets cpu ifstat iostat malloc mbufs netstat nfsclient nfsserver pf pigs pool pcache queues rules sensors states swap vmstat uvm
 	if command -v toot >/dev/null; then
@@ -888,6 +888,14 @@ search() {
 		else
 			lynx "https://koji.fedoraproject.org/koji/search?match=glob&type=package&terms=${query}"
 		fi
+	elif [[ "${1}" == 'freebsd' ]]; then
+		shift
+		local query="$(_escape_html "$@")"
+		if [[ -z "${query}" ]]; then
+			lynx "https://www.freebsd.org/ports/"
+		else
+			lynx "https://www.freebsd.org/cgi/ports.cgi?query=${query}&stype=name&sektion=all"
+		fi
 	elif [[ "${1}" == 'gutenberg' ]]; then
 		shift
 		local query="$(_escape_html "$@")"
@@ -918,7 +926,7 @@ search() {
 		if [[ -z "${query}" ]]; then
 			lynx "https://www.freebsd.org/cgi/man.cgi"
 		else
-			lynx "https://www.freebsd.org/cgi/man.cgi?sektion=0&manpath=FreeBSD%2012.1-RELEASE&arch=default&format=ascii&query=${query}"
+			lynx "https://www.freebsd.org/cgi/man.cgi?sektion=0&manpath=FreeBSD%2012.2-RELEASE&arch=default&format=ascii&query=${query}"
 		fi
 	elif [[ "${1}" == 'manillumos' ]]; then
 		shift
@@ -992,6 +1000,14 @@ search() {
 			lynx "https://en.oxforddictionaries.com/english-thesaurus"
 		else
 			lynx "https://en.oxforddictionaries.com/thesaurus/${query}"
+		fi
+	elif [[ "${1}" == 'ubuntu' ]]; then
+		shift
+		local query="$(_escape_html "$@")"
+		if [[ -z "${query}" ]]; then
+			lynx "https://packages.ubuntu.com/"
+		else
+			lynx "https://packages.ubuntu.com/search?keywords=${query}&searchon=names&suite=bionic&section=all"
 		fi
 	elif [[ "${1}" == 'wikipedia' ]]; then
 		shift
