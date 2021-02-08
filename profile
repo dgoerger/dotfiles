@@ -82,6 +82,7 @@ alias less='less -iLMR'
 alias listening='netstat -lnp tcp && netstat -lnp udp'
 alias ll='ls -Fhl'
 alias ls='ls -F'
+alias lS='ls -aFhlS'
 if command -v mutt >/dev/null; then
 	alias mail=mutt
 fi
@@ -247,6 +248,7 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 	alias listening='ss -lntu'
 	alias ll='LC_ALL=C ls -Fhl --color=never'
 	alias ls='LC_ALL=C ls -F --color=never'
+	alias lS='LC_ALL=C ls -aFhlS --color=never'
 	alias man='man --nh --nj'
 	alias mtop='top -s -o "RES"'
 	alias pscpu='ps -Awwo user,pid,ppid,nice,pcpu,pmem,vsz:10,rss:8,stat,cputime,comm --sort -pcpu,-vsz,-pmem,-rss'
