@@ -94,9 +94,6 @@ fi
 alias pscpu='ps -Awwro user,pid,ppid,nice,%cpu,%mem,vsz,rss,state,wchan,time,comm'
 alias psmem='ps -Awwmo pid,state,time,pagein,vsz,rss,tsiz,%cpu,%mem,comm'
 alias pssec='ps -Awwo pid,state,user,etime,rtable,comm,pledge'
-if command -v python3 >/dev/null; then
-	alias py=python3
-fi
 alias realpath='readlink -f'
 alias rgrep='grep -rIns --'
 alias rm='rm -i'
@@ -117,32 +114,6 @@ alias shrug='echo '\''¯\_(ツ)_/¯'\'''
 alias stare='echo '\''(•_•)'\'''
 alias sunglasses='echo '\''(■_■¬)'\'''
 alias woohoo='echo \\\(ˆ˚ˆ\)/'
-
-
-## daemons
-# ssh-agent
-if [[ -z "${SSH_AUTH_SOCK}" ]] || [[ -n "$(echo "${SSH_AUTH_SOCK}" | grep -E "^/run/user/$(id -u)/keyring/ssh$")" ]] || [[ -n "$(echo "${SSH_AUTH_SOCK}" | grep -E "^/private/tmp/com.apple.launchd.*/Listeners$")" ]]; then
-	if [[ -w "${HOME}/.ssh" ]]; then
-		# create ~/.ssh if missing - some operating systems don't include this in /etc/skel
-		if [[ ! -d "${HOME}/.ssh" ]]; then
-			mkdir -m 0700 "${HOME}/.ssh"
-		fi
-		if [[ ! -f "${HOME}/.ssh/known_hosts" ]]; then
-			touch "${HOME}/.ssh/known_hosts"
-		fi
-		# if ssh-agent isn't running OR GNOME Keyring controls the socket
-		export SSH_AUTH_SOCK="${HOME}/.ssh/${LOGNAME}@${HOSTNAME}.socket"
-		if [[ ! -S "${SSH_AUTH_SOCK}" ]]; then
-			eval $(ssh-agent -s -a "${SSH_AUTH_SOCK}" >/dev/null)
-		elif ! pgrep -U "${LOGNAME}" -f "ssh-agent -s -a ${SSH_AUTH_SOCK}" >/dev/null 2>&1; then
-			if [[ -S "${SSH_AUTH_SOCK}" ]]; then
-				# if proc isn't running but the socket exists, remove and restart
-				/bin/rm "${SSH_AUTH_SOCK}"
-				eval $(ssh-agent -s -a "${SSH_AUTH_SOCK}" >/dev/null)
-			fi
-		fi
-	fi
-fi
 
 
 ### OS-specific overrides
@@ -241,10 +212,11 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 	alias date='LC_ALL=C /bin/date'
 	alias doas=/usr/bin/sudo #mostly-compatible
 	alias fetch='curl -Lso'
-	alias free='free -h'
+	alias free='/usr/bin/free -h | sed "s/^Mem\:/Mem\:\ /; s/^Swap\:/Swap\:\ /; s/Ki/K\ /g; s/Mi/M\ /g; s/Gi/G\ /g; s/Ti/T\ /g; s/Pi/P\ /g; s/Ei/E\ /g;"'
 	alias l='LC_ALL=C ls -1F --color=never'
 	alias la='LC_ALL=C ls -aFhl --color=never'
 	alias larth='LC_ALL=C ls -aFhlrt --color=never'
+	alias less='less -iMR'
 	alias listening='ss -lntu'
 	alias ll='LC_ALL=C ls -Fhl --color=never'
 	alias ls='LC_ALL=C ls -F --color=never'
@@ -255,7 +227,7 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 	alias psmem='ps -Awwo pid,stat,cputime,majflt,vsz:10,rss:8,trs:8,pcpu,pmem,comm --sort -vsz,-rss,-pcpu'
 	alias pssec='ps -Awo pid,stat,user,etime,comm,cgname'
 	if command -v pstree >/dev/null; then
-		alias pstreepid='pstree -supa'
+		alias pstreepid='pstree -apsu'
 	fi
 	alias realpath='readlink -ev'
 	unalias sha512
@@ -268,49 +240,7 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 		# whence exists in ksh and zsh, but not in bash
 		alias whence='command -v'
 	fi
-	function zless {
-		local flags=
-		while test $# -ne 0; do
-			case "$1" in
-				--)
-					shift
-					break
-					;;
-				-*|+*)
-					flags="${flags} ${1}"
-					shift
-					;;
-				*)
-					break
-					;;
-			esac
-		done
 
-		if [[ $# -eq 0 ]]; then
-			gzip -cdf 2>&1 | less "${flags}"
-			exit 0
-		fi
-
-		oterm=$(stty -g 2>/dev/null)
-		while test $# -ne 0; do
-			gzip -cdf "$1" 2>&1 | less "${flags}"
-			prev="${1}"
-			shift
-			if tty -s && test -n "${oterm}" -a $# -gt 0; then
-				echo -n "$prev (END) - Next: $1 "
-				trap "stty ${oterm} 2>/dev/null" 0 1 2 3 13 15
-				stty cbreak -echo 2>/dev/null
-				REPLY=$(dd bs=1 count=1 2>/dev/null)
-				stty ${oterm} 2>/dev/null
-				trap - 0 1 2 3 13 15
-				echo
-				case "$REPLY" in
-					s) shift ;;
-					e|q) break ;;
-				esac
-			fi
-		done
-	}
 
 elif [[ "$(uname)" == 'NetBSD' ]]; then
 	export HTOPRC=/dev/null
@@ -390,10 +320,7 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == 'ksh' ]]; then
 	if [[ -r /usr/local/etc/manuals.list ]]; then
 		set -A complete_man_1 -- $(cat /usr/local/etc/manuals.list)
 	fi
-	set -A complete_nc_1 -- -c -cv -cvTprotocols=tlsv1.3 -v ${HOST_LIST}
-	if command -v ncdu >/dev/null; then
-		set -A complete_ncdu_1 -- -rx -x
-	fi
+	set -A complete_nc_1 -- -c -cv -v ${HOST_LIST}
 	set -A complete_ping_1 -- ${HOST_LIST}
 	set -A complete_ping6_1 -- ${HOST_LIST}
 	if [[ "$(uname)" == 'OpenBSD' ]] && [[ -r /etc/rc.d ]]; then
@@ -408,7 +335,7 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == 'ksh' ]]; then
 	set -A complete_scp_2 -- ${HOST_LIST}
 	set -A complete_sftp_1 -- -p
 	set -A complete_sftp_2 -- ${HOST_LIST}
-	set -A complete_search_1 -- alpine arxiv centos cve debian fedora freebsd mandebian mandragonflybsd manfreebsd manillumos manlinux mannetbsd manopenbsd mbug nws rfc rhbz thesaurus ubuntu wikipedia wiktionary
+	set -A complete_search_1 -- alpine arxiv cve debian fedora freebsd mandebian mandragonflybsd manfreebsd manillumos manlinux mannetbsd manopenbsd mbug nws rfc rhbz ubuntu wikipedia wiktionary
 	set -A complete_ssh_1 -- ${HOST_LIST}
 	set -A complete_systat_1 -- buckets cpu ifstat iostat malloc mbufs netstat nfsclient nfsserver pf pigs pool pcache queues rules sensors states swap vmstat uvm
 	if command -v toot >/dev/null; then
@@ -1049,6 +976,30 @@ shacompare() {
 		printf 'usage:\n    shacompare FILE1 FILE2\n' && return 1
 	fi
 }
+
+# ssh-init() ssh-agent initialiser
+ssh-init() {
+	if [[ -z "${SSH_AUTH_SOCK}" ]] || [[ -n "$(echo "${SSH_AUTH_SOCK}" | grep -E "^/run/user/$(id -u)/keyring/ssh$")" ]] || [[ -n "$(echo "${SSH_AUTH_SOCK}" | grep -E "^/private/tmp/com.apple.launchd.*/Listeners$")" ]]; then
+		# if ssh-agent isn't running OR GNOME Keyring controls the socket OR we're on macOS
+		if [[ -w "${HOME}" ]]; then
+			export SSH_AUTH_SOCK="${HOME}/.ssh/${LOGNAME}@${HOSTNAME}.socket"
+		else
+			export SSH_AUTH_SOCK="/tmp/ssh-${LOGNAME}@${HOSTNAME}.socket"
+		fi
+		if [[ ! -S "${SSH_AUTH_SOCK}" ]]; then
+			eval $(ssh-agent -s -a "${SSH_AUTH_SOCK}" >/dev/null)
+		elif ! pgrep -U "${LOGNAME}" -f "ssh-agent -s -a ${SSH_AUTH_SOCK}" >/dev/null 2>&1; then
+			if [[ -S "${SSH_AUTH_SOCK}" ]]; then
+				# if proc isn't running but the socket exists, remove and restart
+				/bin/rm "${SSH_AUTH_SOCK}"
+				eval $(ssh-agent -s -a "${SSH_AUTH_SOCK}" >/dev/null)
+			fi
+		fi
+	else
+		printf "ssh-agent is already listening on %s\n" "${SSH_AUTH_SOCK}"
+	fi
+}
+
 
 # sysinfo() system profiler
 sysinfo() {
