@@ -10,17 +10,26 @@ set -o posix_argzero
 set -o posix_identifiers
 set -o sh_word_split
 
-
 ## history
 set -o hist_expire_dups_first
 set -o hist_ignore_dups
 set -o hist_reduce_blanks
 set -o inc_append_history
 
-
 ## prompt
 export PROMPT='%m%(!.#.$) '
 
+## tab-completion
+# disable fuzzy match
+zstyle ':completion:*' accept-exact true
+# case-sensitive
+zstyle ':completion:*' matcher-list 'r:|=*' 'l:|=* r:|=*'
+# smaller 'cd' tab-completion array
+zstyle ':completion:*:cd:*' tag-order local-directories
+# enable cache
+zstyle ':completion:*' use-cache yes
+autoload -Uz compinit
+compinit -i -D
 
 ## source shell-agnostic aliases and functions
 if [[ -r ${HOME}/.profile ]]; then

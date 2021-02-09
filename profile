@@ -118,10 +118,6 @@ alias woohoo='echo \\\(ˆ˚ˆ\)/'
 
 ### OS-specific overrides
 if [[ "$(uname)" == 'Darwin' ]]; then
-	# zsh tab completion
-	autoload -Uz compinit
-	compinit -i -D
-
 	export MANWIDTH=80
 
 	alias bc='bc -ql'
