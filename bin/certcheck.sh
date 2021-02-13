@@ -3,10 +3,24 @@ set -euo pipefail
 
 EXPIRY_THRESHOLD_WARNING=15
 EXPIRY_THRESHOLD_CRITICAL=5
+TLS_PROTOCOL_VERSION=''
 
 usage() {
 	printf 'usage:\n    certcheck HOSTNAME [PORT]\n'
 }
+
+while getopts ":0:1:2:3:" option; do
+	case "${option}" in
+		0) export TLS_PROTOCOL_VERSION='-tls1' && shift ;;
+		1) export TLS_PROTOCOL_VERSION='-tls1_1' && shift ;;
+		2) export TLS_PROTOCOL_VERSION='-tls1_2' && shift ;;
+		3) export TLS_PROTOCOL_VERSION='-tls1_3' && shift ;;
+		*)
+			usage
+			exit 3
+			;;
+	esac
+done
 
 # set port number
 if [[ "$#" == '1' ]]; then
@@ -41,22 +55,22 @@ fi
 # set protocol-specific flags
 if [[ "${PORT}" == '21' ]]; then
 	# protocol == starttls (ftp/21)
-	PROTOCOL_FLAGS="-starttls ftp"
+	PROTOCOL_FLAGS="${TLS_PROTOCOL_VERSION} -starttls ftp"
 elif [[ "${PORT}" == '25' ]] || [[ "${PORT}" == '587' ]]; then
 	# protocol == starttls (smtp/25, smtp-submission/587)
-	PROTOCOL_FLAGS="-starttls smtp"
+	PROTOCOL_FLAGS="${TLS_PROTOCOL_VERSION} -starttls smtp"
 elif [[ "${PORT}" == '110' ]]; then
 	# protocol == starttls (pop3/110)
-	PROTOCOL_FLAGS="-starttls pop3"
+	PROTOCOL_FLAGS="${TLS_PROTOCOL_VERSION} -starttls pop3"
 elif [[ "${PORT}" == '143' ]] || [[ "${PORT}" == '220' ]]; then
 	# protocol == starttls (imap/143, imap3/220)
-	PROTOCOL_FLAGS="-starttls imap"
+	PROTOCOL_FLAGS="${TLS_PROTOCOL_VERSION} -starttls imap"
 elif [[ "${PORT}" == '5222' ]] || [[ "${PORT}" == '5269' ]]; then
 	# protocol == starttls (xmpp-client/5222, xmpp-server/5269)
-	PROTOCOL_FLAGS="-starttls xmpp"
+	PROTOCOL_FLAGS="${TLS_PROTOCOL_VERSION} -starttls xmpp"
 else
 	# protocol == tls+sni (https/443, smtps/465, ldaps/636, imaps/993, xmpps/5223, https-tomcat/8443, etc)
-	PROTOCOL_FLAGS="-servername ${FQDN}"
+	PROTOCOL_FLAGS="${TLS_PROTOCOL_VERSION} -servername ${FQDN}"
 fi
 
 # query certificate
