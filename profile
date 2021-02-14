@@ -63,7 +63,7 @@ if command -v calendar >/dev/null && [[ -r "${HOME}/.calendar" ]]; then
 fi
 alias cp='cp -i'
 if command -v cvs >/dev/null; then
-	alias cvsup='cvs -q up -PdA'
+	alias cvs='cvs -q'
 fi
 alias df='df -h'
 alias dush='du -had1 | sort -hr'
