@@ -4,7 +4,7 @@
 sticky yes
 # builtin command definitions and overrides
 command lock /usr/X11R6/bin/xlock
-command term /usr/local/bin/kitty
+command term /usr/local/bin/sakura
 # emulate tiling
 bind-key CMS-v window-vtile
 bind-key 4-Up window-fullscreen
