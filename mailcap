@@ -5,6 +5,3 @@ text/html; lynx -vikeys -force_empty_hrefless_a -enable_scrollback -dump %s; nam
 application/msword; pandoc -s %s -t markdown; copiousoutput
 # docx
 application/vnd.openxmlformats-officedocument.wordprocessingml.document; pandoc -s %s -t markdown; copiousoutput
-# ical
-text/calendar; /usr/local/libexec/cal-invite-parser %s; copiousoutput;
-application/ics; /usr/local/libexec/cal-invite-parser %s; copiousoutput;
