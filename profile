@@ -517,36 +517,34 @@ if command -v exiv2 >/dev/null; then
 fi
 
 # pomodoro() timer
-if command -v tmux >/dev/null; then
+if command -v tmux >/dev/null && command -v notify-send >/dev/null && [[ -n "${DESKTOP_SESSION}" ]]; then
 	# GNOME3 - libnotify "toaster" popup
-	if command -v notify-send >/dev/null && [[ -n "${DESKTOP_SESSION}" ]]; then
-		pomodoro() {
-			local usage='usage: pomodoro [minutes] [message]\n'
-			if [[ $# -ne 2 ]]; then
-				echo -e "${usage}" && return 1
-			else
-				local message="${2}"
-			fi
-			case ${1} in
-				''|*[!0-9]*) echo "Error: \${1} must be an integer." && return 1 ;;
-				*) local delay=${1} ;;
-			esac
-			tmux new -d "sleep $(echo "${delay}*60" | bc -l); notify-send POMODORO \"${message}\" --icon=dialog-warning-symbolic --urgency=critical"
-		}
+	pomodoro() {
+		local usage='usage: pomodoro [minutes] [message]\n'
+		if [[ $# -ne 2 ]]; then
+			echo -e "${usage}" && return 1
+		else
+			local message="${2}"
+		fi
+		case ${1} in
+			''|*[!0-9]*) echo "Error: \${1} must be an integer." && return 1 ;;
+			*) local delay=${1} ;;
+		esac
+		tmux new -d "sleep $(echo "${delay}*60" | bc -l); notify-send POMODORO \"${message}\" --icon=dialog-warning-symbolic --urgency=critical"
+	}
+elif command -v leave >/dev/null; then
 	# headless!
-	elif command -v leave >/dev/null; then
-		pomodoro() {
-			local usage='usage: pomodoro [minutes]\n\n  .. or just use leave(1)!\n'
-			if [[ $# -ne 1 ]]; then
-				echo -e "${usage}" && return 1
-			fi
-			case ${1} in
-				''|*[!0-9]*) echo "Error: \${1} must be an integer." && return 1 ;;
-				*) local delay=${1} ;;
-			esac
-			leave "+${1}"
-		}
-	fi
+	pomodoro() {
+		local usage='usage: pomodoro [minutes]\n\n  .. or just use leave(1)!\n'
+		if [[ $# -ne 1 ]]; then
+			echo -e "${usage}" && return 1
+		fi
+		case ${1} in
+			''|*[!0-9]*) echo "Error: \${1} must be an integer." && return 1 ;;
+			*) local delay=${1} ;;
+		esac
+		leave "+${1}"
+	}
 fi
 
 # pwgen() random password generator
