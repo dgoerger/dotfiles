@@ -13,5 +13,9 @@ if [[ -x /usr/local/bin/xwallpaper ]] && [[ -r ${HOME}/.config/wallpaper/current
 fi
 # load ~/.profile in ksh(1) interactive shells
 export ENV=${HOME}/.profile
+# launch xscreensaver
+if [[ -x /usr/local/bin/xscreensaver ]]; then
+	/usr/local/bin/xscreensaver -no-splash &
+fi
 # launch the calm window manager
 /usr/X11R6/bin/cwm
