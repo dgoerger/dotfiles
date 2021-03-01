@@ -21,7 +21,7 @@ export PROMPT='%m%(!.#.$) '
 
 ## tab-completion
 # disable fuzzy match
-zstyle ':completion:*' accept-exact true
+zstyle ':completion:*' accept-exact-dirs true
 # case-sensitive
 zstyle ':completion:*' matcher-list 'r:|=*' 'l:|=* r:|=*'
 # smaller 'cd' tab-completion array
