@@ -16,7 +16,7 @@ pki fq.dn key "/etc/ssl/private/fq.dn.key"
 # filters
 filter check-fcrdns phase connect match ! fcrdns disconnect "550 relay denied"
 filter all_filters chain { check-fcrdns }
-filter "dkimsign" proc-exec "filter-dkimsign -d fq.dn -s ersa19 -c relaxed/relaxed -k /etc/mail/dkim/private.key" user _dkimsign group _dkimsign
+filter "dkimsign" proc-exec "filter-dkimsign -d fq.dn -s selectorname -c relaxed/relaxed -k /etc/mail/dkim/private.key" user _dkimsign group _dkimsign
 
 # open ports
 listen on lo0 filter "dkimsign"
