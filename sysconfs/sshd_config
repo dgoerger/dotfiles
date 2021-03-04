@@ -23,7 +23,7 @@ AuthorizedKeysFile .ssh/authorized_keys
 PermitEmptyPasswords no
 ChallengeResponseAuthentication no
 MaxAuthTries 3
-HostKeyAlgorithms ssh-ed25519,ssh-rsa
+HostKeyAlgorithms ssh-ed25519
 
 # env
 AcceptEnv LANG LC_ALL TZ
