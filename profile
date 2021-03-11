@@ -147,6 +147,7 @@ elif [[ "$(uname)" == 'FreeBSD' ]]; then
 	alias cal='/usr/bin/ncal -C'
 	alias dush='du -hd1 | sort -hr'
 	alias free='top | grep -E "^Mem"'
+	alias listening='sockstat -l46'
 	alias pssec='ps -Awo pid,state,user,etime,comm,jail'
 
 elif [[ "$(uname)" == 'Linux' ]]; then
