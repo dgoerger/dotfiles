@@ -973,8 +973,8 @@ shacompare() {
 	fi
 }
 
-# ssh-init() ssh-agent initialiser
-ssh-init() {
+# sshinit() ssh-agent initialiser
+sshinit() {
 	if [[ -z "${SSH_AUTH_SOCK}" ]] || [[ -n "$(echo "${SSH_AUTH_SOCK}" | grep -E "^/run/user/$(id -u)/keyring/ssh$")" ]] || [[ -n "$(echo "${SSH_AUTH_SOCK}" | grep -E "^/private/tmp/com.apple.launchd.*/Listeners$")" ]]; then
 		# if ssh-agent isn't running OR GNOME Keyring controls the socket OR we're on macOS
 		if [[ -w "${HOME}" ]]; then
