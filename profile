@@ -873,10 +873,9 @@ search() {
 		shift
 		local query="$(_escape_html "$@")"
 		if [[ -z "${query}" ]]; then
-			# unofficial
-			lynx "https://netbsd.gw.com/cgi-bin/man-cgi"
+			lynx "https://man.netbsd.org/"
 		else
-			lynx "https://netbsd.gw.com/cgi-bin/man-cgi?${query}++NetBSD-current"
+			lynx "https://man.netbsd.org/NetBSD-9.1-STABLE/${query}"
 		fi
 	elif [[ "${1}" == 'manopenbsd' ]]; then
 		shift
