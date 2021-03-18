@@ -149,6 +149,7 @@ elif [[ "$(uname)" == 'FreeBSD' ]]; then
 	alias free='top | grep -E "^Mem"'
 	alias listening='sockstat -l46'
 	alias pssec='ps -Awo pid,state,user,etime,comm,jail'
+	alias pstree='ps auxwd'
 
 elif [[ "$(uname)" == 'Linux' ]]; then
 	# env
@@ -223,8 +224,8 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 	alias pscpu='ps -Awwo user,pid,ppid,nice,pcpu,pmem,vsz:10,rss:8,stat,cputime,comm --sort -pcpu,-vsz,-pmem,-rss'
 	alias psmem='ps -Awwo pid,stat,cputime,majflt,vsz:10,rss:8,trs:8,pcpu,pmem,comm --sort -vsz,-rss,-pcpu'
 	alias pssec='ps -Awo pid,stat,user,etime,comm,cgname'
-	if command -v pstree >/dev/null; then
-		alias pstreepid='pstree -apsu'
+	if ! command -v pstree >/dev/null; then
+		alias pstree='ps auxwf'
 	fi
 	alias realpath='readlink -ev'
 	unalias sha512
@@ -252,6 +253,7 @@ elif [[ "$(uname)" == 'NetBSD' ]]; then
 	alias listening='netstat -anf inet | grep -Ev "(ESTABLISHED|TIME_WAIT|FIN_WAIT_1|FIN_WAIT_2)$"'
 	alias pkgsrc='ftp -Vo - "https://ftp.netbsd.org/pub/pkgsrc/packages/NetBSD/x86_64/$(uname -r)/All/" 2>/dev/null | less'
 	alias pssec='ps -Awo pid,state,user,etime,comm'
+	alias pstree='ps auxwd'
 	alias realpath='readlink -fv'
 	unalias sha512
 	function sha512 {
