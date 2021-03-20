@@ -795,9 +795,9 @@ search() {
 		shift
 		local query="$(_escape_html "$@")"
 		if [[ -z "${query}" ]]; then
-			lynx "http://cve.mitre.org"
+			lynx "https://cve.mitre.org"
 		else
-			lynx "http://cve.mitre.org/cgi-bin/cvename.cgi?name=${query}"
+			lynx "https://cve.mitre.org/cgi-bin/cvename.cgi?name=${query}"
 		fi
 	elif [[ "${1}" == 'debian' ]]; then
 		shift
