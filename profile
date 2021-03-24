@@ -345,6 +345,10 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == 'ksh' ]]; then
 	set -A complete_tmux_1 -- attach list-commands list-sessions list-windows new-session new-window source
 	set -A complete_traceroute_1 -- ${HOST_LIST}
 	set -A complete_traceroute6_1 -- ${HOST_LIST}
+	if pgrep -qf /usr/sbin/vmd; then
+		set -A complete_vmctl_1 -- console load reload start stop reset status send receive
+		set -A complete_vmctl -- $(vmctl status | awk '!/NAME/{print $NF}')
+	fi
 fi
 
 
