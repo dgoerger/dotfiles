@@ -145,6 +145,7 @@ if [[ "$(uname)" == 'Darwin' ]]; then
 
 elif [[ "$(uname)" == 'FreeBSD' ]]; then
 	alias cal='/usr/bin/ncal -C'
+	alias checkupdates='pkg upgrade -Un'
 	alias dush='du -hd1 | sort -hr'
 	alias free='top | grep -E "^Mem"'
 	alias listening='sockstat -l46'
