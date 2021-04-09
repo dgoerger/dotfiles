@@ -1018,9 +1018,9 @@ sysinfo() {
 	elif [[ "$(uname)" == 'FreeBSD' ]]; then
 		local cpu_speed="$(sysctl -n hw.clockrate)"
 		local cpu="$(echo "$(sysctl -n hw.ncpu)"cpu: "${cpu_speed:0:1}.${cpu_speed:1}GHz")"
-		local disk_query="$(/bin/df -chl | awk '/^total/ {print $2, $3, $5}' | tail -n1)"
+		local disk_query="$(/sbin/zpool list -Hpo size,allocated,capacity tank | awk '{printf("%.1fG %.1fG %d%%\n", $1/1024^3, $2/1024^3, $3)}')"
 		local distro='FreeBSD'
-		local gpu="$(pciconf -lv | grep -B 4 -F "VGA" | grep -F "device" | awk -F"'" '{print $2}')"
+		local gpu="$(pciconf -lv | grep -B 4 -F "VGA" | grep -F "device" | awk -F"'" '{print $2}' | sed '/^$/d')"
 		local host="$(sysctl -n hw.model 2>/dev/null)"
 		local kernel="$(uname -mr)"
 		local memory_query="$(echo "$(sysctl -n hw.pagesize) $(sysctl -n hw.usermem) $(vmstat -s | awk '/pages active$/ {print $1}')" | awk '{ print $2, $1 * $3 }')"
@@ -1037,14 +1037,14 @@ sysinfo() {
 		local memory_query="$(/usr/bin/free -b | grep -E "^Mem:" | awk '{ print $2,$3 }')"
 	elif [[ "$(uname)" == 'NetBSD' ]]; then
 		local cpu="$(echo "$(sysctl -n hw.ncpuonline)"cpu: "$(sysctl -n machdep.cpu_brand | tr -s " ")")"
-		local disk_query="$(/bin/df -Pk 2>/dev/null | awk '/^\// {total+=$2; used+=$3}END{printf("%.1fGiB %.1fGiB %d%%\n", total/1048576, used/1048576, used*100/total)}')"
+		local disk_query="$(/bin/df -Pk 2>/dev/null | awk '/^\// {total+=$2; used+=$3}END{printf("%.1fG %.1fG %d%%\n", total/1048576, used/1048576, used*100/total)}')"
 		local distro="$(uname -sr)"
 		local host="$(echo "$(sysctl -n machdep.dmi.system-vendor 2>/dev/null) $(sysctl -n machdep.dmi.system-product 2>/dev/null)" | sed 's/^\ //g' | sed 's/\ $//g')"
 		local kernel="$(echo "$(uname -m): $(sysctl -n kern.version | head -n1 | awk '{print $NF, $6, $7}')")"
 		local memory_query="$(echo "$(sysctl -n hw.pagesize) $(sysctl -n hw.usermem64) $(vmstat -s | awk '/pages active$/ {print $1}')" | awk '{ print $2, $1 * $3 }')"
 	elif [[ "$(uname)" == 'OpenBSD' ]]; then
 		local cpu="$(echo "$(sysctl -n hw.ncpuonline)"cpu: "$(sysctl -n hw.model)")"
-		local disk_query="$(/bin/df -Pk 2>/dev/null | awk '/^\// {total+=$2; used+=$3}END{printf("%.1fGiB %.1fGiB %d%%\n", total/1048576, used/1048576, used*100/total)}')"
+		local disk_query="$(/bin/df -Pk 2>/dev/null | awk '/^\// {total+=$2; used+=$3}END{printf("%.1fG %.1fG %d%%\n", total/1048576, used/1048576, used*100/total)}')"
 		local distro="$(sysctl -n kern.version | head -n1 | awk '{print $1, $2}')"
 		local gpu="$(/usr/X11R6/bin/glxinfo -B 2>/dev/null | awk '/OpenGL renderer string/ { sub(/OpenGL renderer string: /,""); print }')"
 		local host="$(echo "$(sysctl -n hw.vendor 2>/dev/null) $(sysctl -n hw.product 2>/dev/null)" | sed 's/^\ //g' | sed 's/\ $//g')"
@@ -1089,7 +1089,7 @@ sysinfo() {
 	if [[ -n "${disk_used}" ]]; then
 		printf "Disk:\t\t%s / %s (%s)\n" "${disk_used}" "${disk_total}" "${disk_percent_used}"
 	fi
-	printf "RAM:\t\t%sMiB / %sMiB (%s%%)\n" "${memory_used}" "${memory_total}" "${memory_percent_used}"
+	printf "RAM:\t\t%sM / %sM (%s%%)\n" "${memory_used}" "${memory_total}" "${memory_percent_used}"
 }
 
 whattimeisitin() {
