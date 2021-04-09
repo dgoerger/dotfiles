@@ -66,7 +66,7 @@ if command -v cvs >/dev/null; then
 	alias cvs='cvs -q'
 fi
 alias df='df -h'
-alias dush='du -had1 | sort -hr'
+alias ducks='du -ahxd1 | sort -hr'
 alias fetch='ftp -Vo'
 alias free='top | grep -E "^Memory"'
 if command -v grep >/dev/null; then
@@ -123,7 +123,7 @@ if [[ "$(uname)" == 'Darwin' ]]; then
 	alias bc='bc -ql'
 	alias cal='/usr/bin/ncal -C'
 	alias dns_reset='sudo killall -HUP mDNSResponder; sudo killall mDNSResponderHelper; sudo dscacheutil -flushcache'
-	alias dush='du -hd1 | sort -hr'
+	alias ducks='du -hxd1 | sort -hr'
 	alias fetch='curl -Lso'
 	alias free='top -l 1 -s 0 | grep PhysMem'
 	getent() {
@@ -144,13 +144,15 @@ if [[ "$(uname)" == 'Darwin' ]]; then
 	}
 
 elif [[ "$(uname)" == 'FreeBSD' ]]; then
+	alias bc='bc -lPq'
 	alias cal='/usr/bin/ncal -C'
 	alias checkupdates='pkg upgrade -Un'
-	alias dush='du -hd1 | sort -hr'
+	alias ducks='du -hxd1 | sort -hr'
 	alias free='top | grep -E "^Mem"'
 	alias listening='sockstat -l46'
 	alias pssec='ps -Awo pid,state,user,etime,comm,jail'
 	alias pstree='ps auxwd'
+	unalias realpath
 
 elif [[ "$(uname)" == 'Linux' ]]; then
 	# env
