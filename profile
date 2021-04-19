@@ -1036,7 +1036,7 @@ sysinfo() {
 		local memory_query="$(echo "$(sysctl -n hw.pagesize) $(sysctl -n hw.usermem) $(vmstat -s | awk '/pages active$/ {print $1}')" | awk '{ print $2, $1 * $3 }')"
 	elif [[ "$(uname)" == 'Linux' ]]; then
 		local cpu="$(echo "$(lscpu | awk '/^CPU\(s\):/ {print $NF}')"cpu: "$(grep '^model name' /proc/cpuinfo | uniq | awk -F': ' '{print $NF}' | tr -s " ")")"
-		local disk_query="$(/bin/df -h -x aufs -x tmpfs -x overlay -x devtmpfs -x udf -x nfs -x cifs --total 2>/dev/null | awk '{print $2, $3, $5}' | tail -n1)"
+		local disk_query="$(/bin/df -lh -x aufs -x tmpfs -x overlay -x devtmpfs -x sysfs -x udf -x nfs -x cifs -x cgroup -x cgroup2 --total 2>/dev/null | awk '{print $2, $3, $5}' | tail -n1)"
 		local distro="$(grep PRETTY_NAME /etc/os-release 2>/dev/null | awk -F'"' '{print $2}')"
 		if [[ -z "${distro}" ]]; then
 			local distro="$(uname -sm)"
