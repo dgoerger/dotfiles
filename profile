@@ -334,6 +334,8 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == 'ksh' ]]; then
 		set -A complete_man_1 -- $(cat /usr/local/etc/manuals.list)
 	fi
 	set -A complete_nc_1 -- -c -cv -v ${HOST_LIST}
+	set -A complete_openrsync_1 -- -vaxx
+	set -A complete_openrsync_2 -- --rsync-path=/usr/bin/openrsync
 	set -A complete_ping_1 -- ${HOST_LIST}
 	set -A complete_ping6_1 -- ${HOST_LIST}
 	if [[ "$(uname)" == 'OpenBSD' ]] && [[ -r /etc/rc.d ]]; then
