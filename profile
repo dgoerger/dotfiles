@@ -69,7 +69,7 @@ alias df='df -h'
 alias ducks='du -ahxd1 | sort -hr'
 alias fetch='ftp -Vo'
 alias free='top | grep -E "^Memory"'
-if command -v grep >/dev/null; then
+if command -v git >/dev/null; then
 	alias ggrep='git grep -in --'
 fi
 if command -v kpcli >/dev/null; then
