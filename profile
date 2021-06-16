@@ -270,39 +270,32 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
 		# search all sections of the manual by default
 		/usr/bin/man -k any="${1}"
 	}
-	if [[ -r /etc/installurl ]]; then
-		if [[ -z "$(sysctl kern.version | grep -E "\-(current|beta)")" ]]; then
-			checkupdates() {
-				# on -stable, check if there are available syspatches
-				local _patchfile="$(mktemp /tmp/checkupdates.XXXXXXXXXX)"
-				ftp -VMo "${_patchfile}" "$(cat /etc/installurl)/syspatch/$(uname -r)/$(uname -m)/SHA256"
-				if [[ "$(echo "(syspatch$(/bin/ls -hrt /var/syspatch/ | tail -n 1).tgz)")" != "$(awk '!/^$/ {print $2}' "${_patchfile}" | tail -n 1)" ]]; then
-					printf "%s\n" "Updates are available via syspatch(8)."
-				else
-					printf "%s\n" "System is up-to-date."
-				fi
-				/bin/rm "${_patchfile}"
-			}
-		else
-			checkupdates() {
-				# on -current, check if there's a newer snap available
-				local _snapfile="$(mktemp /tmp/checkupdates.XXXXXXXXXX)"
-				local _snapdate="$(mktemp /tmp/checkupdates.XXXXXXXXXX)"
-				ftp -VMo "${_snapfile}" "$(cat /etc/installurl)/snapshots/$(uname -m)/SHA256"
-				ftp -VMo "${_snapdate}" "$(cat /etc/installurl)/snapshots/$(uname -m)/BUILDINFO"
-				if [[ "$(sha512 -q "${_snapfile}")" != "$(sha512 -q /var/db/installed.SHA256)" ]]; then
-					printf "%s\n\n" "Updates are available via sysupgrade(8)."
-					if [[ "$(file -b "${_snapdate}")" == 'ASCII text' ]]; then
-						printf "%s%s\n" "Running: " "$(TZ='Canada/Mountain' date -z 'Canada/Mountain' -jf "%a %b %e %H:%M:%S %Y" "$(sysctl -n kern.version | head -n 1 | awk -F': ' '{print $NF}' | sed 's/MST//' | sed 's/MDT//')" +"%Y%m%d %H:%M:%S")"
-						printf "%s%s\n" "Upgrade: " "$(TZ=UTC date -z 'Canada/Mountain' -jf "%a %b %e %H:%M:%S %Z %Y" "$(awk -F ' - ' '{print $NF}' "${_snapdate}")" +"%Y%m%d %H:%M:%S")"
-					fi
-				else
-					printf "%s\n" "System is up-to-date."
-				fi
-				/bin/rm "${_snapfile}"
-				/bin/rm "${_snapdate}"
-			}
-		fi
+	if sysctl -n kern.version | grep -qE "\-(current|beta)"; then
+		checkupdates() {
+			# on -current, check if there's a newer snap available
+			local _buildshasum="$(ftp -VMo - "$(cat /etc/installurl)/snapshots/$(uname -m)/SHA256" | sha512 -q)"
+			local _builddate="$(ftp -VMo - "$(cat /etc/installurl)/snapshots/$(uname -m)/BUILDINFO" | awk -F ' - ' '{print $NF}')"
+			local _installshasum="$(sha512 -q /var/db/installed.SHA256)"
+			local _installdate="$(sysctl -n kern.version | head -n 1 | awk -F': ' '{print $NF}' | sed 's/MST//' | sed 's/MDT//')"
+			if [[ "${_buildshasum}" != "${_installshasum}" ]]; then
+				printf "Updates are available via sysupgrade(8).\n\n"
+				printf "Running: %s\n" "$(TZ='Canada/Mountain' date -z 'Canada/Mountain' -jf "%a %b %e %H:%M:%S %Y" "${_installdate}" +"%Y%m%d %H:%M:%S")"
+				printf "Upgrade: %s\n" "$(TZ=UTC date -z 'Canada/Mountain' -jf "%a %b %e %H:%M:%S %Z %Y" "${_builddate}" +"%Y%m%d %H:%M:%S")"
+			else
+				printf "System is up-to-date.\n"
+			fi
+		}
+	else
+		checkupdates() {
+			# on -stable, check if there are available syspatches
+			local _availablepatches="$(ftp -VMo - "$(cat /etc/installurl)/syspatch/$(uname -r)/$(uname -m)/SHA256" | awk '!/^$/ {print $2}' | tail -n 1)"
+			local _installedpatches="$(echo "(syspatch$(/bin/ls -hrt /var/syspatch/ | tail -n 1).tgz)")"
+			if [[ "${_installedpatches}" != "${_availablepatches}" ]]; then
+				printf "Updates are available via syspatch(8).\n"
+			else
+				printf "System is up-to-date.\n"
+			fi
+		}
 	fi
 	usrlocal_extras() {
 		# function to identify files in /usr/local which aren't claimed by an installed package
