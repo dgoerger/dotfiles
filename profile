@@ -1025,7 +1025,7 @@ sysinfo() {
 		local memory_query="$(echo "$(echo "$(sysctl -n hw.memsize)" | bc) $(vm_stat | grep ' active' | awk '{ print $3*4*1024 }')")"
 	elif [[ "$(uname)" == 'FreeBSD' ]]; then
 		local cpu="$(echo "$(sysctl -n hw.ncpu)cpu: $(sysctl -n hw.model 2>/dev/null)")"
-		local disk_query="$(/sbin/zpool list -Hpo size,allocated,capacity tank | awk '{printf("%.1fG %.1fG %d%%\n", $1/1024^3, $2/1024^3, $3)}')"
+		local disk_query="$(/sbin/zpool list -Hpo size,allocated,capacity | awk '{printf("%.1fG %.1fG %d%%\n", $1/1024^3, $2/1024^3, $3)}' | head -n 1)"
 		local distro='FreeBSD'
 		local gpu="$(pciconf -lv | grep -B 4 -F "VGA" | grep -F "device" | awk -F"'" '{print $2}' | sed '/^$/d')"
 		local host='unknown'
