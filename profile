@@ -4,6 +4,9 @@
 ## PATH
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/games:/usr/local/bin
 
+# quick exit for legacy sh(1)
+if [ "${0}" = '-sh' ] || [ "${0}" = 'sh' ] || [ "${0}" = '/bin/sh' ] || [ "${0}" = '/usr/local/etc/lightdm/Xsession' ]; then return; fi
+
 # quick exit for non-interactive shells
 if [[ ${-} != *i* ]]; then return; fi
 
@@ -1021,12 +1024,11 @@ sysinfo() {
 		local kernel="$(uname -rm)"
 		local memory_query="$(echo "$(echo "$(sysctl -n hw.memsize)" | bc) $(vm_stat | grep ' active' | awk '{ print $3*4*1024 }')")"
 	elif [[ "$(uname)" == 'FreeBSD' ]]; then
-		local cpu_speed="$(sysctl -n hw.clockrate)"
-		local cpu="$(echo "$(sysctl -n hw.ncpu)"cpu: "${cpu_speed:0:1}.${cpu_speed:1}GHz")"
+		local cpu="$(echo "$(sysctl -n hw.ncpu)cpu: $(sysctl -n hw.model 2>/dev/null)"
 		local disk_query="$(/sbin/zpool list -Hpo size,allocated,capacity tank | awk '{printf("%.1fG %.1fG %d%%\n", $1/1024^3, $2/1024^3, $3)}')"
 		local distro='FreeBSD'
 		local gpu="$(pciconf -lv | grep -B 4 -F "VGA" | grep -F "device" | awk -F"'" '{print $2}' | sed '/^$/d')"
-		local host="$(sysctl -n hw.model 2>/dev/null)"
+		local host='unknown'
 		local kernel="$(uname -mr)"
 		local memory_query="$(echo "$(sysctl -n hw.pagesize) $(sysctl -n hw.usermem) $(vmstat -s | awk '/pages active$/ {print $1}')" | awk '{ print $2, $1 * $3 }')"
 	elif [[ "$(uname)" == 'Linux' ]]; then
