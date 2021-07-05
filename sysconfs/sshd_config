@@ -21,7 +21,7 @@ PasswordAuthentication yes
 AuthenticationMethods publickey,password
 AuthorizedKeysFile .ssh/authorized_keys
 PermitEmptyPasswords no
-ChallengeResponseAuthentication no
+KbdInteractiveAuthentication no
 MaxAuthTries 3
 HostKeyAlgorithms ssh-ed25519
 
