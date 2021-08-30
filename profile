@@ -79,6 +79,7 @@ if command -v kpcli >/dev/null; then
 	alias kpcli='kpcli --histfile=/dev/null --readonly --kdb'
 fi
 alias l='ls -1F'
+alias lA='ls -AF'
 alias la='ls -aFhl'
 alias larth='ls -aFhlrt'
 alias less='less -iLMR'
@@ -218,6 +219,7 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 	alias fetch='curl -Lso'
 	alias free='/usr/bin/free -h | sed "s/^Mem\:/Mem\:\ /; s/^Swap\:/Swap\:\ /; s/Ki/K\ /g; s/Mi/M\ /g; s/Gi/G\ /g; s/Ti/T\ /g; s/Pi/P\ /g; s/Ei/E\ /g;"'
 	alias l='LC_ALL=C ls -1F --color=never'
+	alias lA='LC_ALL=C ls -AF --color=never'
 	alias la='LC_ALL=C ls -aFhl --color=never'
 	alias larth='LC_ALL=C ls -aFhlrt --color=never'
 	alias less='less -iMR'
