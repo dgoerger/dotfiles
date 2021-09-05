@@ -39,3 +39,14 @@ XLock.password              :
 XLock.info                  :
 XLock.validate              :
 XLock.invalid               :
+!
+!!! Zutty terminal emulator
+!!! src: https://github.com/tomszilagyi/zutty
+! copy/paste sync primary+clipboard
+Zutty.autoCopy              : true
+! fonts
+Zutty.fontpath              : /usr/local/share/fonts:/usr/X11R6/lib/X11/fonts
+Zutty.font                  : FiraMono
+Zutty.fontsize              : 16
+! login shell
+Zutty.login                 : true

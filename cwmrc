@@ -12,7 +12,7 @@ unbind-key all
 #
 # terminal
 bind-key CM-Return terminal
-command term "/usr/local/bin/sakura"
+command term "/usr/local/bin/zutty"
 #
 # screen lock
 bind-key 4-l lock
