@@ -1,20 +1,6 @@
 # OpenBSD: /etc/ssh/sshd_config, see sshd_config(5)
-#
-# Linux nota bene:
-#UsePAM yes
-#PrintMotd no
-### sftp-server path compatibility patches
-## Arch
-# $ sudo mkdir -p /usr/libexec
-# $ sudo ln -s /usr/lib/ssh/sftp-server /usr/libexec/sftp-server
-## Debian
-# $ sudo mkdir -p /usr/libexec
-# $ sudo ln -s /usr/lib/openssh/sftp-server /usr/libexec/sftp-server
-## RHEL/Fedora
-# $ sudo ln -s /usr/libexec/openssh/sftp-server /usr/libexec/sftp-server
 
-
-## Authentication
+## authentication
 PermitRootLogin no
 PubkeyAuthentication yes
 PasswordAuthentication yes
@@ -28,5 +14,18 @@ HostKeyAlgorithms ssh-ed25519
 # env
 AcceptEnv LANG LC_ALL TZ
 
+# time out stale client sessions after 120s
+TCPKeepAlive no
+ClientAliveCountMax 8
+ClientAliveInterval 15
+
 ## override default of no subsystems
 Subsystem sftp /usr/libexec/sftp-server
+
+### nota bene for Linux
+#UsePAM yes
+#PrintMotd no
+## sftp subsystem
+# Arch:        /usr/lib/ssh/sftp-server
+# Debian:      /usr/lib/openssh/sftp-server
+# Fedora/RHEL: /usr/libexec/openssh/sftp-server
