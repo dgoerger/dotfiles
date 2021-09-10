@@ -169,6 +169,7 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 	if [[ -d "${HOME}/bin" ]]; then
 		export PATH=${HOME}/bin:${PATH}
 	fi
+	export SSH_AUTH_SOCK_PATH="${HOME}/.ssh/ssh-$(printf "%s@%s" "${LOGNAME}" "${HOSTNAME}" | sha256sum | awk '{print $1}').socket"
 	export QUOTING_STYLE=literal
 	unset LS_COLORS
 
@@ -270,6 +271,8 @@ elif [[ "$(uname)" == 'NetBSD' ]]; then
 	alias sysctl=/sbin/sysctl
 
 elif [[ "$(uname)" == 'OpenBSD' ]]; then
+	local SSH_AUTH_SOCK_PATH="${HOME}/.ssh/ssh-$(printf "%s@%s" "${LOGNAME}" "${HOSTNAME}" | sha256).socket"
+
 	# aliases
 	apropos() {
 		# search all sections of the manual by default
@@ -995,10 +998,10 @@ shacompare() {
 sshinit() {
 	if [[ -z "${SSH_AUTH_SOCK}" ]] || [[ -n "$(echo "${SSH_AUTH_SOCK}" | grep -E "^/run/user/$(id -u)/keyring/ssh$")" ]] || [[ -n "$(echo "${SSH_AUTH_SOCK}" | grep -E "^/private/tmp/com.apple.launchd.*/Listeners$")" ]]; then
 		# if ssh-agent isn't running OR GNOME Keyring controls the socket OR we're on macOS
-		if [[ -w "${HOME}" ]]; then
-			export SSH_AUTH_SOCK="${HOME}/.ssh/${LOGNAME}@${HOSTNAME}.socket"
+		if [[ -w "${HOME}" ]] && [[ -n "${SSH_AUTH_SOCK_PATH}" ]]; then
+			export SSH_AUTH_SOCK="${SSH_AUTH_SOCK_PATH}"
 		else
-			export SSH_AUTH_SOCK="/tmp/ssh-${LOGNAME}@${HOSTNAME}.socket"
+			printf "ERROR: unable to create \$SSH_AUTH_SOCK_PATH\n" && return 1
 		fi
 		if [[ ! -S "${SSH_AUTH_SOCK}" ]]; then
 			eval $(ssh-agent -s -a "${SSH_AUTH_SOCK}" >/dev/null)
@@ -1010,7 +1013,7 @@ sshinit() {
 			fi
 		fi
 	else
-		printf "ssh-agent is already listening on %s\n" "${SSH_AUTH_SOCK}"
+		printf "ssh-agent is already listening on %s\n" "${SSH_AUTH_SOCK}" && return 1
 	fi
 }
 
