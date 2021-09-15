@@ -6,6 +6,7 @@
 	remotes = remote get-url --all origin
 	st = status --branch --porcelain
 	tags = tag -l
+	worktrees = worktree list
 [apply]
 	whitespace = fix
 [branch]
