@@ -24,7 +24,7 @@ umask 077
 
 
 ## environment variables
-unset ENV
+unset  ENV
 export BROWSER=lynx
 export EDITOR=vi
 export GIT_AUTHOR_EMAIL="${LOGNAME}@users.noreply.github.com"
@@ -48,6 +48,7 @@ if [[ -r "${HOME}/.pythonrc" ]]; then
 	export PYTHONSTARTUP="${HOME}/.pythonrc"
 fi
 export SAVEHIST=${HISTSIZE}
+export SSH_AUTH_SOCK_PATH="${HOME}/.ssh/ssh-$(printf "%s@%s" "${LOGNAME}" "${HOSTNAME}" | sha256).socket"
 export TZ='America/New_York'
 export VISUAL=${EDITOR}
 
@@ -123,6 +124,7 @@ alias woohoo='echo \\\(ˆ˚ˆ\)/'
 ### OS-specific overrides
 if [[ "$(uname)" == 'Darwin' ]]; then
 	export MANWIDTH=80
+	export SSH_AUTH_SOCK_PATH="${HOME}/.ssh/ssh-$(printf "%s@%s" "${LOGNAME}" "${HOSTNAME}" | shasum -a 256 | awk '{print $1}').socket"
 
 	alias bc='bc -ql'
 	alias cal='/usr/bin/ncal -C'
@@ -161,6 +163,7 @@ elif [[ "$(uname)" == 'FreeBSD' ]]; then
 elif [[ "$(uname)" == 'Linux' ]]; then
 	# env
 	export HTOPRC=/dev/null
+	unset  LS_COLORS
 	export MANWIDTH=80
 	if [[ -L "/bin" ]]; then
 		# some Linux have /bin -> /usr/bin
@@ -171,7 +174,6 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 	fi
 	export SSH_AUTH_SOCK_PATH="${HOME}/.ssh/ssh-$(printf "%s@%s" "${LOGNAME}" "${HOSTNAME}" | sha256sum | awk '{print $1}').socket"
 	export QUOTING_STYLE=literal
-	unset LS_COLORS
 
 	# aliases
 	function apropos {
@@ -256,6 +258,7 @@ elif [[ "$(uname)" == 'NetBSD' ]]; then
 		export PATH=${HOME}/bin:/usr/bin:/bin
 	fi
 	export PS1="${HOSTNAME}$ "
+	export SSH_AUTH_SOCK_PATH="${HOME}/.ssh/ssh-$(printf "%s@%s" "${LOGNAME}" "${HOSTNAME}" | cksum -a SHA256 | awk '{print $1}').socket"
 
 	alias apropos='/usr/bin/apropos -l'
 	alias cal='/usr/bin/cal -d1'
@@ -272,8 +275,6 @@ elif [[ "$(uname)" == 'NetBSD' ]]; then
 	alias sysctl=/sbin/sysctl
 
 elif [[ "$(uname)" == 'OpenBSD' ]]; then
-	local SSH_AUTH_SOCK_PATH="${HOME}/.ssh/ssh-$(printf "%s@%s" "${LOGNAME}" "${HOSTNAME}" | sha256).socket"
-
 	# aliases
 	apropos() {
 		# search all sections of the manual by default
@@ -663,89 +664,6 @@ rename() {
 	done
 }
 
-# scp() reimplementation based on sftp(1)
-scp() {
-	if [[ $# == 1 ]]; then
-		if [[ "${1}" == '-h' ]]; then
-			printf "usage:\n"
-			printf "    scp REMOTE:SOURCE\n"
-			printf "    scp REMOTE:SOURCE LOCAL_DESTINATION\n"
-			printf "    scp LOCAL_SOURCE REMOTE:DESTINATION\n"
-			return 0
-		elif [[ "${1}" == '-V' ]]; then
-			printf "scp() reimplementation based on sftp(1)\n"
-			return 0
-		else
-			# simple fetch
-			sftp -p "${1}"
-			return $?
-		fi
-	elif [[ $# == 2 ]]; then
-		if printf "%s" "${1}" | grep -q '@'; then
-			local arg1_domain_test="$(printf "%s" "${1}" | awk -F'@' '{print $2}' | awk -F':' '{print $1}')"
-		else
-			local arg1_domain_test="$(printf "%s" "${1}" | awk -F':' '{print $1}')"
-		fi
-		if printf "%s" "${2}" | grep -q '@'; then
-			if printf "%s" "${2}" | grep -q ':'; then
-				local arg2_domain_test="$(printf "%s" "${2}" | awk -F'@' '{print $2}' | awk -F':' '{print $1}')"
-			else
-				local arg2_domain_test="$(printf "%s" "${2}" | awk -F'@' '{print $2}')"
-			fi
-		else
-			if printf "%s" "${2}" | grep -q ':'; then
-				local arg2_domain_test="$(printf "%s" "${2}" | awk -F':' '{print $1}')"
-			else
-				local arg2_domain_test="${2}"
-			fi
-		fi
-		if [[ ! -r "${1}" ]] && [[ -n "${arg1_domain_test}" ]]; then
-			if getent hosts "${arg1_domain_test}" >/dev/null 2>&1; then
-				local REMOTE="${1}"
-			else
-				printf "ssh: Could not resolve hostname %s: no address associated with name" "${arg1_domain_test}"
-				return 1
-			fi
-			if [[ -r "${2}" ]] && [[ "${2}" != '.' ]]; then
-				printf "scp: destination file already exists, refusing to overwrite\n"
-				return 1
-			else
-				local LOCAL_FILE="${2}"
-			fi
-			# simple fetch
-			sftp -p "${REMOTE}" "${LOCAL_FILE}"
-			return $?
-		elif [[ ! -r "${2}" ]]; then
-			if getent hosts "${2}" >/dev/null 2>&1; then
-				local REMOTE="${2}"
-				local REMOTE_DEST="."
-			elif getent hosts "${arg2_domain_test}" >/dev/null 2>&1; then
-				local REMOTE="${arg2_domain_test}"
-				local REMOTE_DEST="$(printf "%s" "${2}" | awk -F':' '{print $2}')"
-			else
-				printf "ssh: Could not resolve hostname %s: no address associated with name" "${arg1_domain_test}"
-				return 1
-			fi
-			if [[ -r "${1}" ]]; then
-				local LOCAL_FILE="${1}"
-			else
-				printf "scp: source file not found\n"
-				return 1
-			fi
-			# simple put
-			printf "put %s %s" "${LOCAL_FILE}" "${REMOTE_DEST}" | sftp -p "${REMOTE}"
-			return $?
-		else
-			printf "scp: incorrect syntax\n\n"
-		fi
-	fi
-	printf "usage:\n"
-	printf "    scp REMOTE:SOURCE\n"
-	printf "    scp REMOTE:SOURCE LOCAL_DESTINATION\n"
-	printf "    scp LOCAL_SOURCE REMOTE:DESTINATION\n"
-	return 1
-}
-
 # search() the web
 search() {
 	# try to guess preferred language from $LANG
@@ -1132,4 +1050,12 @@ export GIT_COMMITTER_EMAIL=${GIT_AUTHOR_EMAIL}
 export GIT_COMMITTER_NAME=${GIT_AUTHOR_NAME}
 if command -v got >/dev/null; then
 	export GOT_AUTHOR="${GIT_AUTHOR_NAME} <${GIT_AUTHOR_EMAIL}>"
+fi
+
+### fix ssh agent forwarding workstation->jumpbox
+if [[ "${HOSTNAME}" == "${SSH_JUMPBOX}" ]] && echo "${SSH_AUTH_SOCK}" | grep -qE "^/tmp/ssh-.*/agent\."; then
+	if [[ -w "${HOME}" ]] && [[ -S "${SSH_AUTH_SOCK}" ]] && [[ "${SSH_AUTH_SOCK}" != "$(realpath "${SSH_AUTH_SOCK_PATH}" 2>/dev/null)" ]]; then
+		/bin/ln -sf "${SSH_AUTH_SOCK}" "${SSH_AUTH_SOCK_PATH}"
+	fi
+	export SSH_AUTH_SOCK="${SSH_AUTH_SOCK_PATH}"
 fi

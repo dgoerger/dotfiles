@@ -1,0 +1,85 @@
+#!/bin/bash
+
+set -euo pipefail
+
+usage() {
+	printf "usage:\n"
+	printf "\tscp REMOTE:SOURCE\n"
+	printf "\tscp REMOTE:SOURCE LOCAL_DESTINATION\n"
+	printf "\tscp LOCAL_SOURCE REMOTE:DESTINATION\n"
+}
+
+if [[ $# == 1 ]]; then
+	if [[ "${1}" == '-h' ]]; then
+		usage
+		exit 0
+	elif [[ "${1}" == '-V' ]]; then
+		printf "scp() reimplementation based on sftp(1), for OpenSSH 8.6 and earlier\n"
+		exit 0
+	else
+		# simple fetch
+		sftp -p "${1}"
+		exit $?
+	fi
+elif [[ $# == 2 ]]; then
+	if printf "%s" "${1}" | grep -q '@'; then
+		arg1_domain_test="$(printf "%s" "${1}" | awk -F'@' '{print $2}' | awk -F':' '{print $1}')"
+	else
+		arg1_domain_test="$(printf "%s" "${1}" | awk -F':' '{print $1}')"
+	fi
+	if printf "%s" "${2}" | grep -q '@'; then
+		if printf "%s" "${2}" | grep -q ':'; then
+			arg2_domain_test="$(printf "%s" "${2}" | awk -F'@' '{print $2}' | awk -F':' '{print $1}')"
+		else
+			arg2_domain_test="$(printf "%s" "${2}" | awk -F'@' '{print $2}')"
+		fi
+	else
+		if printf "%s" "${2}" | grep -q ':'; then
+			arg2_domain_test="$(printf "%s" "${2}" | awk -F':' '{print $1}')"
+		else
+			arg2_domain_test="${2}"
+		fi
+	fi
+	if [[ ! -r "${1}" ]] && [[ -n "${arg1_domain_test}" ]]; then
+		if getent hosts "${arg1_domain_test}" >/dev/null 2>&1; then
+			REMOTE="${1}"
+		else
+			printf "ssh: Could not resolve hostname %s: no address associated with name" "${arg1_domain_test}"
+			exit 1
+		fi
+		if [[ -r "${2}" ]] && [[ "${2}" != '.' ]]; then
+			printf "scp: destination file already exists, refusing to overwrite\n"
+			exit 1
+		else
+			LOCAL_FILE="${2}"
+		fi
+		# simple fetch
+		sftp -p "${REMOTE}" "${LOCAL_FILE}"
+		exit $?
+	elif [[ ! -r "${2}" ]]; then
+		if getent hosts "${2}" >/dev/null 2>&1; then
+			REMOTE="${2}"
+			REMOTE_DEST="."
+		elif getent hosts "${arg2_domain_test}" >/dev/null 2>&1; then
+			REMOTE="${arg2_domain_test}"
+			REMOTE_DEST="$(printf "%s" "${2}" | awk -F':' '{print $2}')"
+		else
+			printf "ssh: Could not resolve hostname %s: no address associated with name" "${arg1_domain_test}"
+			exit 1
+		fi
+		if [[ -r "${1}" ]]; then
+			LOCAL_FILE="${1}"
+		else
+			printf "scp: source file not found\n"
+			exit 1
+		fi
+		# simple put
+		printf "put %s %s" "${LOCAL_FILE}" "${REMOTE_DEST}" | sftp -p "${REMOTE}"
+		exit $?
+	else
+		printf "scp: incorrect syntax\n\n"
+	fi
+else
+	usage
+	exit 1
+fi
