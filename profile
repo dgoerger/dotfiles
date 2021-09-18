@@ -97,7 +97,7 @@ if command -v newsboat >/dev/null; then
 	alias news='newsboat -q'
 fi
 alias pscpu='ps -Awwro user,pid,ppid,nice,%cpu,%mem,vsz,rss,state,wchan,time,comm'
-alias psmem='ps -Awwmo pid,state,time,pagein,vsz,rss,tsiz,%cpu,%mem,comm'
+alias psmem='ps -Awwmo user,pid,state,time,pagein,vsz,rss,tsiz,%cpu,%mem,comm'
 alias pssec='ps -Awwo pid,state,user,etime,rtable,comm,pledge'
 alias realpath='readlink -f'
 alias rgrep='grep -rIns --'
@@ -233,7 +233,7 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 	alias man='man --nh --nj'
 	alias mtop='top -s -o "RES"'
 	alias pscpu='ps -Awwo user,pid,ppid,nice,pcpu,pmem,vsz:10,rss:8,stat,cputime,comm --sort -pcpu,-vsz,-pmem,-rss'
-	alias psmem='ps -Awwo pid,stat,cputime,majflt,vsz:10,rss:8,trs:8,pcpu,pmem,comm --sort -vsz,-rss,-pcpu'
+	alias psmem='ps -Awwo user,pid,stat,cputime,majflt,vsz:10,rss:8,trs:8,pcpu,pmem,comm --sort -rss,-vsz,-pcpu'
 	alias pssec='ps -Awo pid,stat,user,etime,comm,cgname'
 	if ! command -v pstree >/dev/null; then
 		alias pstree='ps auxwf'
