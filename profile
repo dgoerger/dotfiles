@@ -36,7 +36,6 @@ export HOSTNAME=$(hostname -s)
 export LANG="en_CA.UTF-8"
 export LC_ALL="en_CA.UTF-8"
 export LESSSECURE=1
-export LESSHISTFILE=-
 if [[ -r "${HOME}/.lynxrc" ]]; then
 	if [[ -r "${HOME}/.elynxrc" ]]; then
 		alias elynx='COLUMNS=80 lynx -cfg=~/.elynxrc -useragent "Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101 Firefox/68.0" 2>/dev/null'
@@ -123,6 +122,7 @@ alias woohoo='echo \\\(ˆ˚ˆ\)/'
 
 ### OS-specific overrides
 if [[ "$(uname)" == 'Darwin' ]]; then
+	export LESSHISTFILE=-
 	export MANWIDTH=80
 	export SSH_AUTH_SOCK_PATH="${HOME}/.ssh/ssh-$(printf "%s@%s" "${LOGNAME}" "${HOSTNAME}" | shasum -a 256 | awk '{print $1}').socket"
 
@@ -150,6 +150,8 @@ if [[ "$(uname)" == 'Darwin' ]]; then
 	}
 
 elif [[ "$(uname)" == 'FreeBSD' ]]; then
+	export LESSHISTFILE=-
+
 	alias bc='bc -lPq'
 	alias cal='/usr/bin/ncal -C'
 	alias checkupdates='pkg upgrade -Un'
@@ -163,6 +165,8 @@ elif [[ "$(uname)" == 'FreeBSD' ]]; then
 elif [[ "$(uname)" == 'Linux' ]]; then
 	# env
 	export HTOPRC=/dev/null
+	# as of less v594, we will no-longer need to disable LESSHISTFILE manually: https://github.com/gwsw/less/commit/9eba0da958d33ef3582667e09701865980595361
+	export LESSHISTFILE=-
 	unset  LS_COLORS
 	export MANWIDTH=80
 	if [[ -L "/bin" ]]; then
@@ -253,6 +257,7 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 
 elif [[ "$(uname)" == 'NetBSD' ]]; then
 	export HTOPRC=/dev/null
+	export LESSHISTFILE=-
 	export MANPATH=/usr/share/man:/usr/local/man
 	if [[ -d "${HOME}/bin" ]]; then
 		export PATH=${HOME}/bin:/usr/bin:/bin
