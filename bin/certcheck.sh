@@ -37,7 +37,6 @@ elif [[ "$#" == '2' ]]; then
 			;;
 	esac
 else
-	printf 'ERROR: incorrect number of args\n\n'
 	usage
 	exit 1
 fi
@@ -78,7 +77,6 @@ QUERY="$(echo Q | openssl s_client ${PROTOCOL_FLAGS} -connect "${FQDN}:${PORT}" 
 CERTIFICATE_AUTHORITY="$(echo "${QUERY}" | sed 's/\ =\ /=/g' | awk -F'CN=' '/^issuer=/ {print $2}')"
 ROOT_AUTHORITY="$(echo "${QUERY}" | grep -E '^Certificate chain$' -A4 | tail -n1 | sed 's/\ =\ /=/g' | awk -F'CN=' '/i:/ {print $2}')"
 TLS_PROTOCOL="$(echo "${QUERY}" | awk '/Protocol  :/ {print $NF}')"
-TLS_CIPHER="$(echo "${QUERY}" | awk '/Cipher    :/ {print $NF}')"
 EXPIRY_DATE="$(echo "${QUERY}" | openssl x509 -noout -enddate 2>/dev/null | awk -F'=' '/notAfter/ {print $2}')"
 CHAIN_OF_TRUST_STATUS="$(echo "${QUERY}" | awk '/Verify return code:/ {print $4}')"
 
@@ -107,9 +105,6 @@ if [[ -z "${ROOT_AUTHORITY}" ]]; then
 	ROOT_AUTHORITY='??'
 fi
 printf "Issuer: %s -> %s\n" "${CERTIFICATE_AUTHORITY}" "${ROOT_AUTHORITY}"
-
-# print cipher info
-printf "Cipher: %s (%s)\n" "${TLS_CIPHER}" "${TLS_PROTOCOL}"
 
 # print expiry date
 printf "Expiry: %s\n" "${EXPIRY_DATE}"
