@@ -98,7 +98,6 @@ fi
 alias pscpu='ps -Awwro user,pid,ppid,nice,%cpu,%mem,vsz,rss,state,wchan,time,comm'
 alias psmem='ps -Awwmo user,pid,state,time,pagein,vsz,rss,tsiz,%cpu,%mem,comm'
 alias pssec='ps -Awwo pid,state,user,etime,rtable,comm,pledge'
-alias realpath='readlink -f'
 alias rgrep='grep -rIns --'
 alias rm='rm -i'
 if ! command -v rsync >/dev/null && command -v openrsync >/dev/null; then
@@ -160,7 +159,6 @@ elif [[ "$(uname)" == 'FreeBSD' ]]; then
 	alias listening='sockstat -l46'
 	alias pssec='ps -Awo pid,state,user,etime,comm,jail'
 	alias pstree='ps auxwd'
-	unalias realpath
 
 elif [[ "$(uname)" == 'Linux' ]]; then
 	# env
