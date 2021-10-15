@@ -33,6 +33,9 @@ export HISTCONTROL=ignoredups
 export HISTFILE=${HOME}/.history
 export HISTSIZE=20736
 export HOSTNAME=$(hostname -s)
+if command -v jq >/dev/null 2>&1; then
+	export JQ_COLORS='0;37:0;39:0;39:0;39:0;32:1;39:1;39'
+fi
 export LANG="en_CA.UTF-8"
 export LC_ALL="en_CA.UTF-8"
 export LESSSECURE=1
