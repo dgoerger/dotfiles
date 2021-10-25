@@ -1,5 +1,11 @@
 ! ~/.Xdefaults
 !
+!!! Fonts
+Xft.antialias               : true
+Xft.autohint                : true
+Xft.hinting                 : true
+Xft.hintstyle               : hintslight
+!
 !!! XTerm
 ! always source ~/.profile
 XTerm*loginShell            : true
@@ -8,17 +14,18 @@ XTerm*termName              : xterm-256color
 XTerm*background            : black
 XTerm*foreground            : white
 ! fonts
-XTerm*font                  : xft:DejaVu Sans Mono:pixelsize=16
-XTerm*faceName              : xft:DejaVu Sans Mono:pixelsize=16
-XTerm*faceNameDoublesize    : xft:Noto Sans Mono CJK JP:pixelsize=12:style=Regular
+XTerm*font                  : xft:DejaVu Sans Mono:pixelsize=20
+XTerm*faceName              : xft:DejaVu Sans Mono:pixelsize=20
+XTerm*faceNameDoublesize    : xft:Noto Sans Mono CJK JP:pixelsize=16:style=Regular
 XTerm*antialias             : true
+XTerm*charClass             : 33:48,35:48,37:48,43:48,45-47:48,64:48,95:48,126:48,35:48,58:48,63:48,61:48,44:48,38:48,59:48
+XTerm*fastScroll            : true
+XTerm*scrollBar             : false
 ! copy/paste
 XTerm*selectToClipboard     : true
 XTerm.VT100.translations    : #override \n\
 	Ctrl Shift <Key>C: copy-selection(CLIPBOARD) \n\
 	Ctrl Shift <Key>V: insert-selection(CLIPBOARD)
-! misc
-XTerm*ScrollBar             : false
 !
 !!! XLock
 ! turn off the backlight
@@ -29,24 +36,5 @@ XLock.background            : black
 XLock.foreground            : grey
 ! wake screen by moving the mouse
 XLock.mousemotion           : on
-! iso10646-1 => unicode support
-XLock.font                  : -misc-fixed-medium-r-normal-*-20-*-*-*-*-iso10646-1
-XLock.planfont              : -misc-fixed-medium-r-normal-*-20-*-*-*-*-iso10646-1
 ! don't display extraneous text on the lockscreen
 XLock.description           : off
-XLock.username              :
-XLock.password              :
-XLock.info                  :
-XLock.validate              :
-XLock.invalid               :
-!
-!!! Zutty terminal emulator
-!!! src: https://github.com/tomszilagyi/zutty
-! copy/paste sync primary+clipboard
-Zutty.autoCopy              : true
-! fonts
-Zutty.fontpath              : /usr/local/share/fonts:/usr/X11R6/lib/X11/fonts
-Zutty.font                  : FiraMono
-Zutty.fontsize              : 16
-! login shell
-Zutty.login                 : true

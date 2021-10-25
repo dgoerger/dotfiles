@@ -12,7 +12,7 @@ unbind-key all
 #
 # terminal
 bind-key CM-Return terminal
-command term "/usr/local/bin/zutty"
+command term "/usr/X11R6/bin/xterm"
 #
 # screen lock
 bind-key 4-l lock
