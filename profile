@@ -50,7 +50,6 @@ if [[ -r "${HOME}/.pythonrc" ]]; then
 	export PYTHONSTARTUP="${HOME}/.pythonrc"
 fi
 export SAVEHIST=${HISTSIZE}
-export SSH_AUTH_SOCK_PATH="${HOME}/.ssh/ssh-$(printf "%s@%s" "${LOGNAME}" "${HOSTNAME}" | sha256).socket"
 export TZ='America/New_York'
 export VISUAL=${EDITOR}
 
@@ -281,6 +280,8 @@ elif [[ "$(uname)" == 'NetBSD' ]]; then
 	alias sysctl=/sbin/sysctl
 
 elif [[ "$(uname)" == 'OpenBSD' ]]; then
+	export SSH_AUTH_SOCK_PATH="${HOME}/.ssh/ssh-$(printf "%s@%s" "${LOGNAME}" "${HOSTNAME}" | sha256).socket"
+
 	# aliases
 	apropos() {
 		# search all sections of the manual by default
@@ -369,7 +370,7 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == 'ksh' ]]; then
 	set -A complete_tmux_1 -- attach list-commands list-sessions list-windows new-session new-window source
 	set -A complete_traceroute_1 -- ${HOST_LIST}
 	set -A complete_traceroute6_1 -- ${HOST_LIST}
-	if pgrep -qf /usr/sbin/vmd; then
+	if pgrep -qf /usr/sbin/vmd >/dev/null 2>&1; then
 		set -A complete_vmctl_1 -- console load reload start stop reset status send receive
 		set -A complete_vmctl -- $(vmctl status | awk '!/NAME/{print $NF}')
 	fi
