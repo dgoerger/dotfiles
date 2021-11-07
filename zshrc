@@ -32,6 +32,6 @@ autoload -Uz compinit
 compinit -i -D
 
 ## source shell-agnostic aliases and functions
-if [[ -r ${HOME}/.profile ]]; then
-	. ${HOME}/.profile
+if [[ -r ${HOME}/.kshrc ]]; then
+	. ${HOME}/.kshrc
 fi

@@ -2,6 +2,6 @@
 
 export PS1="\h$ "
 
-if [[ -r ${HOME}/.profile ]]; then
-	. ${HOME}/.profile
+if [[ -r ${HOME}/.kshrc ]]; then
+	. ${HOME}/.kshrc
 fi
