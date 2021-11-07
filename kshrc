@@ -1,14 +1,9 @@
-# ~/.kshrc
+# ~/.kshrc, see ksh(1)
+# docs: https://man.openbsd.org/ksh
 
 ### all operating systems and shells
 ## PATH
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/games:/usr/local/bin
-
-# quick exit for legacy sh(1)
-if [ "${0}" = '-sh' ] || [ "${0}" = 'sh' ] || [ "${0}" = '/bin/sh' ] || [ "${0}" = '/usr/local/etc/lightdm/Xsession' ]; then return; fi
-
-# quick exit for non-interactive shells
-if [[ ${-} != *i* ]]; then return; fi
 
 ## terminal settings
 # fix backspace on old TERMs
@@ -41,10 +36,10 @@ export LC_ALL="en_CA.UTF-8"
 export LESSSECURE=1
 if [[ -r "${HOME}/.lynxrc" ]]; then
 	if [[ -r "${HOME}/.elynxrc" ]]; then
-		alias elynx='COLUMNS=80 lynx -cfg=~/.elynxrc -useragent "Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101 Firefox/68.0" 2>/dev/null'
+		alias elynx='COLUMNS=80 lynx -cfg=~/.elynxrc -useragent "Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0" 2>/dev/null'
 	fi
 	export LYNX_CFG="${HOME}/.lynxrc"
-	alias lynx='COLUMNS=80 lynx -useragent "Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101 Firefox/68.0" 2>/dev/null'
+	alias lynx='COLUMNS=80 lynx -useragent "Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0" 2>/dev/null'
 fi
 if [[ -r "${HOME}/.pythonrc" ]]; then
 	export PYTHONSTARTUP="${HOME}/.pythonrc"
@@ -72,7 +67,6 @@ if command -v cvs >/dev/null; then
 fi
 alias df='df -h'
 alias ducks='du -ahxd1 | sort -hr'
-alias fetch='ftp -Vo'
 alias free='top | grep -E "^Memory"'
 if command -v git >/dev/null; then
 	alias ggrep='git grep -in --'
@@ -97,8 +91,8 @@ alias mv='mv -i'
 if command -v newsboat >/dev/null; then
 	alias news='newsboat -q'
 fi
-alias pscpu='ps -Awwro user,pid,ppid,nice,%cpu,%mem,vsz,rss,state,wchan,time,comm'
-alias psmem='ps -Awwmo user,pid,state,time,pagein,vsz,rss,tsiz,%cpu,%mem,comm'
+alias pscpu='ps -Awwro user,pid,ppid,nice,%cpu,%mem,vsz,rss,state,wchan,time,command'
+alias psmem='ps -Awwmo user,pid,state,time,pagein,vsz,rss,tsiz,%cpu,%mem,command'
 alias pssec='ps -Awwo pid,state,user,etime,rtable,comm,pledge'
 alias rgrep='grep -rIns --'
 alias rm='rm -i'
@@ -108,7 +102,7 @@ fi
 alias sha512='sha512 -q'
 alias stat='stat -x'
 alias tm='tmux new-session -A -s tm'
-alias view='less -iLMR'
+alias view=less
 alias w='w -i'
 
 # kaomoji
@@ -131,7 +125,6 @@ if [[ "$(uname)" == 'Darwin' ]]; then
 	alias cal='/usr/bin/ncal -C'
 	alias dns_reset='sudo killall -HUP mDNSResponder; sudo killall mDNSResponderHelper; sudo dscacheutil -flushcache'
 	alias ducks='du -hxd1 | sort -hr'
-	alias fetch='curl -Lso'
 	alias free='top -l 1 -s 0 | grep PhysMem'
 	getent() {
 		# implement just enough of getent(1) so that user functions work
@@ -188,7 +181,7 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 		alias atop='atop -f'
 	fi
 	alias bc='bc -ql'
-	bpftrace_openat() {
+	bpftrace_open() {
 		if ! command -v bpftrace >/dev/null 2>&1; then
 			printf 'bpftrace(8) not installed, aborting...\n'
 			return 1
@@ -219,11 +212,11 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 		alias checkupdates='apt list --upgradeable'
 	elif [[ -r /etc/redhat-release ]]; then
 		alias checkupdates='yum -q check-update'
-		alias which='/usr/bin/which'
 	fi
 	alias date='LC_ALL=C /bin/date'
-	alias doas=/usr/bin/sudo #mostly-compatible
-	alias fetch='curl -Lso'
+	if ! command -v doas >/dev/null; then
+		alias doas=/usr/bin/sudo
+	fi
 	alias free='/usr/bin/free -h | sed "s/^Mem\:/Mem\:\ /; s/^Swap\:/Swap\:\ /; s/Ki/K\ /g; s/Mi/M\ /g; s/Gi/G\ /g; s/Ti/T\ /g; s/Pi/P\ /g; s/Ei/E\ /g;"'
 	alias l='LC_ALL=C ls -1F --color=never'
 	alias lA='LC_ALL=C ls -AF --color=never'
@@ -236,9 +229,9 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 	alias lS='LC_ALL=C ls -aFhlS --color=never'
 	alias man='man --nh --nj'
 	alias mtop='top -s -o "RES"'
-	alias pscpu='ps -Awwo user,pid,ppid,nice,pcpu,pmem,vsz:10,rss:8,stat,cputime,comm --sort -pcpu,-vsz,-pmem,-rss'
-	alias psmem='ps -Awwo user,pid,stat,cputime,majflt,vsz:10,rss:8,trs:8,pcpu,pmem,comm --sort -rss,-vsz,-pcpu'
-	alias pssec='ps -Awo pid,stat,user,etime,comm,cgname'
+	alias pscpu='ps -Awwo user,pid,ppid,nice,pcpu,pmem,vsz:10,rss:8,stat,cputime,command --sort -pcpu,-vsz,-pmem,-rss'
+	alias psmem='ps -Awwo user,pid,stat,cputime,majflt,vsz:10,rss:8,trs:8,pcpu,pmem,command --sort -rss,-vsz,-pcpu'
+	alias pssec='ps -Awo pid,stat,user,etime,command,cgname'
 	if ! command -v pstree >/dev/null; then
 		alias pstree='ps auxwf'
 	fi
@@ -249,19 +242,18 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 	}
 	unalias stat
 	alias top='top -s'
-	if [[ -z "$(whence whence 2>/dev/null)" ]]; then
+	if whence whence >/dev/null 2>&1; then
 		# whence exists in ksh and zsh, but not in bash
 		alias whence='command -v'
+	fi
+	if [[ -x /usr/bin/which ]]; then
+		alias which=/usr/bin/which
 	fi
 
 
 elif [[ "$(uname)" == 'NetBSD' ]]; then
-	export HTOPRC=/dev/null
 	export LESSHISTFILE=-
 	export MANPATH=/usr/share/man:/usr/local/man
-	if [[ -d "${HOME}/bin" ]]; then
-		export PATH=${HOME}/bin:/usr/bin:/bin
-	fi
 	export PS1="${HOSTNAME}$ "
 	export SSH_AUTH_SOCK_PATH="${HOME}/.ssh/ssh-$(printf "%s@%s" "${LOGNAME}" "${HOSTNAME}" | cksum -a SHA256 | awk '{print $1}').socket"
 
@@ -270,14 +262,13 @@ elif [[ "$(uname)" == 'NetBSD' ]]; then
 	unalias free
 	alias listening='netstat -anf inet | grep -Ev "(ESTABLISHED|TIME_WAIT|FIN_WAIT_1|FIN_WAIT_2)$"'
 	alias pkgsrc='ftp -Vo - "https://ftp.netbsd.org/pub/pkgsrc/packages/NetBSD/x86_64/$(uname -r)/All/" 2>/dev/null | less'
-	alias pssec='ps -Awo pid,state,user,etime,comm'
+	unalias pssec
 	alias pstree='ps auxwd'
 	alias realpath='readlink -fv'
 	unalias sha512
 	function sha512 {
 		cksum -a SHA512 "${1}" | awk '{print $NF}'
 	}
-	alias sysctl=/sbin/sysctl
 
 elif [[ "$(uname)" == 'OpenBSD' ]]; then
 	export SSH_AUTH_SOCK_PATH="${HOME}/.ssh/ssh-$(printf "%s@%s" "${LOGNAME}" "${HOSTNAME}" | sha256).socket"
@@ -363,10 +354,6 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == 'ksh' ]]; then
 	set -A complete_search_1 -- alpine arxiv cve debian fedora freebsd mandebian mandragonflybsd manfreebsd manillumos manlinux mannetbsd manopenbsd mbug nws rfc rhbz ubuntu wikipedia wiktionary
 	set -A complete_ssh_1 -- ${HOST_LIST}
 	set -A complete_systat_1 -- buckets cpu ifstat iostat malloc mbufs netstat nfsclient nfsserver pf pigs pool pcache queues rules sensors states swap vmstat uvm
-	if command -v toot >/dev/null; then
-		set -A complete_toot_1 -- block follow instance mute notifications post tui unblock unfollow unmute upload whoami whois
-		set -A complete_toot_2 -- --help
-	fi
 	set -A complete_tmux_1 -- attach list-commands list-sessions list-windows new-session new-window source
 	set -A complete_traceroute_1 -- ${HOST_LIST}
 	set -A complete_traceroute6_1 -- ${HOST_LIST}
