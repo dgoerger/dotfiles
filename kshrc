@@ -103,10 +103,10 @@ alias sha512='sha512 -q'
 alias stat='stat -x'
 alias tm='tmux new-session -A -s tm'
 if command -v nvim >/dev/null; then
-        vi=nvim
-        view='nvim --cmd "let no_plugin_maps = 1" -c "runtime! macros/less.vim" -m -M -R -n'
+        alias vi=nvim
+        alias view='nvim --cmd "let no_plugin_maps = 1" -c "runtime! macros/less.vim" -m -M -R -n'
 else
-        view=less
+        alias view=less
 fi
 alias w='w -i'
 
