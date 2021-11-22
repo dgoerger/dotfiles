@@ -3,22 +3,22 @@
 set -euo pipefail
 
 usage() {
-        printf "usage:\n\tsearch [KEYWORD] [QUERY]\n\nSupported KEYWORDs:\n"
-        printf "\t* alpine     - search the package repositories for Alpine Linux\n"
-        printf "\t* arxiv      - search the arXiv preprint server\n"
-        printf "\t* cve        - retrieve info about a published CVE\n"
-        printf "\t* debian     - search the package repositories for Debian Linux\n"
-        printf "\t* fedora     - search the package repositories for Fedora Linux\n"
-        printf "\t* freebsd    - search the package repositories for FreeBSD\n"
-        printf "\t* gutenberg  - search the Project Gutenberg archives\n"
-        printf "\t* man*       - retrieve manpages for debian, dragonflybsd, freebsd, illumos, netbsd, or openbsd\n"
-        printf "\t* mbug       - search the Mozilla Bugzilla\n"
-        printf "\t* nws        - retrieve a forecast from the US National Weather Service\n"
-        printf "\t* rfc        - retrieve the text of a published IETF RFC\n"
-        printf "\t* rhbz       - search the Red Hat Bugzilla\n"
-        printf "\t* thesaurus  - search the Oxford Dictionary thesaurus\n"
-        printf "\t* wikipedia  - search Wikipedia, the free encyclopedia\n"
-        printf "\t* wiktionary - search Wiktionary, the free dictionary\n"
+	printf "usage:\n\tsearch [KEYWORD] [QUERY]\n\nSupported KEYWORDs:\n"
+	printf "\t* alpine     - search the package repositories for Alpine Linux\n"
+	printf "\t* arxiv      - search the arXiv preprint server\n"
+	printf "\t* cve        - retrieve info about a published CVE\n"
+	printf "\t* debian     - search the package repositories for Debian Linux\n"
+	printf "\t* fedora     - search the package repositories for Fedora Linux\n"
+	printf "\t* freebsd    - search the package repositories for FreeBSD\n"
+	printf "\t* gutenberg  - search the Project Gutenberg archives\n"
+	printf "\t* man*       - retrieve manpages for debian, dragonflybsd, freebsd, illumos, netbsd, or openbsd\n"
+	printf "\t* mbug       - search the Mozilla Bugzilla\n"
+	printf "\t* nws        - retrieve a forecast from the US National Weather Service\n"
+	printf "\t* rfc        - retrieve the text of a published IETF RFC\n"
+	printf "\t* rhbz       - search the Red Hat Bugzilla\n"
+	printf "\t* thesaurus  - search the Oxford Dictionary thesaurus\n"
+	printf "\t* wikipedia  - search Wikipedia, the free encyclopedia\n"
+	printf "\t* wiktionary - search Wiktionary, the free dictionary\n"
 }
 
 # try to guess preferred language from $LANG
@@ -62,8 +62,8 @@ escape_html() {
 
 # surf the netz raw
 if [[ "${#}" == '0' ]] || [[ "${1}" == '-h' ]] || [[ "${1}" == '--help' ]]; then
-        usage
-        exit 0
+	usage
+	exit 0
 
 elif [[ "${1}" == 'alpine' ]]; then
 	shift
@@ -125,7 +125,7 @@ elif [[ "${1}" == 'gutenberg' ]]; then
 	if [[ -z "${query}" ]]; then
 		lynx "https://www.gutenberg.org/"
 	else
-                lynx "https://www.gutenberg.org/ebooks/search/?query=${query}&submit_search=Go%21"
+		lynx "https://www.gutenberg.org/ebooks/search/?query=${query}&submit_search=Go%21"
 	fi
 
 elif [[ "${1}" == 'mandebian' ]]; then
@@ -233,7 +233,7 @@ elif [[ "${1}" == 'wikipedia' ]] || [[ "${1}" == 'w' ]]; then
 	if [[ -z "${query}" ]]; then
 		lynx "https://${lang}.wikipedia.org/wiki/"
 	else
-		lynx "https://${lang}.wikipedia.org/wiki/index.php?search=${query}&go=Go"
+		lynx "https://${lang}.wikipedia.org/wiki/Special:Search?search=${query}&go=Go&ns0=1"
 	fi
 
 elif [[ "${1}" == 'wiktionary' ]] || [[ "${1}" == 'wikt' ]]; then
@@ -242,7 +242,7 @@ elif [[ "${1}" == 'wiktionary' ]] || [[ "${1}" == 'wikt' ]]; then
 	if [[ -z "${query}" ]]; then
 		lynx "https://${lang}.wiktionary.org/wiki/"
 	else
-		lynx "https://${lang}.wiktionary.org/wiki/index.php?search=${query}&go=Go"
+		lynx "https://${lang}.wiktionary.org/wiki/Special:Search?search=${query}&go=Go&ns0=1"
 	fi
 
 else
