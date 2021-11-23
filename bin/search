@@ -14,6 +14,7 @@ usage() {
 	printf "\t* man*       - retrieve manpages for debian, dragonflybsd, freebsd, illumos, netbsd, or openbsd\n"
 	printf "\t* mbug       - search the Mozilla Bugzilla\n"
 	printf "\t* nws        - retrieve a forecast from the US National Weather Service\n"
+	printf "\t* openbsd    - search the package repositories for OpenBSD\n"
 	printf "\t* rfc        - retrieve the text of a published IETF RFC\n"
 	printf "\t* rhbz       - search the Red Hat Bugzilla\n"
 	printf "\t* thesaurus  - search the Oxford Dictionary thesaurus\n"
@@ -198,6 +199,15 @@ elif [[ "${1}" == 'nws' ]]; then
 		lynx "https://www.weather.gov/"
 	else
 		lynx "https://forecast.weather.gov/zipcity.php?inputstring=${query}&btnSearch=Go&unit=1"
+	fi
+
+elif [[ "${1}" == 'openbsd' ]]; then
+	shift
+	readonly query="$(escape_html "$@")"
+	if [[ -z "${query}" ]]; then
+		lynx "https://cvsweb.openbsd.org/ports/"
+	else
+		lynx "https://openports.se/search.php?so=${query}"
 	fi
 
 elif [[ "${1}" == 'rfc' ]]; then
