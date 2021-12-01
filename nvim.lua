@@ -10,7 +10,6 @@ vim.cmd [[
 set.expandtab	= true          -- use spaces by default instead of tabs
 set.ignorecase  = true          -- ignore case when searching
 set.incsearch   = true          -- search as you type
-set.joinspaces  = false         -- insert ONE space between sentences, not TWO
 set.modelines   = 0             -- disable modelines for security, see rhbz#1398227
 set.mouse       = ''            -- disable mouse support (jumpy trackpads)
 set.shada       = ''            -- disable history file
