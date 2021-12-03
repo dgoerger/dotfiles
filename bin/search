@@ -22,6 +22,10 @@ usage() {
 	printf "\t* wiktionary - search Wiktionary, the free dictionary\n"
 }
 
+if [[ "$(tput cols)" -gt 80 ]]; then
+        export COLUMNS=80
+fi
+
 # try to guess preferred language from $LANG
 if [[ -n "${LANG}" ]]; then
 	readonly lang="$(echo "${LANG}" | cut -c1-2)"
