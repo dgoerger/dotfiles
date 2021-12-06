@@ -72,7 +72,7 @@ case "${SHELL##*/}" in
 	*) readonly shell_version='' ;;
 esac
 
-readonly uptime="$(uptime | awk '{print $3, $4}' | sed 's/\,//g')"
+uptime="$(uptime | awk '{print $3, $4}' | sed 's/\,//g')"
 if [[ "$(echo "${uptime}" | awk -F':' '{print $1}')" != "${uptime}" ]]; then
 	readonly uptime="$(echo "${uptime}" | awk -F':' '{print $1}') hour(s)"
 fi
