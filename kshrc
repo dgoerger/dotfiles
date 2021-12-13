@@ -103,10 +103,10 @@ alias sha512='sha512 -q'
 alias stat='stat -x'
 alias tm='tmux new-session -A -s tm'
 if command -v nvim >/dev/null; then
-        alias vi=nvim
-        alias view='nvim --cmd "let no_plugin_maps = 1" -c "runtime! macros/less.vim" -m -M -R -n'
+	alias vi=nvim
+	alias view='nvim --cmd "let no_plugin_maps = 1" -c "runtime! macros/less.vim" -m -M -R -n'
 else
-        alias view=less
+	alias view=less
 fi
 alias w='w -i'
 
@@ -162,11 +162,9 @@ elif [[ "$(uname)" == 'FreeBSD' ]]; then
 
 elif [[ "$(uname)" == 'Linux' ]]; then
 	# env
-	export HTOPRC=/dev/null
 	# as of less v594, we will no-longer need to disable LESSHISTFILE manually: https://github.com/gwsw/less/commit/9eba0da958d33ef3582667e09701865980595361
 	export LESSHISTFILE=-
 	unset  LS_COLORS
-	export MANWIDTH=80
 	if [[ -L "/bin" ]]; then
 		# some Linux have /bin -> /usr/bin
 		export PATH=/usr/local/bin:/bin:/sbin
@@ -206,18 +204,6 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 			return 1
 		fi
 	}
-	if [[ -r /etc/alpine-release ]]; then
-		alias checkupdates='apk list -u'
-	elif [[ -r /etc/arch-release ]]; then
-		alias checkupdates='pacman -Sup --print-format "%n %v"'
-	elif [[ -r /etc/debian_version ]]; then
-		if [[ -x /usr/bin/ncal ]]; then
-			alias cal='/usr/bin/ncal -bM'
-		fi
-		alias checkupdates='apt list --upgradeable'
-	elif [[ -r /etc/redhat-release ]]; then
-		alias checkupdates='yum -q check-update'
-	fi
 	alias date='LC_ALL=C /bin/date'
 	if ! command -v doas >/dev/null; then
 		alias doas=/usr/bin/sudo
@@ -232,7 +218,6 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 	alias ll='LC_ALL=C ls -Fhl --color=never'
 	alias ls='LC_ALL=C ls -F --color=never'
 	alias lS='LC_ALL=C ls -aFhlS --color=never'
-	alias man='man --nh --nj'
 	alias mtop='top -s -o "RES"'
 	alias pscpu='ps -Awwo user,pid,ppid,nice,pcpu,pmem,vsz:10,rss:8,stat,cputime,command --sort -pcpu,-vsz,-pmem,-rss'
 	alias psmem='ps -Awwo user,pid,stat,cputime,majflt,vsz:10,rss:8,trs:8,pcpu,pmem,command --sort -rss,-vsz,-pcpu'
@@ -247,7 +232,7 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 	}
 	unalias stat
 	alias top='top -s'
-	if whence whence >/dev/null 2>&1; then
+	if ! whence whence >/dev/null 2>&1; then
 		# whence exists in ksh and zsh, but not in bash
 		alias whence='command -v'
 	fi
@@ -255,6 +240,26 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 		alias which=/usr/bin/which
 	fi
 
+	# distro-specific overrides
+	if [[ -r /etc/alpine-release ]]; then
+		alias checkupdates='apk list -u'
+		unalias realpath
+	elif [[ -r /etc/arch-release ]]; then
+		alias checkupdates='pacman -Sup --print-format "%n %v"'
+	elif [[ -r /etc/debian_version ]]; then
+		if [[ -x /usr/bin/ncal ]]; then
+			alias cal='/usr/bin/ncal -bM'
+		fi
+		alias checkupdates='apt list --upgradeable'
+	elif [[ -r /etc/redhat-release ]]; then
+		alias checkupdates='yum -q check-update'
+	fi
+
+	# manual pages
+	if [[ "$(realpath /usr/bin/man)" != '/usr/bin/mandoc' ]]; then
+		export MANWIDTH=80
+		alias man='man --nh --nj'
+	fi
 
 elif [[ "$(uname)" == 'NetBSD' ]]; then
 	export LESSHISTFILE=-
@@ -435,9 +440,9 @@ fi
 # fat32san() sanitize file/folder names for FAT32 filesystems
 fat32san() {
 	# illegal chars =>   : " ? < > | \ / *
-	# FIXME: this strategy isn't safe for removing '/' from a filename
-	#        as it's the path directory separator, so do not handle
-	#        that char for now
+	# FIXME this strategy isn't safe for removing '/' from a filename
+	#       as it's the path directory separator, so do not handle
+	#       that char for now
 	_rename() {
 		mv "${1}" "$(echo "${1}" | tr -d '\:\"\?\<\>\|\\\*')"
 	}
@@ -680,9 +685,9 @@ whattimeisitin() {
 }
 
 # zless() implementation which doesn't rely on LESSPIPE
-#         .. LESSPIPE pipe commands are incompatible with LESSSECURE=1;
-#         .. rather than disable security (e.g. 'alias zless="LESSSECURE= /usr/bin/zless"'),
-#         .. use an alternative implementation from the OpenBSD Project
+#     .. LESSPIPE pipe commands are incompatible with LESSSECURE=1;
+#     .. rather than disable security (e.g. 'alias zless="LESSSECURE= /usr/bin/zless"'),
+#     .. use an alternative implementation from the OpenBSD Project
 if [[ "$(uname)" == 'Linux' ]] || [[ "$(uname)" == 'FreeBSD' ]]; then
 	zless() {
 		# $OpenBSD: zmore,v 1.9 2019/01/25 00:19:26 millert Exp $
