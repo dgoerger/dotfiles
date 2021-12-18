@@ -26,6 +26,7 @@ Subsystem sftp /usr/libexec/sftp-server
 #UsePAM yes
 #PrintMotd no
 ## sftp subsystem
+# Alpine:      /usr/lib/ssh/sftp-server
 # Arch:        /usr/lib/ssh/sftp-server
 # Debian:      /usr/lib/openssh/sftp-server
 # Fedora/RHEL: /usr/libexec/openssh/sftp-server
