@@ -640,7 +640,7 @@ rwhence() {
 		if [[ -z "${cmd}" ]]; then
 			printf "'%s' not found\n" "${1}" >&2   
 			return 1
-		elif [[ -r "${cmd}" ]]; then
+		elif [[ -f "${cmd}" ]]; then
 			realpath "${cmd}"
 		else       
 			printf "'%s' is a function\n" "${1}" >&2   
