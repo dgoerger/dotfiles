@@ -633,6 +633,25 @@ rename() {
 	done
 }
 
+# rwhence() realpath + whence
+rwhence() {
+	if [[ "${#}" == '1' ]]; then
+		local cmd="$(command -v "${1}")"
+		if [[ -z "${cmd}" ]]; then
+			printf "'%s' not found\n" "${1}" >&2   
+			return 1
+		elif [[ -r "${cmd}" ]]; then
+			realpath "${cmd}"
+		else       
+			printf "'%s' is a function\n" "${1}" >&2   
+			return 1
+		fi       
+	else       
+		printf "usage:\n\trwhence COMMAND\n" >&2
+		return 1
+	fi       
+}
+
 # shacompare() file comparison
 shacompare() {
 	if [[ $# == 2 ]] && [[ -r "${1}" ]] && [[ -r "${2}" ]]; then
