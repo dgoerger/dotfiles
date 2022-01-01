@@ -14,8 +14,8 @@ XTerm*termName              : xterm-256color
 XTerm*background            : black
 XTerm*foreground            : white
 ! fonts
-XTerm*font                  : xft:DejaVu Sans Mono:pixelsize=20
-XTerm*faceName              : xft:DejaVu Sans Mono:pixelsize=20
+XTerm*font                  : xft:Fira Mono:pixelsize=20
+XTerm*faceName              : xft:Fira Mono:pixelsize=20
 XTerm*faceNameDoublesize    : xft:Noto Sans Mono CJK JP:pixelsize=16:style=Regular
 XTerm*antialias             : true
 ! mouse
@@ -29,15 +29,3 @@ XTerm*selectToClipboard     : true
 XTerm.VT100.translations    : #override \n\
 	Ctrl Shift <Key>C: copy-selection(CLIPBOARD) \n\
 	Ctrl Shift <Key>V: insert-selection(CLIPBOARD)
-!
-!!! XLock
-! turn off the backlight
-XLock.dpmsoff               : 1
-! lock with a blank screen
-XLock.mode                  : blank
-XLock.background            : black
-XLock.foreground            : grey
-! wake screen by moving the mouse
-XLock.mousemotion           : on
-! don't display extraneous text on the lockscreen
-XLock.description           : off
