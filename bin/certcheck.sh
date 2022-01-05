@@ -78,7 +78,7 @@ CERTIFICATE_AUTHORITY="$(echo "${QUERY}" | sed 's/\ =\ /=/g' | awk -F'CN=' '/^is
 ROOT_AUTHORITY="$(echo "${QUERY}" | grep -E '^Certificate chain$' -A4 | tail -n1 | sed 's/\ =\ /=/g' | awk -F'CN=' '/i:/ {print $2}')"
 TLS_PROTOCOL="$(echo "${QUERY}" | awk '/Protocol  :/ {print $NF}')"
 EXPIRY_DATE="$(echo "${QUERY}" | openssl x509 -noout -enddate 2>/dev/null | awk -F'=' '/notAfter/ {print $2}')"
-CHAIN_OF_TRUST_STATUS="$(echo "${QUERY}" | awk '/Verify return code:/ {print $4}')"
+CHAIN_OF_TRUST_STATUS="$(echo "${QUERY}" | awk '/Verify return code:/ {print $4}' | head -n1)"
 
 # best-effort estimation of whether the certificate is valid for the queried domain
 if [[ "$(echo "${FQDN}" | tr -cd . | wc -c)" -ge 2 ]]; then
