@@ -33,6 +33,12 @@ else
 	readonly lang='en'
 fi
 
+if [[ -n "${BROWSER}" ]]; then
+        readonly browser="${BROWSER}"
+else
+        readonly browser="lynx"
+fi
+
 # escape characters for URL-encoding
 escape_html() {
 	echo "$@" | sed 's/%/%25/g;
@@ -74,196 +80,196 @@ elif [[ "${1}" == 'alpine' ]]; then
 	shift
 	readonly query="$(escape_html "$@")"
 	if [[ -z "${query}" ]]; then
-		lynx "https://pkgs.alpinelinux.org/packages"
+		"${browser}" "https://pkgs.alpinelinux.org/packages"
 	else
-		lynx "https://pkgs.alpinelinux.org/packages?name=${query}&branch=edge"
+		"${browser}" "https://pkgs.alpinelinux.org/packages?name=${query}&branch=edge"
 	fi
 
 elif [[ "${1}" == 'arxiv' ]]; then
 	shift
 	readonly query="$(escape_html "$@")"
 	if [[ -z "${query}" ]]; then
-		lynx "https://arxiv.org/"
+		${browser} "https://arxiv.org/"
 	else
-		lynx "https://arxiv.org/search/?query=${query}&searchtype=all&source=header"
+		${browser} "https://arxiv.org/search/?query=${query}&searchtype=all&source=header"
 	fi
 
 elif [[ "${1}" == 'cve' ]]; then
 	shift
 	readonly query="$(escape_html "$@")"
 	if [[ -z "${query}" ]]; then
-		lynx "https://cve.mitre.org"
+		${browser} "https://cve.mitre.org"
 	else
-		lynx "https://cve.mitre.org/cgi-bin/cvename.cgi?name=${query}"
+		${browser} "https://cve.mitre.org/cgi-bin/cvename.cgi?name=${query}"
 	fi
 
 elif [[ "${1}" == 'debian' ]]; then
 	shift
 	readonly query="$(escape_html "$@")"
 	if [[ -z "${query}" ]]; then
-		lynx "https://tracker.debian.org/"
+		${browser} "https://tracker.debian.org/"
 	else
-		lynx "https://tracker.debian.org/search?package_name=${query}"
+		${browser} "https://tracker.debian.org/search?package_name=${query}"
 	fi
 
 elif [[ "${1}" == 'fedora' ]]; then
 	shift
 	readonly query="$(escape_html "$@")"
 	if [[ -z "${query}" ]]; then
-		lynx "https://koji.fedoraproject.org/koji"
+		${browser} "https://koji.fedoraproject.org/koji"
 	else
-		lynx "https://koji.fedoraproject.org/koji/search?match=glob&type=package&terms=${query}"
+		${browser} "https://koji.fedoraproject.org/koji/search?match=glob&type=package&terms=${query}"
 	fi
 
 elif [[ "${1}" == 'freebsd' ]]; then
 	shift
 	readonly query="$(escape_html "$@")"
 	if [[ -z "${query}" ]]; then
-		lynx "https://www.freebsd.org/ports/"
+		${browser} "https://www.freebsd.org/ports/"
 	else
-		lynx "https://www.freebsd.org/cgi/ports.cgi?query=${query}&stype=name&sektion=all"
+		${browser} "https://www.freebsd.org/cgi/ports.cgi?query=${query}&stype=name&sektion=all"
 	fi
 
 elif [[ "${1}" == 'gutenberg' ]]; then
 	shift
 	readonly query="$(escape_html "$@")"
 	if [[ -z "${query}" ]]; then
-		lynx "https://www.gutenberg.org/"
+		${browser} "https://www.gutenberg.org/"
 	else
-		lynx "https://www.gutenberg.org/ebooks/search/?query=${query}&submit_search=Go%21"
+		${browser} "https://www.gutenberg.org/ebooks/search/?query=${query}&submit_search=Go%21"
 	fi
 
 elif [[ "${1}" == 'mandebian' ]]; then
 	shift
 	readonly query="$(escape_html "$@")"
 	if [[ -z "${query}" ]]; then
-		lynx "https://manpages.debian.org/"
+		${browser} "https://manpages.debian.org/"
 	else
-		lynx "https://manpages.debian.org/jump?q=${query}"
+		${browser} "https://manpages.debian.org/jump?q=${query}"
 	fi
 
 elif [[ "${1}" == 'mandragonflybsd' ]] || [[ "${1}" == 'mandflybsd' ]]; then
 	shift
 	readonly query="$(escape_html "$@")"
 	if [[ -z "${query}" ]]; then
-		lynx "https://man.dragonflybsd.org/"
+		${browser} "https://man.dragonflybsd.org/"
 	else
-		lynx "https://man.dragonflybsd.org/?section=ANY&command=${query}"
+		${browser} "https://man.dragonflybsd.org/?section=ANY&command=${query}"
 	fi
 
 elif [[ "${1}" == 'manfreebsd' ]]; then
 	shift
 	readonly query="$(escape_html "$@")"
 	if [[ -z "${query}" ]]; then
-		lynx "https://www.freebsd.org/cgi/man.cgi"
+		${browser} "https://www.freebsd.org/cgi/man.cgi"
 	else
-		lynx "https://www.freebsd.org/cgi/man.cgi?sektion=0&manpath=FreeBSD%2012.2-RELEASE&arch=default&format=ascii&query=${query}"
+		${browser} "https://www.freebsd.org/cgi/man.cgi?sektion=0&manpath=FreeBSD%2012.2-RELEASE&arch=default&format=ascii&query=${query}"
 	fi
 
 elif [[ "${1}" == 'manillumos' ]]; then
 	shift
 	readonly query="$(escape_html "$@")"
 	if [[ -z "${query}" ]]; then
-		lynx "https://illumos.org/man"
+		${browser} "https://illumos.org/man"
 	else
-		lynx "https://illumos.org/man/${query}"
+		${browser} "https://illumos.org/man/${query}"
 	fi
 
 elif [[ "${1}" == 'mannetbsd' ]]; then
 	shift
 	readonly query="$(escape_html "$@")"
 	if [[ -z "${query}" ]]; then
-		lynx "https://man.netbsd.org/"
+		${browser} "https://man.netbsd.org/"
 	else
-		lynx "https://man.netbsd.org/NetBSD-current/${query}"
+		${browser} "https://man.netbsd.org/NetBSD-current/${query}"
 	fi
 
 elif [[ "${1}" == 'manopenbsd' ]] || [[ "${1}" == 'man' ]]; then
 	shift
 	readonly query="$(escape_html "$@")"
 	if [[ -z "${query}" ]]; then
-		lynx "https://man.openbsd.org/"
+		${browser} "https://man.openbsd.org/"
 	else
-		lynx "https://man.openbsd.org/?sec=0&arch=default&manpath=OpenBSD-current&query=${query}"
+		${browser} "https://man.openbsd.org/?sec=0&arch=default&manpath=OpenBSD-current&query=${query}"
 	fi
 
 elif [[ "${1}" == 'mbug' ]]; then
 	shift
 	readonly query="$(escape_html "$@")"
 	if [[ -z "${query}" ]]; then
-		lynx "https://bugzilla.mozilla.org/"
+		${browser} "https://bugzilla.mozilla.org/"
 	else
-		lynx "https://bugzilla.mozilla.org/buglist.cgi?quicksearch=${query}"
+		${browser} "https://bugzilla.mozilla.org/buglist.cgi?quicksearch=${query}"
 	fi
 
 elif [[ "${1}" == 'nws' ]]; then
 	shift
 	readonly query="$(escape_html "$@")"
 	if [[ -z "${query}" ]]; then
-		lynx "https://www.weather.gov/"
+		${browser} "https://www.weather.gov/"
 	else
-		lynx "https://forecast.weather.gov/zipcity.php?inputstring=${query}&btnSearch=Go&unit=1"
+		${browser} "https://forecast.weather.gov/zipcity.php?inputstring=${query}&btnSearch=Go&unit=1"
 	fi
 
 elif [[ "${1}" == 'openbsd' ]]; then
 	shift
 	readonly query="$(escape_html "$@")"
 	if [[ -z "${query}" ]]; then
-		lynx "https://cvsweb.openbsd.org/ports/"
+		${browser} "https://cvsweb.openbsd.org/ports/"
 	else
-		lynx "https://openports.se/search.php?so=${query}"
+		${browser} "https://openports.se/search.php?so=${query}"
 	fi
 
 elif [[ "${1}" == 'rfc' ]]; then
 	shift
 	readonly query="$(escape_html "$@")"
 	if [[ -z "${query}" ]]; then
-		lynx "https://www.ietf.org/standards/rfcs/"
+		${browser} "https://www.ietf.org/standards/rfcs/"
 	else
-		lynx "https://tools.ietf.org/rfc/rfc${query}.txt"
+		${browser} "https://tools.ietf.org/rfc/rfc${query}.txt"
 	fi
 
 elif [[ "${1}" == 'rhbz' ]]; then
 	shift
 	readonly query="$(escape_html "$@")"
 	if [[ -z "${query}" ]]; then
-		lynx "https://bugzilla.redhat.com/"
+		${browser} "https://bugzilla.redhat.com/"
 	else
-		lynx "https://bugzilla.redhat.com/buglist.cgi?quicksearch=${query}"
+		${browser} "https://bugzilla.redhat.com/buglist.cgi?quicksearch=${query}"
 	fi
 
 elif [[ "${1}" == 'thesaurus' ]]; then
 	shift
 	readonly query="$(escape_html "$@")"
 	if [[ -z "${query}" ]]; then
-		lynx "https://en.oxforddictionaries.com/english-thesaurus"
+		${browser} "https://en.oxforddictionaries.com/english-thesaurus"
 	else
-		lynx "https://en.oxforddictionaries.com/thesaurus/${query}"
+		${browser} "https://en.oxforddictionaries.com/thesaurus/${query}"
 	fi
 
 elif [[ "${1}" == 'wikipedia' ]] || [[ "${1}" == 'w' ]]; then
 	shift
 	readonly query="$(escape_html "$@")"
 	if [[ -z "${query}" ]]; then
-		lynx "https://${lang}.wikipedia.org/wiki/"
+		${browser} "https://${lang}.wikipedia.org/wiki/"
 	else
-		lynx "https://${lang}.wikipedia.org/wiki/Special:Search?search=${query}&go=Go&ns0=1"
+		${browser} "https://${lang}.wikipedia.org/wiki/Special:Search?search=${query}&go=Go&ns0=1"
 	fi
 
 elif [[ "${1}" == 'wiktionary' ]] || [[ "${1}" == 'wikt' ]]; then
 	shift
 	readonly query="$(escape_html "$@")"
 	if [[ -z "${query}" ]]; then
-		lynx "https://${lang}.wiktionary.org/wiki/"
+		${browser} "https://${lang}.wiktionary.org/wiki/"
 	else
-		lynx "https://${lang}.wiktionary.org/wiki/Special:Search?search=${query}&go=Go&ns0=1"
+		${browser} "https://${lang}.wiktionary.org/wiki/Special:Search?search=${query}&go=Go&ns0=1"
 	fi
 
 else
 	readonly query="$(escape_html "$@")"
 	if [[ -z "${query}" ]]; then
-		lynx "https://www.duckduckgo.com/lite/"
+		${browser} "https://www.duckduckgo.com/lite/"
 	else
-		lynx "https://www.duckduckgo.com/lite/?q=${query}&?kae=t&kac=-1&kaj=m&kam=osm&kak=-1&kax=-1&kv=-1&kaq=-1&kap=-1&kg=g"
+		${browser} "https://www.duckduckgo.com/lite/?q=${query}&?kae=t&kac=-1&kaj=m&kam=osm&kak=-1&kax=-1&kv=-1&kaq=-1&kap=-1&kg=g"
 	fi
 fi
