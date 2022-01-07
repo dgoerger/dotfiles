@@ -27,3 +27,4 @@ man -M /usr/share/man:/usr/local/man -s 8 -k Nm~. | cut -d\( -f1 | tee -a "${TMP
 tr -d , < "${TMPFILE}" | tr '[:space:]' '\n' | awk '/^[a-zA-Z]/' | sort -u | tee "${CONFFILE}" >/dev/null
 chown root:wheel "${CONFFILE}"
 chmod 0444 "${CONFFILE}"
+rm "${TMPFILE}"
