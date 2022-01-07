@@ -29,6 +29,7 @@ fi
 cp "${TMPFILE}" "${CONF}"
 chown root:wheel "${CONF}"
 chmod 0440 "${CONF}"
+rm "${TMPFILE}"
 
 # verify syntax and reload pf
 if pfctl -nf /etc/pf.conf 2>/dev/null; then
