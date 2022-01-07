@@ -1,0 +1,24 @@
+# ~/.alacritty.yml
+# docs: https://raw.githubusercontent.com/alacritty/alacritty/master/alacritty.yml
+
+env:
+  TERM: xterm-256color
+
+window:
+  dynamic_title: false
+  gtk_theme_variant: dark
+
+font:
+  normal:
+    # default: monospace
+    family: Fira Mono
+
+draw_bold_text_with_bright_colors: true
+
+shell:
+  program: /bin/ksh
+  args:
+    - -l
+
+selection:
+  semantic_escape_chars: ",│`|\"' ()[]{}<>\t"
