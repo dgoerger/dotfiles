@@ -1,34 +1,31 @@
-#!/bin/ksh
+#!/bin/ksh -
+set -Cefuo pipefail
 
-set -efuo pipefail
+if [[ "$(uname)" != 'OpenBSD' ]]; then
+	printf 'ERROR: Unsupported OS\n' && exit 1
+fi
 
-CONF="/etc/pf.conf.deny"
-TMPFILE="$(mktemp -t pf.XXXXXX)"
+readonly CONF="/etc/pf.conf.deny"
+readonly TMPFILE="$(mktemp -t pf.XXXXXX)"
 
 chown root:_pkgfetch "${TMPFILE}"
 chmod 0660 "${TMPFILE}"
 
-if [[ "$(uname)" != 'OpenBSD' ]]; then
-	printf 'ERROR: Unsupported OS\n' && return 1
-fi
-
 # download IP blocklists and parse
-/usr/bin/su -s/bin/ksh _pkgfetch -c "/usr/bin/ftp -Vo - https://www.binarydefense.com/banlist.txt \
-https://rules.emergingthreats.net/blockrules/compromised-ips.txt \
-https://rules.emergingthreats.net/fwrules/emerging-Block-IPs.txt \
-https://raw.githubusercontent.com/firehol/blocklist-ipsets/master/firehol_level1.netset \
-https://raw.githubusercontent.com/firehol/blocklist-ipsets/master/firehol_level2.netset | awk '/^[1-9].*[0-9]$/' | cut -d ' ' -f1 | sort -uV > ${TMPFILE}"
+/usr/bin/su -s/bin/ksh _pkgfetch -c "/usr/bin/ftp -Vo - \
+https://iplists.firehol.org/files/firehol_level1.netset \
+https://iplists.firehol.org/files/firehol_level2.netset \
+https://iplists.firehol.org/files/firehol_level3.netset | \
+awk '/^[1-9].*[0-9]$/' | cut -d ' ' -f1 | sort -uV | tee ${TMPFILE}" >/dev/null
 
 # block Shodan
-/usr/bin/su -s/bin/sh _pkgfetch -c "/usr/bin/ftp -Vo - https://isc.sans.edu/api/threatlist/shodan/shodan.txt | grep -Eo '([[:digit:]]{1,3}\.){3}[[:digit:]]{1,3}' >> ${TMPFILE}"
+/usr/bin/su -s/bin/ksh _pkgfetch -c "/usr/bin/ftp -Vo - https://isc.sans.edu/api/threatlist/shodan/shodan.txt | grep -Eo '([[:digit:]]{1,3}\.){3}[[:digit:]]{1,3}' | tee -a ${TMPFILE}" >/dev/null
 
 # copy into place
 if [[ -f "${CONF}" ]]; then
 	cp -p "${CONF}" "${CONF}.bak"
 fi
-cp "${TMPFILE}" "${CONF}"
-chown root:wheel "${CONF}"
-chmod 0440 "${CONF}"
+install -pm 0440 -o root -g wheel "${TMPFILE}" "${CONF}"
 rm "${TMPFILE}"
 
 # verify syntax and reload pf

@@ -1,6 +1,9 @@
-#!/bin/ksh
+#!/bin/ksh -
+set -Cefuo pipefail
 
-set -efuo pipefail
+if [[ "$(uname)" != 'OpenBSD' ]]; then
+	printf 'ERROR: Unsupported OS\n' && exit 1
+fi
 
 cp -p /bsd.booted /obsd
 cp -p /bsd.rd /obsd.rd

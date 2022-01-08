@@ -1,17 +1,23 @@
-#!/bin/ksh
+#!/bin/ksh -
+set -Cefuo pipefail
 
-set -efuo pipefail
-
-UPSTREAM_HOSTS_FILE='https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-porn/hosts'
-
-BLOCKLIST_FILE='/etc/unwind.conf.deny'
-SRC="$(mktemp)"
-TMP="$(mktemp)"
+readonly SRC="$(mktemp)"
+readonly TMP="$(mktemp)"
+readonly UPSTREAM_HOSTS_FILE='https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-porn/hosts'
 
 case "$(uname)" in
-	Linux) FETCH="/usr/bin/curl -sLo ${SRC} ${UPSTREAM_HOSTS_FILE}" ;;
-	OpenBSD) FETCH="/usr/bin/ftp -Vo ${SRC} ${UPSTREAM_HOSTS_FILE}" ;;
-	*) printf 'ERROR: Unsupported OS\n' && return 1 ;;
+	Linux)
+		readonly BLOCKLIST_FILE='/etc/unbound/blocklist.conf'
+		readonly FETCH="/usr/bin/curl -sLo ${SRC} ${UPSTREAM_HOSTS_FILE}"
+		;;
+	OpenBSD)
+		readonly BLOCKLIST_FILE='/etc/unwind.conf.deny'
+		readonly FETCH="/usr/bin/ftp -Vo ${SRC} ${UPSTREAM_HOSTS_FILE}"
+		;;
+	*)
+		printf 'ERROR: Unsupported OS\n'
+		exit 1
+		;;
 esac
 
 # first verify we can reach upstream
@@ -21,18 +27,20 @@ if ${FETCH} 2>/dev/null; then
 		awk '$1 == "0.0.0.0" {print $2}' "${SRC}" | tee "${TMP}" >/dev/null 2>&1
 		# ref: https://support.mozilla.org/en-US/kb/canary-domain-use-application-dnsnet
 		printf 'use-application-dns.net\n' | tee -a "${TMP}" >/dev/null 2>&1
-	else
+	elif pgrep -xu unbound unbound >/dev/null 2>&1; then
 		# build for unbound(8)
 		awk '$1 == "0.0.0.0" {print "local-zone: \""$2"\" always_refuse"}' "${SRC}" | tee "${TMP}" >/dev/null 2>&1
 		printf 'local-zone: "use-application-dns.net" always_refuse\n' | tee -a "${TMP}" >/dev/null 2>&1
+	else
+		printf 'ERROR: unsupported resolver\n'
+		exit 1
 	fi
 	# create a backup of any existing, working blocklist
 	if [[ -f "${BLOCKLIST_FILE}" ]]; then
 		cp -p "${BLOCKLIST_FILE}" "${BLOCKLIST_FILE}.bak"
 	fi
 	# copy in the new blocklist
-	cp "${TMP}" "${BLOCKLIST_FILE}"
-	chmod 0444 "${BLOCKLIST_FILE}"
+	install -pm 0444 -o root "${TMP}" "${BLOCKLIST_FILE}"
 
 	# unwind(8)
 	if rcctl ls on 2>/dev/null | grep -qE "^unwind$"; then
@@ -42,6 +50,9 @@ if ${FETCH} 2>/dev/null; then
 		# OpenBSD
 		if rcctl ls on 2>/dev/null | grep -qE "^unbound$"; then
 			rcctl restart unbound >/dev/null 2>&1
+		# Alpine
+		elif rc-service unbound status >/dev/null 2>&1; then
+			rc-service unbound restart
 		# Linux with systemd
 		elif systemctl is-enabled unbound >/dev/null 2>&1; then
 			systemctl restart unbound >/dev/null 2>&1
@@ -58,5 +69,5 @@ if ${FETCH} 2>/dev/null; then
 	rm "${TMP}" "${SRC}"
 else
 	printf 'ERROR: Upstream blocklist is unreachable.\n'
-	return 1
+	exit 1
 fi

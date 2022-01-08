@@ -1,6 +1,5 @@
-#!/bin/ksh
-
-set -euo pipefail
+#!/bin/ksh -
+set -Cefuo pipefail
 
 usage() {
 	printf "usage:\n\tsearch [KEYWORD] [QUERY]\n\nSupported KEYWORDs:\n"

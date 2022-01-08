@@ -1,4 +1,4 @@
-#!/bin/ksh
+#!/bin/ksh -
 # Precompute an array for ksh(1) tab-completion of man(1).
 #
 # Motivation:
@@ -12,12 +12,21 @@
 #     and are thus filtered out (e.g. perl* and git-*)
 #   - sections 2, 3, 3p, 4, and 9 are omitted for brevity
 
-set -efuo pipefail
+set -Cefuo pipefail
 
-CONFFILE="/usr/local/etc/manuals.list"
-TMPFILE="$(mktemp)"
+readonly CONFDIR="/usr/local/etc"
+readonly CONFFILE="${CONFDIR}/manuals.list"
+readonly PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/games:/usr/local/bin:/usr/local/sbin:/usr/X11R6/bin
+readonly TMPFILE="$(mktemp)"
 
-export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/games:/usr/local/bin:/usr/local/sbin:/usr/X11R6/bin
+if [[ ! -d "${CONFDIR}" ]]; then
+	printf "ENOENT: directory '%s' does not exist\n" "${CONFDIR}"
+        exit 1
+elif [[ ! -w "${CONFDIR}" ]]; then
+        printf "EACCES: cannot write to '%s'\n" "${CONFDIR}"
+        exit 1
+fi
+
 # why is section 1 filled with so much junk?
 man -M /usr/share/man:/usr/local/man:/usr/X11R6/man -s 1 -k Nm~. | cut -d\( -f1 | while read -r COMMAND; do if command -v "${COMMAND}" >/dev/null; then printf "%s\n" "${COMMAND}"; fi; done | tee "${TMPFILE}" >/dev/null
 man -M /usr/share/man:/usr/local/man:/usr/X11R6/man -s 5 -k Nm~. | cut -d\( -f1 | tee -a "${TMPFILE}" >/dev/null

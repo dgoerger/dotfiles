@@ -1,6 +1,6 @@
-#!/bin/ksh
+#!/bin/ksh -
 
-set -euo pipefail
+set -Cefuo pipefail
 
 readonly OS="$(uname)"
 

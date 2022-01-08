@@ -1,5 +1,5 @@
-#!/bin/ksh
-set -euo pipefail
+#!/bin/ksh -
+set -Cefuo pipefail
 
 EXPIRY_THRESHOLD_WARNING=15
 EXPIRY_THRESHOLD_CRITICAL=5
