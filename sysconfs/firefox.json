@@ -36,10 +36,8 @@
 		},
 		"Extensions": {
 			"Install": [
-				"https://addons.mozilla.org/firefox/downloads/latest/css-exfil-protection/latest.xpi",
 				"https://addons.mozilla.org/firefox/downloads/latest/decentraleyes/latest.xpi",
 				"https://addons.mozilla.org/firefox/downloads/latest/dont-touch-my-tabs/latest.xpi",
-				"https://addons.mozilla.org/firefox/downloads/latest/https-everywhere/latest.xpi",
 				"https://addons.mozilla.org/firefox/downloads/latest/noscript/latest.xpi",
 				"https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi"
 			]
