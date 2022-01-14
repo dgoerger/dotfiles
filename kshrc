@@ -162,7 +162,8 @@ elif [[ "$(uname)" == 'FreeBSD' ]]; then
 
 elif [[ "$(uname)" == 'Linux' ]]; then
 	# env
-	# as of less v594, we will no-longer need to disable LESSHISTFILE manually: https://github.com/gwsw/less/commit/9eba0da958d33ef3582667e09701865980595361
+	# with less(1) v594, we no-longer need to disable LESSHISTFILE manually
+        # .. https://github.com/gwsw/less/commit/9eba0da958d33ef3582667e09701865980595361
 	export LESSHISTFILE=-
 	unset  LS_COLORS
 	if [[ -L "/bin" ]]; then
@@ -184,26 +185,6 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 		alias atop='atop -f'
 	fi
 	alias bc='bc -ql'
-	bpftrace_open() {
-		if ! command -v bpftrace >/dev/null 2>&1; then
-			printf 'bpftrace(8) not installed, aborting...\n'
-			return 1
-		elif [[ -n "${1}" ]]; then
-			case "${1}" in
-				''|*[!0-9]*)
-					printf 'ERROR: pid must be an integer\n'
-					return 1
-					;;
-				*)
-					PID="${1}"
-					;;
-			esac
-			sudo bpftrace -e "tracepoint:syscalls:sys_enter_openat /pid == ${PID}/ { printf(\"%s %s\n\", comm, str(args->filename)); }"
-		else
-			printf 'usage\n    bpftrace_openat PID\n\n'
-			return 1
-		fi
-	}
 	alias date='LC_ALL=C /bin/date'
 	if ! command -v doas >/dev/null; then
 		alias doas=/usr/bin/sudo
@@ -244,8 +225,6 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 	if [[ -r /etc/alpine-release ]]; then
 		alias checkupdates='apk list -u'
 		unalias realpath
-	elif [[ -r /etc/arch-release ]]; then
-		alias checkupdates='pacman -Sup --print-format "%n %v"'
 	elif [[ -r /etc/debian_version ]]; then
 		if [[ -x /usr/bin/ncal ]]; then
 			alias cal='/usr/bin/ncal -bM'
@@ -265,7 +244,6 @@ elif [[ "$(uname)" == 'NetBSD' ]]; then
 	export LESSHISTFILE=-
 	export MANPATH=/usr/share/man:/usr/local/man
 	export PS1="${HOSTNAME}$ "
-	export SSH_AUTH_SOCK_PATH="${HOME}/.ssh/ssh-$(printf "%s@%s" "${LOGNAME}" "${HOSTNAME}" | cksum -a SHA256 | awk '{print $1}').socket"
 
 	alias apropos='/usr/bin/apropos -l'
 	alias cal='/usr/bin/cal -d1'
