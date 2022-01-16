@@ -36,7 +36,6 @@
 		},
 		"Extensions": {
 			"Install": [
-				"https://addons.mozilla.org/firefox/downloads/latest/decentraleyes/latest.xpi",
 				"https://addons.mozilla.org/firefox/downloads/latest/noscript/latest.xpi",
 				"https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi"
 			]
