@@ -10,7 +10,10 @@ window:
 
 font:
   normal:
-    # default: monospace
+    # Default:
+    #   - (macOS) Menlo
+    #   - (Linux/BSD) monospace
+    #   - (Windows) Consolas
     family: Fira Mono
 
 draw_bold_text_with_bright_colors: true
@@ -22,3 +25,7 @@ shell:
 
 selection:
   semantic_escape_chars: ",│`|\"' ()[]{}<>\t"
+
+key_bindings:
+  - { key: C,    mods: Control|Shift,               action: Copy    }
+  - { key: V,    mods: Control|Shift,               action: Paste   }
