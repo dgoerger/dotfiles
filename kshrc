@@ -163,7 +163,7 @@ elif [[ "$(uname)" == 'FreeBSD' ]]; then
 elif [[ "$(uname)" == 'Linux' ]]; then
 	# env
 	# with less(1) v594, we no-longer need to disable LESSHISTFILE manually
-        # .. https://github.com/gwsw/less/commit/9eba0da958d33ef3582667e09701865980595361
+	# .. https://github.com/gwsw/less/commit/9eba0da958d33ef3582667e09701865980595361
 	export LESSHISTFILE=-
 	unset  LS_COLORS
 	if [[ -L "/bin" ]]; then
@@ -224,6 +224,11 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 	# distro-specific overrides
 	if [[ -r /etc/alpine-release ]]; then
 		alias checkupdates='apk list -u'
+		if command -v flatpak >/dev/null 2>&1; then
+			alias pkg_up='/usr/bin/doas /bin/sh -c "/sbin/apk update && /sbin/apk upgrade && /usr/bin/flatpak update -y"'
+		else
+			alias pkg_up='/usr/bin/doas /bin/sh -c "/sbin/apk update && /sbin/apk upgrade"'
+		fi
 		unalias realpath
 	elif [[ -r /etc/debian_version ]]; then
 		if [[ -x /usr/bin/ncal ]]; then
@@ -293,6 +298,7 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
 			fi
 		}
 	fi
+	alias pkg_up='/usr/bin/doas /usr/sbin/pkg_add -Vu'
 	usrlocal_extras() {
 		# function to identify files in /usr/local which aren't claimed by an installed package
 		local LOCAL_FILES="$(mktemp)"
