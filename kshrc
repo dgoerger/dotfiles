@@ -189,7 +189,37 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 	if ! command -v doas >/dev/null; then
 		alias doas=/usr/bin/sudo
 	fi
-	alias free='/usr/bin/free -h | sed "s/^Mem\:/Mem\:\ /; s/^Swap\:/Swap\:\ /; s/Ki/K\ /g; s/Mi/M\ /g; s/Gi/G\ /g; s/Ti/T\ /g; s/Pi/P\ /g; s/Ei/E\ /g;"'
+	unalias free
+	function free {
+		scale() {
+			printf "%s\n" "${1}" | awk -v CONVFMT='%.1f' '{ split( "K M G T E" , v ); s=1; while( $1>1024 ){ $1/=1024; s++ } print $1 v[s] }'
+		}
+
+		local MEMINFO="$(cat /proc/meminfo)"
+		local TOTAL="$(echo "${MEMINFO}" | awk '/^MemTotal:/ {print $2}')"
+		local FREE="$(echo "${MEMINFO}" | awk '/^MemFree:/ {print $2}')"
+		local AVAIL="$(echo "${MEMINFO}" | awk '/^MemAvailable:/ {print $2}')"
+		local SHARED="$(echo "${MEMINFO}" | awk '/^Shmem:/ {print $2}')"
+		local CACHE="$(echo "${MEMINFO}" | awk '/^Cached:/ {print $2}')"
+		local BUFFERS="$(echo "${MEMINFO}" | awk '/^Buffers:/ {print $2}')"
+		local HUGEPAGES="$(echo "${MEMINFO}" | awk '/^Hugetlb:/ {print $2}')"
+		local SWAP_TOTAL="$(echo "${MEMINFO}" | awk '/^SwapTotal:/ {print $2}')"
+		local SWAP_FREE="$(echo "${MEMINFO}" | awk '/^SwapFree:/ {print $2}')"
+		local SWAP_CACHE="$(echo "${MEMINFO}" | awk '/^SwapCached:/ {print $2}')"
+		local COMMIT_LIMIT="$(echo "${MEMINFO}" | awk '/^CommitLimit:/ {print $2}')"
+		local COMMIT_USED="$(echo "${MEMINFO}" | awk '/^Committed_AS:/ {print $2}')"
+		local USED="$(echo "${TOTAL} - ${BUFFERS} - ${CACHE} - ${FREE}" | bc -l)"
+		local SWAP_USED="$(echo "${SWAP_TOTAL} - ${SWAP_CACHE} - ${SWAP_FREE}" | bc -l)"
+		local BUFFCACHE="$(echo "${BUFFERS} + ${CACHE}" | bc -l)"
+		local COMMIT_PERCENT="$(echo "result = (${COMMIT_USED} / ${COMMIT_LIMIT}) * 100; scale=0; result/1" | bc -l)"
+		local SCALE_TOTAL="$(scale ${TOTAL})"
+
+		printf "\ttotal\tused\tfree\tshared\tcached\tavail\thugetlb\tvmcom\n"
+		printf "Mem:\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s%%\n" "$(scale ${TOTAL})" "$(scale ${USED})" "$(scale ${FREE})" "$(scale ${SHARED})" "$(scale ${BUFFCACHE})" "$(scale ${AVAIL})" "$(scale ${HUGEPAGES})" "${COMMIT_PERCENT}"
+		if [[ "${SWAP_TOTAL}" != '0' ]]; then
+			printf "Swap:\t%s\t%s\t%s\n" "$(scale ${SWAP_TOTAL})" "$(scale ${SWAP_USED})" "$(scale ${SWAP_FREE})"
+		fi
+	}
 	alias l='LC_ALL=C ls -1F --color=never'
 	alias lA='LC_ALL=C ls -AF --color=never'
 	alias la='LC_ALL=C ls -aFhl --color=never'
