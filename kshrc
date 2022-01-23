@@ -177,10 +177,6 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 	export QUOTING_STYLE=literal
 
 	# aliases
-	function apropos {
-		# man(1) default search order: 1,8,3,2,5,4,9,6,7
-		man -s 1,8,5,4,6,7 -wK "${@}" | awk -F'(/|\\.)' '{system("/usr/bin/whatis " $(NF-2))}'
-	}
 	if command -v atop >/dev/null; then
 		alias atop='atop -f'
 	fi
@@ -219,6 +215,7 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 		if [[ "${SWAP_TOTAL}" != '0' ]]; then
 			printf "Swap:\t%s\t%s\t%s\n" "$(scale ${SWAP_TOTAL})" "$(scale ${SWAP_USED})" "$(scale ${SWAP_FREE})"
 		fi
+		unset -f scale
 	}
 	alias l='LC_ALL=C ls -1F --color=never'
 	alias lA='LC_ALL=C ls -AF --color=never'
@@ -472,6 +469,7 @@ fat32san() {
 		find "${1}" -name '*\\*' | while read -r FILE; do _rename "${FILE}"; done
 		find "${1}" -name '*\**' | while read -r FILE; do _rename "${FILE}"; done
 	fi
+	unset -f _rename
 }
 
 # fd() find files and directories
@@ -522,6 +520,7 @@ if command -v exiv2 >/dev/null; then
 			find . -type f -iname "*.${x}" | while read -r photo; do _import_photo "${photo}"; done
 		done
 	}
+	unset -f _import_photo
 fi
 
 # pomodoro() timer
