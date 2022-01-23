@@ -255,9 +255,9 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 	if [[ -r /etc/alpine-release ]]; then
 		alias checkupdates='apk list -u'
 		if command -v flatpak >/dev/null 2>&1; then
-			alias pkg_up='/usr/bin/doas /bin/sh -c "/sbin/apk update && /sbin/apk upgrade && /usr/bin/flatpak update -y"'
+			alias pkgup='/usr/bin/doas /bin/sh -c "/sbin/apk update && /sbin/apk upgrade && /usr/bin/flatpak update -y"'
 		else
-			alias pkg_up='/usr/bin/doas /bin/sh -c "/sbin/apk update && /sbin/apk upgrade"'
+			alias pkgup='/usr/bin/doas /bin/sh -c "/sbin/apk update && /sbin/apk upgrade"'
 		fi
 		unalias realpath
 	elif [[ -r /etc/debian_version ]]; then
@@ -328,7 +328,7 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
 			fi
 		}
 	fi
-	alias pkg_up='/usr/bin/doas /usr/sbin/pkg_add -Vu'
+	alias pkgup='/usr/bin/doas /usr/sbin/pkg_add -Vu'
 	usrlocal_extras() {
 		# function to identify files in /usr/local which aren't claimed by an installed package
 		local LOCAL_FILES="$(mktemp)"
