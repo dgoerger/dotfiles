@@ -256,7 +256,7 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 	if [[ -r /etc/alpine-release ]]; then
 		alias checkupdates='apk list -u'
 		if command -v flatpak >/dev/null 2>&1; then
-			alias pkgup='/usr/bin/doas /bin/sh -c "/sbin/apk update && /sbin/apk upgrade && /usr/bin/flatpak update -y"'
+			alias pkgup='/usr/bin/doas /bin/sh -c "/sbin/apk update && /sbin/apk upgrade && /usr/bin/flatpak update -y && /usr/bin/flatpak uninstall -y --unused"'
 		else
 			alias pkgup='/usr/bin/doas /bin/sh -c "/sbin/apk update && /sbin/apk upgrade"'
 		fi
