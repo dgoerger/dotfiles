@@ -243,6 +243,20 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 		sha512sum --tag "${1}" | awk '{print $NF}'
 	}
 	unalias stat
+	function sysinfo {
+		local distro="$(awk -F'"' '/PRETTY_NAME/ {print $2}' /etc/os-release 2>/dev/null)"
+		if [[ -z "${distro}" ]]; then
+			local distro='Linux'
+		fi
+		local uptime="$(uptime | awk '{print $3, $4}' | sed 's/\,//g')"
+		if [[ "$(echo "${uptime}" | awk -F':' '{print $1}')" != "${uptime}" ]]; then
+			uptime="$(echo "${uptime}" | awk -F':' '{print $1}') hour(s)"
+		fi
+		printf "\nOS:\t\t%s\n" "${distro}"
+		printf "Kernel:\t\t%s: %s\n" "$(uname -m | sed 's/x86_64/amd64/')" "$(uname -r | awk -F'-' '{print $1}')"
+		printf "Uptime:\t\t%s\n" "${uptime}"
+		printf "CPU:\t\t%s\n" "$(echo "$(grep -c "^processor" /proc/cpuinfo)"cpu: "$(grep '^model name' /proc/cpuinfo | tail -n1 | awk -F': ' '{print $NF}' | tr -s " ")")"
+	}
 	alias top='top -s'
 	if ! whence whence >/dev/null 2>&1; then
 		# whence exists in ksh and zsh, but not in bash
@@ -330,6 +344,21 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
 		}
 	fi
 	alias pkgup='/usr/bin/doas /usr/sbin/pkg_add -Vu'
+	function sysinfo {
+		printf "\nOS:\t\t%s\n" "$(sysctl -n kern.version | head -n1 | awk '{print $1, $2}')"
+		printf "Kernel:\t\t%s\n" "$(echo "$(uname -m): $(sysctl -n kern.version | head -n1 | awk '{print $NF, $6, $7}' | tr -d '()')")"
+		local uptime="$(($(date +%s) - $(sysctl -n kern.boottime)))"
+		if [[ "$((${uptime}/86400))" != '0' ]]; then
+			printf "Uptime:\t\t%s day(s)\n" "$((${uptime}/86400))"
+		elif [[ "$((${uptime}/3600))" != '0' ]]; then
+			printf "Uptime:\t\t%s hour(s)\n" "$((${uptime}/3600))"
+		elif [[ "$((${uptime}/60))" != '0' ]]; then
+			printf "Uptime:\t\t%s minute(s)\n" "$((${uptime}/60))"
+		else
+			printf "Uptime:\t\t%s seconds\n" "${uptime}"
+		fi
+		printf "CPU:\t\t%scpu: %s\n" "$(sysctl -n hw.ncpuonline)" "$(sysctl -n hw.model)"
+	}
 	usrlocal_extras() {
 		# function to identify files in /usr/local which aren't claimed by an installed package
 		local LOCAL_FILES="$(mktemp)"
@@ -655,18 +684,18 @@ rwhence() {
 	if [[ "${#}" == '1' ]]; then
 		local cmd="$(command -v "${1}")"
 		if [[ -z "${cmd}" ]]; then
-			printf "'%s' not found\n" "${1}" >&2   
+			printf "'%s' not found\n" "${1}" >&2
 			return 1
 		elif [[ -f "${cmd}" ]]; then
 			realpath "${cmd}"
-		else       
-			printf "'%s' is a function\n" "${1}" >&2   
+		else
+			printf "'%s' is a function\n" "${1}" >&2
 			return 1
-		fi       
-	else       
+		fi
+	else
 		printf "usage:\n\trwhence COMMAND\n" >&2
 		return 1
-	fi       
+	fi
 }
 
 # shacompare() file comparison
@@ -729,7 +758,7 @@ if [[ "$(uname)" == 'Linux' ]] || [[ "$(uname)" == 'FreeBSD' ]]; then
 		# $OpenBSD: zmore,v 1.9 2019/01/25 00:19:26 millert Exp $
 		#
 		# Copyright (c) 2003 Todd C. Miller <millert@openbsd.org>
-		# 
+		#
 		# Permission to use, copy, modify, and distribute this software for any
 		# purpose with or without fee is hereby granted, provided that the above
 		# copyright notice and this permission notice appear in all copies.
@@ -746,7 +775,7 @@ if [[ "$(uname)" == 'Linux' ]] || [[ "$(uname)" == 'FreeBSD' ]]; then
 		# Agency (DARPA) and Air Force Research Laboratory, Air Force
 		# Materiel Command, USAF, under agreement number F39502-99-1-0512.
 		#
-		
+
 		# Pull out any command line flags so we can pass them to more/less
 		flags=
 		while test $# -ne 0; do
@@ -764,13 +793,13 @@ if [[ "$(uname)" == 'Linux' ]] || [[ "$(uname)" == 'FreeBSD' ]]; then
 					;;
 			esac
 		done
-		
+
 		# No files means read from stdin
 		if [[ ${#} -eq 0 ]]; then
 			gzip -cdf 2>&1 | less ${flags}
 			return 0
 		fi
-		
+
 		oterm="$(stty -g 2>/dev/null)"
 		while test $# -ne 0; do
 			gzip -cdf "${1}" 2>&1 | less ${flags}
