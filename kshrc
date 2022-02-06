@@ -41,6 +41,7 @@ if [[ -r "${HOME}/.lynxrc" ]]; then
 	export LYNX_CFG="${HOME}/.lynxrc"
 	alias lynx='COLUMNS=80 lynx -useragent "Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0" 2>/dev/null'
 fi
+export OS="$(uname)"
 if [[ -r "${HOME}/.pythonrc" ]]; then
 	export PYTHONSTARTUP="${HOME}/.pythonrc"
 fi
@@ -99,7 +100,6 @@ alias rm='rm -i'
 if ! command -v rsync >/dev/null && command -v openrsync >/dev/null; then
 	alias rsync="$(command -v openrsync)"
 fi
-alias sha512='sha512 -q'
 alias stat='stat -x'
 alias tm='tmux new-session -A -s tm'
 if command -v nvim >/dev/null; then
@@ -121,7 +121,7 @@ alias woohoo='echo \\\(ˆ˚ˆ\)/'
 
 
 ### OS-specific overrides
-if [[ "$(uname)" == 'Darwin' ]]; then
+if [[ "${OS}" == 'Darwin' ]]; then
 	export LESSHISTFILE=-
 	export MANWIDTH=80
 	export SSH_AUTH_SOCK_PATH="${HOME}/.ssh/ssh-$(printf "%s@%s" "${LOGNAME}" "${HOSTNAME}" | shasum -a 256 | awk '{print $1}').socket"
@@ -143,12 +143,8 @@ if [[ "$(uname)" == 'Darwin' ]]; then
 	alias mtop='top -o mem'
 	alias pssec='ps -Awo pid,state,user,etime,comm'
 	alias realpath='readlink'
-	unalias sha512
-	function sha512 {
-		shasum -a 512 "${1}" | awk '{print $1}'
-	}
 
-elif [[ "$(uname)" == 'FreeBSD' ]]; then
+elif [[ "${OS}" == 'FreeBSD' ]]; then
 	export LESSHISTFILE=-
 
 	alias bc='bc -lPq'
@@ -160,7 +156,7 @@ elif [[ "$(uname)" == 'FreeBSD' ]]; then
 	alias pssec='ps -Awo pid,state,user,etime,comm,jail'
 	alias pstree='ps auxwd'
 
-elif [[ "$(uname)" == 'Linux' ]]; then
+elif [[ "${OS}" == 'Linux' ]]; then
 	# env
 	# with less(1) v594, we no-longer need to disable LESSHISTFILE manually
 	# .. https://github.com/gwsw/less/commit/9eba0da958d33ef3582667e09701865980595361
@@ -238,25 +234,7 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 		alias pstree='ps auxwf'
 	fi
 	alias realpath='readlink -ev'
-	unalias sha512
-	function sha512 {
-		sha512sum --tag "${1}" | awk '{print $NF}'
-	}
 	unalias stat
-	function sysinfo {
-		local distro="$(awk -F'"' '/PRETTY_NAME/ {print $2}' /etc/os-release 2>/dev/null)"
-		if [[ -z "${distro}" ]]; then
-			local distro='Linux'
-		fi
-		local uptime="$(uptime | awk '{print $3, $4}' | sed 's/\,//g')"
-		if [[ "$(echo "${uptime}" | awk -F':' '{print $1}')" != "${uptime}" ]]; then
-			uptime="$(echo "${uptime}" | awk -F':' '{print $1}') hour(s)"
-		fi
-		printf "\nOS:\t\t%s\n" "${distro}"
-		printf "Kernel:\t\t%s: %s\n" "$(uname -m | sed 's/x86_64/amd64/')" "$(uname -r | awk -F'-' '{print $1}')"
-		printf "Uptime:\t\t%s\n" "${uptime}"
-		printf "CPU:\t\t%s\n" "$(echo "$(grep -c "^processor" /proc/cpuinfo)"cpu: "$(grep '^model name' /proc/cpuinfo | tail -n1 | awk -F': ' '{print $NF}' | tr -s " ")")"
-	}
 	alias top='top -s'
 	if ! whence whence >/dev/null 2>&1; then
 		# whence exists in ksh and zsh, but not in bash
@@ -290,7 +268,7 @@ elif [[ "$(uname)" == 'Linux' ]]; then
 		alias man='man --nh --nj'
 	fi
 
-elif [[ "$(uname)" == 'NetBSD' ]]; then
+elif [[ "${OS}" == 'NetBSD' ]]; then
 	export LESSHISTFILE=-
 	export MANPATH=/usr/share/man:/usr/local/man
 	export PS1="${HOSTNAME}$ "
@@ -303,12 +281,8 @@ elif [[ "$(uname)" == 'NetBSD' ]]; then
 	unalias pssec
 	alias pstree='ps auxwd'
 	alias realpath='readlink -fv'
-	unalias sha512
-	function sha512 {
-		cksum -a SHA512 "${1}" | awk '{print $NF}'
-	}
 
-elif [[ "$(uname)" == 'OpenBSD' ]]; then
+elif [[ "${OS}" == 'OpenBSD' ]]; then
 	export SSH_AUTH_SOCK_PATH="${HOME}/.ssh/ssh-$(printf "%s@%s" "${LOGNAME}" "${HOSTNAME}" | sha256).socket"
 
 	# aliases
@@ -344,21 +318,6 @@ elif [[ "$(uname)" == 'OpenBSD' ]]; then
 		}
 	fi
 	alias pkgup='/usr/bin/doas /usr/sbin/pkg_add -Vu'
-	function sysinfo {
-		printf "\nOS:\t\t%s\n" "$(sysctl -n kern.version | head -n1 | awk '{print $1, $2}')"
-		printf "Kernel:\t\t%s\n" "$(echo "$(uname -m): $(sysctl -n kern.version | head -n1 | awk '{print $NF, $6, $7}' | tr -d '()')")"
-		local uptime="$(($(date +%s) - $(sysctl -n kern.boottime)))"
-		if [[ "$((${uptime}/86400))" != '0' ]]; then
-			printf "Uptime:\t\t%s day(s)\n" "$((${uptime}/86400))"
-		elif [[ "$((${uptime}/3600))" != '0' ]]; then
-			printf "Uptime:\t\t%s hour(s)\n" "$((${uptime}/3600))"
-		elif [[ "$((${uptime}/60))" != '0' ]]; then
-			printf "Uptime:\t\t%s minute(s)\n" "$((${uptime}/60))"
-		else
-			printf "Uptime:\t\t%s seconds\n" "${uptime}"
-		fi
-		printf "CPU:\t\t%scpu: %s\n" "$(sysctl -n hw.ncpuonline)" "$(sysctl -n hw.model)"
-	}
 	usrlocal_extras() {
 		# function to identify files in /usr/local which aren't claimed by an installed package
 		local LOCAL_FILES="$(mktemp)"
@@ -393,7 +352,7 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == 'ksh' ]]; then
 	set -A complete_openrsync_2 -- --rsync-path=/usr/bin/openrsync
 	set -A complete_ping_1 -- ${HOST_LIST}
 	set -A complete_ping6_1 -- ${HOST_LIST}
-	if [[ "$(uname)" == 'OpenBSD' ]] && [[ -r /etc/rc.d ]]; then
+	if [[ "${OS}" == 'OpenBSD' ]] && [[ -r /etc/rc.d ]]; then
 		set -A complete_rcctl_1 -- disable enable get ls order set
 		set -A complete_rcctl_2 -- $(rcctl ls all)
 	fi
@@ -526,11 +485,11 @@ if command -v exiv2 >/dev/null; then
 			echo "${1}: Abort! DateTime not found" && return 1
 		elif [[ "$(echo "${DATETIME}" | wc -l)" -ne 1 ]]; then
 			echo "${1}: Abort! File has more than one DateTime declaration" && return 1
-		elif [[ "$(uname)" == 'OpenBSD' ]]; then
+		elif [[ "${OS}" == 'OpenBSD' ]]; then
 			if ! date -j "$(echo "${DATETIME}/0000" | sed 's/\///g')" >/dev/null 2>&1; then
 				echo "${1}: Abort! /bin/date doesn't recognise the detected DateTime as a valid date" && return 1
 			fi
-		elif [[ "$(uname)" == 'Linux' ]]; then
+		elif [[ "${OS}" == 'Linux' ]]; then
 			if ! date --date="$(echo "${DATETIME}" | sed 's/\///g')" >/dev/null 2>&1; then
 				echo "${1}: Abort! /bin/date doesn't recognise the detected DateTime as a valid date" && return 1
 			fi
@@ -734,6 +693,71 @@ sshinit() {
 	fi
 }
 
+# sysinfo() system profiler
+sysinfo() {
+	scale() {
+		printf "%s\n" "${1}" | awk -v CONVFMT='%.1f' '{ split( "K M G T E" , v ); s=1; while( $1>1024 ){ $1/=1024; s++ } print $1 v[s] }'
+	}
+	if [[ "${OS}" == 'FreeBSD' ]]; then
+		distro="$(awk -F'"' '/PRETTY_NAME/ {print $2}' /etc/os-release 2>/dev/null)"
+		if [[ -z "${distro}" ]]; then
+			distro='FreeBSD'
+		fi
+		kernel="$(echo "$(uname -m): $(sysctl -n kern.version | head -n1 | awk '{print $NF, $5, $6}')")"
+		cpu="$(echo "$(sysctl -n hw.ncpu)cpu: $(sysctl -n hw.model)")"
+		uptime="$(($(date +%s) - $(sysctl -n kern.boottime | awk -F" |," '{print $4}')))"
+		memtot="$(($(sysctl -n hw.physmem)/1024))"
+		memused="$(($(vmstat -s | awk '/pages active$/ {print $1}') * $(sysctl -n hw.pagesize) / 1024))"
+	elif [[ "${OS}" == 'Linux' ]]; then
+		distro="$(awk -F'"' '/PRETTY_NAME/ {print $2}' /etc/os-release 2>/dev/null)"
+		if [[ -z "${distro}" ]]; then
+			distro='Linux'
+		fi
+		kernel="$(echo "$(uname -m | sed 's/x86_64/amd64/'): $(uname -r | awk -F'-' '{print $1}')")"
+		cpu="$(echo "$(grep -c "^processor" /proc/cpuinfo)"cpu: "$(grep '^model name' /proc/cpuinfo | tail -n1 | awk -F': ' '{print $NF}' | tr -s " ")")" 
+		uptime="$(awk -F'.' '{print $1}' /proc/uptime)"
+		meminfo="$(cat /proc/meminfo)"
+		memtot="$(echo "${meminfo}" | awk '/^MemTotal:/ {print $2}')"
+		memused="$(echo "$(echo "${meminfo}" | awk '/^MemTotal:/ {print $2}') - $(echo "${MEMINFO}" | awk '/^Buffers:/ {print $2}') - $(echo "${MEMINFO}" | awk '/^Cached:/ {print $2}') - $(echo "${MEMINFO}" | awk '/^SReclaimable:/ {print $2}') - $(echo "${MEMINFO}" | awk '/^MemFree:/ {print $2}') - ($(echo "${MEMINFO}" | awk '/^HugePages_Free:/ {print $2}') * $(echo "${MEMINFO}" | awk '/^Hugepagesize:/ {print $2}'))" | bc)"
+	elif [[ "${OS}" == 'NetBSD' ]]; then
+		distro="$(sysctl -n kern.version | head -n1 | awk '{print $1, $2}')"
+		kernel="$(echo "$(uname -m): $(sysctl -n kern.version | head -n1 | awk '{print $NF, $6, $7}')")"
+		cpu="$(echo "$(sysctl -n hw.ncpuonline)"cpu: "$(sysctl -n machdep.cpu_brand | tr -s " ")")"
+		uptime="$(($(date +%s) - $(sysctl -n kern.boottime)))"
+		memtot="$(($(sysctl -n hw.physmem64)/1024))"
+		memused="$(($(vmstat -s | awk '/pages active$/ {print $1}') * $(sysctl -n hw.pagesize) / 1024))"
+	elif [[ "${OS}" == 'OpenBSD' ]]; then
+		distro="$(sysctl -n kern.version | head -n1 | awk '{print $1, $2}')"
+		kernel="$(echo "$(uname -m): $(sysctl -n kern.version | head -n1 | awk '{print $NF, $6, $7}')")"
+		cpu="$(echo "$(sysctl -n hw.ncpuonline)"cpu: "$(sysctl -n hw.model)")" 
+		uptime="$(($(date +%s) - $(sysctl -n kern.boottime)))"
+		memtot="$(($(sysctl -n hw.physmem)/1024))"
+		memused="$(($(vmstat -s | awk '/pages active$/ {print $1}') * $(sysctl -n hw.pagesize) / 1024))"
+	else
+		distro="${OS}"
+		kernel='unknown'
+		cpu='unknown'
+		uptime='0'
+		memtot='0'
+		memused='0'
+	fi
+
+	printf "OS:\t\t%s\n" "${distro}"
+	printf "Kernel:\t\t%s\n" "${kernel}"
+	if [[ "$((${uptime}/86400))" != '0' ]]; then
+		printf "Uptime:\t\t%s day(s)\n" "$((${uptime}/86400))"
+	elif [[ "$((${uptime}/3600))" != '0' ]]; then
+		printf "Uptime:\t\t%s hour(s)\n" "$((${uptime}/3600))"
+	elif [[ "$((${uptime}/60))" != '0' ]]; then
+		printf "Uptime:\t\t%s minute(s)\n" "$((${uptime}/60))"
+	else
+		printf "Uptime:\t\t%s seconds\n" "${uptime}"
+	fi
+	printf "RAM:\t\t%s / %s\n" "$(scale ${memused})" "$(scale ${memtot})"
+	printf "CPU:\t\t%s\n" "${cpu}"
+	unset -f scale
+}
+
 # whattimeisitin() time zone query
 whattimeisitin() {
 	if [[ "${#}" == '0' ]]; then
@@ -753,7 +777,7 @@ whattimeisitin() {
 #     .. LESSPIPE pipe commands are incompatible with LESSSECURE=1;
 #     .. rather than disable security (e.g. 'alias zless="LESSSECURE= /usr/bin/zless"'),
 #     .. use an alternative implementation from the OpenBSD Project
-if [[ "$(uname)" == 'Linux' ]] || [[ "$(uname)" == 'FreeBSD' ]]; then
+if [[ "${OS}" == 'Linux' ]] || [[ "${OS}" == 'FreeBSD' ]]; then
 	zless() {
 		# $OpenBSD: zmore,v 1.9 2019/01/25 00:19:26 millert Exp $
 		#
