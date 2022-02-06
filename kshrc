@@ -699,47 +699,47 @@ sysinfo() {
 		printf "%s\n" "${1}" | awk -v CONVFMT='%.1f' '{ split( "K M G T E" , v ); s=1; while( $1>1024 ){ $1/=1024; s++ } print $1 v[s] }'
 	}
 	if [[ "${OS}" == 'FreeBSD' ]]; then
-		distro="$(awk -F'"' '/PRETTY_NAME/ {print $2}' /etc/os-release 2>/dev/null)"
+		local distro="$(awk -F'"' '/PRETTY_NAME/ {print $2}' /etc/os-release 2>/dev/null)"
 		if [[ -z "${distro}" ]]; then
-			distro='FreeBSD'
+			local distro='FreeBSD'
 		fi
-		kernel="$(echo "$(uname -m): $(sysctl -n kern.version | head -n1 | awk '{print $NF, $5, $6}')")"
-		cpu="$(echo "$(sysctl -n hw.ncpu)cpu: $(sysctl -n hw.model)")"
-		uptime="$(($(date +%s) - $(sysctl -n kern.boottime | awk -F" |," '{print $4}')))"
-		memtot="$(($(sysctl -n hw.physmem)/1024))"
-		memused="$(($(vmstat -s | awk '/pages active$/ {print $1}') * $(sysctl -n hw.pagesize) / 1024))"
+		local kernel="$(echo "$(uname -m): $(sysctl -n kern.version | head -n1 | awk '{print $NF, $5, $6}')")"
+		local cpu="$(echo "$(sysctl -n hw.ncpu)cpu: $(sysctl -n hw.model)")"
+		local uptime="$(($(date +%s) - $(sysctl -n kern.boottime | awk -F" |," '{print $4}')))"
+		local memtot="$(($(sysctl -n hw.physmem)/1024))"
+		local memused="$(($(vmstat -s | awk '/pages active$/ {print $1}') * $(sysctl -n hw.pagesize) / 1024))"
 	elif [[ "${OS}" == 'Linux' ]]; then
-		distro="$(awk -F'"' '/PRETTY_NAME/ {print $2}' /etc/os-release 2>/dev/null)"
+		local distro="$(awk -F'"' '/PRETTY_NAME/ {print $2}' /etc/os-release 2>/dev/null)"
 		if [[ -z "${distro}" ]]; then
-			distro='Linux'
+			local distro='Linux'
 		fi
-		kernel="$(echo "$(uname -m | sed 's/x86_64/amd64/'): $(uname -r | awk -F'-' '{print $1}')")"
-		cpu="$(echo "$(grep -c "^processor" /proc/cpuinfo)"cpu: "$(grep '^model name' /proc/cpuinfo | tail -n1 | awk -F': ' '{print $NF}' | tr -s " ")")" 
-		uptime="$(awk -F'.' '{print $1}' /proc/uptime)"
-		meminfo="$(cat /proc/meminfo)"
-		memtot="$(echo "${meminfo}" | awk '/^MemTotal:/ {print $2}')"
-		memused="$(echo "$(echo "${meminfo}" | awk '/^MemTotal:/ {print $2}') - $(echo "${MEMINFO}" | awk '/^Buffers:/ {print $2}') - $(echo "${MEMINFO}" | awk '/^Cached:/ {print $2}') - $(echo "${MEMINFO}" | awk '/^SReclaimable:/ {print $2}') - $(echo "${MEMINFO}" | awk '/^MemFree:/ {print $2}') - ($(echo "${MEMINFO}" | awk '/^HugePages_Free:/ {print $2}') * $(echo "${MEMINFO}" | awk '/^Hugepagesize:/ {print $2}'))" | bc)"
+		local kernel="$(echo "$(uname -m | sed 's/x86_64/amd64/'): $(uname -r | awk -F'-' '{print $1}')")"
+		local cpu="$(echo "$(grep -c "^processor" /proc/cpuinfo)"cpu: "$(grep '^model name' /proc/cpuinfo | tail -n1 | awk -F': ' '{print $NF}' | tr -s " ")")"
+		local uptime="$(awk -F'.' '{print $1}' /proc/uptime)"
+		local meminfo="$(cat /proc/meminfo)"
+		local memtot="$(echo "${meminfo}" | awk '/^MemTotal:/ {print $2}')"
+		local memused="$(echo "$(echo "${meminfo}" | awk '/^MemTotal:/ {print $2}') - $(echo "${MEMINFO}" | awk '/^Buffers:/ {print $2}') - $(echo "${MEMINFO}" | awk '/^Cached:/ {print $2}') - $(echo "${MEMINFO}" | awk '/^SReclaimable:/ {print $2}') - $(echo "${MEMINFO}" | awk '/^MemFree:/ {print $2}') - ($(echo "${MEMINFO}" | awk '/^HugePages_Free:/ {print $2}') * $(echo "${MEMINFO}" | awk '/^Hugepagesize:/ {print $2}'))" | bc)"
 	elif [[ "${OS}" == 'NetBSD' ]]; then
-		distro="$(sysctl -n kern.version | head -n1 | awk '{print $1, $2}')"
-		kernel="$(echo "$(uname -m): $(sysctl -n kern.version | head -n1 | awk '{print $NF, $6, $7}')")"
-		cpu="$(echo "$(sysctl -n hw.ncpuonline)"cpu: "$(sysctl -n machdep.cpu_brand | tr -s " ")")"
-		uptime="$(($(date +%s) - $(sysctl -n kern.boottime)))"
-		memtot="$(($(sysctl -n hw.physmem64)/1024))"
-		memused="$(($(vmstat -s | awk '/pages active$/ {print $1}') * $(sysctl -n hw.pagesize) / 1024))"
+		local distro="$(sysctl -n kern.version | head -n1 | awk '{print $1, $2}')"
+		local kernel="$(echo "$(uname -m): $(sysctl -n kern.version | head -n1 | awk '{print $NF, $6, $7}')")"
+		local cpu="$(echo "$(sysctl -n hw.ncpuonline)"cpu: "$(sysctl -n machdep.cpu_brand | tr -s " ")")"
+		local uptime="$(($(date +%s) - $(sysctl -n kern.boottime)))"
+		local memtot="$(($(sysctl -n hw.physmem64)/1024))"
+		local memused="$(($(vmstat -s | awk '/pages active$/ {print $1}') * $(sysctl -n hw.pagesize) / 1024))"
 	elif [[ "${OS}" == 'OpenBSD' ]]; then
-		distro="$(sysctl -n kern.version | head -n1 | awk '{print $1, $2}')"
-		kernel="$(echo "$(uname -m): $(sysctl -n kern.version | head -n1 | awk '{print $NF, $6, $7}')")"
-		cpu="$(echo "$(sysctl -n hw.ncpuonline)"cpu: "$(sysctl -n hw.model)")" 
-		uptime="$(($(date +%s) - $(sysctl -n kern.boottime)))"
-		memtot="$(($(sysctl -n hw.physmem)/1024))"
-		memused="$(($(vmstat -s | awk '/pages active$/ {print $1}') * $(sysctl -n hw.pagesize) / 1024))"
+		local distro="$(sysctl -n kern.version | head -n1 | awk '{print $1, $2}')"
+		local kernel="$(echo "$(uname -m): $(sysctl -n kern.version | head -n1 | awk '{print $NF, $6, $7}')")"
+		local cpu="$(echo "$(sysctl -n hw.ncpuonline)"cpu: "$(sysctl -n hw.model)")"
+		local uptime="$(($(date +%s) - $(sysctl -n kern.boottime)))"
+		local memtot="$(($(sysctl -n hw.physmem)/1024))"
+		local memused="$(($(vmstat -s | awk '/pages active$/ {print $1}') * $(sysctl -n hw.pagesize) / 1024))"
 	else
-		distro="${OS}"
-		kernel='unknown'
-		cpu='unknown'
-		uptime='0'
-		memtot='0'
-		memused='0'
+		local distro="${OS}"
+		local kernel='unknown'
+		local cpu='unknown'
+		local uptime='0'
+		local memtot='0'
+		local memused='0'
 	fi
 
 	printf "OS:\t\t%s\n" "${distro}"
