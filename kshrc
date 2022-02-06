@@ -718,7 +718,7 @@ sysinfo() {
 		local uptime="$(awk -F'.' '{print $1}' /proc/uptime)"
 		local meminfo="$(cat /proc/meminfo)"
 		local memtot="$(echo "${meminfo}" | awk '/^MemTotal:/ {print $2}')"
-		local memused="$(echo "$(echo "${meminfo}" | awk '/^MemTotal:/ {print $2}') - $(echo "${MEMINFO}" | awk '/^Buffers:/ {print $2}') - $(echo "${MEMINFO}" | awk '/^Cached:/ {print $2}') - $(echo "${MEMINFO}" | awk '/^SReclaimable:/ {print $2}') - $(echo "${MEMINFO}" | awk '/^MemFree:/ {print $2}') - ($(echo "${MEMINFO}" | awk '/^HugePages_Free:/ {print $2}') * $(echo "${MEMINFO}" | awk '/^Hugepagesize:/ {print $2}'))" | bc)"
+		local memused="$(($(echo "${meminfo}" | awk '/^MemTotal:/ {print $2}') - $(echo "${meminfo}" | awk '/^Buffers:/ {print $2}') - $(echo "${meminfo}" | awk '/^Cached:/ {print $2}') - $(echo "${meminfo}" | awk '/^SReclaimable:/ {print $2}') - $(echo "${meminfo}" | awk '/^MemFree:/ {print $2}') - ($(echo "${meminfo}" | awk '/^HugePages_Free:/ {print $2}') * $(echo "${meminfo}" | awk '/^Hugepagesize:/ {print $2}'))))"
 	elif [[ "${OS}" == 'NetBSD' ]]; then
 		local distro="$(sysctl -n kern.version | head -n1 | awk '{print $1, $2}')"
 		local kernel="$(echo "$(uname -m): $(sysctl -n kern.version | head -n1 | awk '{print $NF, $6, $7}')")"
