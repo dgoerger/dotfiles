@@ -247,11 +247,12 @@ elif [[ "${OS}" == 'Linux' ]]; then
 	# distro-specific overrides
 	if [[ -r /etc/alpine-release ]]; then
 		alias checkupdates='apk list -u'
+		unalias ducks
 		alias listening='netstat -antpl'
 		if command -v flatpak >/dev/null 2>&1; then
-			alias pkgup='/usr/bin/doas /bin/sh -c "/sbin/apk update && /sbin/apk upgrade && /usr/bin/flatpak update -y && /usr/bin/flatpak uninstall -y --unused"'
+			alias pkgup='/usr/bin/doas /bin/sh -c "/sbin/apk update && /sbin/apk upgrade && /usr/bin/flatpak update -y && /usr/bin/flatpak uninstall -y --unused && /sbin/apk fix -s"'
 		else
-			alias pkgup='/usr/bin/doas /bin/sh -c "/sbin/apk update && /sbin/apk upgrade"'
+			alias pkgup='/usr/bin/doas /bin/sh -c "/sbin/apk update && /sbin/apk upgrade && /sbin/apk fix -s"'
 		fi
 		unalias realpath
 	elif [[ -r /etc/debian_version ]]; then
