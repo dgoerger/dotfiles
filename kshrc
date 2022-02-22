@@ -6,8 +6,6 @@
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/games:/usr/local/bin
 
 ## terminal settings
-# fix backspace on old TERMs
-#stty erase '^?' echoe
 # disable terminal flow control (ctrl+s/ctrl+q)
 stty -ixon
 # disable job control (^Z)
@@ -55,17 +53,11 @@ if command -v abook >/dev/null && [[ -r "${HOME}/.abookrc" ]] && [[ -r "${HOME}/
 	alias abook='abook --config ${HOME}/.abookrc --datafile ${HOME}/.addresses'
 fi
 alias bc='bc -l'
-if command -v cabal >/dev/null && [[ -d /usr/local/cabal/build ]] && [[ -w /usr/local/cabal/build ]]; then
-	alias cabal='env TMPDIR=/usr/local/cabal/build/ cabal'
-fi
 alias cal='cal -m'
 if command -v calendar >/dev/null && [[ -r "${HOME}/.calendar" ]]; then
 	alias calendar='calendar -f ${HOME}/.calendar'
 fi
 alias cp='cp -i'
-if command -v cvs >/dev/null; then
-	alias cvs='cvs -q'
-fi
 alias df='df -h'
 alias ducks='du -ahxd1 | sort -hr'
 alias free='top | grep -E "^Memory"'
@@ -97,14 +89,11 @@ alias psmem='ps -Awwmo user,pid,state,time,pagein,vsz,rss,tsiz,%cpu,%mem,command
 alias pssec='ps -Awwo pid,state,user,etime,rtable,comm,pledge'
 alias rgrep='grep -rIns --'
 alias rm='rm -i'
-if ! command -v rsync >/dev/null && command -v openrsync >/dev/null; then
-	alias rsync="$(command -v openrsync)"
-fi
 alias stat='stat -x'
 alias tm='tmux new-session -A -s tm'
 if command -v nvim >/dev/null; then
 	alias vi=nvim
-	alias view='nvim --cmd "let no_plugin_maps = 1" -c "runtime! macros/less.vim" -m -M -R -n'
+	alias view='nvim --cmd "let no_plugin_maps = 1" -c "runtime! macros/less.vim" -c "set nofoldenable" -m -M -R -n'
 else
 	alias view=less
 fi
@@ -131,17 +120,10 @@ if [[ "${OS}" == 'Darwin' ]]; then
 	alias dns_reset='sudo killall -HUP mDNSResponder; sudo killall mDNSResponderHelper; sudo dscacheutil -flushcache'
 	alias ducks='du -hxd1 | sort -hr'
 	alias free='top -l 1 -s 0 | grep PhysMem'
-	getent() {
-		# implement just enough of getent(1) so that user functions work
-		if [[ "${#}" == '2' ]] && [[ "${1}" == 'hosts' ]]; then
-			host "${2}" | grep -qE "has( IPv6 | )address"
-			return $?
-		fi
-	}
 	alias ldd='otool -L'
 	alias listening='netstat -an | grep LISTEN'
 	alias mtop='top -o mem'
-	alias pssec='ps -Awo pid,state,user,etime,comm'
+	unalias pssec
 	alias realpath='readlink'
 
 elif [[ "${OS}" == 'FreeBSD' ]]; then
@@ -149,11 +131,10 @@ elif [[ "${OS}" == 'FreeBSD' ]]; then
 
 	alias bc='bc -lPq'
 	alias cal='/usr/bin/ncal -C'
-	alias checkupdates='pkg upgrade -Un'
 	alias ducks='du -hxd1 | sort -hr'
 	alias free='top | grep -E "^Mem"'
 	alias listening='sockstat -l46'
-	alias pssec='ps -Awo pid,state,user,etime,comm,jail'
+	unalias pssec
 	alias pstree='ps auxwd'
 
 elif [[ "${OS}" == 'Linux' ]]; then
@@ -329,6 +310,7 @@ elif [[ "${OS}" == 'OpenBSD' ]]; then
 		pkg_mklocatedb -nq | awk -F':' '{$1=""; print $0}' | sed 's/^\ //g' | sed 's/\ \ /::/g' | grep -E "^/usr/local" | sort -u | grep -Ev "/$" | grep -v '/usr/local/share/mime' > "${PKG_FILES}"
 
 		diff -U0 -L pkg_files -L installed_files "${PKG_FILES}" "${LOCAL_FILES}" | grep -Ev "^\@" | awk '/^\@/ {printf "\033[0;96m%s\033[0;0m\n", $0} /^\-/ {printf "\033[0;91m%s\033[0;0m\n", $0} /^\+/ {printf "\033[0;92m%s\033[0;0m\n", $0} /^\ / {printf "\033[0;0m%s\033[0;0m\n", $0}'
+		/bin/rm "${LOCAL_FILES}" "${PKG_FILES}"
 	}
 fi
 
@@ -398,15 +380,14 @@ colours() {
 }
 
 # def() look up the definition of a word
-if command -v curl >/dev/null; then
-	def() {
-		if [[ $# -eq 1 ]]; then
-			curl "dict://dict.org/d:${1}:gcide"
-		else
-			printf "usage:\n    def WORD\n" && return 1
-		fi
-	}
-fi
+def() {
+	if [[ $# -eq 1 ]]; then
+		echo "D gcide ${1}\nQ" | nc dict.org 2628 | grep -Ev "^(150|220|221|250|\.)"
+	else
+		printf "usage:\n\tdef WORD\n"
+		return 1
+	fi
+}
 
 # diff() with syntax highlighting
 diff() {
@@ -429,47 +410,30 @@ diff() {
 # ereader()
 if command -v pandoc >/dev/null && command -v lynx >/dev/null; then
 	ereader() {
+		usage() {
+			printf 'usage:\n\tereader file.epub\n'
+		}
 		if [[ $# -ne 1 ]]; then
-			printf 'usage:\n    ereader file.epub\n' && return 1
+			usage
+			return 1
 		elif [[ "${1}" = '-h' ]] || [[ "${1}" = '--help' ]]; then
-			printf 'usage:\n    ereader file.epub\n' && return 0
-		elif ! ls "${1}" >/dev/null 2>&1; then
-			printf 'ERROR: file not found\n' && return 1
+			usage
+			return 0
+		elif ! stat "${1}" >/dev/null 2>&1; then
+			printf 'ERROR: file not found\n'
+			return 1
 		else
 			printf 'Reformatting.. (this might take a moment)\n'
 			pandoc -t html "${1}" | lynx -stdin
 		fi
+		unset -f usage
 	}
 fi
-
-# fat32san() sanitize file/folder names for FAT32 filesystems
-fat32san() {
-	# illegal chars =>   : " ? < > | \ / *
-	# FIXME this strategy isn't safe for removing '/' from a filename
-	#       as it's the path directory separator, so do not handle
-	#       that char for now
-	_rename() {
-		mv "${1}" "$(echo "${1}" | tr -d '\:\"\?\<\>\|\\\*')"
-	}
-	if [[ "${#}" != '1' ]] || [[ ! -d "${1}" ]]; then
-		printf "usage:\n    fat32san /path/to/sanitize\n"
-	else
-		find "${1}" -name '*\:*' | while read -r FILE; do _rename "${FILE}"; done
-		find "${1}" -name '*\"*' | while read -r FILE; do _rename "${FILE}"; done
-		find "${1}" -name '*\?*' | while read -r FILE; do _rename "${FILE}"; done
-		find "${1}" -name '*\<*' | while read -r FILE; do _rename "${FILE}"; done
-		find "${1}" -name '*\>*' | while read -r FILE; do _rename "${FILE}"; done
-		find "${1}" -name '*\|*' | while read -r FILE; do _rename "${FILE}"; done
-		find "${1}" -name '*\\*' | while read -r FILE; do _rename "${FILE}"; done
-		find "${1}" -name '*\**' | while read -r FILE; do _rename "${FILE}"; done
-	fi
-	unset -f _rename
-}
 
 # fd() find files and directories
 fd() {
 	if [[ "${#}" != '1' ]]; then
-		printf "usage:\n    fd FILENAME\n"
+		printf "usage:\n\tfd FILENAME\n"
 	else
 		find . -iname "*${1}*"
 	fi
@@ -518,35 +482,41 @@ if command -v exiv2 >/dev/null; then
 fi
 
 # pomodoro() timer
-if command -v tmux >/dev/null && command -v notify-send >/dev/null && [[ -n "${DESKTOP_SESSION}" ]]; then
-	# GNOME3 - libnotify "toaster" popup
-	pomodoro() {
-		local usage='usage: pomodoro [minutes] [message]\n'
-		if [[ $# -ne 2 ]]; then
-			echo -e "${usage}" && return 1
-		else
-			local message="${2}"
-		fi
-		case ${1} in
-			''|*[!0-9]*) echo "Error: \${1} must be an integer." && return 1 ;;
-			*) local delay=${1} ;;
-		esac
-		tmux new -d "sleep $(echo "${delay}*60" | bc -l); notify-send POMODORO \"${message}\" --icon=dialog-warning-symbolic --urgency=critical"
+pomodoro() {
+	usage() {
+		printf 'usage:\n\tpomodoro minutes [message]\n'
 	}
-elif command -v leave >/dev/null; then
-	# headless!
-	pomodoro() {
-		local usage='usage: pomodoro [minutes]\n\n  .. or just use leave(1)!\n'
-		if [[ $# -ne 1 ]]; then
-			echo -e "${usage}" && return 1
-		fi
-		case ${1} in
-			''|*[!0-9]*) echo "Error: \${1} must be an integer." && return 1 ;;
-			*) local delay=${1} ;;
-		esac
-		leave "+${1}"
-	}
-fi
+	if [[ ${#} -eq 0 ]] || [[ "${1}" == '-h' ]] || [[ "${1}" == '--help' ]]; then
+		usage
+		return 0
+	elif [[ ${#} -eq 1 ]]; then
+		local minutes="${1}"
+		local message="Time's up!"
+	elif [[ ${#} -ge 2 ]]; then
+		local minutes="${1}"
+		shift
+		local message="${@}"
+	fi
+	case "${minutes}" in
+		''|*[!0-9]*)
+			printf "Error: 'minutes' must be an integer.\n"
+			usage
+			return 1
+			;;
+		*)
+			if command -v tmux >/dev/null && command -v notify-send >/dev/null && [[ -n "${DESKTOP_SESSION}" ]]; then
+				# libnotify "toaster" popup
+				tmux new -d "sleep $((${minutes}*60)); notify-send POMODORO \"${message}\" --urgency=critical"
+			elif command -v leave >/dev/null; then
+				leave "+${minutes}"
+			else
+				printf "Error: unsupported platform\n"
+				return 1
+			fi
+			;;
+	esac
+	unset -f usage
+}
 
 # pwgen() random password generator
 pwgen() {
@@ -558,40 +528,25 @@ pwgen() {
 			*) </dev/urandom LC_ALL=C tr -cd '[:alnum:]' | fold -w "${1}" | head -n1
 		esac
 	else
-		printf "usage:\n    pwgen [INT]\n" && return 1
+		printf "usage:\n\tpwgen [INT]\n" && return 1
 	fi
 }
 
 # rename() files
 rename() {
-	# options handling, if any
-	if [[ "${#}" == '0' ]] || [[ "${1}" == '-h' ]]; then
-		printf "usage:\n    rename [-nv] "REGEX" filename(s)\n" && return 0
-	elif [[ "${1}" == '-n' ]]; then
-		if [[ $# -gt 1 ]]; then
-			local noop=1
-			shift
-		else
-			printf "usage:\n    rename [-nv] "REGEX" filename(s)\n" && return 1
-		fi
-	elif [[ "${1}" == '-v' ]]; then
-		if [[ $# -gt 1 ]]; then
-			local verbose=1
-			shift
-		else
-			printf "usage:\n    rename [-nv] "REGEX" filename(s)\n" && return 1
-		fi
-	elif [[ "${1}" == '-nv' ]] || [[ "${1}" == '-vn' ]]; then
-		if [[ $# -gt 1 ]]; then
-			local noop=1
-			local verbose=1
-			shift
-		else
-			printf "usage:\n    rename [-nv] "REGEX" filename(s)\n" && return 1
-		fi
-	elif [[ "${1}" == '-V' ]]; then
-		printf "rename() ksh function defined in ~/.kshrc\n" && return 0
-	fi
+	usage() {
+		printf "usage:\n\trename [-nv] "REGEX" filename(s)\n"
+	}
+
+	while getopts ":hnVv" option; do
+		case "${option}" in
+			h) usage && return 0 ;;
+			n) local noop=1 ;;
+			V) printf "rename() ksh function defined in ~/.kshrc\n" && return 0 ;;
+			v) local verbose=1 ;;
+			*) usage && return 1 ;;
+		esac
+	done
 
 	# verify the passed regex is recognised by sed(1)
 	if echo test_string | sed -E "${1}" >/dev/null 2>&1; then
@@ -603,9 +558,10 @@ rename() {
 
 	# verify input file(s) exist
 	if [[ -z "${@}" ]]; then
-		printf "usage:\n    rename [-nv] "REGEX" filename(s)\n" && return 1
+		usage
+		return 1
 	fi
-	if ! /bin/ls "${@}" >/dev/null 2>&1; then
+	if ! /bin/ls -- "${@}" >/dev/null 2>&1; then
 		printf "ERROR: unable to stat file(s) '%s'.\n" "${@}" && return 1
 	fi
 
@@ -628,16 +584,15 @@ rename() {
 		fi
 
 		# perform the rename
-		if [[ "${noop}" == '1' ]] && [[ "${verbose}" == '1' ]]; then
-			printf "%s -> %s\n" "${oldname}" "${newname}"
-		elif [[ "${noop}" == '1' ]]; then
-			continue
+		if [[ "${noop}" == '1' ]]; then
+			printf "WOULD MOVE: %s -> %s\n" "${oldname}" "${newname}"
 		elif [[ "${verbose}" == '1' ]]; then
 			/bin/mv -v -- "${oldname}" "${newname}"
 		else
 			/bin/mv -- "${oldname}" "${newname}"
 		fi
 	done
+	unset -f usage
 }
 
 # rwhence() realpath + whence
@@ -668,7 +623,7 @@ shacompare() {
 			printf 'The two files are NOT identical.\n'
 		fi
 	else
-		printf 'usage:\n    shacompare FILE1 FILE2\n' && return 1
+		printf 'usage:\n\tshacompare FILE1 FILE2\n' && return 1
 	fi
 }
 
@@ -763,7 +718,7 @@ sysinfo() {
 # whattimeisitin() time zone query
 whattimeisitin() {
 	if [[ "${#}" == '0' ]]; then
-		printf 'usage:\n    whattimeisitin CITY\n'
+		printf 'usage:\n\twhattimeisitin CITY\n'
 	fi
 	local sanitized_input="$(echo $@ | sed 's/\ /_/g')"
 	local zone="$(grep -im1 "\/${sanitized_input}" /usr/share/zoneinfo/zone.tab | awk '{print $3}')"
