@@ -18,5 +18,10 @@ export LC_ALL=en_CA.UTF-8
 if [[ -x /usr/local/bin/xscreensaver ]]; then
 	/usr/local/bin/xscreensaver -no-splash &
 fi
+# launch notification daemon
+if [[ -x /usr/local/bin/dunst ]]; then
+        /usr/local/bin/dunst &
+fi
 # launch the calm window manager
+export DESKTOP_SESSION=cwm
 /usr/X11R6/bin/cwm
