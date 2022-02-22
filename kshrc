@@ -6,10 +6,12 @@
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/games:/usr/local/bin
 
 ## terminal settings
-# disable terminal flow control (ctrl+s/ctrl+q)
+# disable terminal flow control (^S/^Q)
 stty -ixon
 # disable job control (^Z)
 set +m
+# prevent accidental clobber, set pipefail
+set -Co pipefail
 # SIGINFO: see signal(3)
 stty status ^T 2>/dev/null
 # restrict umask (override in ~/.profile.local)
