@@ -5,4 +5,5 @@ auto-execute /tmp/mutt* auto-fill-mode
 meta-key-mode
 make-backup-files
 column-number-mode
+delete-trailing-space
 set-fill-column 70
