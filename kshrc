@@ -410,27 +410,63 @@ diff() {
 }
 
 # ereader()
-if command -v pandoc >/dev/null && command -v lynx >/dev/null; then
-	ereader() {
-		usage() {
-			printf 'usage:\n\tereader file.epub\n'
-		}
-		if [[ $# -ne 1 ]]; then
-			usage
-			return 1
-		elif [[ "${1}" = '-h' ]] || [[ "${1}" = '--help' ]]; then
-			usage
-			return 0
-		elif ! stat "${1}" >/dev/null 2>&1; then
-			printf 'ERROR: file not found\n'
-			return 1
-		else
-			printf 'Reformatting.. (this might take a moment)\n'
-			pandoc -t html "${1}" | lynx -stdin
-		fi
-		unset -f usage
+ereader() {
+	usage() {
+		printf 'usage:\n\tereader FILE\n'
 	}
-fi
+	open_lowdown() {
+		if command -v lowdown >/dev/null 2>&1; then
+			lowdown -sTterm "${1}" | less
+		else
+			less "${1}"
+		fi
+	}
+	open_pandoc() {
+		if command -v pandoc >/dev/null 2>&1 && command -v lowdown >/dev/null 2>&1; then
+			pandoc -t plain+gutenberg "${1}" | lowdown -sTterm | less
+		else
+			printf "ERROR: command 'pandoc' or 'lowdown' not found\n"
+			return 1
+		fi
+	}
+	if [[ $# -ne 1 ]]; then
+		usage
+		return 1
+	elif [[ "${1}" = '-h' ]] || [[ "${1}" = '--help' ]]; then
+		usage
+		return 0
+	else
+		local FILE="${1}"
+		local FILETYPE="${FILE##*\.}"
+		if ! stat "${FILE}" >/dev/null 2>&1; then
+			if [[ "$(echo "${FILE}" | awk -F':' '/^https/ {print $1}')" == 'https' ]]; then
+				local FILETYPE='html'
+			else
+				printf "ERROR: file '%s' not found\n" "${FILE}"
+				return 1
+			fi
+		fi
+		case "${FILETYPE}" in
+			epub)
+				open_pandoc "${FILE}"
+				;;
+			html)
+				open_pandoc "${FILE}"
+				;;
+			md)
+				open_lowdown "${FILE}"
+				;;
+			txt)
+				open_lowdown "${FILE}"
+				;;
+			*)
+				printf "ERROR: filetype '%s' not supported\n" "${FILETYPE}"
+				return 1
+				;;
+		esac
+	fi
+	unset -f usage open_lowdown open_pandoc
+}
 
 # fd() find files and directories
 fd() {
