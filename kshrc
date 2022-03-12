@@ -384,7 +384,7 @@ colours() {
 # def() look up the definition of a word
 def() {
 	if [[ $# -eq 1 ]]; then
-		printf "D gcide %s\nQ" "${1}" | nc dict.org 2628 | grep -Ev "^(150|220|221|250|\.)"
+		printf "D gcide %s\nQ\n" "${1}" | nc dict.org 2628 | grep -Ev "^(150|220|221|250|\.)"
 	else
 		printf "usage:\n\tdef WORD\n"
 		return 1
