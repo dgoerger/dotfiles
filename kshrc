@@ -230,7 +230,7 @@ elif [[ "${OS}" == 'Linux' ]]; then
 	# distro-specific overrides
 	if [[ -r /etc/alpine-release ]]; then
 		alias checkupdates='apk list -u'
-		unalias ducks
+		alias ducks='du -akxd1 | sort -nr'
 		alias listening='netstat -antpl'
 		if command -v flatpak >/dev/null 2>&1; then
 			alias pkgup='/usr/bin/doas /bin/sh -c "/sbin/apk update && /sbin/apk upgrade && /usr/bin/flatpak update -y && /usr/bin/flatpak uninstall -y --unused && /sbin/apk fix -s"'
@@ -384,7 +384,7 @@ colours() {
 # def() look up the definition of a word
 def() {
 	if [[ $# -eq 1 ]]; then
-		echo "D gcide ${1}\nQ" | nc dict.org 2628 | grep -Ev "^(150|220|221|250|\.)"
+		printf "D gcide %s\nQ" "${1}" | nc dict.org 2628 | grep -Ev "^(150|220|221|250|\.)"
 	else
 		printf "usage:\n\tdef WORD\n"
 		return 1
@@ -751,6 +751,16 @@ sysinfo() {
 	printf "RAM:\t\t%s / %s\n" "$(scale ${memused})" "$(scale ${memtot})"
 	printf "CPU:\t\t%s\n" "${cpu}"
 	unset -f scale
+}
+
+# thesaurus() synonym lookup
+thesaurus() {
+	if [[ $# -eq 1 ]]; then
+		printf "D moby-thesaurus %s\nQ\n" "${1}" | nc dict.org 2628 | grep -Ev "^(150|220|221|250|\.)"
+	else
+		printf "usage:\n\tthesaurus WORD\n"
+		return 1
+	fi
 }
 
 # whattimeisitin() time zone query
