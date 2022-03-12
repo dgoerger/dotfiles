@@ -278,6 +278,14 @@
 			"PreventInstalls": true
 		},
 		"SearchSuggestEnabled": false,
-		"SSLVersionMin": "tls1.2"
+		"SSLVersionMin": "tls1.2",
+		"UserMessaging": {
+			"ExtensionRecommendations": false,
+			"FeatureRecommendations": false,
+			"MoreFromMozilla": false,
+			"SkipOnboarding": true,
+			"UrlbarInterventions": false,
+			"WhatsNew": true
+		}
 	}
 }
