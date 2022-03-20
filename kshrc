@@ -226,6 +226,9 @@ elif [[ "${OS}" == 'Linux' ]]; then
 	if [[ -x /usr/bin/which ]]; then
 		alias which=/usr/bin/which
 	fi
+	if [[ "${SHELL}" == '/bin/ksh' ]]; then
+		export PS1="${HOSTNAME}$ "
+	fi
 
 	# distro-specific overrides
 	if [[ -r /etc/alpine-release ]]; then
