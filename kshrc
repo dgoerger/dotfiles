@@ -486,35 +486,35 @@ fd() {
 
 # photo_import() import photos from an SD card
 if command -v exiv2 >/dev/null; then
-	_import_photo() {
-		local DATETIME="$(exiv2 -pt -qK Exif.Photo.DateTimeOriginal "${1}" 2>/dev/null | awk '{print $(NF-1)}' | sed 's/\:/\//g' | sort -u)"
-		local FILENAME="$(echo "${1}" | awk -F"/" '{print $NF}' | tr '[:upper:]' '[:lower:]')"
-		local PHOTO_DIR="${HOME}/Pictures"
-
-		# sanity checks
-		if [[ -z "${DATETIME}" ]]; then
-			echo "${1}: Abort! DateTime not found" && return 1
-		elif [[ "$(echo "${DATETIME}" | wc -l)" -ne 1 ]]; then
-			echo "${1}: Abort! File has more than one DateTime declaration" && return 1
-		elif [[ "${OS}" == 'OpenBSD' ]]; then
-			if ! date -j "$(echo "${DATETIME}/0000" | sed 's/\///g')" >/dev/null 2>&1; then
-				echo "${1}: Abort! /bin/date doesn't recognise the detected DateTime as a valid date" && return 1
-			fi
-		elif [[ "${OS}" == 'Linux' ]]; then
-			if ! date --date="$(echo "${DATETIME}" | sed 's/\///g')" >/dev/null 2>&1; then
-				echo "${1}: Abort! /bin/date doesn't recognise the detected DateTime as a valid date" && return 1
-			fi
-		fi
-
-		# copy the file into place
-		if [[ -n "${FILENAME}" ]]; then
-			mkdir -p "${PHOTO_DIR}/${DATETIME}"
-			if [[ ! -f "${PHOTO_DIR}/${DATETIME}/${FILENAME}" ]]; then
-				cp -p "${1}" "${PHOTO_DIR}/${DATETIME}/${FILENAME}"
-			fi
-		fi
-	}
 	photo_import() {
+		_import_photo() {
+			local DATETIME="$(exiv2 -pt -qK Exif.Photo.DateTimeOriginal "${1}" 2>/dev/null | awk '{print $(NF-1)}' | sed 's/\:/\//g' | sort -u)"
+			local FILENAME="$(echo "${1}" | awk -F"/" '{print $NF}' | tr '[:upper:]' '[:lower:]')"
+			local PHOTO_DIR="${HOME}/Pictures"
+	
+			# sanity checks
+			if [[ -z "${DATETIME}" ]]; then
+				echo "${1}: Abort! DateTime not found" && return 1
+			elif [[ "$(echo "${DATETIME}" | wc -l)" -ne 1 ]]; then
+				echo "${1}: Abort! File has more than one DateTime declaration" && return 1
+			elif [[ "${OS}" == 'OpenBSD' ]]; then
+				if ! date -j "$(echo "${DATETIME}/0000" | sed 's/\///g')" >/dev/null 2>&1; then
+					echo "${1}: Abort! /bin/date doesn't recognise the detected DateTime as a valid date" && return 1
+				fi
+			elif [[ "${OS}" == 'Linux' ]]; then
+				if ! date --date="$(echo "${DATETIME}" | sed 's/\///g')" >/dev/null 2>&1; then
+					echo "${1}: Abort! /bin/date doesn't recognise the detected DateTime as a valid date" && return 1
+				fi
+			fi
+	
+			# copy the file into place
+			if [[ -n "${FILENAME}" ]]; then
+				mkdir -p "${PHOTO_DIR}/${DATETIME}"
+				if [[ ! -f "${PHOTO_DIR}/${DATETIME}/${FILENAME}" ]]; then
+					cp -p "${1}" "${PHOTO_DIR}/${DATETIME}/${FILENAME}"
+				fi
+			fi
+		}
 		# This script will search recursively for exif metadata in supported
 		#   files within the current directory, and copy images to
 		#   $PHOTO_DIR/$YYYY/$MM/$DD
@@ -522,8 +522,8 @@ if command -v exiv2 >/dev/null; then
 		for x in ${FILETYPES}; do
 			find . -type f -iname "*.${x}" | while read -r photo; do _import_photo "${photo}"; done
 		done
+		unset -f _import_photo
 	}
-	unset -f _import_photo
 fi
 
 # pomodoro() timer
