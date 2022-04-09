@@ -246,6 +246,10 @@ elif [[ "${OS}" == 'Linux' ]]; then
 			alias cal='/usr/bin/ncal -bM'
 		fi
 		alias checkupdates='apt list --upgradeable'
+		if [[ -r /etc/pop-os/issue ]]; then
+			alias pkgup='/usr/bin/sudo /bin/bash -c "/bin/apt update && /bin/apt upgrade -y && /bin/flatpak update --system -y && /bin/flatpak uninstall --system --unused -y"'
+		fi
+
 	elif [[ -r /etc/redhat-release ]]; then
 		alias checkupdates='yum -q check-update'
 	fi
