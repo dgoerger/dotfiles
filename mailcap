@@ -1,7 +1,7 @@
 ### Begin custom config for mutt et al ###
 # html
-text/html; lynx -vikeys -force_empty_hrefless_a -enable_scrollback -dump %s; nametemplate=%s.html; copiousoutput
+text/html; pandoc -st plain+gutenberg %s; nametemplate=%s.html; copiousoutput
 # doc
-application/msword; pandoc -s %s -t markdown; copiousoutput
+application/msword; pandoc -st plain+gutenberg %s; copiousoutput
 # docx
-application/vnd.openxmlformats-officedocument.wordprocessingml.document; pandoc -s %s -t markdown; copiousoutput
+application/vnd.openxmlformats-officedocument.wordprocessingml.document; pandoc -st plain+gutenberg %s; copiousoutput

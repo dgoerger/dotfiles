@@ -35,9 +35,6 @@ export LANG="en_CA.UTF-8"
 export LC_ALL="en_CA.UTF-8"
 export LESSSECURE=1
 if [[ -r "${HOME}/.lynxrc" ]]; then
-	if [[ -r "${HOME}/.elynxrc" ]]; then
-		alias elynx='COLUMNS=80 lynx -cfg=~/.elynxrc -useragent "Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0" 2>/dev/null'
-	fi
 	export LYNX_CFG="${HOME}/.lynxrc"
 	alias lynx='COLUMNS=80 lynx -useragent "Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0" 2>/dev/null'
 fi
@@ -357,7 +354,6 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == 'ksh' ]]; then
 	set -A complete_scp_2 -- ${HOST_LIST}
 	set -A complete_sftp_1 -- -p
 	set -A complete_sftp_2 -- ${HOST_LIST}
-	set -A complete_search_1 -- alpine arxiv cve debian fedora freebsd mandebian mandragonflybsd manfreebsd manillumos manlinux mannetbsd manopenbsd mbug nws rfc rhbz ubuntu wikipedia wiktionary
 	set -A complete_ssh_1 -- ${HOST_LIST}
 	set -A complete_systat_1 -- buckets cpu ifstat iostat malloc mbufs netstat nfsclient nfsserver pf pigs pool pcache queues rules sensors states swap vmstat uvm
 	set -A complete_tmux_1 -- attach list-commands list-sessions list-windows new-session new-window source
@@ -483,6 +479,121 @@ fd() {
 		find . -iname "*${1}*"
 	fi
 }
+
+# info() retrieve information from the Internet
+if command -v pandoc >/dev/null && command -v lowdown >/dev/null; then
+	info() {
+		usage() {
+			printf "usage:\n\tinfo [KEYWORD] [QUERY]\n\nSupported KEYWORDs:\n"
+			printf "\t* alpine PKG      - search the package repositories for Alpine Linux\n"
+			printf "\t* debian PKG      - search the package repositories for Debian Linux\n"
+			printf "\t* mandebian CMD   - retrieve manuals from the Debian Project\n"
+			printf "\t* manfbsd CMD     - retrieve manuals from the FreeBSD Project\n"
+			printf "\t* manobsd CMD     - retrieve manuals from the OpenBSD Project\n"
+			printf "\t* nws ZIPCODE     - retrieve forecasts from the US National Weather Service\n"
+			printf "\t* rfc NUMBER      - retrieve the text of a published IETF RFC\n"
+			printf "\t* thesaurus WORD  - query the Oxford Dictionary thesaurus\n"
+			printf "\t* wikipedia WORD  - query Wikipedia, the free encyclopedia\n"
+			printf "\t* wiktionary WORD - query Wiktionary, the free dictionary\n"
+		}
+		
+		# try to guess preferred language from $LANG
+		if [[ -n "${LANG}" ]]; then
+			local readonly lang="$(echo "${LANG}" | cut -c1-2)"
+		else
+			local readonly lang='en'
+		fi
+		
+		# escape characters for URL-encoding
+		escape_html() {
+			echo "$@" | sed 's/%/%25/g;
+				s/+/%2B/g;
+				s/ /%20/g;
+				s/(/%28/g;
+				s/)/%29/g;
+				s/"/%22/g;
+				s/#/%23/g;
+				s/\$/%24/g;
+				s/&/%26/g;
+				s/,/%2C/g;
+				sx/x%2Fxg;
+				s/:/%3A/g;
+				s/;/%3B/g;
+				s/</%3C/g;
+				s/=/%3D/g;
+				s/>/%3E/g;
+				s/?/%3F/g;
+				s/@/%40/g;
+				s/\[/%5B/g;
+				s/\\/%5C/g;
+				s/\]/%5D/g;
+				s/\^/%5E/g;
+				s/{/%7B/g;
+				s/|/%7C/g;
+				s/}/%7D/g;
+				s/~/%7E/g;
+				s/`/%60/g;
+			'"s/'/%27/g"
+		}
+		
+		# browser
+		open_html() {
+			pandoc -st plain+gutenberg \
+			--request-header User-Agent:"Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0" \
+			"${1}" | lowdown -sT term | less -iLMR
+		}
+		
+		if [[ "${#}" == '0' ]] || [[ "${1}" == '-h' ]] || [[ "${1}" == '--help' ]]; then
+			usage
+			return 0
+		elif [[ "${#}" -lt 2 ]]; then
+			usage
+			return 1
+		else
+			local readonly site="${1}"
+			shift
+			local readonly query="$(escape_html "$@")"
+		fi
+		
+		case "${site}" in
+			apk|alpine)
+				open_html "https://pkgs.alpinelinux.org/packages?name=${query}&branch=edge&arch=x86_64"
+				;;
+			deb|debian)
+				open_html "https://tracker.debian.org/search?package_name=${query}"
+				;;
+			man|manobsd|manopenbsd)
+				open_html "https://man.openbsd.org/?sec=0&arch=default&manpath=OpenBSD-current&query=${query}"
+				;;
+			mandeb|mandebian)
+				open_html "https://manpages.debian.org/jump?q=${query}"
+				;;
+			manfbsd|manfreebsd)
+				open_html "https://www.freebsd.org/cgi/man.cgi?query=${query}&apropos=0&sektion=0&manpath=FreeBSD+13.0-RELEASE&arch=default&format=ascii"
+				;;
+			nws)
+				open_html "https://forecast.weather.gov/zipcity.php?inputstring=${query}&btnSearch=Go&unit=1"
+				;;
+			rfc)
+				open_html "https://tools.ietf.org/rfc/rfc${query}.txt"
+				;;
+			thesaurus)
+				open_html "https://en.oxforddictionaries.com/thesaurus/${query}"
+				;;
+			w|wikipedia)
+				open_html "https://${lang}.wikipedia.org/w/index.php?search=${query}&title=Special%3ASearch&go=Go"
+				;;
+			wikt|wiktionary)
+				open_html "https://${lang}.wiktionary.org/w/index.php?search=${query}&title=Special%3ASearch&go=Go"
+				;;
+			*)
+				usage
+				return 1
+				;;
+		esac
+	unset -f escape_html open_html usage
+	}
+fi
 
 # photo_import() import photos from an SD card
 if command -v exiv2 >/dev/null; then

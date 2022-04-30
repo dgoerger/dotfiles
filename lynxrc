@@ -49,7 +49,6 @@ RULE:Fail finger:*
 RULE:Fail ftp:*
 RULE:Fail gopher:*
 RULE:Fail http:*
-https_proxy:http://[::1]:3128
 RULE:Fail lynxexec:*
 RULE:Fail lynxprog:*
 RULE:Fail mailto:*
