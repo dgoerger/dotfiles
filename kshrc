@@ -83,6 +83,9 @@ alias mv='mv -i'
 if command -v newsboat >/dev/null; then
 	alias news='newsboat -q'
 fi
+if command -v pandoc >/dev/null; then
+	alias pandoc_gutenberg='pandoc -st plain+gutenberg --request-header User-Agent:"Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0"'
+fi
 alias pscpu='ps -Awwro user,pid,ppid,nice,%cpu,%mem,vsz,rss,state,wchan,time,command'
 alias psmem='ps -Awwmo user,pid,state,time,pagein,vsz,rss,tsiz,%cpu,%mem,command'
 alias pssec='ps -Awwo pid,state,user,etime,rtable,comm,pledge'
@@ -425,8 +428,8 @@ ereader() {
 		fi
 	}
 	open_pandoc() {
-		if command -v pandoc >/dev/null 2>&1 && command -v lowdown >/dev/null 2>&1; then
-			pandoc -t plain+gutenberg "${1}" | lowdown -sTterm | less
+		if command -v pandoc_gutenberg >/dev/null 2>&1 && command -v lowdown >/dev/null 2>&1; then
+			pandoc_gutenberg "${1}" | lowdown -sTterm | less
 		else
 			printf "ERROR: command 'pandoc' or 'lowdown' not found\n"
 			return 1
@@ -481,7 +484,7 @@ fd() {
 }
 
 # info() retrieve information from the Internet
-if command -v pandoc >/dev/null && command -v lowdown >/dev/null; then
+if command -v pandoc_gutenberg >/dev/null && command -v lowdown >/dev/null; then
 	info() {
 		usage() {
 			printf "usage:\n\tinfo [KEYWORD] [QUERY]\n\nSupported KEYWORDs:\n"
@@ -538,9 +541,7 @@ if command -v pandoc >/dev/null && command -v lowdown >/dev/null; then
 		
 		# browser
 		open_html() {
-			pandoc -st plain+gutenberg \
-			--request-header User-Agent:"Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0" \
-			"${1}" | lowdown -sT term | less -iLMR
+			pandoc_gutenberg "${1}" | lowdown -sT term | less
 		}
 		
 		if [[ "${#}" == '0' ]] || [[ "${1}" == '-h' ]] || [[ "${1}" == '--help' ]]; then

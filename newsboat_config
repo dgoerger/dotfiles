@@ -1,6 +1,6 @@
 # ~/.newsboat/config, see newsboat(1)
 always-display-description      true
-browser                         "pandoc -t plain+gutenberg %u | lowdown -sTterm | less -iLMR"
+browser                         "pandoc -st plain+gutenberg --request-header User-Agent:'Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0' %u | lowdown -sTterm | less -iLMR"
 cache-file                      ~/.newsboat/cache.db
 cleanup-on-quit                 yes
 confirm-mark-feed-read          no
