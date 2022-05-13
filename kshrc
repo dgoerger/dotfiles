@@ -117,6 +117,41 @@ if [[ "${OS}" == 'Darwin' ]]; then
 	export MANWIDTH=80
 	export SSH_AUTH_SOCK_PATH="${HOME}/.ssh/ssh-$(printf "%s@%s" "${LOGNAME}" "${HOSTNAME}" | shasum -a 256 | awk '{print $1}').socket"
 
+	getent() {
+		usage() {
+			printf "usage:\n\tgetent group GROUPNAME\n\tgetent hosts HOSTNAME\n\tgetent passwd USERNAME\n"
+		}
+		if [[ "${#}" == '1' ]]; then
+			if [[ "${1}" == '-h' ]] || [[ "${1}" == '--help' ]]; then
+				usage
+				return 0
+			else
+				usage
+				return 1
+			fi
+		elif [[ "${#}" == '2' ]]; then
+			case "${1}" in
+				group)
+					dscacheutil -q group -a name "${2}"
+					;;
+				hosts)
+					dscacheutil -q host -a name "${2}"
+					;;
+				passwd)
+					dscacheutil -q user -a name "${2}"
+					;;
+				*)
+					usage
+					return 1
+					;;
+			esac
+		else
+			usage
+			exit 1
+		fi
+		unset -f usage
+	}
+
 	alias bc='bc -ql'
 	alias cal='/usr/bin/ncal -C'
 	alias dns_reset='sudo killall -HUP mDNSResponder; sudo killall mDNSResponderHelper; sudo dscacheutil -flushcache'
