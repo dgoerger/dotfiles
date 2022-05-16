@@ -281,6 +281,7 @@ elif [[ "${OS}" == 'Linux' ]]; then
 			alias cal='/usr/bin/ncal -bM'
 		fi
 		alias checkupdates='apt list --upgradeable'
+		alias pkgextras='apt list "~o"'
 		if [[ -r /etc/pop-os/issue ]]; then
 			alias pkgup='/usr/bin/sudo /bin/bash -c "/bin/apt update && /bin/apt upgrade -y && /bin/flatpak update --system -y && /bin/flatpak uninstall --system --unused -y"'
 		fi
@@ -345,7 +346,7 @@ elif [[ "${OS}" == 'OpenBSD' ]]; then
 		}
 	fi
 	alias pkgup='/usr/bin/doas /usr/sbin/pkg_add -Vu'
-	usrlocal_extras() {
+	pkgextras() {
 		# function to identify files in /usr/local which aren't claimed by an installed package
 		local LOCAL_FILES="$(mktemp)"
 		local PKG_FILES="$(mktemp)"
