@@ -32,7 +32,7 @@ attachments -A application/x-pkcs7-.*
 attachments +I text/plain
 attachments -A message/external-body
 attachments -I message/external-body
-auto_view text/html text/calendar application/ics application/vnd.openxmlformats-officedocument.wordprocessingml.document
+auto_view text/html
 mime_lookup application/octet-stream
 
 ### address book
