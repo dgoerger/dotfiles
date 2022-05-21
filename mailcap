@@ -1,7 +1,2 @@
-### Begin custom config for mutt et al ###
 # html
 text/html; pandoc -st plain+gutenberg %s; nametemplate=%s.html; copiousoutput
-# doc
-application/msword; pandoc -st plain+gutenberg %s; copiousoutput
-# docx
-application/vnd.openxmlformats-officedocument.wordprocessingml.document; pandoc -st plain+gutenberg %s; copiousoutput
