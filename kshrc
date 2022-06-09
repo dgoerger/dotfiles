@@ -711,6 +711,40 @@ pomodoro() {
 	unset -f usage
 }
 
+# poweroff() + reboot() with molly-guard
+if [[ "${OS}" == 'OpenBSD' ]] || [[ -r "/etc/alpine-release" ]]; then
+	poweroff() {
+		stty -echo
+		printf 'Please enter the name of the machine to power off: '
+		read -r MACHINE_NAME
+		stty echo
+	
+		if [[ "${HOSTNAME}" == "${MACHINE_NAME}" ]]; then
+			if [[ "${OS}" == 'OpenBSD' ]]; then
+				doas /sbin/shutdown -p now
+			elif [[ -r "/etc/alpine-release" ]]; then
+				doas /sbin/poweroff
+			fi
+		else
+			printf "\n\nRefusing to power off '%s'...\n\n" "${HOSTNAME}"
+			return 1
+		fi
+	}
+fi
+reboot() {
+	stty -echo
+	printf 'Please enter the name of the machine to reboot: '
+	read -r MACHINE_NAME
+	stty echo
+
+	if [[ "${HOSTNAME}" == "${MACHINE_NAME}" ]]; then
+		doas /sbin/reboot
+	else
+		printf "\n\nRefusing to reboot '%s'...\n\n" "${HOSTNAME}"
+		return 1
+	fi
+}
+
 # pwgen() random password generator
 pwgen() {
 	if [[ $# == 0 ]]; then
