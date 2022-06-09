@@ -357,6 +357,9 @@ elif [[ "${OS}" == 'OpenBSD' ]]; then
 		diff -U0 -L pkg_files -L installed_files "${PKG_FILES}" "${LOCAL_FILES}" | grep -Ev "^\@" | awk '/^\@/ {printf "\033[0;96m%s\033[0;0m\n", $0} /^\-/ {printf "\033[0;91m%s\033[0;0m\n", $0} /^\+/ {printf "\033[0;92m%s\033[0;0m\n", $0} /^\ / {printf "\033[0;0m%s\033[0;0m\n", $0}'
 		/bin/rm "${LOCAL_FILES}" "${PKG_FILES}"
 	}
+	if [[ -x /usr/local/sbin/sysclean ]]; then
+		alias sysclean='doas /usr/local/sbin/sysclean'
+	fi
 fi
 
 
