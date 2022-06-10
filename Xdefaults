@@ -19,8 +19,6 @@ XTerm*faceName              : xft:Fira Mono:pixelsize=20
 XTerm*faceNameDoublesize    : xft:Noto Sans Mono CJK JP:pixelsize=16:style=Regular
 XTerm*antialias             : true
 ! mouse
-XTerm*allowMouseOps         : true
-XTerm*disallowedMouseOps    : "X10,Locator,VT200Click,VT200Hilite,AnyButton,AnyEvent,FocusEvent,Extended,URXVT,AlternateScroll"
 XTerm*charClass             : 33:48,35:48,37:48,43:48,45-47:48,64:48,95:48,126:48,35:48,58:48,63:48,61:48,44:48,38:48,59:48
 XTerm*fastScroll            : true
 XTerm*scrollBar             : false
