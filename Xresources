@@ -1,4 +1,4 @@
-! ~/.Xdefaults
+! ~/.Xresources
 !
 !!! Fonts
 Xft.antialias               : true
