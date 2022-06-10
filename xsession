@@ -8,6 +8,9 @@ fi
 /usr/X11R6/bin/setxkbmap us mac
 # background
 /usr/X11R6/bin/xsetroot -solid "#252123"
+if [[ -r "${HOME}/.Xresources" ]]; then
+        /usr/X11R6/bin/xrdb load "${HOME}/.Xresources"
+fi
 if [[ -x /usr/local/bin/xwallpaper ]] && [[ -r ${HOME}/.config/wallpaper/current ]]; then
 	/usr/local/bin/xwallpaper --center ${HOME}/.config/wallpaper/current
 fi
