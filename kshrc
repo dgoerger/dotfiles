@@ -722,6 +722,7 @@ if [[ "${OS}" == 'OpenBSD' ]] || [[ -r "/etc/alpine-release" ]]; then
 		printf 'Please enter the name of the machine to power off: '
 		read -r MACHINE_NAME
 		stty echo
+		printf '\n'
 	
 		if [[ "${HOSTNAME}" == "${MACHINE_NAME}" ]]; then
 			if [[ "${OS}" == 'OpenBSD' ]]; then
