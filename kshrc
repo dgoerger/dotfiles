@@ -277,6 +277,9 @@ elif [[ "${OS}" == 'Linux' ]]; then
 			alias pkgup='/usr/bin/doas /bin/sh -c "/sbin/apk update && /sbin/apk upgrade && /sbin/apk fix -s"'
 		fi
 		unalias realpath
+		if [[ -x /usr/sbin/zzz ]]; then
+			alias zzz='/usr/bin/doas /usr/sbin/zzz'
+		fi
 	elif [[ -r /etc/debian_version ]]; then
 		if [[ -x /usr/bin/ncal ]]; then
 			alias cal='/usr/bin/ncal -bM'
