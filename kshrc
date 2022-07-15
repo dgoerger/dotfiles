@@ -744,6 +744,7 @@ reboot() {
 	printf 'Please enter the name of the machine to reboot: '
 	read -r MACHINE_NAME
 	stty echo
+	printf '\n'
 
 	if [[ "${HOSTNAME}" == "${MACHINE_NAME}" ]]; then
 		doas /sbin/reboot
