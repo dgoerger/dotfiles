@@ -666,7 +666,7 @@ if command -v exiv2 >/dev/null; then
 			if [[ -n "${FILENAME}" ]]; then
 				mkdir -p "${PHOTO_DIR}/${DATETIME}"
 				if [[ ! -f "${PHOTO_DIR}/${DATETIME}/${FILENAME}" ]]; then
-					cp -p "${1}" "${PHOTO_DIR}/${DATETIME}/${FILENAME}"
+					install -pm 0444 "${1}" "${PHOTO_DIR}/${DATETIME}/${FILENAME}"
 				fi
 			fi
 		}
