@@ -5,6 +5,7 @@
 	contributors = shortlog -ens
 	remotes = remote get-url --all origin
 	st = status --branch --porcelain
+	sub = submodule update --init --recursive
 	tags = tag -l
 	worktrees = worktree list
 [apply]
