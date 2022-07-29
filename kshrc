@@ -1070,7 +1070,7 @@ if command -v got >/dev/null; then
 fi
 
 ### fix ssh agent forwarding workstation->jumpbox
-if [[ "${HOSTNAME}" == "${SSH_JUMPBOX}" ]] && echo "${SSH_AUTH_SOCK}" | grep -qE "^/tmp/ssh-.*/agent\."; then
+if [[ "${HOSTNAME}" == "${SSH_JUMPBOX}" ]] && [[ -z "${DESKTOP_SESSION}" ]] && [[ -z "${XRDP_SESSION}" ]] && echo "${SSH_AUTH_SOCK}" | grep -qE "^/tmp/ssh-.*/agent\."; then
 	if [[ -w "${HOME}" ]] && [[ -S "${SSH_AUTH_SOCK}" ]] && [[ "${SSH_AUTH_SOCK}" != "$(realpath "${SSH_AUTH_SOCK_PATH}" 2>/dev/null)" ]]; then
 		/bin/ln -sf "${SSH_AUTH_SOCK}" "${SSH_AUTH_SOCK_PATH}"
 	fi
