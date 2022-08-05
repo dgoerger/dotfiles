@@ -3,7 +3,7 @@
 
 ### all operating systems and shells
 ## PATH
-export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/games:/usr/local/bin
+export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin
 
 ## terminal settings
 # disable terminal flow control (^S/^Q)
@@ -20,7 +20,6 @@ umask 077
 
 ## environment variables
 unset  ENV
-export BROWSER=lynx
 export EDITOR=vi
 export GIT_AUTHOR_EMAIL="${LOGNAME}@users.noreply.github.com"
 export GIT_AUTHOR_NAME="$(getent passwd "${LOGNAME}" | cut -d: -f5 | cut -d, -f1)"
