@@ -221,14 +221,18 @@ elif [[ "${OS}" == 'Linux' ]]; then
 		local COMMIT_LIMIT="$(echo "${MEMINFO}" | awk '/^CommitLimit:/ {print $2}')"
 		local COMMIT_USED="$(echo "${MEMINFO}" | awk '/^Committed_AS:/ {print $2}')"
 		local HUGEPAGE_FREE="$(echo "${HUGEPAGE_BLOCKS_FREE} * ${HUGEPAGE_BLOCKS_SIZE}" | bc -l)"
-		local HUGEPAGES="$(echo "${HUGEPAGE_TOTAL} - ${HUGEPAGE_FREE}" | bc -l)"
+		local HUGEPAGE_USED="$(echo "${HUGEPAGE_TOTAL} - ${HUGEPAGE_FREE}" | bc -l)"
 		local BUFFCACHE="$(echo "${BUFFERS} + ${CACHE} + ${SLAB}" | bc -l)"
 		local USED="$(echo "${TOTAL} - ${BUFFCACHE} - ${FREE} - ${HUGEPAGE_FREE}" | bc -l)"
+		local NONHUGEPAGE_TOTAL="$(echo "${TOTAL} - ${HUGEPAGE_TOTAL}" | bc -l)"
 		local SWAP_USED="$(echo "${SWAP_TOTAL} - ${SWAP_CACHE} - ${SWAP_FREE}" | bc -l)"
 		local COMMIT_PERCENT="$(echo "result = (${COMMIT_USED} / ${COMMIT_LIMIT}) * 100; scale=0; result/1" | bc -l)"
 
-		printf "\ttotal\tused\tfree\tshared\tcached\tavail\thpused\thptot\tvmcom\n"
-		printf "Mem:\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s%%\n" "$(scale ${TOTAL})" "$(scale ${USED})" "$(scale ${FREE})" "$(scale ${SHARED})" "$(scale ${BUFFCACHE})" "$(scale ${AVAIL})" "$(scale ${HUGEPAGES})" "$(scale ${HUGEPAGE_TOTAL})" "${COMMIT_PERCENT}"
+		printf "\ttotal\tused\tfree\tshared\tcached\tavail\tvmcom\n"
+		printf "Mem:\t%s\t%s\t%s\t%s\t%s\t%s\t%s%%\n" "$(scale ${NONHUGEPAGE_TOTAL})" "$(scale ${USED})" "$(scale ${FREE})" "$(scale ${SHARED})" "$(scale ${BUFFCACHE})" "$(scale ${AVAIL})" "${COMMIT_PERCENT}"
+		if [[ "${HUGEPAGE_TOTAL}" != '0' ]]; then
+			printf "HugePg:\t%s\t%s\t%s\n" "$(scale ${HUGEPAGE_TOTAL})" "$(scale ${HUGEPAGE_USED})" "$(scale ${HUGEPAGE_FREE})"
+		fi
 		if [[ "${SWAP_TOTAL}" != '0' ]]; then
 			printf "Swap:\t%s\t%s\t%s\n" "$(scale ${SWAP_TOTAL})" "$(scale ${SWAP_USED})" "$(scale ${SWAP_FREE})"
 		fi
