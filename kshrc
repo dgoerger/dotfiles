@@ -774,7 +774,7 @@ pwgen() {
 # rename() files
 rename() {
 	usage() {
-		printf "usage:\n\trename [-nv] "REGEX" filename(s)\n"
+		printf "usage:\n\trename [-nv] 'REGEX' filename(s)\n"
 	}
 
 	while getopts ":hnVv" option; do
