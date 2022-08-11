@@ -51,6 +51,7 @@ set text_flowed = yes
 set wrap = 80
 
 ### mailbox navigation
+set ascii_chars = yes
 set collapse_unread = no
 set date_format = "%Y%m%d"
 set index_format = "%2C | %Z [%d] %-25.25F (%-4.4c) %s"
