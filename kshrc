@@ -88,6 +88,9 @@ fi
 alias pscpu='ps -Awwro user,pid,ppid,nice,%cpu,%mem,vsz,rss,state,wchan,time,command'
 alias psmem='ps -Awwmo user,pid,state,time,pagein,vsz,rss,tsiz,%cpu,%mem,command'
 alias pssec='ps -Awwo pid,state,user,etime,rtable,comm,pledge'
+if ! command -v pstree >/dev/null 2>&1; then
+	alias pstree='ps fauxw'
+fi
 alias rgrep='grep -rIns --'
 alias rm='rm -i'
 alias stat='stat -x'
@@ -160,6 +163,7 @@ if [[ "${OS}" == 'Darwin' ]]; then
 	alias listening='netstat -an | grep LISTEN'
 	alias mtop='top -o mem'
 	unalias pssec
+	unalias pstree
 	alias realpath='readlink'
 
 elif [[ "${OS}" == 'FreeBSD' ]]; then
@@ -251,9 +255,6 @@ elif [[ "${OS}" == 'Linux' ]]; then
 	alias pscpu='ps -Awwo user,pid,ppid,nice,pcpu,pmem,vsz:10,rss:8,stat,cputime,command --sort -pcpu,-vsz,-pmem,-rss'
 	alias psmem='ps -Awwo user,pid,stat,cputime,majflt,vsz:10,rss:8,trs:8,pcpu,pmem,command --sort -rss,-vsz,-pcpu'
 	alias pssec='ps -Awo pid,stat,user,etime,command,cgname'
-	if ! command -v pstree >/dev/null; then
-		alias pstree='ps auxwf'
-	fi
 	alias realpath='readlink -ev'
 	unalias stat
 	alias top='top -s'
