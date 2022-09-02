@@ -18,8 +18,9 @@ set.spelllang   = 'en_ca'       -- enable spellcheck with ':set spell'
 
 -- indentation schema
 vim.cmd [[
-        set nofoldenable
+	set nofoldenable
 	autocmd BufNewFile,BufRead .calendar set ft=calendar noexpandtab
 	autocmd BufRead,BufNewFile /tmp/mutt* set ft=mail spell formatoptions+=aw nosmartindent nocindent indentexpr=
 	autocmd BufRead,BufNewFile *.md,*.markdown set ft=mkd syntax=markdown spell formatoptions+=aw textwidth=70 nosmartindent nocindent indentexpr=
+	autocmd BufRead,BufNewFile Jenkinsfile*,*.jenkinsfile set ft=groovy syntax=groovy
 ]]
