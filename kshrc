@@ -149,7 +149,7 @@ if [[ "${OS}" == 'Darwin' ]]; then
 			esac
 		else
 			usage
-			exit 1
+			return 1
 		fi
 		unset -f usage
 	}
@@ -204,42 +204,64 @@ elif [[ "${OS}" == 'Linux' ]]; then
 	fi
 	unalias free
 	function free {
+		# FOR COMPATIBILITY with procps-ng, and to ensure safe scripting, revert
+		#     to procps-ng's implementation whenever argc > 1
+		if [[ "${#}" -gt 0 ]]; then
+			if [[ -x /usr/bin/free ]]; then
+				/usr/bin/free "${@}"
+				return $?
+			else
+				printf "command not found: /usr/bin/free\n"
+				return 1
+			fi
+		fi
+
+		# format for human-readable output
 		scale() {
 			printf "%s\n" "${1}" | awk -v CONVFMT='%.1f' '{ split( "K M G T E" , v ); s=1; while( $1>1024 ){ $1/=1024; s++ } print $1 v[s] }'
 		}
 
-		local MEMINFO="$(cat /proc/meminfo)"
-		local TOTAL="$(echo "${MEMINFO}" | awk '/^MemTotal:/ {print $2}')"
-		local FREE="$(echo "${MEMINFO}" | awk '/^MemFree:/ {print $2}')"
-		local AVAIL="$(echo "${MEMINFO}" | awk '/^MemAvailable:/ {print $2}')"
-		local SHARED="$(echo "${MEMINFO}" | awk '/^Shmem:/ {print $2}')"
-		local CACHE="$(echo "${MEMINFO}" | awk '/^Cached:/ {print $2}')"
-		local BUFFERS="$(echo "${MEMINFO}" | awk '/^Buffers:/ {print $2}')"
-		local HUGEPAGE_TOTAL="$(echo "${MEMINFO}" | awk '/^Hugetlb:/ {print $2}')"
-		local HUGEPAGE_BLOCKS_FREE="$(echo "${MEMINFO}" | awk '/^HugePages_Free:/ {print $2}')"
-		local HUGEPAGE_BLOCKS_SIZE="$(echo "${MEMINFO}" | awk '/^Hugepagesize:/ {print $2}')"
-		local SLAB="$(echo "${MEMINFO}" | awk '/^SReclaimable:/ {print $2}')"
-		local SWAP_TOTAL="$(echo "${MEMINFO}" | awk '/^SwapTotal:/ {print $2}')"
-		local SWAP_FREE="$(echo "${MEMINFO}" | awk '/^SwapFree:/ {print $2}')"
-		local SWAP_CACHE="$(echo "${MEMINFO}" | awk '/^SwapCached:/ {print $2}')"
-		local COMMIT_LIMIT="$(echo "${MEMINFO}" | awk '/^CommitLimit:/ {print $2}')"
-		local COMMIT_USED="$(echo "${MEMINFO}" | awk '/^Committed_AS:/ {print $2}')"
-		local HUGEPAGE_FREE="$(echo "${HUGEPAGE_BLOCKS_FREE} * ${HUGEPAGE_BLOCKS_SIZE}" | bc -l)"
-		local HUGEPAGE_USED="$(echo "${HUGEPAGE_TOTAL} - ${HUGEPAGE_FREE}" | bc -l)"
-		local BUFFCACHE="$(echo "${BUFFERS} + ${CACHE} + ${SLAB}" | bc -l)"
-		local USED="$(echo "${TOTAL} - ${BUFFCACHE} - ${FREE} - ${HUGEPAGE_FREE}" | bc -l)"
-		local NONHUGEPAGE_TOTAL="$(echo "${TOTAL} - ${HUGEPAGE_TOTAL}" | bc -l)"
-		local SWAP_USED="$(echo "${SWAP_TOTAL} - ${SWAP_CACHE} - ${SWAP_FREE}" | bc -l)"
-		local COMMIT_PERCENT="$(echo "result = (${COMMIT_USED} / ${COMMIT_LIMIT}) * 100; scale=0; result/1" | bc -l)"
+		# source /proc/meminfo ONCE to avoid inconsistencies stemming from multiple reads
+		local MEMINFO="$(cat /proc/meminfo)"; readonly MEMINFO
 
+		# maths
+		local TOTAL="$(echo "${MEMINFO}" | awk '/^MemTotal:/ {print $2}')"; readonly TOTAL
+		local FREE="$(echo "${MEMINFO}" | awk '/^MemFree:/ {print $2}')"; readonly FREE
+		local AVAIL="$(echo "${MEMINFO}" | awk '/^MemAvailable:/ {print $2}')"; readonly AVAIL
+		local SHARED="$(echo "${MEMINFO}" | awk '/^Shmem:/ {print $2}')"; readonly SHARED
+		local CACHE="$(echo "${MEMINFO}" | awk '/^Cached:/ {print $2}')"; readonly CACHE
+		local BUFFERS="$(echo "${MEMINFO}" | awk '/^Buffers:/ {print $2}')"; readonly BUFFERS
+		local HUGEPAGE_TOTAL="$(echo "${MEMINFO}" | awk '/^Hugetlb:/ {print $2}')"; readonly HUGEPAGE_TOTAL
+		local HUGEPAGE_BLOCKS_FREE="$(echo "${MEMINFO}" | awk '/HugePages_Free:/ {print $2}')"; readonly HUGEPAGE_BLOCKS_FREE
+		local HUGEPAGE_BLOCKS_SIZE="$(echo "${MEMINFO}" | awk '/Hugepagesize:/ {print $2}')"; readonly HUGEPAGE_BLOCKS_SIZE
+		local SLAB="$(echo "${MEMINFO}" | awk '/^SReclaimable:/ {print $2}')"; readonly SLAB
+		local SWAP_TOTAL="$(echo "${MEMINFO}" | awk '/^SwapTotal:/ {print $2}')"; readonly SWAP_TOTAL
+		local SWAP_FREE="$(echo "${MEMINFO}" | awk '/^SwapFree:/ {print $2}')"; readonly SWAP_FREE
+		local SWAP_CACHE="$(echo "${MEMINFO}" | awk '/^SwapCached:/ {print $2}')"; readonly SWAP_CACHE
+		local COMMIT_LIMIT="$(echo "${MEMINFO}" | awk '/^CommitLimit:/ {print $2}')"; readonly COMMIT_LIMIT
+		local COMMIT_USED="$(echo "${MEMINFO}" | awk '/^Committed_AS:/ {print $2}')"; readonly COMMIT_USED
+		local HUGEPAGE_FREE="$(echo "${HUGEPAGE_BLOCKS_FREE} * ${HUGEPAGE_BLOCKS_SIZE}" | bc -l)"; readonly HUGEPAGE_FREE
+		local SWAP_USED="$(echo "${SWAP_TOTAL} - ${SWAP_CACHE} - ${SWAP_FREE}" | bc -l)"; readonly SWAP_USED
+		local BUFFCACHE="$(echo "${BUFFERS} + ${CACHE} + ${SLAB}" | bc -l)"; readonly BUFFCACHE
+		local HUGEPAGE_USED="$(echo "${HUGEPAGE_TOTAL} - ${HUGEPAGE_FREE}" | bc -l)"; readonly HUGEPAGE_USED
+		local USED="$(echo "${TOTAL} - ${BUFFERS} - ${CACHE} - ${FREE} - ${SLAB} - ${HUGEPAGE_FREE} - ${HUGEPAGE_USED}" | bc -l)"; readonly USED
+		local NONHUGEPAGE_TOTAL="$(echo "${TOTAL} - ${HUGEPAGE_TOTAL}" | bc -l)"; readonly NONHUGEPAGE_TOTAL
+		local COMMIT_PERCENT="$(echo "result = (${COMMIT_USED} / ${COMMIT_LIMIT}) * 100; scale=0; result/1" | bc -l)"; readonly COMMIT_PERCENT
+		
+		# print memory usage
 		printf "\ttotal\tused\tfree\tshared\tcached\tavail\tvmcom\n"
 		printf "Mem:\t%s\t%s\t%s\t%s\t%s\t%s\t%s%%\n" "$(scale ${NONHUGEPAGE_TOTAL})" "$(scale ${USED})" "$(scale ${FREE})" "$(scale ${SHARED})" "$(scale ${BUFFCACHE})" "$(scale ${AVAIL})" "${COMMIT_PERCENT}"
+		
+		# only print the hugepages line if hugepages are enabled
 		if [[ "${HUGEPAGE_TOTAL}" != '0' ]]; then
 			printf "HugePg:\t%s\t%s\t%s\n" "$(scale ${HUGEPAGE_TOTAL})" "$(scale ${HUGEPAGE_USED})" "$(scale ${HUGEPAGE_FREE})"
 		fi
+		
+		# only print the swap line if swap is enabled
 		if [[ "${SWAP_TOTAL}" != '0' ]]; then
 			printf "Swap:\t%s\t%s\t%s\n" "$(scale ${SWAP_TOTAL})" "$(scale ${SWAP_USED})" "$(scale ${SWAP_FREE})"
 		fi
+
 		unset -f scale
 	}
 	alias l='LC_ALL=C ls -1F --color=never'
