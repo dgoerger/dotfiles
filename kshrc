@@ -38,7 +38,6 @@ export OS="$(uname)"
 if [[ -r "${HOME}/.pythonrc" ]]; then
 	export PYTHONSTARTUP="${HOME}/.pythonrc"
 fi
-export SAVEHIST=${HISTSIZE}
 export TZ='America/New_York'
 export VISUAL="${EDITOR}"
 

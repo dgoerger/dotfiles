@@ -35,3 +35,7 @@ compinit -i -D
 if [[ -r ${HOME}/.kshrc ]]; then
 	. ${HOME}/.kshrc
 fi
+
+if [[ -n ${HISTSIZE} ]]; then
+	export SAVEHIST=${HISTSIZE}
+fi
