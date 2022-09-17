@@ -24,18 +24,15 @@ export EDITOR=vi
 export GIT_AUTHOR_EMAIL="${LOGNAME}@users.noreply.github.com"
 export GIT_AUTHOR_NAME="$(getent passwd "${LOGNAME}" | cut -d: -f5 | cut -d, -f1)"
 export HISTCONTROL=ignoredups
-export HISTFILE=${HOME}/.history
+export HISTFILE="${HOME}/.history"
 export HISTSIZE=20736
-export HOSTNAME=$(hostname -s)
-if command -v jq >/dev/null 2>&1; then
-	export JQ_COLORS='0;37:0;39:0;39:0;39:0;32:1;39:1;39'
-fi
+export HOSTNAME="$(hostname -s)"
 export LANG="en_CA.UTF-8"
 export LC_ALL="en_CA.UTF-8"
 export LESSSECURE=1
 if [[ -r "${HOME}/.lynxrc" ]]; then
 	export LYNX_CFG="${HOME}/.lynxrc"
-	alias lynx='COLUMNS=80 lynx -useragent "Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0" 2>/dev/null'
+	alias lynx='COLUMNS=80 lynx -useragent "Mozilla/5.0 (Windows NT 10.0; rv:102.0) Gecko/20100101 Firefox/102.0" 2>/dev/null'
 fi
 export OS="$(uname)"
 if [[ -r "${HOME}/.pythonrc" ]]; then
@@ -43,7 +40,7 @@ if [[ -r "${HOME}/.pythonrc" ]]; then
 fi
 export SAVEHIST=${HISTSIZE}
 export TZ='America/New_York'
-export VISUAL=${EDITOR}
+export VISUAL="${EDITOR}"
 
 
 ## aliases
@@ -61,9 +58,6 @@ alias ducks='du -ahxd1 | sort -hr'
 alias free='top | grep -E "^Memory"'
 if command -v git >/dev/null; then
 	alias ggrep='git grep -in --'
-fi
-if command -v kpcli >/dev/null; then
-	alias kpcli='kpcli --histfile=/dev/null --readonly --kdb'
 fi
 alias l='ls -1F'
 alias lA='ls -AF'
@@ -83,7 +77,7 @@ if command -v newsboat >/dev/null; then
 	alias news='newsboat -q'
 fi
 if command -v pandoc >/dev/null; then
-	alias pandoc_gutenberg='pandoc -st plain+gutenberg --request-header User-Agent:"Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0"'
+	alias pandoc_gutenberg='pandoc -st plain+gutenberg --request-header User-Agent:"Mozilla/5.0 (Windows NT 10.0; rv:102.0) Gecko/20100101 Firefox/102.0"'
 fi
 alias pscpu='ps -Awwro user,pid,ppid,nice,%cpu,%mem,vsz,rss,state,wchan,time,command'
 alias psmem='ps -Awwmo user,pid,state,time,pagein,vsz,rss,tsiz,%cpu,%mem,command'
@@ -315,9 +309,6 @@ elif [[ "${OS}" == 'Linux' ]]; then
 		if [[ -r /etc/pop-os/issue ]]; then
 			alias pkgup='/usr/bin/sudo /bin/bash -c "/bin/apt update && /bin/apt upgrade -y && /bin/flatpak update --system -y && /bin/flatpak uninstall --system --unused -y"'
 		fi
-
-	elif [[ -r /etc/redhat-release ]]; then
-		alias checkupdates='yum -q check-update'
 	fi
 
 	# manual pages
@@ -439,23 +430,6 @@ fi
 
 
 ### functions
-# colours() test for true colour support
-colours() {
-	awk -v term_cols="${width:-$(tput cols || echo 80)}" 'BEGIN{
-		s="/\\";
-		for (colnum = 0; colnum<term_cols; colnum++) {
-			r = 255-(colnum*255/term_cols);
-			g = (colnum*510/term_cols);
-			b = (colnum*255/term_cols);
-			if (g>255) g = 510-g;
-			printf "\033[48;2;%d;%d;%dm", r,g,b;
-			printf "\033[38;2;%d;%d;%dm", 255-r,255-g,255-b;
-			printf "%s\033[0m", substr(s,colnum%2+1,1);
-		}
-		printf "\n";
-	}'
-}
-
 # def() look up the definition of a word
 def() {
 	if [[ $# -eq 1 ]]; then
@@ -873,19 +847,6 @@ rwhence() {
 	else
 		printf "usage:\n\trwhence COMMAND\n" >&2
 		return 1
-	fi
-}
-
-# shacompare() file comparison
-shacompare() {
-	if [[ $# == 2 ]] && [[ -r "${1}" ]] && [[ -r "${2}" ]]; then
-		if cmp -s "${1}" "${2}"; then
-			printf 'The two files are identical.\n'
-		else
-			printf 'The two files are NOT identical.\n'
-		fi
-	else
-		printf 'usage:\n\tshacompare FILE1 FILE2\n' && return 1
 	fi
 }
 
