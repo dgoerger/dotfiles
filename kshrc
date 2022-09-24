@@ -921,19 +921,25 @@ sysinfo() {
 		local memused='0'
 	fi
 
-	printf "OS:\t\t%s\n" "${distro}"
-	printf "Kernel:\t\t%s\n" "${kernel}"
 	if [[ "$((${uptime}/86400))" != '0' ]]; then
-		printf "Uptime:\t\t%s day(s)\n" "$((${uptime}/86400))"
+		local uptime_int="$((${uptime}/86400))"
+		local uptime_unit='days(s)'
 	elif [[ "$((${uptime}/3600))" != '0' ]]; then
-		printf "Uptime:\t\t%s hour(s)\n" "$((${uptime}/3600))"
+		local uptime_int="$((${uptime}/3600))"
+		local uptime_unit='hour(s)'
 	elif [[ "$((${uptime}/60))" != '0' ]]; then
-		printf "Uptime:\t\t%s minute(s)\n" "$((${uptime}/60))"
+		local uptime_int="$((${uptime}/60))"
+		local uptime_unit='minute(s)'
 	else
-		printf "Uptime:\t\t%s seconds\n" "${uptime}"
+		local uptime_int="${uptime}"
+		local uptime_unit='seconds'
 	fi
-	printf "RAM:\t\t%s / %s\n" "$(scale ${memused})" "$(scale ${memtot})"
-	printf "CPU:\t\t%s\n" "${cpu}"
+
+	printf "OS:\t\t%s\n\
+Kernel:\t\t%s\n\
+Uptime:\t\t%s %s\n\
+RAM:\t\t%s / %s\n\
+CPU:\t\t%s\n" "${distro}" "${kernel}" "${uptime_int}" "${uptime_unit}" "$(scale ${memused})" "$(scale ${memtot})" "${cpu}"
 	unset -f scale
 }
 
