@@ -159,17 +159,6 @@ if [[ "${OS}" == 'Darwin' ]]; then
 	unalias pstree
 	alias realpath='readlink'
 
-elif [[ "${OS}" == 'FreeBSD' ]]; then
-	export LESSHISTFILE=-
-
-	alias bc='bc -lPq'
-	alias cal='/usr/bin/ncal -C'
-	alias ducks='du -hxd1 | sort -hr'
-	alias free='top | grep -E "^Mem"'
-	alias listening='sockstat -l46'
-	unalias pssec
-	alias pstree='ps auxwd'
-
 elif [[ "${OS}" == 'Linux' ]]; then
 	# env
 	# with less(1) v594, we no-longer need to disable LESSHISTFILE manually
@@ -315,20 +304,6 @@ elif [[ "${OS}" == 'Linux' ]]; then
 		export MANWIDTH=80
 		alias man='man --nh --nj'
 	fi
-
-elif [[ "${OS}" == 'NetBSD' ]]; then
-	export LESSHISTFILE=-
-	export MANPATH=/usr/share/man:/usr/local/man
-	export PS1="${HOSTNAME}$ "
-
-	alias apropos='/usr/bin/apropos -l'
-	alias cal='/usr/bin/cal -d1'
-	unalias free
-	alias listening='netstat -anf inet | grep -Ev "(ESTABLISHED|TIME_WAIT|FIN_WAIT_1|FIN_WAIT_2)$"'
-	alias pkgsrc='ftp -Vo - "https://ftp.netbsd.org/pub/pkgsrc/packages/NetBSD/x86_64/$(uname -r)/All/" 2>/dev/null | less'
-	unalias pssec
-	alias pstree='ps auxwd'
-	alias realpath='readlink -fv'
 
 elif [[ "${OS}" == 'OpenBSD' ]]; then
 	export SSH_AUTH_SOCK_PATH="${HOME}/.ssh/ssh-$(printf "%s@%s" "${LOGNAME}" "${HOSTNAME}" | sha256).socket"
@@ -641,7 +616,6 @@ if command -v pandoc_gutenberg >/dev/null && command -v lowdown >/dev/null; then
 			printf "\t* alpine PKG      - search the package repositories for Alpine Linux\n"
 			printf "\t* debian PKG      - search the package repositories for Debian Linux\n"
 			printf "\t* mandebian CMD   - retrieve manuals from the Debian Project\n"
-			printf "\t* manfbsd CMD     - retrieve manuals from the FreeBSD Project\n"
 			printf "\t* manobsd CMD     - retrieve manuals from the OpenBSD Project\n"
 			printf "\t* nws ZIPCODE     - retrieve forecasts from the US National Weather Service\n"
 			printf "\t* rfc NUMBER      - retrieve the text of a published IETF RFC\n"
@@ -718,9 +692,6 @@ if command -v pandoc_gutenberg >/dev/null && command -v lowdown >/dev/null; then
 				;;
 			mandeb|mandebian)
 				open_html "https://manpages.debian.org/jump?q=${query}"
-				;;
-			manfbsd|manfreebsd)
-				open_html "https://www.freebsd.org/cgi/man.cgi?query=${query}&apropos=0&sektion=0&manpath=FreeBSD+13.0-RELEASE&arch=default&format=ascii"
 				;;
 			nws)
 				open_html "https://forecast.weather.gov/zipcity.php?inputstring=${query}&btnSearch=Go&unit=1"
@@ -1084,7 +1055,7 @@ whattimeisitin() {
 #     .. LESSPIPE pipe commands are incompatible with LESSSECURE=1;
 #     .. rather than disable security (e.g. 'alias zless="LESSSECURE= /usr/bin/zless"'),
 #     .. use an alternative implementation from the OpenBSD Project
-if [[ "${OS}" == 'Linux' ]] || [[ "${OS}" == 'FreeBSD' ]]; then
+if [[ "${OS}" == 'Linux' ]]; then
 	zless() {
 		# $OpenBSD: zmore,v 1.9 2019/01/25 00:19:26 millert Exp $
 		#

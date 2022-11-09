@@ -12,12 +12,9 @@ on OpenBSD-current, with versions tagged corresponding with each
 release.
 
 Dotfiles, as well as a subset of sysconfs and bin scripts, are also
-regularly battle-tested against Alpine-stable.
+regularly battle-tested against Alpine- and Debian-stable.
 
-Debian and NetBSD are also frequent test targets for dotfiles and
-scripts.
-
-FreeBSD and macOS are tested infrequently, and dotfiles-only.
+macOS is tested infrequently, and dotfiles-only.
 
 
 Testing
