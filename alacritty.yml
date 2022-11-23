@@ -6,7 +6,7 @@ env:
 
 window:
   dynamic_title: false
-  gtk_theme_variant: dark
+  decorations_theme_variant: dark
 
 font:
   normal:
