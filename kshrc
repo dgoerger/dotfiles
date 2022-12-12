@@ -161,10 +161,7 @@ if [[ "${OS}" == 'Darwin' ]]; then
 
 elif [[ "${OS}" == 'Linux' ]]; then
 	# env
-	# with less(1) v594, we no-longer need to disable LESSHISTFILE manually
-	# .. https://github.com/gwsw/less/commit/9eba0da958d33ef3582667e09701865980595361
-	export LESSHISTFILE=-
-	unset  LS_COLORS
+	unset LS_COLORS
 	if [[ -L "/bin" ]]; then
 		# some Linux have /bin -> /usr/bin
 		export PATH=/usr/local/bin:/bin:/sbin
@@ -173,14 +170,12 @@ elif [[ "${OS}" == 'Linux' ]]; then
 		export PATH=${HOME}/bin:${PATH}
 	fi
 	export SSH_AUTH_SOCK_PATH="${HOME}/.ssh/ssh-$(printf "%s@%s" "${LOGNAME}" "${HOSTNAME}" | sha256sum | awk '{print $1}').socket"
-	export QUOTING_STYLE=literal
 
 	# aliases
 	if command -v atop >/dev/null; then
 		alias atop='atop -f'
 	fi
 	alias bc='bc -ql'
-	alias date='LC_ALL=C /bin/date'
 	if ! command -v doas >/dev/null; then
 		alias doas=/usr/bin/sudo
 	fi
@@ -250,8 +245,6 @@ elif [[ "${OS}" == 'Linux' ]]; then
 	alias lA='LC_ALL=C ls -AF --color=never'
 	alias la='LC_ALL=C ls -aFhl --color=never'
 	alias larth='LC_ALL=C ls -aFhlrt --color=never'
-	alias less='less -iMR'
-	alias listening='ss -lntu'
 	alias ll='LC_ALL=C ls -Fhl --color=never'
 	alias ls='LC_ALL=C ls -F --color=never'
 	alias lS='LC_ALL=C ls -aFhlS --color=never'
@@ -259,7 +252,6 @@ elif [[ "${OS}" == 'Linux' ]]; then
 	alias pscpu='ps -Awwo user,pid,ppid,nice,pcpu,pmem,vsz:10,rss:8,stat,cputime,command --sort -pcpu,-vsz,-pmem,-rss'
 	alias psmem='ps -Awwo user,pid,stat,cputime,majflt,vsz:10,rss:8,trs:8,pcpu,pmem,command --sort -rss,-vsz,-pcpu'
 	alias pssec='ps -Awo pid,stat,user,etime,command,cgname'
-	alias realpath='readlink -ev'
 	unalias stat
 	alias top='top -s'
 	if ! whence whence >/dev/null 2>&1; then
@@ -277,7 +269,6 @@ elif [[ "${OS}" == 'Linux' ]]; then
 	if [[ -r /etc/alpine-release ]]; then
 		alias checkupdates='apk list -u'
 		alias ducks='du -akxd1 | sort -nr'
-		unalias less
 		alias listening='netstat -antpl'
 		if command -v flatpak >/dev/null 2>&1; then
 			alias pkgup='/usr/bin/doas /bin/sh -c "/sbin/apk update && /sbin/apk upgrade && /usr/bin/flatpak update -y && /usr/bin/flatpak uninstall -y --unused && /sbin/apk fix -s"'
@@ -289,14 +280,22 @@ elif [[ "${OS}" == 'Linux' ]]; then
 			alias zzz='/usr/bin/doas /usr/sbin/zzz'
 		fi
 	elif [[ -r /etc/debian_version ]]; then
+		# with less(1) v594, we no-longer need to disable LESSHISTFILE manually
+		# .. https://github.com/gwsw/less/commit/9eba0da958d33ef3582667e09701865980595361
+		export LESSHISTFILE=-
+		export QUOTING_STYLE=literal
+
 		if [[ -x /usr/bin/ncal ]]; then
 			alias cal='/usr/bin/ncal -bM'
 		fi
+		alias date='LC_ALL=C /bin/date'
 		alias checkupdates='apt list --upgradeable'
+		alias listening='ss -lntu'
 		alias pkgextras='apt list "~o"'
 		if [[ -r /etc/pop-os/issue ]]; then
 			alias pkgup='/usr/bin/sudo /bin/bash -c "/bin/apt update && /bin/apt upgrade -y && /bin/flatpak update --system -y && /bin/flatpak uninstall --system --unused -y"'
 		fi
+		alias realpath='readlink -ev'
 	fi
 
 	# manual pages
