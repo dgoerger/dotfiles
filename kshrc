@@ -151,9 +151,9 @@ if [[ "${OS}" == 'Darwin' ]]; then
 	alias cal='/usr/bin/ncal -C'
 	alias dns_reset='sudo killall -HUP mDNSResponder; sudo killall mDNSResponderHelper; sudo dscacheutil -flushcache'
 	alias ducks='du -hxd1 | sort -hr'
-	alias free='top -l 1 -s 0 | grep PhysMem'
+	alias free='top -l 1 -s 0 | grep -F PhysMem'
 	alias ldd='otool -L'
-	alias listening='netstat -an | grep LISTEN'
+	alias listening='netstat -an | grep -F LISTEN'
 	alias mtop='top -o mem'
 	unalias pssec
 	unalias pstree
@@ -312,7 +312,7 @@ elif [[ "${OS}" == 'OpenBSD' ]]; then
 		# search all sections of the manual by default
 		/usr/bin/man -k any="${1}"
 	}
-	if sysctl -n kern.version | grep -qE "\-(current|beta)"; then
+	if sysctl -n kern.version | grep -E "\-(current|beta)" >/dev/null 2>&1; then
 		checkupdates() {
 			# on -current, check if there's a newer snap available
 			local _buildshasum="$(ftp -VMo - "$(cat /etc/installurl)/snapshots/$(uname -m)/SHA256" | sha512 -q)"
@@ -346,7 +346,7 @@ elif [[ "${OS}" == 'OpenBSD' ]]; then
 		local PKG_FILES="$(mktemp)"
 
 		find -L /usr/local/ -type f | sort -u | grep -Ev "^/usr/local/(share/mime|info/dir|lib/qt5/include|man/mandoc.db$|.*\.cache$)" >| "${LOCAL_FILES}"
-		pkg_mklocatedb -nq | awk -F':' '{$1=""; print $0}' | sed 's/^\ //g' | sed 's/\ \ /::/g' | grep -E "^/usr/local" | sort -u | grep -Ev "/$" | grep -v '/usr/local/share/mime' >| "${PKG_FILES}"
+		pkg_mklocatedb -nq | awk -F':' '{$1=""; print $0}' | sed 's/^\ //g' | sed 's/\ \ /::/g' | grep -E "^/usr/local" | sort -u | grep -Ev "/$" | grep -Fv '/usr/local/share/mime' >| "${PKG_FILES}"
 
 		diff -U0 -L pkg_files -L installed_files "${PKG_FILES}" "${LOCAL_FILES}" | grep -Ev "^\@" | awk '/^\@/ {printf "\033[0;96m%s\033[0;0m\n", $0} /^\-/ {printf "\033[0;91m%s\033[0;0m\n", $0} /^\+/ {printf "\033[0;92m%s\033[0;0m\n", $0} /^\ / {printf "\033[0;0m%s\033[0;0m\n", $0}'
 		/bin/rm "${LOCAL_FILES}" "${PKG_FILES}"
@@ -462,9 +462,9 @@ certcheck() {
 	else
 		local DOMAIN_WILDCARD="${FQDN}"; readonly DOMAIN_WILDCARD
 	fi
-	if echo "${QUERY}" | openssl x509 -text | grep -q "DNS:${FQDN}"; then
+	if echo "${QUERY}" | openssl x509 -text | grep "DNS:${FQDN}" >/dev/null 2>&1; then
 		local VALID_FOR_DOMAIN=0; readonly VALID_FOR_DOMAIN
-	elif echo "${QUERY}"  | openssl x509 -text | grep -q "DNS:${DOMAIN_WILDCARD}"; then
+	elif echo "${QUERY}"  | openssl x509 -text | grep "DNS:${DOMAIN_WILDCARD}" >/dev/null 2>&1; then
 		local VALID_FOR_DOMAIN=0; readonly VALID_FOR_DOMAIN
 	else
 		local VALID_FOR_DOMAIN=1; readonly VALID_FOR_DOMAIN
@@ -883,10 +883,10 @@ rename() {
 		local newname="$(echo "${oldname}" | sed -E "${regex}")"
 
 		# sanity checks
-		if echo "${oldname}" | grep -q '/'; then
+		if echo "${oldname}" | grep -F '/' >/dev/null 2>&1; then
 			printf "WARNING: source file contains directory path character '/', skipping '%s'\n" "${oldname}"
 			continue
-		elif echo "${newname}" | grep -q '/'; then
+		elif echo "${newname}" | grep -F '/' >/dev/null 2>&1; then
 			printf "WARNING: destination file contains directory path character '/', skipping '%s'\n" "${newname}"
 			continue
 		elif [[ "${newname}" == "${oldname}" ]]; then
@@ -1144,7 +1144,7 @@ if command -v got >/dev/null; then
 fi
 
 ### fix ssh agent forwarding workstation->jumpbox
-if [[ "${HOSTNAME}" == "${SSH_JUMPBOX}" ]] && [[ -z "${DESKTOP_SESSION}" ]] && [[ -z "${XRDP_SESSION}" ]] && echo "${SSH_AUTH_SOCK}" | grep -qE "^/tmp/ssh-.*/agent\."; then
+if [[ "${HOSTNAME}" == "${SSH_JUMPBOX}" ]] && [[ -z "${DESKTOP_SESSION}" ]] && [[ -z "${XRDP_SESSION}" ]] && echo "${SSH_AUTH_SOCK}" | grep -E "^/tmp/ssh-.*/agent\." >/dev/null 2>&1; then
 	if [[ -w "${HOME}" ]] && [[ -S "${SSH_AUTH_SOCK}" ]] && [[ "${SSH_AUTH_SOCK}" != "$(realpath "${SSH_AUTH_SOCK_PATH}" 2>/dev/null)" ]]; then
 		/bin/ln -sf "${SSH_AUTH_SOCK}" "${SSH_AUTH_SOCK_PATH}"
 	fi

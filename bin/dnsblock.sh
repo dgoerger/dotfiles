@@ -1,8 +1,8 @@
 #!/bin/ksh -
 set -Cefuo pipefail
 
-readonly SRC="$(mktemp)"
-readonly TMP="$(mktemp)"
+SRC="$(mktemp)"; readonly SRC
+TMP="$(mktemp)"; readonly TMP
 readonly UPSTREAM_HOSTS_FILE='https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-porn/hosts'
 
 case "$(uname)" in
@@ -43,12 +43,12 @@ if ${FETCH} 2>/dev/null; then
 	install -pm 0444 -o root "${TMP}" "${BLOCKLIST_FILE}"
 
 	# unwind(8)
-	if rcctl ls on 2>/dev/null | grep -qE "^unwind$"; then
+	if rcctl ls on 2>/dev/null | grep -E "^unwind$" >/dev/null 2>&1; then
 		rcctl restart unwind >/dev/null 2>&1
 	# syntax check for sanity - we do NOT want to break the DNS!!
 	elif /usr/sbin/unbound-checkconf >/dev/null 2>&1; then
 		# OpenBSD
-		if rcctl ls on 2>/dev/null | grep -qE "^unbound$"; then
+		if rcctl ls on 2>/dev/null | grep -E "^unbound$" 2>&1; then
 			rcctl restart unbound >/dev/null 2>&1
 		# Alpine
 		elif rc-service unbound status >/dev/null 2>&1; then
