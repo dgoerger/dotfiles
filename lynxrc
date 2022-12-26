@@ -2,9 +2,7 @@
 # ref: https://lynx.invisible-island.net/release/lynx_help/body.html
 
 # homepage
-STARTFILE:~/.bookmarks.html
-DEFAULT_BOOKMARK_FILE:~/.bookmarks.html
-DEFAULT_INDEX_FILE:~/.bookmarks.html
+STARTFILE:https://duckduckgo.com/html/
 
 # sane defaults
 ACCEPT_ALL_COOKIES:TRUE
@@ -48,7 +46,6 @@ RULE:Fail cso:*
 RULE:Fail finger:*
 RULE:Fail ftp:*
 RULE:Fail gopher:*
-RULE:Fail http:*
 RULE:Fail lynxexec:*
 RULE:Fail lynxprog:*
 RULE:Fail mailto:*
