@@ -34,6 +34,10 @@
 			"Cryptomining": true,
 			"Fingerprinting": true
 		},
+		"EncryptedMediaExtensions": {
+			"Enabled": false,
+			"Locked": true
+		},
 		"Extensions": {
 			"Install": [
 				"https://addons.mozilla.org/firefox/downloads/latest/noscript/latest.xpi",
@@ -43,11 +47,13 @@
 		"ExtensionUpdate": true,
 		"FirefoxHome": {
 			"Highlights": false,
-			"Locked": true,
 			"Pocket": false,
 			"Search": false,
 			"Snippets": false,
-			"TopSites": false
+			"SponsoredPocket": false,
+			"SponsoredTopSites": false,
+			"TopSites": false,
+			"Locked": true
 		},
 		"Homepage": {
 			"StartPage": "none"
@@ -59,6 +65,10 @@
 		"OfferToSaveLogins": false,
 		"PasswordManagerEnabled": false,
 		"Permissions": {
+			"Autoplay": {
+				"BlockNewRequests": true,
+				"Locked": true
+			},
 			"Camera": {
 				"BlockNewRequests": true
 			},
@@ -71,6 +81,10 @@
 			"Notifications": {
 				"BlockNewRequests": true
 			}
+		},
+		"PictureInPicture": {
+			"Enabled": false,
+			"Locked": true
 		},
 		"Preferences": {
 			"browser.backspace_action": {
@@ -121,10 +135,10 @@
 				"Value": true,
 				"Status": "locked"
 			},
-                        "browser.safebrowsing.blockedURIs.enabled": {
-                                "Value": true,
-                                "Status": "locked"
-                        },
+			"browser.safebrowsing.blockedURIs.enabled": {
+				"Value": true,
+				"Status": "locked"
+			},
 			"browser.safebrowsing.downloads.enabled": {
 				"Value": true,
 				"Status": "locked"
@@ -133,14 +147,14 @@
 				"Value": true,
 				"Status": "locked"
 			},
-                        "browser.safebrowsing.downloads.remote.block_dangerous": {
-                                "Value": true,
-                                "Status": "locked"
-                        },
-                        "browser.safebrowsing.downloads.remote.block_dangerous_host": {
-                                "Value": true,
-                                "Status": "locked"
-                        },
+			"browser.safebrowsing.downloads.remote.block_dangerous": {
+				"Value": true,
+				"Status": "locked"
+			},
+			"browser.safebrowsing.downloads.remote.block_dangerous_host": {
+				"Value": true,
+				"Status": "locked"
+			},
 			"browser.safebrowsing.malware.enabled": {
 				"Value": true,
 				"Status": "locked"
@@ -213,15 +227,7 @@
 				"Value": 1,
 				"Status": "locked"
 			},
-			"media.eme.enabled": {
-				"Value": false,
-				"Status": "locked"
-			},
 			"media.gmp-gmpopenh264.enabled": {
-				"Value": false,
-				"Status": "locked"
-			},
-			"media.gmp-widevinecdm.enabled": {
 				"Value": false,
 				"Status": "locked"
 			},
