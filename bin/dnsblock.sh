@@ -48,7 +48,7 @@ if ${FETCH} 2>/dev/null; then
 	# syntax check for sanity - we do NOT want to break the DNS!!
 	elif /usr/sbin/unbound-checkconf >/dev/null 2>&1; then
 		# OpenBSD
-		if rcctl ls on 2>/dev/null | grep -E "^unbound$" 2>&1; then
+		if rcctl ls on 2>/dev/null | grep -E "^unbound$" >/dev/null 2>&1; then
 			rcctl restart unbound >/dev/null 2>&1
 		# Alpine
 		elif rc-service unbound status >/dev/null 2>&1; then
