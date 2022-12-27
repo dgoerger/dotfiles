@@ -14,12 +14,7 @@ chmod 0660 "${TMPFILE}"
 # download IP blocklists and parse
 /usr/bin/su -s/bin/ksh _pkgfetch -c "/usr/bin/ftp -Vo - \
 https://iplists.firehol.org/files/firehol_level1.netset \
-https://iplists.firehol.org/files/firehol_level2.netset \
-https://iplists.firehol.org/files/firehol_level3.netset | \
 awk '/^[1-9].*[0-9]$/' | cut -d ' ' -f1 | sort -uV | tee ${TMPFILE}" >/dev/null
-
-# block Shodan
-/usr/bin/su -s/bin/ksh _pkgfetch -c "/usr/bin/ftp -Vo - https://isc.sans.edu/api/threatlist/shodan/shodan.txt | grep -Eo '([[:digit:]]{1,3}\.){3}[[:digit:]]{1,3}' | tee -a ${TMPFILE}" >/dev/null
 
 # copy into place
 if [[ -f "${CONF}" ]]; then
