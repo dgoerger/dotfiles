@@ -403,114 +403,6 @@ fi
 
 
 ### functions
-# certcheck() verify a TLS certificate is installed correctly
-certcheck() {
-	usage() {
-		printf 'usage:\n    certcheck HOSTNAME [PORT]\n'
-	}
-
-	local EXPIRY_THRESHOLD_WARNING=15; readonly EXPIRY_THRESHOLD_WARNING
-	local EXPIRY_THRESHOLD_CRITICAL=5; readonly EXPIRY_THRESHOLD_CRITICAL
-
-	if [[ "$#" == '1' ]]; then
-		local PORT='443'; readonly PORT
-	elif [[ "$#" == '2' ]]; then
-	       case ${2} in
-			''|*[!0-9]*)
-				printf 'ERROR: port number must be an integer\n\n'
-				usage
-				return 1
-				;;
-			*)
-				local PORT="${2}"; readonly PORT
-				;;
-		esac 
-	else
-		usage
-		return 1
-	fi
-
-	if getent hosts "${1}" >/dev/null 2>&1; then
-		local FQDN="${1}"; readonly FQDN
-	else
-		printf "ERROR: cannot find %s in DNS.\n" "${1}"
-		return 1
-	fi
-
-	# set protocol-specific flags
-	if [[ "${PORT}" == '25' ]] || [[ "${PORT}" == '587' ]]; then
-		# protocol == starttls (smtp/25, smtp-submission/587)
-		local PROTOCOL_FLAGS="-starttls smtp"; readonly PROTOCOL_FLAGS
-	elif [[ "${PORT}" == '5222' ]] || [[ "${PORT}" == '5269' ]]; then
-		# protocol == starttls (xmpp-client/5222, xmpp-server/5269)
-		local PROTOCOL_FLAGS="-starttls xmpp"; readonly PROTOCOL_FLAGS
-	else
-		# protocol == tls+sni (https/443, smtps/465, ldaps/636, imaps/993, xmpps/5223, https-tomcat/8443, etc)
-		local PROTOCOL_FLAGS="-servername ${FQDN}"; readonly PROTOCOL_FLAGS
-	fi
-
-	# query certificate
-	local QUERY="$(echo Q | openssl s_client ${PROTOCOL_FLAGS} -connect "${FQDN}:${PORT}" 2>/dev/null)"; readonly QUERY
-	local CERTIFICATE_AUTHORITY="$(echo "${QUERY}" | sed 's/\ =\ /=/g' | awk -F'CN=' '/^issuer=/ {print $2}')"; readonly CERTIFICATE_AUTHORITY
-	local ROOT_AUTHORITY="$(echo "${QUERY}" | grep -E '^Certificate chain$' -A4 | tail -n1 | sed 's/\ =\ /=/g' | awk -F'CN=' '/i:/ {print $2}')"; readonly ROOT_AUTHORITY
-	local EXPIRY_DATE="$(echo "${QUERY}" | openssl x509 -noout -enddate 2>/dev/null | awk -F'=' '/notAfter/ {print $2}')"; readonly EXPIRY_DATE
-	local CHAIN_OF_TRUST_STATUS="$(echo "${QUERY}" | awk '/Verify return code:/ {print $4}' | head -n1)"; readonly CHAIN_OF_TRUST_STATUS
-	
-	# best-effort estimation of whether the certificate is valid for the queried domain
-	if [[ "$(echo "${FQDN}" | tr -cd . | wc -c)" -ge 2 ]]; then
-		local DOMAIN_WILDCARD="$(echo "\*.$(echo "${FQDN}" | cut -d. -f2-)")"; readonly DOMAIN_WILDCARD
-	else
-		local DOMAIN_WILDCARD="${FQDN}"; readonly DOMAIN_WILDCARD
-	fi
-	if echo "${QUERY}" | openssl x509 -text | grep "DNS:${FQDN}" >/dev/null 2>&1; then
-		local VALID_FOR_DOMAIN=0; readonly VALID_FOR_DOMAIN
-	elif echo "${QUERY}"  | openssl x509 -text | grep "DNS:${DOMAIN_WILDCARD}" >/dev/null 2>&1; then
-		local VALID_FOR_DOMAIN=0; readonly VALID_FOR_DOMAIN
-	else
-		local VALID_FOR_DOMAIN=1; readonly VALID_FOR_DOMAIN
-	fi
-	
-	# error if we can't find a certificate
-	if [[ -z "${EXPIRY_DATE}" ]]; then
-		printf "UNKNOWN: certificate %s:%s is unreachable\n" "${FQDN}" "${PORT}"
-		return 1
-	fi
-	
-	# print certificate authority info
-	if [[ -z "${ROOT_AUTHORITY}" ]]; then
-		local ROOT_AUTHORITY='??'; readonly ROOT_AUTHORITY
-	fi
-	printf "Issuer: %s -> %s\n" "${CERTIFICATE_AUTHORITY}" "${ROOT_AUTHORITY}"
-	
-	# print expiry date
-	printf "Expiry: %s\n" "${EXPIRY_DATE}"
-	
-	# calculate the number of days to expiry
-	if [[ "$(uname)" == 'Linux' ]]; then
-		local SECONDS_TO_EXPIRY="$(echo "$(date --date="${EXPIRY_DATE}" +%s) - $(date +%s)" | bc -l)"; readonly SECONDS_TO_EXPIRY
-	else
-		local SECONDS_TO_EXPIRY="$(echo "$(date -jf "%b %e %H:%M:%S %Y %Z" "${EXPIRY_DATE}" +%s) - $(date +%s)" | bc -l)"; readonly SECONDS_TO_EXPIRY
-	fi
-	local DAYS_TO_EXPIRY="$(echo "scale=0; ${SECONDS_TO_EXPIRY} / 86400" | bc -l)"; readonly DAYS_TO_EXPIRY
-	
-	# print overall status
-	if [[ "${CHAIN_OF_TRUST_STATUS}" != '0' ]]; then
-		printf "Status: CRITICAL - cannot be determined to be authentic (chain-of-trust)\n"
-	elif [[ "${SECONDS_TO_EXPIRY}" -lt '0' ]]; then
-		printf "Status: CRITICAL - already expired\n"
-	elif [[ "${DAYS_TO_EXPIRY}" -le "${EXPIRY_THRESHOLD_CRITICAL}" ]]; then
-		printf "Status: CRITICAL - expires in %s day(s)\n" "${DAYS_TO_EXPIRY}"
-	elif [[ "${VALID_FOR_DOMAIN}" != '0' ]]; then
-		printf "Status: WARNING - possible domain mismatch\n"
-	elif [[ "${DAYS_TO_EXPIRY}" -le "${EXPIRY_THRESHOLD_WARNING}" ]]; then
-		printf "Status: WARNING - expires in %s day(s)\n" "${DAYS_TO_EXPIRY}"
-	else
-		printf "Status: OK - expires in %s day(s)\n" "${DAYS_TO_EXPIRY}"
-	fi
-
-	unset -f usage
-}
-
 # def() look up the definition of a word
 def() {
 	if [[ $# -eq 1 ]]; then
@@ -957,14 +849,6 @@ sysinfo() {
 	}
 	local arch="$(uname -m)"
 	case "${OS}" in
-		FreeBSD)
-			local distro="$(uname -sr)"
-			local kernel="$(echo "${arch}: $(sysctl -n kern.version | awk 'NR==1 {print $NF, $5, $6}')")"
-			local cpu="$(echo "$(sysctl -n hw.ncpu)cpu: $(sysctl -n hw.model)")"
-			local uptime="$(($(date +%s) - $(sysctl -n kern.boottime | awk -F" |," '{print $4}')))"
-			local memtot="$(($(sysctl -n hw.physmem)/1024))"
-			local memused="$(($(vmstat -s | awk '/pages active$/ {print $1}') * $(sysctl -n hw.pagesize) / 1024))"
-			;;
 		Linux)
 			local distro="$(awk -F'"' '/PRETTY_NAME/ {print $2}' /etc/os-release 2>/dev/null)"
 			if [[ -z "${distro}" ]]; then
@@ -976,14 +860,6 @@ sysinfo() {
 			local meminfo="$(cat /proc/meminfo)"
 			local memtot="$(echo "${meminfo}" | awk '/^MemTotal:/ {print $2}')"
 			local memused="$(($(echo "${meminfo}" | awk '/^MemTotal:/ {print $2}') - $(echo "${meminfo}" | awk '/^Buffers:/ {print $2}') - $(echo "${meminfo}" | awk '/^Cached:/ {print $2}') - $(echo "${meminfo}" | awk '/^SReclaimable:/ {print $2}') - $(echo "${meminfo}" | awk '/^MemFree:/ {print $2}') - ($(echo "${meminfo}" | awk '/^HugePages_Free:/ {print $2}') * $(echo "${meminfo}" | awk '/^Hugepagesize:/ {print $2}'))))"
-			;;
-		NetBSD)
-			local distro="$(uname -sr)"
-			local kernel="$(echo "${arch}: $(sysctl -n kern.version | awk 'NR==1 {print $NF, $6, $7}')")"
-			local cpu="$(echo "$(sysctl -n hw.ncpuonline)"cpu: "$(sysctl -n machdep.cpu_brand | tr -s " ")")"
-			local uptime="$(($(date +%s) - $(sysctl -n kern.boottime)))"
-			local memtot="$(($(sysctl -n hw.physmem64)/1024))"
-			local memused="$(($(vmstat -s | awk '/pages active$/ {print $1}') * $(sysctl -n hw.pagesize) / 1024))"
 			;;
 		OpenBSD)
 			local distro="$(sysctl -n kern.version | awk 'NR==1 {print $1, $2}')"
