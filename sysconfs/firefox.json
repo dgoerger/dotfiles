@@ -118,31 +118,35 @@
 				"Status": "locked"
 			},
 			"browser.safebrowsing.enabled": {
-				"Value": false,
+				"Value": true,
 				"Status": "locked"
 			},
+                        "browser.safebrowsing.blockedURIs.enabled": {
+                                "Value": true,
+                                "Status": "locked"
+                        },
 			"browser.safebrowsing.downloads.enabled": {
-				"Value": false,
+				"Value": true,
 				"Status": "locked"
 			},
 			"browser.safebrowsing.downloads.remote.enabled": {
-				"Value": false,
+				"Value": true,
 				"Status": "locked"
 			},
+                        "browser.safebrowsing.downloads.remote.block_dangerous": {
+                                "Value": true,
+                                "Status": "locked"
+                        },
+                        "browser.safebrowsing.downloads.remote.block_dangerous_host": {
+                                "Value": true,
+                                "Status": "locked"
+                        },
 			"browser.safebrowsing.malware.enabled": {
-				"Value": false,
+				"Value": true,
 				"Status": "locked"
 			},
 			"browser.safebrowsing.phishing.enabled": {
-				"Value": false,
-				"Status": "locked"
-			},
-			"browser.safebrowsing.provider.mozilla.gethashURL": {
-				"Value": "NULL",
-				"Status": "locked"
-			},
-			"browser.safebrowsing.provider.mozilla.updateURL": {
-				"Value": "NULL",
+				"Value": true,
 				"Status": "locked"
 			},
 			"browser.search.countryCode": {
