@@ -860,6 +860,7 @@ sysinfo() {
 			local meminfo="$(cat /proc/meminfo)"
 			local memtot="$(echo "${meminfo}" | awk '/^MemTotal:/ {print $2}')"
 			local memused="$(($(echo "${meminfo}" | awk '/^MemTotal:/ {print $2}') - $(echo "${meminfo}" | awk '/^Buffers:/ {print $2}') - $(echo "${meminfo}" | awk '/^Cached:/ {print $2}') - $(echo "${meminfo}" | awk '/^SReclaimable:/ {print $2}') - $(echo "${meminfo}" | awk '/^MemFree:/ {print $2}') - ($(echo "${meminfo}" | awk '/^HugePages_Free:/ {print $2}') * $(echo "${meminfo}" | awk '/^Hugepagesize:/ {print $2}'))))"
+			local loadavg="$(cut -d' ' -f1-3 /proc/loadavg)"
 			;;
 		OpenBSD)
 			local distro="$(sysctl -n kern.version | awk 'NR==1 {print $1, $2}')"
@@ -868,6 +869,7 @@ sysinfo() {
 			local uptime="$(($(date +%s) - $(sysctl -n kern.boottime)))"
 			local memtot="$(($(sysctl -n hw.physmem)/1024))"
 			local memused="$(($(vmstat -s | awk '/pages active$/ {print $1}') * $(sysctl -n hw.pagesize) / 1024))"
+			local loadavg="$(sysctl -n vm.loadavg)"
 			;;
 		*)
 			local distro="${OS}"
@@ -876,6 +878,7 @@ sysinfo() {
 			local uptime='0'
 			local memtot='0'
 			local memused='0'
+			local loadavg='unknown'
 			;;
 	esac
 
@@ -897,7 +900,8 @@ sysinfo() {
 kernel\t%s\n\
 uptime\t%s %s\n\
 memory\t%s / %s\n\
-cpu\t%s\n" "${distro}" "${kernel}" "${uptime_int}" "${uptime_unit}" "$(scale ${memused})" "$(scale ${memtot})" "${cpu}"
+load\t%s\n\
+cpu\t%s\n" "${distro}" "${kernel}" "${uptime_int}" "${uptime_unit}" "$(scale ${memused})" "$(scale ${memtot})" "${loadavg}" "${cpu}"
 	unset -f scale
 }
 
