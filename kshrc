@@ -901,7 +901,7 @@ sysinfo() {
 	fi
 
 	if [[ -z "${temperature}" ]]; then
-		local temperature='_'
+		local temperature='unknown '
 	fi
 
 	printf "os\t%s\n\
