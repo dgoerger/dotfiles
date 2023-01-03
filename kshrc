@@ -861,6 +861,9 @@ sysinfo() {
 			local memtot="$(echo "${meminfo}" | awk '/^MemTotal:/ {print $2}')"
 			local memused="$(($(echo "${meminfo}" | awk '/^MemTotal:/ {print $2}') - $(echo "${meminfo}" | awk '/^Buffers:/ {print $2}') - $(echo "${meminfo}" | awk '/^Cached:/ {print $2}') - $(echo "${meminfo}" | awk '/^SReclaimable:/ {print $2}') - $(echo "${meminfo}" | awk '/^MemFree:/ {print $2}') - ($(echo "${meminfo}" | awk '/^HugePages_Free:/ {print $2}') * $(echo "${meminfo}" | awk '/^Hugepagesize:/ {print $2}'))))"
 			local loadavg="$(cut -d' ' -f1-3 /proc/loadavg)"
+			if [[ -r /sys/class/thermal/thermal_zone0/temp ]]; then
+				local temperature="$(($(cat /sys/class/thermal/thermal_zone*/temp | sort -nr | head -n1) / 1000))"
+			fi
 			;;
 		OpenBSD)
 			local distro="$(sysctl -n kern.version | awk 'NR==1 {print $1, $2}')"
@@ -870,6 +873,7 @@ sysinfo() {
 			local memtot="$(($(sysctl -n hw.physmem)/1024))"
 			local memused="$(($(vmstat -s | awk '/pages active$/ {print $1}') * $(sysctl -n hw.pagesize) / 1024))"
 			local loadavg="$(sysctl -n vm.loadavg)"
+			local temperature="$(sysctl -n hw.sensors.ksmn0.temp0 2>/dev/null | awk -F'.' '{print $1}')"
 			;;
 		*)
 			local distro="${OS}"
@@ -896,12 +900,16 @@ sysinfo() {
 		local uptime_unit='seconds'
 	fi
 
+	if [[ -z "${temperature}" ]]; then
+		local temperature='_'
+	fi
+
 	printf "os\t%s\n\
 kernel\t%s\n\
 uptime\t%s %s\n\
 memory\t%s / %s\n\
-load\t%s\n\
-cpu\t%s\n" "${distro}" "${kernel}" "${uptime_int}" "${uptime_unit}" "$(scale ${memused})" "$(scale ${memtot})" "${loadavg}" "${cpu}"
+load\t%s (%sºC)\n\
+cpu\t%s\n" "${distro}" "${kernel}" "${uptime_int}" "${uptime_unit}" "$(scale ${memused})" "$(scale ${memtot})" "${loadavg}" "${temperature}" "${cpu}"
 	unset -f scale
 }
 
