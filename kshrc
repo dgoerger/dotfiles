@@ -873,7 +873,7 @@ sysinfo() {
 			local memtot="$(($(sysctl -n hw.physmem)/1024))"
 			local memused="$(($(vmstat -s | awk '/pages active$/ {print $1}') * $(sysctl -n hw.pagesize) / 1024))"
 			local loadavg="$(sysctl -n vm.loadavg)"
-			local temperature="$(sysctl -n hw.sensors.ksmn0.temp0 2>/dev/null | awk -F'.' '{print $1}')"
+			local temperature="$(sysctl -n hw.sensors.acpitz0.temp0 2>/dev/null | awk -F'.' '{print $1}')"
 			;;
 		*)
 			local distro="${OS}"
