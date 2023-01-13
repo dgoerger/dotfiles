@@ -9,6 +9,8 @@ set -o no_auto_menu
 set -o posix_argzero
 set -o posix_identifiers
 set -o sh_word_split
+autoload -U select-word-style
+select-word-style bash
 
 ## history
 set -o hist_expire_dups_first
