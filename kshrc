@@ -78,11 +78,10 @@ fi
 if command -v pandoc >/dev/null; then
 	alias pandoc_gutenberg='pandoc -st plain+gutenberg --request-header User-Agent:"Mozilla/5.0 (Windows NT 10.0; rv:102.0) Gecko/20100101 Firefox/102.0"'
 fi
-alias pscpu='ps -Awwro user,pid,ppid,nice,%cpu,%mem,vsz,rss,state,wchan,time,command'
-alias psmem='ps -Awwmo user,pid,state,time,pagein,vsz,rss,tsiz,%cpu,%mem,command'
-alias pssec='ps -Awwo pid,state,user,etime,rtable,comm,pledge'
+alias pscpu='ps -Awwro uid,pid,ppid,pgid,%cpu,%mem,lstart,stat,wchan,time,command'
+alias psmem='ps -Awwmo uid,pid,ppid,pgid,%cpu,%mem,lstart,stat,wchan,time,command'
 if ! command -v pstree >/dev/null 2>&1; then
-	alias pstree='ps fauxw'
+	alias pstree='ps -Awwfo uid,pid,ppid,pgid,%cpu,%mem,stat,wchan,time,command'
 fi
 alias rgrep='grep -rIns --'
 alias rm='rm -i'
@@ -155,7 +154,6 @@ if [[ "${OS}" == 'Darwin' ]]; then
 	alias ldd='otool -L'
 	alias listening='netstat -an | grep -F LISTEN'
 	alias mtop='top -o mem'
-	unalias pssec
 	unalias pstree
 	alias realpath='readlink'
 
@@ -249,9 +247,9 @@ elif [[ "${OS}" == 'Linux' ]]; then
 	alias ls='LC_ALL=C ls -F --color=never'
 	alias lS='LC_ALL=C ls -aFhlS --color=never'
 	alias mtop='top -s -o "RES"'
-	alias pscpu='ps -Awwo user,pid,ppid,nice,pcpu,pmem,vsz:10,rss:8,stat,cputime,command --sort -pcpu,-vsz,-pmem,-rss'
-	alias psmem='ps -Awwo user,pid,stat,cputime,majflt,vsz:10,rss:8,trs:8,pcpu,pmem,command --sort -rss,-vsz,-pcpu'
-	alias pssec='ps -Awo pid,stat,user,etime,command,cgname'
+	alias pscpu='ps -Awwo uid,pid,ppid,pgid,pcpu,pmem,lstart,stat,wchan,time,command --sort -pcpu,-pmem'
+	alias psmem='ps -Awwo uid,pid,ppid,pgid,pcpu,pmem,lstart,stat,wchan,time,command --sort -pmem,-pcpu'
+	unalias pstree
 	unalias stat
 	alias top='top -s'
 	if ! whence whence >/dev/null 2>&1; then
