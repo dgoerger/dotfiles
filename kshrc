@@ -302,7 +302,6 @@ elif [[ "${OS}" == 'Linux' ]]; then
 			printf "${W}" | grep -v days | sort -hk4
 			printf "${W}" | grep days | sort -hk4
 		}
-	}
 	fi
 
 	# manual pages
