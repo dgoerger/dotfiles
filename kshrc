@@ -296,6 +296,13 @@ elif [[ "${OS}" == 'Linux' ]]; then
 			alias pkgup='/usr/bin/sudo /bin/bash -c "/bin/apt update && /bin/apt upgrade -y && /bin/flatpak update --system -y && /bin/flatpak uninstall --system --unused -y"'
 		fi
 		alias realpath='readlink -ev'
+		unalias w
+		function w {
+			local W="$(/usr/bin/w -shi)"
+			printf "${W}" | grep -v days | sort -hk4
+			printf "${W}" | grep days | sort -hk4
+		}
+	}
 	fi
 
 	# manual pages
