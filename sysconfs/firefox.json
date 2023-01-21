@@ -214,6 +214,10 @@
 				"Value": false,
 				"Status": "locked"
 			},
+			"extensions.unifiedExtensions.enabled": {
+				"Value": false,
+				"Status": "locked"
+			},
 			"extensions.webservice.discoverURL": {
 				"Value": "NULL",
 				"Status": "locked"
