@@ -442,14 +442,14 @@ ereader() {
 	}
 	open_lowdown() {
 		if command -v lowdown >/dev/null 2>&1; then
-			lowdown -sTterm "${1}" | less
+			lowdown --parse-no-intraemph -st term "${1}" | less
 		else
 			less "${1}"
 		fi
 	}
 	open_pandoc() {
 		if command -v pandoc_gutenberg >/dev/null 2>&1 && command -v lowdown >/dev/null 2>&1; then
-			pandoc_gutenberg "${1}" | lowdown -sTterm | less
+			pandoc_gutenberg "${1}" | lowdown --parse-no-intraemph -st term | less
 		else
 			printf "ERROR: command 'pandoc' or 'lowdown' not found\n"
 			return 1
