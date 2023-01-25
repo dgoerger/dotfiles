@@ -2,7 +2,7 @@
 
 [alias]
 	branches = branch -av
-	contributors = shortlog -ens
+	contributors = shortlog -ens --no-merges
 	remotes = remote get-url --all origin
 	st = status --branch --porcelain
 	sub = submodule update --init --recursive
