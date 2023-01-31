@@ -72,9 +72,6 @@ if command -v mutt >/dev/null; then
 fi
 alias mtop='top -o res'
 alias mv='mv -i'
-if command -v newsboat >/dev/null; then
-	alias news='newsboat -q'
-fi
 if command -v pandoc >/dev/null; then
 	alias pandoc_gutenberg='pandoc -st plain+gutenberg --request-header User-Agent:"Mozilla/5.0 (Windows NT 10.0; rv:102.0) Gecko/20100101 Firefox/102.0"'
 fi
