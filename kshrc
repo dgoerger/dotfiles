@@ -80,9 +80,7 @@ if command -v pandoc >/dev/null; then
 fi
 alias pscpu='ps -Awwro uid,pid,ppid,pgid,%cpu,%mem,lstart,stat,wchan,time,command'
 alias psmem='ps -Awwmo uid,pid,ppid,pgid,%cpu,%mem,lstart,stat,wchan,time,command'
-if ! command -v pstree >/dev/null 2>&1; then
-	alias pstree='ps -Awwfo uid,pid,ppid,pgid,%cpu,%mem,stat,wchan,time,command'
-fi
+alias pstree='ps -Awwfo uid,pid,ppid,pgid,%cpu,%mem,stat,wchan,time,command'
 alias rgrep='grep -rIns --'
 alias rm='rm -i'
 alias stat='stat -x'
