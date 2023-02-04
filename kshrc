@@ -347,7 +347,7 @@ elif [[ "${OS}" == 'OpenBSD' ]]; then
 		find -L /usr/local/ -type f | sort -u | grep -Ev "^/usr/local/(share/mime|info/dir|lib/qt5/include|man/mandoc.db$|.*\.cache$)" >| "${LOCAL_FILES}"
 		pkg_mklocatedb -nq | awk -F':' '{$1=""; print $0}' | sed 's/^\ //g' | sed 's/\ \ /::/g' | grep -E "^/usr/local" | sort -u | grep -Ev "/$" | grep -Fv '/usr/local/share/mime' >| "${PKG_FILES}"
 
-		/usr/bin/diff -U0 -L pkg_files -L installed_files "${PKG_FILES}" "${LOCAL_FILES}" | grep -Ev "^\@" | awk '/^\-/ {printf "\033[38;5;125m%s\033[38;5;m\n", $0} /^\+/ {printf "\033[38;5;22m%s\033[38;5;m\n", $0}'
+		/usr/bin/diff -U0 -L pkg_files -L installed_files "${PKG_FILES}" "${LOCAL_FILES}" | grep -Ev "^\@" | awk '/^\-/ {printf "\033[38;5;125m%s\033[38;5;m\n", $0} /^\+/ {printf "\033[38;5;28m%s\033[38;5;m\n", $0}'
 		/bin/rm "${LOCAL_FILES}" "${PKG_FILES}"
 	}
 	if [[ -x /usr/local/sbin/sysclean ]]; then
@@ -415,10 +415,11 @@ def() {
 # diff() with syntax highlighting
 diff() {
 	if [[ "${#}" == '0' ]]; then
-		local diff="$(git diff 2>/dev/null || got diff 2>/dev/null || /usr/bin/diff)"
+		local diff="$(git diff 2>/dev/null || got diff 2>/dev/null)"
 	elif [[ "${#}" == '3' ]] && [[ "${1}" == '-u' ]] && [[ -r "${2}" ]] && [[ -r "${3}" ]]; then
 		local diff="$(/usr/bin/diff -u "${2}" "${3}")"
-	else
+	fi
+	if [[ -z "${diff}" ]]; then
 		/usr/bin/diff "${@}"
 		return $?
 	fi
@@ -429,7 +430,7 @@ diff() {
 			/^\+/ {printf "\033[38;5;28m%s\033[38;5;m\n", $0}
 			/^(\ |[a-z])/ {printf "\033[0;0m%s\033[0;0m\n", $0}'
 	else
-	      	printf "%s" "${diff}"
+	      	printf "%s\n" "${diff}"
 	fi
 }
 
@@ -842,6 +843,11 @@ sshinit() {
 	else
 		printf "ssh-agent is already listening on %s\n" "${SSH_AUTH_SOCK}" && return 1
 	fi
+}
+
+# st() git repo status
+st() {
+	git status --branch --porcelain 2>/dev/null || got st 2>/dev/null || (printf "error: '%s' is not a git repo\n" "${PWD}"; return 1)
 }
 
 # sysinfo() system profiler
