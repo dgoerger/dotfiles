@@ -415,14 +415,13 @@ def() {
 # diff() with syntax highlighting
 diff() {
 	if [[ "${#}" == '0' ]]; then
-		if git diff >/dev/null 2>&1 || got diff >/dev/null 2>&1; then
-			local diff="$(git diff 2>/dev/null || got diff 2>/dev/null)"
-		else
+		diff="$(git diff 2>/dev/null || got diff 2>/dev/null)"
+		if [[ "${?}" != '0' ]]; then
 			/usr/bin/diff
 			return $?
 		fi
 	elif [[ "${#}" == '3' ]] && [[ "${1}" == '-u' ]] && [[ -r "${2}" ]] && [[ -r "${3}" ]]; then
-		local diff="$(/usr/bin/diff -u "${2}" "${3}")"
+		diff="$(/usr/bin/diff -u "${2}" "${3}")"
 	else
 		/usr/bin/diff "${@}"
 		return $?
@@ -436,6 +435,7 @@ diff() {
 	else
 	      	printf "%s\n" "${diff}"
 	fi
+	unset diff
 }
 
 # ereader()
