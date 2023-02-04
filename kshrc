@@ -347,7 +347,7 @@ elif [[ "${OS}" == 'OpenBSD' ]]; then
 		find -L /usr/local/ -type f | sort -u | grep -Ev "^/usr/local/(share/mime|info/dir|lib/qt5/include|man/mandoc.db$|.*\.cache$)" >| "${LOCAL_FILES}"
 		pkg_mklocatedb -nq | awk -F':' '{$1=""; print $0}' | sed 's/^\ //g' | sed 's/\ \ /::/g' | grep -E "^/usr/local" | sort -u | grep -Ev "/$" | grep -Fv '/usr/local/share/mime' >| "${PKG_FILES}"
 
-		diff -U0 -L pkg_files -L installed_files "${PKG_FILES}" "${LOCAL_FILES}" | grep -Ev "^\@" | awk '/^\@/ {printf "\033[0;96m%s\033[0;0m\n", $0} /^\-/ {printf "\033[0;91m%s\033[0;0m\n", $0} /^\+/ {printf "\033[0;92m%s\033[0;0m\n", $0} /^\ / {printf "\033[0;0m%s\033[0;0m\n", $0}'
+		/usr/bin/diff -U0 -L pkg_files -L installed_files "${PKG_FILES}" "${LOCAL_FILES}" | grep -Ev "^\@" | awk '/^\-/ {printf "\033[38;5;125m%s\033[38;5;m\n", $0} /^\+/ {printf "\033[38;5;22m%s\033[38;5;m\n", $0}'
 		/bin/rm "${LOCAL_FILES}" "${PKG_FILES}"
 	}
 	if [[ -x /usr/local/sbin/sysclean ]]; then
@@ -414,19 +414,22 @@ def() {
 
 # diff() with syntax highlighting
 diff() {
-	# nota bene: [[ -t 1 ]] => "is output to stdout", for example, versus a pipe or a file
-	if [[ -t 1 ]] && [[ "${#}" -eq 2 ]] && [[ -r "${1}" ]] && [[ -r "${2}" ]]; then
-		/usr/bin/diff "${1}" "${2}" | awk '/^[1-9]/ {printf "\033[0;96m%s\033[0;0m\n", $0}
-			/^</ {printf "\033[0;91m%s\033[0;0m\n", $0}
-			/^>/ {printf "\033[0;92m%s\033[0;0m\n", $0}
-			/^-/ {printf "\033[0;0m%s\n", $0}'
-	elif [[ -t 1 ]] && [[ "${#}" -eq 3 ]] && [[ "${1}" == '-u' ]] && [[ -r "${2}" ]] && [[ -r "${3}" ]]; then
-		/usr/bin/diff -u "${2}" "${3}" | awk '/^\@/ {printf "\033[0;96m%s\033[0;0m\n", $0}
-			/^\-/ {printf "\033[0;91m%s\033[0;0m\n", $0}
-			/^\+/ {printf "\033[0;92m%s\033[0;0m\n", $0}
-			/^\ / {printf "\033[0;0m%s\033[0;0m\n", $0}'
+	if [[ "${#}" == '0' ]]; then
+		local diff="$(git diff 2>/dev/null || got diff 2>/dev/null || /usr/bin/diff)"
+	elif [[ "${#}" == '3' ]] && [[ "${1}" == '-u' ]] && [[ -r "${2}" ]] && [[ -r "${3}" ]]; then
+		local diff="$(/usr/bin/diff -u "${2}" "${3}")"
 	else
-		/usr/bin/diff "$@"
+		/usr/bin/diff "${@}"
+		return $?
+	fi
+	# nota bene: [[ -t 1 ]] => "is output to stdout," versus to a pipe or file
+	if [[ -t 1 ]]; then
+		printf "%s" "${diff}" | awk '/^\@/ {printf "\033[0;96m%s\033[0;0m\n", $0}
+			/^\-/ {printf "\033[38;5;125m%s\033[38;5;m\n", $0}
+			/^\+/ {printf "\033[38;5;28m%s\033[38;5;m\n", $0}
+			/^(\ |[a-z])/ {printf "\033[0;0m%s\033[0;0m\n", $0}'
+	else
+	      	printf "%s" "${diff}"
 	fi
 }
 
