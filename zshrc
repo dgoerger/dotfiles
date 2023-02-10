@@ -38,6 +38,10 @@ if [[ -r ${HOME}/.kshrc ]]; then
 	. ${HOME}/.kshrc
 fi
 
-if [[ -n ${HISTSIZE} ]]; then
-	export SAVEHIST=${HISTSIZE}
+if [[ -w "${HOME}" ]]; then
+	if [[ -n "${HISTSIZE}" ]]; then
+		export SAVEHIST="${HISTSIZE}"
+	elif [[ -n "${HISTFILE}" ]]; then
+		unset HISTFILE
+	fi
 fi
