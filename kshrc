@@ -358,9 +358,8 @@ fi
 
 # ksh tab completions
 if [[ "${0}" == '-ksh' ]] || [[ "${0}" == 'ksh' ]]; then
-	export HOST_LIST=$(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts | sort -u)
+	export HOST_LIST=$(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts 2>/dev/null | sort -u)
 
-	set -A complete_diff_1 -- -u
 	set -A complete_dig_1 -- ${HOST_LIST}
 	set -A complete_git_1 -- add bisect blame checkout clone commit diff log mv pull push rebase reset revert rm stash status submodule
 	set -A complete_got_1 -- add backout blame branch cat checkout cherrypick clone commit diff fetch histedit import info init integrate log rebase ref remove revert stage status tag tree unstage update
@@ -373,27 +372,16 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == 'ksh' ]]; then
 		set -A complete_man_1 -- $(cat /usr/local/etc/manuals.list)
 	fi
 	set -A complete_nc_1 -- -c -cv -v ${HOST_LIST}
-	set -A complete_openrsync_1 -- -vaxx
-	set -A complete_openrsync_2 -- --rsync-path=/usr/bin/openrsync
 	set -A complete_ping_1 -- ${HOST_LIST}
 	set -A complete_ping6_1 -- ${HOST_LIST}
 	if [[ "${OS}" == 'OpenBSD' ]] && [[ -r /etc/rc.d ]]; then
 		set -A complete_rcctl_1 -- disable enable get ls order set
 		set -A complete_rcctl_2 -- $(rcctl ls all)
 	fi
-	if command -v rmapi >/dev/null; then
-		set -A complete_rmapi_1 -- help put version
-	fi
 	#set -A complete_rsync_1 -- -HhLPSprtv
-	set -A complete_scp_1 -- ${HOST_LIST}
-	set -A complete_scp_2 -- ${HOST_LIST}
 	set -A complete_sftp_1 -- -p
 	set -A complete_sftp_2 -- ${HOST_LIST}
 	set -A complete_ssh_1 -- ${HOST_LIST}
-	set -A complete_systat_1 -- buckets cpu ifstat iostat malloc mbufs netstat nfsclient nfsserver pf pigs pool pcache queues rules sensors states swap vmstat uvm
-	set -A complete_tmux_1 -- attach list-commands list-sessions list-windows new-session new-window source
-	set -A complete_traceroute_1 -- ${HOST_LIST}
-	set -A complete_traceroute6_1 -- ${HOST_LIST}
 	if pgrep -qf /usr/sbin/vmd >/dev/null 2>&1; then
 		set -A complete_vmctl_1 -- console load reload start stop reset status send receive
 		set -A complete_vmctl -- $(vmctl status | awk '!/NAME/{print $NF}')
