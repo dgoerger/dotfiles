@@ -495,7 +495,7 @@ fd() {
 }
 
 # info() retrieve information from the Internet
-if command -v pandoc_gutenberg >/dev/null && command -v lowdown >/dev/null; then
+if command -v reader >/dev/null && command -v lowdown >/dev/null; then
 	info() {
 		usage() {
 			printf "usage:\n\tinfo [KEYWORD] [QUERY]\n\nSupported KEYWORDs:\n"
@@ -551,7 +551,7 @@ if command -v pandoc_gutenberg >/dev/null && command -v lowdown >/dev/null; then
 		
 		# browser
 		open_html() {
-			pandoc_gutenberg "${1}" | lowdown --parse-no-intraemph -st term | less
+			reader -oi "${1}" | lowdown --parse-no-intraemph -st term | less
 		}
 		
 		if [[ "${#}" == '0' ]] || [[ "${1}" == '-h' ]] || [[ "${1}" == '--help' ]]; then
