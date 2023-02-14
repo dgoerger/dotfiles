@@ -551,7 +551,7 @@ if command -v pandoc_gutenberg >/dev/null && command -v lowdown >/dev/null; then
 		
 		# browser
 		open_html() {
-			pandoc_gutenberg "${1}" | lowdown -sT term | less
+			pandoc_gutenberg "${1}" | lowdown --parse-no-intraemph -st term | less
 		}
 		
 		if [[ "${#}" == '0' ]] || [[ "${1}" == '-h' ]] || [[ "${1}" == '--help' ]]; then
