@@ -426,65 +426,6 @@ diff() {
 	unset diff
 }
 
-# ereader()
-ereader() {
-	usage() {
-		printf 'usage:\n\tereader FILE\n'
-	}
-	open_lowdown() {
-		if command -v lowdown >/dev/null 2>&1; then
-			lowdown --parse-no-intraemph -st term "${1}" | less
-		else
-			less "${1}"
-		fi
-	}
-	open_pandoc() {
-		if command -v pandoc_gutenberg >/dev/null 2>&1 && command -v lowdown >/dev/null 2>&1; then
-			pandoc_gutenberg "${1}" | lowdown --parse-no-intraemph -st term | less
-		else
-			printf "ERROR: command 'pandoc' or 'lowdown' not found\n"
-			return 1
-		fi
-	}
-	if [[ $# -ne 1 ]]; then
-		usage
-		return 1
-	elif [[ "${1}" = '-h' ]] || [[ "${1}" = '--help' ]]; then
-		usage
-		return 0
-	else
-		local FILE="${1}"
-		local FILETYPE="${FILE##*\.}"
-		if ! stat "${FILE}" >/dev/null 2>&1; then
-			if [[ "$(echo "${FILE}" | awk -F':' '/^https/ {print $1}')" == 'https' ]]; then
-				local FILETYPE='html'
-			else
-				printf "ERROR: file '%s' not found\n" "${FILE}"
-				return 1
-			fi
-		fi
-		case "${FILETYPE}" in
-			epub)
-				open_pandoc "${FILE}"
-				;;
-			html)
-				open_pandoc "${FILE}"
-				;;
-			md)
-				open_lowdown "${FILE}"
-				;;
-			txt)
-				open_lowdown "${FILE}"
-				;;
-			*)
-				printf "ERROR: filetype '%s' not supported\n" "${FILETYPE}"
-				return 1
-				;;
-		esac
-	fi
-	unset -f usage open_lowdown open_pandoc
-}
-
 # fd() find files and directories
 fd() {
 	if [[ "${#}" != '1' ]]; then
@@ -508,6 +449,7 @@ if command -v reader >/dev/null && command -v lowdown >/dev/null; then
 			printf "\t* thesaurus WORD  - query the Oxford Dictionary thesaurus\n"
 			printf "\t* wikipedia WORD  - query Wikipedia, the free encyclopedia\n"
 			printf "\t* wiktionary WORD - query Wiktionary, the free dictionary\n"
+			printf "\t* www HTTPS_URL   - retrieve a single webpage by URL\n"
 		}
 		
 		# try to guess preferred language from $LANG
@@ -593,6 +535,9 @@ if command -v reader >/dev/null && command -v lowdown >/dev/null; then
 				;;
 			wikt|wiktionary)
 				open_html "https://${lang}.wiktionary.org/w/index.php?search=${query}&title=Special%3ASearch&go=Go"
+				;;
+			www)
+				open_html "${1}"
 				;;
 			*)
 				usage
