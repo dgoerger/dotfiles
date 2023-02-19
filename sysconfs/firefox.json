@@ -7,9 +7,8 @@
 	"policies": {
 		"CaptivePortal": false,
 		"Cookies": {
-			"AcceptThirdParty": "from-visited",
-			"ExpireAtSessionEnd": true,
-			"RejectTracker": true
+			"Behavior": "reject-tracker-and-partition-foreign",
+			"Locked": true
 		},
 		"DisableFeedbackCommands": true,
 		"DisableFirefoxAccounts": true,
@@ -17,10 +16,11 @@
 		"DisableFirefoxStudies": true,
 		"DisableForgetButton": true,
 		"DisableFormHistory": true,
-		"DisableMasterPasswordCreation": true,
+		"DisablePasswordReveal": true,
 		"DisablePocket": true,
 		"DisableProfileImport": true,
 		"DisableSetDesktopBackground": true,
+		"DisableSystemAddonUpdate": true,
 		"DisableTelemetry": true,
 		"DisplayBookmarksToolbar": false,
 		"DNSOverHTTPS": {
@@ -41,6 +41,13 @@
 		"Extensions": {
 			"Install": [
 				"https://addons.mozilla.org/firefox/downloads/latest/noscript/latest.xpi"
+			],
+			"Uninstall": [
+				"amazon@search.mozilla.org",
+				"amazondotcom@search.mozilla.org",
+				"bing@search.mozilla.org",
+				"ebay@search.mozilla.org",
+				"google@search.mozilla.org"
 			]
 		},
 		"ExtensionUpdate": true,
@@ -57,11 +64,12 @@
 		"Homepage": {
 			"StartPage": "none"
 		},
-		"ImportEnterpriseRoots": false,
 		"NetworkPrediction": false,
 		"NewTabPage": false,
 		"NoDefaultBookmarks": true,
 		"OfferToSaveLogins": false,
+		"OverrideFirstRunPage": "",
+		"OverridePostUpdatePage": "",
 		"PasswordManagerEnabled": false,
 		"Permissions": {
 			"Autoplay": {
@@ -75,10 +83,12 @@
 				"BlockNewRequests": true
 			},
 			"Location": {
-				"BlockNewRequests": true
+				"BlockNewRequests": true,
+				"Locked": true
 			},
 			"Notifications": {
-				"BlockNewRequests": true
+				"BlockNewRequests": true,
+				"Locked": true
 			}
 		},
 		"PictureInPicture": {
@@ -275,21 +285,9 @@
 				"Status": "locked"
 			}
 		},
+		"PrimaryPassword": false,
 		"SanitizeOnShutdown": true,
 		"SearchBar": "unified",
-		"SearchEngines": {
-			"Add": [
-				{
-					"Name": "DuckDuckGo Dark",
-					"URLTemplate": "https://duckduckgo.com/?kae=t&kac=-1&kaj=m&kam=osm&kak=-1&kax=-1&kv=-1&kaq=-1&kap=-1&kg=g&q={searchTerms}",
-					"Method": "GET",
-					"IconURL": "https://duckduckgo.com/favicon.ico",
-					"Description": "We are the Internet privacy company that lets you take control of your information, without any tradeoffs. Welcome to the Duck Side!"
-				}
-			],
-			"Default": "DuckDuckGo Dark",
-			"PreventInstalls": true
-		},
 		"SearchSuggestEnabled": false,
 		"SSLVersionMin": "tls1.2",
 		"UserMessaging": {
