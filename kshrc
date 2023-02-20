@@ -264,13 +264,13 @@ elif [[ "${OS}" == 'Linux' ]]; then
 		alias ducks='du -akxd1 | sort -nr'
 		alias listening='netstat -antpl'
 		if command -v flatpak >/dev/null 2>&1; then
-			alias pkgup='/usr/bin/doas /bin/sh -c "/sbin/apk update && /sbin/apk upgrade && /usr/bin/flatpak update -y && /usr/bin/flatpak uninstall -y --unused && /sbin/apk fix -s"'
+			alias pkgup='doas /bin/sh -c "/sbin/apk update && /sbin/apk upgrade && /usr/bin/flatpak update -y && /usr/bin/flatpak uninstall -y --unused && /sbin/apk fix -s"'
 		else
-			alias pkgup='/usr/bin/doas /bin/sh -c "/sbin/apk update && /sbin/apk upgrade && /sbin/apk fix -s"'
+			alias pkgup='doas /bin/sh -c "/sbin/apk update && /sbin/apk upgrade && /sbin/apk fix -s"'
 		fi
 		unalias realpath
 		if [[ -x /usr/sbin/zzz ]]; then
-			alias zzz='/usr/bin/doas /usr/sbin/zzz'
+			alias zzz='doas /usr/sbin/zzz'
 		fi
 	elif [[ -r /etc/debian_version ]]; then
 		# with less(1) v594, we no-longer need to disable LESSHISTFILE manually
@@ -329,16 +329,10 @@ elif [[ "${OS}" == 'OpenBSD' ]]; then
 	else
 		checkupdates() {
 			# on -stable, check if there are available syspatches
-			local _availablepatches="$(ftp -VMo - "$(cat /etc/installurl)/syspatch/$(uname -r)/$(uname -m)/SHA256" | awk '!/^$/ {print $2}' | tail -n 1)"
-			local _installedpatches="$(echo "(syspatch$(/bin/ls -hrt /var/syspatch/ | tail -n 1).tgz)")"
-			if [[ "${_installedpatches}" != "${_availablepatches}" ]]; then
-				printf "Updates are available via syspatch(8).\n"
-			else
-				printf "System is up-to-date.\n"
-			fi
+			doas /usr/sbin/syspatch -c
 		}
 	fi
-	alias pkgup='/usr/bin/doas /usr/sbin/pkg_add -Vu'
+	alias pkgup='doas /usr/sbin/pkg_add -Vu'
 	pkgextras() {
 		# function to identify files in /usr/local which aren't claimed by an installed package
 		local LOCAL_FILES="$(mktemp)"
