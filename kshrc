@@ -8,10 +8,8 @@ export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin
 ## terminal settings
 # disable terminal flow control (^S/^Q)
 stty -ixon
-# disable job control (^Z)
-set +m
-# prevent accidental clobber, set pipefail
-set -Co pipefail
+# disable job control (^Z), prevent clobber, set pipefail
+set +m -Cuo pipefail
 # SIGINFO: see signal(3)
 stty status ^T 2>/dev/null
 # restrict umask (override in ~/.profile.local)
@@ -43,9 +41,6 @@ export VISUAL="${EDITOR}"
 
 
 ## aliases
-if command -v abook >/dev/null && [[ -r "${HOME}/.abookrc" ]] && [[ -r "${HOME}/.addresses" ]]; then
-	alias abook='abook --config ${HOME}/.abookrc --datafile ${HOME}/.addresses'
-fi
 alias bc='bc -l'
 alias cal='cal -m'
 if command -v calendar >/dev/null && [[ -r "${HOME}/.calendar" ]]; then
@@ -72,9 +67,6 @@ if command -v mutt >/dev/null; then
 fi
 alias mtop='top -o res'
 alias mv='mv -i'
-if command -v pandoc >/dev/null; then
-	alias pandoc_gutenberg='pandoc -st plain+gutenberg --request-header User-Agent:"Mozilla/5.0 (Windows NT 10.0; rv:102.0) Gecko/20100101 Firefox/102.0"'
-fi
 alias pscpu='ps -Awwro uid,pid,ppid,pgid,%cpu,%mem,lstart,stat,wchan,time,command'
 alias psmem='ps -Awwmo uid,pid,ppid,pgid,%cpu,%mem,lstart,stat,wchan,time,command'
 alias pstree='ps -Awwfo uid,pid,ppid,pgid,%cpu,%mem,stat,wchan,time,command'
