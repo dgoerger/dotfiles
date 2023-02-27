@@ -398,6 +398,7 @@ elif [[ "${OS}" == 'OpenBSD' ]]; then
 			doas /usr/sbin/syspatch -c
 		}
 	fi
+	alias patch='patch --posix'
 	alias pkgup='doas /usr/sbin/pkg_add -Vu'
 	pkgextras() {
 		# function to identify files in /usr/local which aren't claimed by an installed package
