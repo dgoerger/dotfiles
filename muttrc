@@ -56,7 +56,7 @@ set collapse_unread = no
 set date_format = "%Y%m%d"
 set index_format = "%2C | %Z [%d] %-25.25F (%-4.4c) %s"
 set sort = 'threads'
-set sort_aux = 'reverse-last-date-sent'
+set sort_aux = 'last-date-sent'
 set uncollapse_jump
 
 ### reading mail
