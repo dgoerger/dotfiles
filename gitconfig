@@ -3,6 +3,7 @@
 [alias]
 	branches = branch -av
 	contributors = shortlog -ens --no-merges
+	reflogs = reflog --date=iso
 	remotes = remote get-url --all origin
 	st = status --branch --porcelain
 	sub = submodule update --init --recursive
