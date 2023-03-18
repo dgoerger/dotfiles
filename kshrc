@@ -393,10 +393,7 @@ elif [[ "${OS}" == 'OpenBSD' ]]; then
 			fi
 		}
 	else
-		checkupdates() {
-			# on -stable, check if there are available syspatches
-			doas /usr/sbin/syspatch -c
-		}
+		alias checkupdates='doas /usr/sbin/syspatch -c'
 	fi
 	alias patch='patch --posix'
 	alias pkgup='doas /usr/sbin/pkg_add -Vu'
