@@ -72,7 +72,7 @@ if ! command -v rg >/dev/null; then
 fi
 alias rm='rm -i'
 alias stat='stat -x'
-alias tm='tmux new-session -A -s tm'
+alias tm='cd && tmux new-session -A -s tm'
 if command -v bat >/dev/null; then
 	alias v='bat --theme="Monokai Extended Origin" --paging=always --pager="less -iLMR"'
 else
