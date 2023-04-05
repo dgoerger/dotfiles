@@ -50,9 +50,6 @@ alias cp='cp -i'
 alias df='df -h'
 alias ducks='du -ahxd1 | sort -hr'
 alias free='top | grep -E "^Memory"'
-if command -v git >/dev/null; then
-	alias ggrep='git grep -in --'
-fi
 alias l='ls -1F'
 alias lA='ls -AF'
 alias la='ls -aFhl'
@@ -70,16 +67,21 @@ alias mv='mv -i'
 alias pscpu='ps -Awwro uid,pid,ppid,pgid,%cpu,%mem,lstart,stat,wchan,time,command'
 alias psmem='ps -Awwmo uid,pid,ppid,pgid,%cpu,%mem,lstart,stat,wchan,time,command'
 alias pstree='ps -Awwfo uid,pid,ppid,pgid,%cpu,%mem,stat,wchan,time,command'
-alias rgrep='grep -rIns --'
+if ! command -v rg >/dev/null; then
+	alias rg='grep -EIinrs --'
+fi
 alias rm='rm -i'
 alias stat='stat -x'
 alias tm='tmux new-session -A -s tm'
+if command -v bat >/dev/null; then
+	alias v='bat --theme="Monokai Extended Origin" --paging=always --pager="less -iLMR"'
+else
+	alias v='less -iLMR'
+fi
 if command -v nvim >/dev/null; then
 	alias vi=nvim
-	alias view='nvim --cmd "let no_plugin_maps = 1" -c "runtime! macros/less.vim" -c "set nofoldenable" -m -M -R -n'
-else
-	alias view=less
 fi
+alias view=v
 alias w='w -i'
 
 # kaomoji
@@ -133,7 +135,6 @@ if [[ "${OS}" == 'Darwin' ]]; then
 		unset -f usage
 	}
 
-	alias bc='bc -ql'
 	alias cal='/usr/bin/ncal -C'
 	alias dns_reset='sudo killall -HUP mDNSResponder; sudo killall mDNSResponderHelper; sudo dscacheutil -flushcache'
 	alias ducks='du -hxd1 | sort -hr'
@@ -160,7 +161,6 @@ elif [[ "${OS}" == 'Linux' ]]; then
 	if command -v atop >/dev/null; then
 		alias atop='atop -f'
 	fi
-	alias bc='bc -ql'
 	if ! command -v doas >/dev/null; then
 		alias doas=/usr/bin/sudo
 	fi
@@ -485,13 +485,15 @@ diff() {
 }
 
 # fd() find files and directories
-fd() {
-	if [[ "${#}" != '1' ]]; then
-		printf "usage:\n\tfd FILENAME\n"
-	else
-		find . -iname "*${1}*"
-	fi
-}
+if ! command -v fd >/dev/null; then
+	fd() {
+		if [[ "${#}" != '1' ]]; then
+			printf "usage:\n\tfd FILENAME\n"
+		else
+			find . -iname "*${1}*"
+		fi
+	}
+fi
 
 # info() retrieve information from the Internet
 if command -v reader >/dev/null && command -v lowdown >/dev/null; then
