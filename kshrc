@@ -98,7 +98,6 @@ alias woohoo='echo \\\(ˆ˚ˆ\)/'
 if [[ "${OS}" == 'Darwin' ]]; then
 	export LESSHISTFILE=-
 	export MANWIDTH=80
-	export SSH_AUTH_SOCK_PATH="${HOME}/.ssh/ssh-$(printf "%s@%s" "${LOGNAME}" "${HOSTNAME}" | shasum -a 256 | awk '{print $1}').socket"
 
 	getent() {
 		usage() {
@@ -135,19 +134,15 @@ if [[ "${OS}" == 'Darwin' ]]; then
 		unset -f usage
 	}
 
-	alias cal='/usr/bin/ncal -C'
 	alias dns_reset='sudo killall -HUP mDNSResponder; sudo killall mDNSResponderHelper; sudo dscacheutil -flushcache'
 	alias ducks='du -hxd1 | sort -hr'
-	alias free='top -l 1 -s 0 | grep -F PhysMem'
 	alias ldd='otool -L'
-	alias listening='netstat -an | grep -F LISTEN'
 	alias mtop='top -o mem'
-	unalias pstree
 	alias realpath='readlink'
 
 elif [[ "${OS}" == 'Linux' ]]; then
 	# env
-	unset LS_COLORS
+	export LS_COLORS='no=00:fi=00:rs=0:di=00:ln=00:mh=00:pi=00:so=00:do=00:bd=00:cd=00:or=00:mi=00:su=00:sg=00:ca=00:tw=00:ow=00:st=00:ex=00'
 	if [[ -L "/bin" ]]; then
 		# some Linux have /bin -> /usr/bin
 		export PATH=/usr/local/bin:/bin:/sbin
@@ -226,13 +221,6 @@ elif [[ "${OS}" == 'Linux' ]]; then
 
 		unset -f scale
 	}
-	alias l='LC_ALL=C ls -1F --color=never'
-	alias lA='LC_ALL=C ls -AF --color=never'
-	alias la='LC_ALL=C ls -aFhl --color=never'
-	alias larth='LC_ALL=C ls -aFhlrt --color=never'
-	alias ll='LC_ALL=C ls -Fhl --color=never'
-	alias ls='LC_ALL=C ls -F --color=never'
-	alias lS='LC_ALL=C ls -aFhlS --color=never'
 	alias mtop='top -s -o "RES"'
 	alias pscpu='ps -Awwo uid,pid,ppid,pgid,pcpu,pmem,lstart,stat,wchan,time,command --sort -pcpu,-pmem'
 	alias psmem='ps -Awwo uid,pid,ppid,pgid,pcpu,pmem,lstart,stat,wchan,time,command --sort -pmem,-pcpu'
@@ -378,20 +366,7 @@ elif [[ "${OS}" == 'OpenBSD' ]]; then
 		/usr/bin/man -k any="${1}"
 	}
 	if sysctl -n kern.version | grep -E "\-(current|beta)" >/dev/null 2>&1; then
-		checkupdates() {
-			# on -current, check if there's a newer snap available
-			local _buildshasum="$(ftp -VMo - "$(cat /etc/installurl)/snapshots/$(uname -m)/SHA256" | sha512 -q)"
-			local _builddate="$(ftp -VMo - "$(cat /etc/installurl)/snapshots/$(uname -m)/BUILDINFO" | awk -F ' - ' '{print $NF}')"
-			local _installshasum="$(sha512 -q /var/db/installed.SHA256)"
-			local _installdate="$(sysctl -n kern.version | head -n 1 | awk -F': ' '{print $NF}' | sed 's/MST//' | sed 's/MDT//')"
-			if [[ "${_buildshasum}" != "${_installshasum}" ]]; then
-				printf "Updates are available via sysupgrade(8).\n\n"
-				printf "Running: %s\n" "$(TZ='Canada/Mountain' date -z 'Canada/Mountain' -jf "%a %b %e %H:%M:%S %Y" "${_installdate}" +"%Y%m%d %H:%M:%S")"
-				printf "Upgrade: %s\n" "$(TZ=UTC date -z 'Canada/Mountain' -jf "%a %b %e %H:%M:%S %Z %Y" "${_builddate}" +"%Y%m%d %H:%M:%S")"
-			else
-				printf "System is up-to-date.\n"
-			fi
-		}
+		alias checkupdates='doas /bin/ksh -c "/usr/bin/timeout -sINT 3s /usr/sbin/sysupgrade -ns"'
 	else
 		alias checkupdates='doas /usr/sbin/syspatch -c'
 	fi
