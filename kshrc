@@ -28,10 +28,6 @@ export HOSTNAME="$(hostname -s)"
 export LANG="en_CA.UTF-8"
 export LC_ALL="en_CA.UTF-8"
 export LESSSECURE=1
-if [[ -r "${HOME}/.lynxrc" ]]; then
-	export LYNX_CFG="${HOME}/.lynxrc"
-	alias lynx='COLUMNS=80 lynx -useragent "Mozilla/5.0 (Windows NT 10.0; rv:102.0) Gecko/20100101 Firefox/102.0" 2>/dev/null'
-fi
 export OS="$(uname)"
 if [[ -r "${HOME}/.pythonrc" ]]; then
 	export PYTHONSTARTUP="${HOME}/.pythonrc"
