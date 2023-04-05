@@ -79,7 +79,7 @@ else
 	alias v='less -iLMR'
 fi
 if command -v nvim >/dev/null; then
-	alias vi=nvim
+	alias vi='nvim -i NONE'
 fi
 alias view=v
 alias w='w -i'
