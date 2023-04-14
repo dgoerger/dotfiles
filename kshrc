@@ -70,9 +70,9 @@ alias rm='rm -i'
 alias stat='stat -x'
 alias tm='cd && tmux new-session -A -s tm'
 if command -v bat >/dev/null; then
-	alias v='bat --theme="Monokai Extended Origin" --paging=always --pager="less -iLMR"'
+	alias v='bat --theme="Monokai Extended Origin" --paging=always --pager="less -iLMR" --'
 else
-	alias v='less -iLMR'
+	alias v='less -iLMR --'
 fi
 if command -v nvim >/dev/null; then
 	alias vi='nvim -i NONE'
@@ -367,7 +367,7 @@ elif [[ "${OS}" == 'OpenBSD' ]]; then
 		alias checkupdates='doas /usr/sbin/syspatch -c'
 	fi
 	alias patch='patch --posix'
-	alias pkgup='doas /usr/sbin/pkg_add -Vu'
+	alias pkgup='doas /bin/ksh -c "/usr/sbin/pkg_add -Vu && /usr/sbin/pkg_delete -a"'
 	pkgextras() {
 		# function to identify files in /usr/local which aren't claimed by an installed package
 		local LOCAL_FILES="$(mktemp)"
