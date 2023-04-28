@@ -70,9 +70,10 @@ alias rm='rm -i'
 alias stat='stat -x'
 alias tm='cd && tmux new-session -A -s tm'
 if command -v bat >/dev/null; then
-	alias v='bat --theme="Monokai Extended Origin" --paging=always --pager="less -iLMR" --'
+	# within 'less', toggle line numbers with '-N<ENTER>'
+	alias v='bat --style=plain --theme="Monokai Extended Origin" --paging=always --pager="less -iLMNR" --'
 else
-	alias v='less -iLMR --'
+	alias v='less -iLMNR --'
 fi
 if command -v nvim >/dev/null; then
 	alias vi='nvim -i NONE'
