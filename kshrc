@@ -467,119 +467,6 @@ if ! command -v fd >/dev/null; then
 	}
 fi
 
-# info() retrieve information from the Internet
-if command -v reader >/dev/null && command -v lowdown >/dev/null; then
-	info() {
-		usage() {
-			printf "usage:\n\tinfo [KEYWORD] [QUERY]\n\nSupported KEYWORDs:\n"
-			printf "\t* alpine PKG      - search the package repositories for Alpine Linux\n"
-			printf "\t* debian PKG      - search the package repositories for Debian Linux\n"
-			printf "\t* mandebian CMD   - retrieve manuals from the Debian Project\n"
-			printf "\t* manobsd CMD     - retrieve manuals from the OpenBSD Project\n"
-			printf "\t* nws ZIPCODE     - retrieve forecasts from the US National Weather Service\n"
-			printf "\t* rfc NUMBER      - retrieve the text of a published IETF RFC\n"
-			printf "\t* thesaurus WORD  - query the Oxford Dictionary thesaurus\n"
-			printf "\t* wikipedia WORD  - query Wikipedia, the free encyclopedia\n"
-			printf "\t* wiktionary WORD - query Wiktionary, the free dictionary\n"
-			printf "\t* www HTTPS_URL   - retrieve a single webpage by URL\n"
-		}
-		
-		# try to guess preferred language from $LANG
-		if [[ -n "${LANG}" ]]; then
-			local lang="$(echo "${LANG}" | cut -c1-2)"; readonly lang
-		else
-			local lang='en'; readonly lang
-		fi
-		
-		# escape characters for URL-encoding
-		escape_html() {
-			echo "$@" | sed 's/%/%25/g;
-				s/+/%2B/g;
-				s/ /%20/g;
-				s/(/%28/g;
-				s/)/%29/g;
-				s/"/%22/g;
-				s/#/%23/g;
-				s/\$/%24/g;
-				s/&/%26/g;
-				s/,/%2C/g;
-				sx/x%2Fxg;
-				s/:/%3A/g;
-				s/;/%3B/g;
-				s/</%3C/g;
-				s/=/%3D/g;
-				s/>/%3E/g;
-				s/?/%3F/g;
-				s/@/%40/g;
-				s/\[/%5B/g;
-				s/\\/%5C/g;
-				s/\]/%5D/g;
-				s/\^/%5E/g;
-				s/{/%7B/g;
-				s/|/%7C/g;
-				s/}/%7D/g;
-				s/~/%7E/g;
-				s/`/%60/g;
-			'"s/'/%27/g"
-		}
-		
-		# browser
-		open_html() {
-			reader -oi "${1}" | lowdown --parse-no-intraemph -st term | less
-		}
-		
-		if [[ "${#}" == '0' ]] || [[ "${1}" == '-h' ]] || [[ "${1}" == '--help' ]]; then
-			usage
-			return 0
-		elif [[ "${#}" -lt 2 ]]; then
-			usage
-			return 1
-		else
-			local site="${1}"; readonly site
-			shift
-			local query="$(escape_html "$@")"; readonly query
-		fi
-		
-		case "${site}" in
-			apk|alpine)
-				open_html "https://pkgs.alpinelinux.org/packages?name=${query}&branch=edge&arch=x86_64"
-				;;
-			deb|debian)
-				open_html "https://tracker.debian.org/search?package_name=${query}"
-				;;
-			man|manobsd|manopenbsd)
-				open_html "https://man.openbsd.org/?sec=0&arch=default&manpath=OpenBSD-current&query=${query}"
-				;;
-			mandeb|mandebian)
-				open_html "https://manpages.debian.org/jump?q=${query}"
-				;;
-			nws)
-				open_html "https://forecast.weather.gov/zipcity.php?inputstring=${query}&btnSearch=Go&unit=1"
-				;;
-			rfc)
-				open_html "https://tools.ietf.org/rfc/rfc${query}.txt"
-				;;
-			thesaurus)
-				open_html "https://en.oxforddictionaries.com/thesaurus/${query}"
-				;;
-			w|wikipedia)
-				open_html "https://${lang}.wikipedia.org/w/index.php?search=${query}&title=Special%3ASearch&go=Go"
-				;;
-			wikt|wiktionary)
-				open_html "https://${lang}.wiktionary.org/w/index.php?search=${query}&title=Special%3ASearch&go=Go"
-				;;
-			www)
-				open_html "${1}"
-				;;
-			*)
-				usage
-				return 1
-				;;
-		esac
-	unset -f escape_html open_html usage
-	}
-fi
-
 # photo_import() import photos from an SD card
 if command -v exiv2 >/dev/null; then
 	photo_import() {
@@ -915,6 +802,107 @@ whattimeisitin() {
 	fi
 }
 
+# www() retrieve information from the Internet
+if command -v reader >/dev/null && command -v lowdown >/dev/null; then
+	www() {
+		usage() {
+			printf "usage:\n\twww [KEYWORD] [QUERY]\n\nSupported KEYWORDs:\n"
+			printf "\t* alpine PKG      - search the package repositories for Alpine Linux\n"
+			printf "\t* debian PKG      - search the package repositories for Debian Linux\n"
+			printf "\t* mandebian CMD   - retrieve manuals from the Debian Project\n"
+			printf "\t* manobsd CMD     - retrieve manuals from the OpenBSD Project\n"
+			printf "\t* nws ZIPCODE     - retrieve forecasts from the US National Weather Service\n"
+			printf "\t* rfc NUMBER      - retrieve the text of a published IETF RFC\n"
+			printf "\t* thesaurus WORD  - query the Oxford Dictionary thesaurus\n"
+			printf "\t* wikipedia WORD  - query Wikipedia, the free encyclopedia\n"
+			printf "\t* wiktionary WORD - query Wiktionary, the free dictionary\n"
+			printf "\t* HTTPS_URL       - retrieve a single webpage by URL\n"
+		}
+		
+		# escape characters for URL-encoding
+		escape_html() {
+			echo "$@" | sed 's/%/%25/g;
+				s/+/%2B/g;
+				s/ /%20/g;
+				s/(/%28/g;
+				s/)/%29/g;
+				s/"/%22/g;
+				s/#/%23/g;
+				s/\$/%24/g;
+				s/&/%26/g;
+				s/,/%2C/g;
+				sx/x%2Fxg;
+				s/:/%3A/g;
+				s/;/%3B/g;
+				s/</%3C/g;
+				s/=/%3D/g;
+				s/>/%3E/g;
+				s/?/%3F/g;
+				s/@/%40/g;
+				s/\[/%5B/g;
+				s/\\/%5C/g;
+				s/\]/%5D/g;
+				s/\^/%5E/g;
+				s/{/%7B/g;
+				s/|/%7C/g;
+				s/}/%7D/g;
+				s/~/%7E/g;
+				s/`/%60/g;
+			'"s/'/%27/g"
+		}
+		
+		# browser
+		open_html() {
+			reader -oi "${1}" | lowdown --parse-no-intraemph -st term | less
+		}
+		
+		if [[ "${#}" == '0' ]] || [[ "${1}" == '-h' ]] || [[ "${1}" == '--help' ]]; then
+			usage
+			return 0
+		elif [[ "${#}" -lt 2 ]]; then
+			usage
+			return 1
+		else
+			local site="${1}"; readonly site
+			shift
+			local query="$(escape_html "$@")"; readonly query
+		fi
+		
+		case "${site}" in
+			apk|alpine)
+				open_html "https://pkgs.alpinelinux.org/packages?name=${query}&branch=edge&arch=x86_64"
+				;;
+			deb|debian)
+				open_html "https://tracker.debian.org/search?package_name=${query}"
+				;;
+			man|manobsd|manopenbsd)
+				open_html "https://man.openbsd.org/?sec=0&arch=default&manpath=OpenBSD-current&query=${query}"
+				;;
+			mandeb|mandebian)
+				open_html "https://manpages.debian.org/jump?q=${query}"
+				;;
+			nws)
+				open_html "https://forecast.weather.gov/zipcity.php?inputstring=${query}&btnSearch=Go&unit=1"
+				;;
+			rfc)
+				open_html "https://tools.ietf.org/rfc/rfc${query}.txt"
+				;;
+			thesaurus)
+				open_html "https://en.oxforddictionaries.com/thesaurus/${query}"
+				;;
+			w|wikipedia)
+				open_html "https://en.wikipedia.org/w/index.php?search=${query}&title=Special%3ASearch&go=Go"
+				;;
+			wikt|wiktionary)
+				open_html "https://en.wiktionary.org/w/index.php?search=${query}&title=Special%3ASearch&go=Go"
+				;;
+			*)
+				open_html "${1}"
+				;;
+		esac
+	unset -f escape_html open_html usage
+	}
+fi
 
 ### enable emacs keybindings
 set -o emacs
