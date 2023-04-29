@@ -816,7 +816,7 @@ if command -v reader >/dev/null && command -v lowdown >/dev/null; then
 			printf "\t* thesaurus WORD  - query the Oxford Dictionary thesaurus\n"
 			printf "\t* wikipedia WORD  - query Wikipedia, the free encyclopedia\n"
 			printf "\t* wiktionary WORD - query Wiktionary, the free dictionary\n"
-			printf "\t* HTTPS_URL       - retrieve a single webpage by URL\n"
+			printf "\t* HTTPS_URL       - retrieve a single https:// webpage by URL\n"
 		}
 		
 		# escape characters for URL-encoding
@@ -859,9 +859,14 @@ if command -v reader >/dev/null && command -v lowdown >/dev/null; then
 		if [[ "${#}" == '0' ]] || [[ "${1}" == '-h' ]] || [[ "${1}" == '--help' ]]; then
 			usage
 			return 0
-		elif [[ "${#}" -lt 2 ]]; then
-			usage
-			return 1
+		elif [[ "${#}" -eq 1 ]]; then
+			if [[ "${1}" == https* ]]; then
+				open_html "${1}"
+				return $?
+			else
+				usage
+				return 1
+			fi
 		else
 			local site="${1}"; readonly site
 			shift
