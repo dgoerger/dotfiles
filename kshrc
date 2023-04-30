@@ -218,6 +218,9 @@ elif [[ "${OS}" == 'Linux' ]]; then
 
 		unset -f scale
 	}
+	if command -v plocate >/dev/null;
+		alias locate='plocate -iN'
+	fi
 	alias mtop='top -s -o "RES"'
 	alias pscpu='ps -Awwo uid,pid,ppid,pgid,pcpu,pmem,lstart,stat,wchan,time,command --sort -pcpu,-pmem'
 	alias psmem='ps -Awwo uid,pid,ppid,pgid,pcpu,pmem,lstart,stat,wchan,time,command --sort -pmem,-pcpu'
