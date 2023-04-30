@@ -60,9 +60,9 @@ if command -v mutt >/dev/null; then
 fi
 alias mtop='top -o res'
 alias mv='mv -i'
-alias pscpu='ps -Awwro uid,pid,ppid,pgid,%cpu,%mem,lstart,stat,wchan,time,command'
-alias psmem='ps -Awwmo uid,pid,ppid,pgid,%cpu,%mem,lstart,stat,wchan,time,command'
-alias pstree='ps -Awwfo uid,pid,ppid,pgid,%cpu,%mem,stat,wchan,time,command'
+alias pscpu='ps -Awwro user,pid,ppid,pgid,%cpu,%mem,lstart,stat,wchan,time,command'
+alias psmem='ps -Awwmo user,pid,ppid,pgid,%cpu,%mem,lstart,stat,wchan,time,command'
+alias pstree='ps -Awwfo user,pid,ppid,pgid,%cpu,%mem,stat,wchan,time,command'
 if ! command -v rg >/dev/null; then
 	alias rg='grep -EIinrs --'
 fi
@@ -218,13 +218,20 @@ elif [[ "${OS}" == 'Linux' ]]; then
 
 		unset -f scale
 	}
-	if command -v plocate >/dev/null;
+	if command -v plocate >/dev/null; then
 		alias locate='plocate -iN'
 	fi
 	alias mtop='top -s -o "RES"'
-	alias pscpu='ps -Awwo uid,pid,ppid,pgid,pcpu,pmem,lstart,stat,wchan,time,command --sort -pcpu,-pmem'
-	alias psmem='ps -Awwo uid,pid,ppid,pgid,pcpu,pmem,lstart,stat,wchan,time,command --sort -pmem,-pcpu'
+	alias pscpu='ps -Awwo user,pid,ppid,pgid,pcpu,pmem,lstart,stat,wchan,time,command --sort -pcpu,-pmem'
+	alias psmem='ps -Awwo user,pid,ppid,pgid,pcpu,pmem,lstart,stat,wchan,time,command --sort -pmem,-pcpu'
 	unalias pstree
+	function pstree {
+		if [[ "${#}" -gt 0 ]]; then
+			/usr/bin/pstree "${@}"
+		else
+			ps f -Awwo user,pid,ppid,pgid,pcpu,pmem,stat,wchan,time,command
+		fi
+	}
 	unalias stat
 	alias top='top -s'
 	if ! whence whence >/dev/null 2>&1; then
