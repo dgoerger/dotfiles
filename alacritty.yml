@@ -24,7 +24,7 @@ shell:
     - -l
 
 selection:
-  semantic_escape_chars: ",│`|\"' ()[]{}<>\t"
+  semantic_escape_chars: ",│`|\"' ()[]{}<>*\t"
 
 key_bindings:
   - { key: C,    mods: Control|Shift,               action: Copy    }
