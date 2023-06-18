@@ -1,5 +1,5 @@
 # ~/.alacritty.yml
-# docs: https://raw.githubusercontent.com/alacritty/alacritty/master/alacritty.yml
+# docs: man 5 alacritty OR https://github.com/alacritty/alacritty/blob/master/extra/man/alacritty.5.scd
 
 env:
   TERM: xterm-256color
@@ -7,6 +7,10 @@ env:
 window:
   dynamic_title: false
   decorations_theme_variant: Dark
+
+colors:
+  primary:
+    background: "#000000"
 
 font:
   normal:
