@@ -23,7 +23,6 @@ XTerm*charClass             : 33:48,35:48,37:48,43:48,45-47:48,64:48,95:48,126:4
 XTerm*fastScroll            : true
 XTerm*scrollBar             : false
 ! copy/paste
-XTerm*selectToClipboard     : true
 XTerm.VT100.translations    : #override \n\
 	Ctrl Shift <Key>C: copy-selection(CLIPBOARD) \n\
 	Ctrl Shift <Key>V: insert-selection(CLIPBOARD)
