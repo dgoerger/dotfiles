@@ -69,16 +69,9 @@ fi
 alias rm='rm -i'
 alias stat='stat -x'
 alias tm='cd && tmux new-session -A -s tm'
-if command -v bat >/dev/null; then
-	# within 'less', toggle line numbers with '-N<ENTER>'
-	alias v='bat --style=plain --theme="Monokai Extended Origin" --paging=always --pager="less -iLMNR" --'
-else
-	alias v='less -iLMNR --'
-fi
 if command -v nvim >/dev/null; then
 	alias vi='nvim -i NONE'
 fi
-alias view=v
 alias w='w -i'
 
 # kaomoji
@@ -793,6 +786,27 @@ thesaurus() {
 	else
 		printf "usage:\n\tthesaurus WORD\n"
 		return 1
+	fi
+}
+
+# v() pager
+v() {
+	# within 'less', toggle line numbers with '-N<ENTER>'
+	if [[ "${#}" -ge 3 ]] && [[ "${1}" == '-l' ]]; then
+		local language
+		language="${2}"
+		shift 2
+		if command -v bat >/dev/null; then
+			bat --style=plain --theme="Monokai Extended Origin" --paging=always --pager="less -iLMNR" --language "${language}" -- "${@}"
+		else
+			less -iLMNR -- "${@}"
+		fi
+	else
+		if command -v bat >/dev/null; then
+			bat --style=plain --theme="Monokai Extended Origin" --paging=always --pager="less -iLMNR" -- "${@}"
+		else
+			less -iLMNR -- "${@}"
+		fi
 	fi
 }
 
