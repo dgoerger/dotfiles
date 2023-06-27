@@ -358,6 +358,9 @@ elif [[ "${OS}" == 'Linux' ]]; then
 
 elif [[ "${OS}" == 'OpenBSD' ]]; then
 	export SSH_AUTH_SOCK_PATH="${HOME}/.ssh/ssh-$(printf "%s@%s" "${LOGNAME}" "${HOSTNAME}" | sha256).socket"
+	if command -v tog >/dev/null; then
+		TOG_COLORS=1; export TOG_COLORS
+	fi
 
 	# aliases
 	apropos() {
