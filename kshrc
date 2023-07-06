@@ -58,7 +58,6 @@ alias lS='ls -aFhlS'
 if command -v mutt >/dev/null; then
 	alias mail=mutt
 fi
-alias mtop='top -o res'
 alias mv='mv -i'
 alias pscpu='ps -Awwro user,pid,ppid,pgid,%cpu,%mem,lstart,stat,wchan,time,command'
 alias psmem='ps -Awwmo user,pid,ppid,pgid,%cpu,%mem,lstart,stat,wchan,time,command'
@@ -127,7 +126,6 @@ if [[ "${OS}" == 'Darwin' ]]; then
 	alias dns_reset='sudo killall -HUP mDNSResponder; sudo killall mDNSResponderHelper; sudo dscacheutil -flushcache'
 	alias ducks='du -hxd1 | sort -hr'
 	alias ldd='otool -L'
-	alias mtop='top -o mem'
 	alias realpath='readlink'
 
 elif [[ "${OS}" == 'Linux' ]]; then
@@ -143,9 +141,6 @@ elif [[ "${OS}" == 'Linux' ]]; then
 	export SSH_AUTH_SOCK_PATH="${HOME}/.ssh/ssh-$(printf "%s@%s" "${LOGNAME}" "${HOSTNAME}" | sha256sum | awk '{print $1}').socket"
 
 	# aliases
-	if command -v atop >/dev/null; then
-		alias atop='atop -f'
-	fi
 	if ! command -v doas >/dev/null; then
 		alias doas=/usr/bin/sudo
 	fi
@@ -214,7 +209,6 @@ elif [[ "${OS}" == 'Linux' ]]; then
 	if command -v plocate >/dev/null; then
 		alias locate='plocate -iN'
 	fi
-	alias mtop='top -s -o "RES"'
 	alias pscpu='ps -Awwo user,pid,ppid,pgid,pcpu,pmem,lstart,stat,wchan,time,command --sort -pcpu,-pmem'
 	alias psmem='ps -Awwo user,pid,ppid,pgid,pcpu,pmem,lstart,stat,wchan,time,command --sort -pmem,-pcpu'
 	unalias pstree
@@ -264,9 +258,6 @@ elif [[ "${OS}" == 'Linux' ]]; then
 		alias checkupdates='apt list --upgradeable'
 		alias listening='ss -lntu'
 		alias pkgextras='apt list "~o"'
-		if [[ -r /etc/pop-os/issue ]]; then
-			alias pkgup='/usr/bin/sudo /bin/bash -c "/bin/apt update && /bin/apt upgrade -y && /bin/flatpak update --system -y && /bin/flatpak uninstall --system --unused -y"'
-		fi
 		alias realpath='readlink -ev'
 		unalias w
 		function w {
@@ -395,10 +386,8 @@ fi
 if [[ "${0}" == '-ksh' ]] || [[ "${0}" == 'ksh' ]]; then
 	export HOST_LIST=$(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts 2>/dev/null | sort -u)
 
-	set -A complete_dig_1 -- ${HOST_LIST}
 	set -A complete_git_1 -- add bisect blame checkout clone commit diff log mv pull push rebase reset revert rm stash status submodule
 	set -A complete_got_1 -- add backout blame branch cat checkout cherrypick clone commit diff fetch histedit import info init integrate log rebase ref remove revert stage status tag tree unstage update
-	set -A complete_host_1 -- ${HOST_LIST}
 	if command -v ifconfig >/dev/null; then
 		set -A complete_ifconfig_1 -- $(ifconfig | awk -F':' '/^[a-z]/ {print $1}')
 	fi
@@ -456,7 +445,7 @@ diff() {
 			/^\+/ {printf "\033[38;5;28m%s\033[38;5;m\n", $0}
 			/^(\ |[a-z])/ {printf "\033[0;0m%s\033[0;0m\n", $0}'
 	else
-	      	printf "%s\n" "${diff}"
+		printf "%s\n" "${diff}"
 	fi
 	unset diff
 }
@@ -664,25 +653,6 @@ rename() {
 	unset -f usage
 }
 
-# rwhence() realpath + whence
-rwhence() {
-	if [[ "${#}" == '1' ]]; then
-		local cmd="$(command -v "${1}")"
-		if [[ -z "${cmd}" ]]; then
-			printf "'%s' not found\n" "${1}" >&2
-			return 1
-		elif [[ -f "${cmd}" ]]; then
-			realpath "${cmd}"
-		else
-			printf "'%s' is a function\n" "${1}" >&2
-			return 1
-		fi
-	else
-		printf "usage:\n\trwhence COMMAND\n" >&2
-		return 1
-	fi
-}
-
 # sshinit() ssh-agent initialiser
 sshinit() {
 	if [[ -z "${SSH_AUTH_SOCK}" ]] || [[ -n "$(echo "${SSH_AUTH_SOCK}" | grep -E "^/run/user/$(id -u)/keyring/ssh$")" ]] || [[ -n "$(echo "${SSH_AUTH_SOCK}" | grep -E "^/private/tmp/com.apple.launchd.*/Listeners$")" ]]; then
@@ -836,13 +806,11 @@ if command -v reader >/dev/null && command -v lowdown >/dev/null; then
 			printf "\t* alpine PKG      - search the package repositories for Alpine Linux\n"
 			printf "\t* debian PKG      - search the package repositories for Debian Linux\n"
 			printf "\t* mandebian CMD   - retrieve manuals from the Debian Project\n"
-			printf "\t* manobsd CMD     - retrieve manuals from the OpenBSD Project\n"
+			printf "\t* manopenbsd CMD  - retrieve manuals from the OpenBSD Project\n"
 			printf "\t* nws ZIPCODE     - retrieve forecasts from the US National Weather Service\n"
 			printf "\t* rfc NUMBER      - retrieve the text of a published IETF RFC\n"
-			printf "\t* thesaurus WORD  - query the Oxford Dictionary thesaurus\n"
 			printf "\t* wikipedia WORD  - query Wikipedia, the free encyclopedia\n"
 			printf "\t* wiktionary WORD - query Wiktionary, the free dictionary\n"
-			printf "\t* HTTPS_URL       - retrieve a single https:// webpage by URL\n"
 		}
 		
 		# escape characters for URL-encoding
@@ -904,7 +872,7 @@ if command -v reader >/dev/null && command -v lowdown >/dev/null; then
 				open_html "https://pkgs.alpinelinux.org/packages?name=${query}&branch=edge&arch=x86_64"
 				;;
 			deb|debian)
-				open_html "https://tracker.debian.org/search?package_name=${query}"
+				open_html "https://qa.debian.org/madison.php?package=${query}"
 				;;
 			man|manobsd|manopenbsd)
 				open_html "https://man.openbsd.org/?sec=0&arch=default&manpath=OpenBSD-current&query=${query}"
@@ -918,9 +886,6 @@ if command -v reader >/dev/null && command -v lowdown >/dev/null; then
 			rfc)
 				open_html "https://tools.ietf.org/rfc/rfc${query}.txt"
 				;;
-			thesaurus)
-				open_html "https://en.oxforddictionaries.com/thesaurus/${query}"
-				;;
 			w|wikipedia)
 				open_html "https://en.wikipedia.org/w/index.php?search=${query}&title=Special%3ASearch&go=Go"
 				;;
@@ -928,7 +893,8 @@ if command -v reader >/dev/null && command -v lowdown >/dev/null; then
 				open_html "https://en.wiktionary.org/w/index.php?search=${query}&title=Special%3ASearch&go=Go"
 				;;
 			*)
-				open_html "${1}"
+				usage
+				return 1
 				;;
 		esac
 	unset -f escape_html open_html usage
