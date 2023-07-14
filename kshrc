@@ -130,9 +130,7 @@ if [[ "${OS}" == 'Darwin' ]]; then
 
 elif [[ "${OS}" == 'Linux' ]]; then
 	# env
-	export LS_COLORS='no=00:fi=00:rs=0:di=00:ln=00:mh=00:pi=00:so=00:do=00:bd=00:cd=00:or=00:mi=00:su=00:sg=00:ca=00:tw=00:ow=00:st=00:ex=00'
 	if [[ -L "/bin" ]]; then
-		# some Linux have /bin -> /usr/bin
 		export PATH=/usr/local/bin:/bin:/sbin
 	fi
 	if [[ -d "${HOME}/bin" ]]; then
@@ -249,6 +247,7 @@ elif [[ "${OS}" == 'Linux' ]]; then
 		# with less(1) v594, we no-longer need to disable LESSHISTFILE manually
 		# .. https://github.com/gwsw/less/commit/9eba0da958d33ef3582667e09701865980595361
 		export LESSHISTFILE=-
+		export LS_COLORS='no=00:fi=00:rs=0:di=00:ln=00:mh=00:pi=00:so=00:do=00:bd=00:cd=00:or=00:mi=00:su=00:sg=00:ca=00:tw=00:ow=00:st=00:ex=00'
 		export QUOTING_STYLE=literal
 
 		if [[ -x /usr/bin/ncal ]]; then
