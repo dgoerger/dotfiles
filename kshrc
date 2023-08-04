@@ -25,7 +25,6 @@ export HISTCONTROL=ignoredups
 export HISTFILE="${HOME}/.history"
 export HISTSIZE=20736
 export HOSTNAME="$(hostname -s)"
-export LANG="en_CA.UTF-8"
 export LC_ALL="en_CA.UTF-8"
 export LESSSECURE=1
 export OS="$(uname)"

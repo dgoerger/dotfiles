@@ -12,7 +12,7 @@ MaxAuthTries 3
 HostKeyAlgorithms ssh-ed25519
 
 # env
-AcceptEnv LANG LC_ALL TZ
+AcceptEnv LC_ALL TZ
 
 # time out stale client sessions after 120s
 TCPKeepAlive no
