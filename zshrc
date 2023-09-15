@@ -1,14 +1,11 @@
 # ~/.zshrc, see zshmodules(1) and zshoptions(1)
 
 ## compat
-set -o append_create
 set -o complete_aliases
 set -o interactive_comments
 set -o local_options
 set -o no_auto_menu
-set -o posix_argzero
 set -o posix_identifiers
-set -o sh_word_split
 autoload -U select-word-style
 select-word-style bash
 
