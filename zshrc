@@ -3,7 +3,6 @@
 ## compat
 set -o complete_aliases
 set -o interactive_comments
-set -o local_options
 set -o no_auto_menu
 set -o posix_identifiers
 autoload -U select-word-style
