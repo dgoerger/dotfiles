@@ -855,6 +855,9 @@ if command -v reader >/dev/null && command -v lowdown >/dev/null; then
 			if [[ "${1}" == https* ]]; then
 				open_html "${1}"
 				return $?
+			elif [[ "${1}" == *.html ]] && [[ -r "${1}" ]]; then
+				open_html "${1}"
+				return $?
 			else
 				usage
 				return 1
