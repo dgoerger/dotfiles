@@ -554,7 +554,11 @@ if [[ "${OS}" == 'OpenBSD' ]] || [[ -r "/etc/alpine-release" ]]; then
 				doas /sbin/poweroff
 			fi
 		else
-			printf "\n\nWrong hostname. Refusing to power off '%s'...\n\n" "${HOSTNAME}"
+			stty -echo
+			printf "\nWrong hostname. Refusing to power off '%s'...\n\n[press ENTER]" "${HOSTNAME}"
+			read -r CONFIRM
+			stty echo
+			printf "\n"
 			return 1
 		fi
 	}
@@ -569,7 +573,11 @@ reboot() {
 	if [[ "${HOSTNAME}" == "${MACHINE_NAME}" ]]; then
 		doas /sbin/reboot
 	else
-		printf "\n\nWrong hostname. Refusing to reboot '%s'...\n\n" "${HOSTNAME}"
+		stty -echo
+		printf "\nWrong hostname. Refusing to reboot '%s'...\n\n[press ENTER]" "${HOSTNAME}"
+		read -r CONFIRM
+		stty echo
+		printf "\n"
 		return 1
 	fi
 }
