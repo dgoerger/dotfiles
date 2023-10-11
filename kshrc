@@ -393,7 +393,7 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == 'ksh' ]]; then
 	if [[ -r /usr/local/etc/manuals.list ]]; then
 		set -A complete_man_1 -- $(cat /usr/local/etc/manuals.list)
 	fi
-	set -A complete_nc_1 -- -c -cv -v ${HOST_LIST}
+	set -A complete_nc_1 -- -cvz -vz ${HOST_LIST}
 	set -A complete_ping_1 -- ${HOST_LIST}
 	set -A complete_ping6_1 -- ${HOST_LIST}
 	if [[ "${OS}" == 'OpenBSD' ]] && [[ -r /etc/rc.d ]]; then
