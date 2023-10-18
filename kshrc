@@ -353,8 +353,8 @@ elif [[ "${OS}" == 'OpenBSD' ]]; then
 
 	# aliases
 	apropos() {
-		# search all sections of the manual by default
-		/usr/bin/man -k any="${1}"
+		# search most fields
+		/usr/bin/apropos Nm,Nd,Sh,Ss,Ar,Ic="${1}"
 	}
 	if sysctl -n kern.version | grep -E "\-(current|beta)" >/dev/null 2>&1; then
 		alias checkupdates='doas /bin/ksh -c "/usr/bin/timeout -sINT 3s /usr/sbin/sysupgrade -ns"'
