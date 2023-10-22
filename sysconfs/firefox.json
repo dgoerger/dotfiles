@@ -1,7 +1,7 @@
 {
 	"__comment": {
 		"__compat": "NIX-ONLY",
-		"__docs": "https://github.com/mozilla/policy-templates/blob/master/README.md",
+		"__docs": "https://mozilla.github.io/policy-templates/",
 		"__usage": "Set globally for new AND old profiles at /usr/local/lib/firefox/distribution/policies.json OR /usr/lib64/firefox/distribution/policies.json"
 	},
 	"policies": {
@@ -40,7 +40,9 @@
 		},
 		"Extensions": {
 			"Install": [
-				"https://addons.mozilla.org/firefox/downloads/latest/noscript/latest.xpi"
+				"https://addons.mozilla.org/firefox/downloads/latest/noscript/latest.xpi",
+				"https://addons.mozilla.org/firefox/downloads/latest/single-file/latest.xpi",
+				"https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi"
 			],
 			"Uninstall": [
 				"amazon@search.mozilla.org",
@@ -59,6 +61,12 @@
 			"SponsoredPocket": false,
 			"SponsoredTopSites": false,
 			"TopSites": false,
+			"Locked": true
+		},
+		"FirefoxSuggest": {
+			"ImproveSuggest": false,
+			"SponsoredSuggestions": false,
+			"WebSuggestions": false,
 			"Locked": true
 		},
 		"Homepage": {
