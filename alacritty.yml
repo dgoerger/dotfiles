@@ -9,6 +9,8 @@ shell:
   args:
     - -l
 
+ipc_socket: false
+
 window:
   dynamic_title: false
   decorations_theme_variant: Dark
