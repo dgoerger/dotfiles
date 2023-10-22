@@ -4,31 +4,51 @@
 env:
   TERM: xterm-256color
 
-window:
-  dynamic_title: false
-  decorations_theme_variant: Dark
-
-colors:
-  primary:
-    background: "#000000"
-
-font:
-  normal:
-    # Default:
-    #   - (macOS) Menlo
-    #   - (Linux/BSD) monospace
-    #   - (Windows) Consolas
-    family: Fira Mono
-
-draw_bold_text_with_bright_colors: true
-
 shell:
   program: ksh
   args:
     - -l
 
+window:
+  dynamic_title: false
+  decorations_theme_variant: Dark
+
+colors:
+  # xterm colour scheme
+  # .. via https://github.com/alacritty/alacritty-theme/blob/master/themes/xterm.yaml
+  primary:
+    background: '0x000000'
+    foreground: '0xffffff'
+  normal:
+    black:      '0x000000'
+    red:        '0xcd0000'
+    green:      '0x00cd00'
+    yellow:     '0xcdcd00'
+    blue:       '0x0000ee'
+    magenta:    '0xcd00cd'
+    cyan:       '0x00cdcd'
+    white:      '0xe5e5e5'
+  bright:
+    black:      '0x000000'
+    red:        '0xff0000'
+    green:      '0x00ff00'
+    yellow:     '0xffff00'
+    blue:       '0x5c5cff'
+    magenta:    '0xff00ff'
+    cyan:       '0x00ffff'
+    white:      '0xffffff'
+
 selection:
   semantic_escape_chars: ",│`|\"' ()[]{}<>*\t"
+
+hints:
+  enabled:
+    - regex: "(https://|http://)[^\\u0000-\\u001F\\u007F-\\u009F<>\"\\\\s{-}\\\\^⟨⟩`]+"
+      action: Select
+      post-processing: false
+      mouse:
+        enabled: false
+        mods: None
 
 key_bindings:
   - { key: C,    mods: Control|Shift,               action: Copy    }
