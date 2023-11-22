@@ -33,6 +33,7 @@
 	"ExtensionInstallForcelist": [
 		"cjpalhdlnbpafiamejdnhcphjbkeiagm;https://clients2.google.com/service/update2/crx"
 	],
+	"ExtensionManifestV2Availability": 3,
 	"ForceEphemeralProfiles": true,
 	"HideWebStoreIcon": true,
 	"HighEfficiencyModeEnabled": false,
