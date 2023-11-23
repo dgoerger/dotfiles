@@ -272,6 +272,10 @@
 				"Value": 2,
 				"Status": "locked"
 			},
+			"pdfjs.disableFontFace": {
+				"Value": true,
+				"Status": "locked"
+			},
 			"places.history.enabled": {
 				"Value": false,
 				"Status": "locked"
