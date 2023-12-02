@@ -1,11 +1,5 @@
 ! ~/.Xresources
 !
-!!! Fonts
-Xft.antialias               : true
-Xft.autohint                : true
-Xft.hinting                 : true
-Xft.hintstyle               : hintslight
-!
 !!! XTerm
 ! always source ~/.profile
 XTerm*loginShell            : true
@@ -13,11 +7,6 @@ XTerm*loginShell            : true
 XTerm*termName              : xterm-256color
 XTerm*background            : black
 XTerm*foreground            : white
-! fonts
-XTerm*font                  : xft:Fira Mono:pixelsize=20
-XTerm*faceName              : xft:Fira Mono:pixelsize=20
-XTerm*faceNameDoublesize    : xft:Noto Sans Mono CJK JP:pixelsize=16:style=Regular
-XTerm*antialias             : true
 ! mouse
 XTerm*charClass             : 33:48,35:48,37:48,43:48,45-47:48,64:48,95:48,126:48,35:48,58:48,63:48,61:48,44:48,38:48,59:48
 XTerm*fastScroll            : true

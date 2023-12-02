@@ -9,6 +9,9 @@ shell:
   args:
     - -l
 
+font:
+  size: 8.0
+
 ipc_socket: false
 
 window:
