@@ -60,7 +60,7 @@ fi
 alias mv='mv -i'
 alias pscpu='ps -Awwro user,pid,ppid,pgid,%cpu,%mem,lstart,stat,wchan,time,command'
 alias psmem='ps -Awwmo user,pid,ppid,pgid,%cpu,%mem,lstart,stat,wchan,time,command'
-alias pstree='ps -Awwfo user,pid,ppid,pgid,%cpu,%mem,stat,wchan,time,command'
+alias pstree='ps -Awwfo user,pid,ppid,pgid,lstart,%cpu,%mem,stat,wchan,command'
 if ! command -v rg >/dev/null; then
 	alias rg='grep -EIinrs --'
 fi
@@ -213,7 +213,7 @@ elif [[ "${OS}" == 'Linux' ]]; then
 		if [[ "${#}" -gt 0 ]]; then
 			/usr/bin/pstree "${@}"
 		else
-			ps f -Awwo user,pid,ppid,pgid,pcpu,pmem,stat,wchan,time,command
+			ps f -Awwo user,pid,ppid,pgid,lstart,pcpu,pmem,stat,wchan,command
 		fi
 	}
 	unalias stat
