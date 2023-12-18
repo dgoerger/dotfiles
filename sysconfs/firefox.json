@@ -292,6 +292,10 @@
 				"Value": false,
 				"Status": "locked"
 			},
+			"signon.firefoxRelay.feature": {
+				"Value": "disabled",
+				"Status": "locked"
+			},
 			"spellchecker.dictionary": {
 				"Value": "en-CA",
 				"Status": "locked"
