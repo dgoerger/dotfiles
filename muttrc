@@ -9,7 +9,7 @@ hdr_order date from to cc subject
 color hdrdefault red default
 color quoted brightblue default
 color signature red default
-color indicator brightyellow red
+color indicator black magenta
 color error brightred default
 color status yellow blue
 color tree magenta default

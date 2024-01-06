@@ -19,29 +19,28 @@ window:
   decorations_theme_variant: Dark
 
 colors:
-  # xterm colour scheme
-  # .. via https://github.com/alacritty/alacritty-theme/blob/master/themes/xterm.yaml
+  # monokai charcoal
   primary:
     background: '0x000000'
-    foreground: '0xffffff'
+    foreground: '0xF0F3F6'
   normal:
     black:      '0x000000'
-    red:        '0xcd0000'
-    green:      '0x00cd00'
-    yellow:     '0xcdcd00'
-    blue:       '0x0000ee'
-    magenta:    '0xcd00cd'
-    cyan:       '0x00cdcd'
-    white:      '0xe5e5e5'
+    red:        '0xF4005F'
+    green:      '0x98E024'
+    yellow:     '0xFA8419'
+    blue:       '0x9D65FF'
+    magenta:    '0xF4005F'
+    cyan:       '0x58D1EB'
+    white:      '0xC4C5B5'
   bright:
-    black:      '0x000000'
-    red:        '0xff0000'
-    green:      '0x00ff00'
-    yellow:     '0xffff00'
-    blue:       '0x5c5cff'
-    magenta:    '0xff00ff'
-    cyan:       '0x00ffff'
-    white:      '0xffffff'
+    black:      '0x625E4C'
+    red:        '0xF4005F'
+    green:      '0x98E024'
+    yellow:     '0xE0D561'
+    blue:       '0x9D65FF'
+    magenta:    '0xF4005F'
+    cyan:       '0x58D1EB'
+    white:      '0xF6F6EF'
 
 selection:
   semantic_escape_chars: ",│`|\"' ()[]{}<>*\t"
