@@ -18,6 +18,7 @@
 	ui = auto
 [diff]
 	algorithm = histogram
+	noprefix = true
 [grep]
 	lineNumber = true
 	patternType = extended
