@@ -19,6 +19,8 @@
 [diff]
 	algorithm = histogram
 	noprefix = true
+[feature]
+	manyFiles = true
 [grep]
 	lineNumber = true
 	patternType = extended
