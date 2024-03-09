@@ -21,6 +21,8 @@
 	noprefix = true
 [feature]
 	manyFiles = true
+[fetch]
+	prune = true
 [grep]
 	lineNumber = true
 	patternType = extended
@@ -34,3 +36,7 @@
 	default = simple
 [rebase]
 	autoSquash = true
+	missingCommitsCheck = warn
+	updateRefs = true
+[rerere]
+	enabled = true
