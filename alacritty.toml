@@ -1,0 +1,60 @@
+# ~/.alacritty.toml
+# docs: man 5 alacritty
+
+# general
+ipc_socket = false
+
+[colors.bright]
+black = "0x625e4c"
+blue = "0x9d65ff"
+cyan = "0x58d1eb"
+green = "0x98e024"
+magenta = "0xf4005f"
+red = "0xf4005f"
+white = "0xf6f6ef"
+yellow = "0xe0d561"
+
+[colors.normal]
+black = "0x000000"
+blue = "0x9d65ff"
+cyan = "0x58d1eb"
+green = "0x98e024"
+magenta = "0xf4005f"
+red = "0xf4005f"
+white = "0xc4c5b5"
+yellow = "0xfa8419"
+
+[colors.primary]
+background = "0x000000"
+foreground = "0xf0f3f6"
+
+[env]
+TERM = "xterm-256color"
+
+[font]
+size = 8.0
+
+[[hints.enabled]]
+action = "Select"
+regex = '(https://|http://)[^\u0000-\u001F\u007F-\u009F<>"\\s{-}\\^⟨⟩`]+'
+mouse.enabled = false
+
+[keyboard]
+bindings = [
+        { action = "Copy", key = "C", mods = "Control|Shift" },
+        { action = "Paste", key = "V", mods = "Control|Shift" }
+]
+
+[selection]
+semantic_escape_chars = ",│`|\"' ()[]{}<>*\t"
+
+[shell]
+program = "ksh"
+args = ["-l"]
+
+[terminal]
+osc52 = "Disabled"
+
+[window]
+decorations_theme_variant = "Dark"
+dynamic_title = false
