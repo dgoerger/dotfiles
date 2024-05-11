@@ -42,28 +42,30 @@ if ${FETCH} 2>/dev/null; then
 	# copy in the new blocklist
 	install -pm 0444 -o root "${TMP}" "${BLOCKLIST_FILE}"
 
-	# unwind(8)
-	if rcctl ls on 2>/dev/null | grep -E "^unwind$" >/dev/null 2>&1; then
+	# unwind(8) validate syntax - we do NOT want to break the DNS!!
+	if rcctl ls on 2>/dev/null | grep -E "^unwind$" >/dev/null 2>&1 && /sbin/unwind -n -f /etc/unwind.conf >/dev/null 2>&1; then
 		rcctl restart unwind >/dev/null 2>&1
-	# syntax check for sanity - we do NOT want to break the DNS!!
+	# unbound(8)
 	elif /usr/sbin/unbound-checkconf >/dev/null 2>&1; then
-		# OpenBSD
-		if rcctl ls on 2>/dev/null | grep -E "^unbound$" >/dev/null 2>&1; then
-			rcctl restart unbound >/dev/null 2>&1
 		# Alpine
-		elif rc-service unbound status >/dev/null 2>&1; then
+		if rc-service unbound status >/dev/null 2>&1; then
 			rc-service unbound restart
 		# Linux with systemd
 		elif systemctl is-enabled unbound >/dev/null 2>&1; then
 			systemctl restart unbound >/dev/null 2>&1
 		fi
 	elif [[ -f "${BLOCKLIST_FILE}.bak" ]]; then
+		# revert invalid config
 		mv "${BLOCKLIST_FILE}.bak" "${BLOCKLIST_FILE}"
+		printf 'reverted invalid config\n'
+		exit 1
 	else
 		# if unbound-checkconf fails AND there is no backup blocklist.. remove the new blocklist
 		rm "${BLOCKLIST_FILE}"
 		touch "${BLOCKLIST_FILE}"
 		chmod 0444 "${BLOCKLIST_FILE}"
+		printf 'reverted invalid config\n'
+		exit 1
 	fi
 
 	rm "${TMP}" "${SRC}"
