@@ -2,7 +2,8 @@
 set -Cefuo pipefail
 
 if [[ "$(uname)" != 'OpenBSD' ]]; then
-	printf 'ERROR: Unsupported OS\n' && exit 1
+	printf 'ERROR: Unsupported OS\n'
+	exit 1
 fi
 
 readonly CONF="/etc/pf.conf.deny"
@@ -28,5 +29,6 @@ if pfctl -nf /etc/pf.conf 2>/dev/null; then
 	pfctl -f /etc/pf.conf
 else
 	mv "${CONF}.bak" "${CONF}"
-	printf "Invalid PF syntax, backing out blocklist update, please verify.\n" | mailx -s "pf: failed to verify updated blocklist" root
+	printf "Invalid PF syntax, backing out blocklist update. Please verify.\n"
+	exit 1
 fi
