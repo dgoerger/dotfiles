@@ -138,31 +138,37 @@ case "${TARGET}" in
 			exit 1
 		fi
 		if [[ -n "${CHROMIUM}" ]]; then
-			# hack to work around missing/non-standard 'install -v' flag
+			# hacks to work around missing/non-standard 'install -[C|b|v]' flags
+			# .. OpenBSD lacks '-v', and Alpine/busybox lacks all three
 			if ! cmp -s "${CHROMIUM_SRC}" "${CHROMIUM_DST}" 2>/dev/null; then
-				install -Cbm 0444 -o root -g wheel sysconfs/chromium.conf /etc/chromium/policies/managed/policy.json
+				cp -p "${CHROMIUM_DST}" "${CHROMIUM_DST}.old"
+				install -pm 0444 -o root -g wheel "${CHROMIUM_SRC}" "${CHROMIUM_DST}"
 				printf "install: %s -> %s\n" "${CHROMIUM_SRC}" "${CHROMIUM_DST}"
 			fi
 		fi
 		if ! cmp -s "${DNSBLOCK_SRC}" "${DNSBLOCK_DST}" 2>/dev/null; then
-			install -Cbm 0544 -o root -g wheel "${DNSBLOCK_SRC}" "${DNSBLOCK_DST}"
+			cp -p "${DNSBLOCK_DST}" "${DNSBLOCK_DST}.old"
+			install -pm 0544 -o root -g wheel "${DNSBLOCK_SRC}" "${DNSBLOCK_DST}"
 			printf "install: %s -> %s\n" "${DNSBLOCK_SRC}" "${DNSBLOCK_DST}"
 		fi
 		if [[ -n "${DOAS}" ]]; then
 			if ! cmp -s "${DOAS_SRC}" "${DOAS_DST}" 2>/dev/null; then
-				install -Cbm 0444 -o root -g wheel "${DOAS_SRC}" "${DOAS_DST}"
+				cp -p "${DOAS_DST}" "${DOAS_DST}.old"
+				install -pm 0444 -o root -g wheel "${DOAS_SRC}" "${DOAS_DST}"
 				printf "install: %s -> %s\n" "${DOAS_SRC}" "${DOAS_DST}"
 			fi
 		fi
 		if [[ -n "${FIREFOX}" ]]; then
 			if ! cmp -s "${FIREFOX_SRC}" "${FIREFOX_DST}" 2>/dev/null; then
-				install -Cbm 0444 -o root -g wheel "${FIREFOX_SRC}" "${FIREFOX_DST}"
+				cp -p "${FIREFOX_DST}" "${FIREFOX_DST}.old"
+				install -pm 0444 -o root -g wheel "${FIREFOX_SRC}" "${FIREFOX_DST}"
 				printf "install: %s -> %s\n" "${FIREFOX_SRC}" "${FIREFOX_DST}"
 			fi
 		fi
 		if [[ -n "${FONTCONFIG}" ]]; then
 			if ! cmp -s "${FONTCONFIG_SRC}" "${FONTCONFIG_DST}" 2>/dev/null; then
-				install -Cbm 0444 -o root -g wheel "${FONTCONFIG_SRC}" "${FONTCONFIG_DST}"
+				cp -p "${FONTCONFIG_DST}" "${FONTCONFIG_DST}.old"
+				install -pm 0444 -o root -g wheel "${FONTCONFIG_SRC}" "${FONTCONFIG_DST}"
 				printf "install: %s -> %s\n" "${FONTCONFIG_SRC}" "${FONTCONFIG_DST}"
 			fi
 		fi
