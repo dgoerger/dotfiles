@@ -1,2 +1,2 @@
 # html
-text/html; pandoc -st plain+gutenberg %s; nametemplate=%s.html; copiousoutput
+text/html; reader --no-images --markdown-output %s | lowdown --parse-no-intraemph -st term; nametemplate=%s.html; copiousoutput
