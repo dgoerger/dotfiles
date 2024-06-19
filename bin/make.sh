@@ -68,7 +68,7 @@ if [[ -d '/etc/fonts' ]]; then
 	FONTCONFIG=1; readonly FONTCONFIG
 fi
 
-if pgrep -qf '/usr/X11R6/bin/xenodm'; then
+if pgrep -f '/usr/X11R6/bin/xenodm' >/dev/null 2>&1; then
 	XENODM=1; readonly XENODM
 fi
 
