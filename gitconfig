@@ -1,13 +1,15 @@
 # ~/.gitconfig, see git-config(1)
 
 [alias]
+	blames = !tig blame
 	branches = branch -av
 	contributors = shortlog -ens --no-merges
-	reflogs = reflog --date=iso
+	reflogs = !git reflog --pretty=raw | tig --pretty=raw
 	remotes = remote get-url --all origin
 	st = status --branch --porcelain
-	sub = submodule update --init --recursive
+	submods = submodule update --init --recursive
 	tags = tag -l
+	upstream = rev-parse --symbolic-full-name @{u}
 	worktrees = worktree list
 [apply]
 	whitespace = fix
@@ -16,9 +18,12 @@
 	sort = -committerdate
 [color]
 	ui = auto
+[core]
+	fsmonitor = true
 [diff]
 	algorithm = histogram
 	noprefix = true
+	renameLimit = 100000
 [feature]
 	manyFiles = true
 [fetch]
@@ -30,12 +35,15 @@
 	defaultBranch = main
 [log]
 	date = iso8601
+[merge]
+	conflictstyle = diff3
 [mergetool]
 	prompt = false
 [push]
 	default = simple
 [rebase]
 	autoSquash = true
+	autoStash = true
 	missingCommitsCheck = warn
 	updateRefs = true
 [rerere]
