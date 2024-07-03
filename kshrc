@@ -27,6 +27,10 @@ export HISTSIZE=20736
 export HOSTNAME="$(hostname -s)"
 export LC_ALL="en_CA.UTF-8"
 export LESSSECURE=1
+if [[ -r "${HOME}/.lynxrc" ]]; then
+	export LYNX_CFG="${HOME}/.lynxrc"
+	alias lynx='COLUMNS=80 lynx'
+fi
 export OS="$(uname)"
 if [[ -r "${HOME}/.pythonrc" ]]; then
 	export PYTHONSTARTUP="${HOME}/.pythonrc"
