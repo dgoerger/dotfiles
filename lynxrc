@@ -1,5 +1,5 @@
 # ~/.lynxrc
-# ref: https://lynx.invisible-island.net/release/lynx_help/body.html
+# docs: https://lynx.invisible-island.net/lynx_help/
 
 # homepage
 STARTFILE:https://search.marginalia.nu/

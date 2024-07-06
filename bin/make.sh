@@ -114,6 +114,9 @@ case "${TARGET}" in
 		elif [[ "${SHELL}" == '/bin/zsh' ]]; then
 			diff -u ~/.zshrc zshrc
 		fi
+		if command -v lynx >/dev/null 2>&1; then
+			diff -u ~/.lynxrc lynxrc
+		fi
 		diff -u ~/.config/nvim/init.lua nvim.lua
 		diff -u ~/.pythonrc pythonrc
 		diff -u ~/.tmux.conf tmux.conf
