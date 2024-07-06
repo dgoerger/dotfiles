@@ -207,7 +207,7 @@ case "${TARGET}" in
 		fi
 		if [[ -n "${XENODM}" ]]; then
 			if ! cmp -s "${XENODM_SRC}" "${XENODM_DST}" 2>/dev/null; then
-				install -Cbm 0444 -o root -g wheel "${XENODM_SRC}" "${XENODM_DST}"
+				install -Cbm 0555 -o root -g wheel "${XENODM_SRC}" "${XENODM_DST}"
 				printf "install: %s -> %s\n" "${XENODM_SRC}" "${XENODM_DST}"
 			fi
 		fi
