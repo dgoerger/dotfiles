@@ -21,7 +21,7 @@ bind-key CM-Backspace lock
 command lock "/usr/local/bin/xscreensaver-command -lock"
 #
 # launch menus
-bind-key M-question menu-exec 
+bind-key M-question menu-exec
 #
 # tiling
 bind-key CMS-v window-vtile

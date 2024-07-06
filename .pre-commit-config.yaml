@@ -26,12 +26,22 @@ repos:
     - id: pretty-format-json
       args: [--autofix,--indent,"\t"]
     - id: trailing-whitespace
-      exclude_types: [text]
 - repo: local
   hooks:
-  - id: shellcheck
-    name: shellcheck
-    entry: shellcheck
-    language: system
-    types:
-      - shell
+    - id: ruff
+      name: ruff
+      entry: ruff check --fix
+      language: system
+      types: [python]
+    - id: ruff-format
+      name: ruff-format
+      entry: ruff format
+      language: system
+      types: [python]
+- repo: local
+  hooks:
+    - id: shellcheck
+      name: shellcheck
+      entry: shellcheck
+      language: system
+      types: [shell]

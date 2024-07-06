@@ -190,16 +190,16 @@ elif [[ "${OS}" == 'Linux' ]]; then
 		local USED="$(echo "${TOTAL} - ${BUFFERS} - ${CACHE} - ${FREE} - ${SLAB} - ${HUGEPAGE_FREE} - ${HUGEPAGE_USED}" | bc -l)"; readonly USED
 		local NONHUGEPAGE_TOTAL="$(echo "${TOTAL} - ${HUGEPAGE_TOTAL}" | bc -l)"; readonly NONHUGEPAGE_TOTAL
 		local COMMIT_PERCENT="$(echo "result = (${COMMIT_USED} / ${COMMIT_LIMIT}) * 100; scale=0; result/1" | bc -l)"; readonly COMMIT_PERCENT
-		
+
 		# print memory usage
 		printf "\ttotal\tused\tfree\tshared\tcached\tavail\tvmcom\n"
 		printf "Mem:\t%s\t%s\t%s\t%s\t%s\t%s\t%s%%\n" "$(scale ${NONHUGEPAGE_TOTAL})" "$(scale ${USED})" "$(scale ${FREE})" "$(scale ${SHARED})" "$(scale ${BUFFCACHE})" "$(scale ${AVAIL})" "${COMMIT_PERCENT}"
-		
+
 		# only print the hugepages line if hugepages are enabled
 		if [[ "${HUGEPAGE_TOTAL}" != '0' ]]; then
 			printf "HugePg:\t%s\t%s\t%s\n" "$(scale ${HUGEPAGE_TOTAL})" "$(scale ${HUGEPAGE_USED})" "$(scale ${HUGEPAGE_FREE})"
 		fi
-		
+
 		# only print the swap line if swap is enabled
 		if [[ "${SWAP_TOTAL}" != '0' ]]; then
 			printf "Swap:\t%s\t%s\t%s\n" "$(scale ${SWAP_TOTAL})" "$(scale ${SWAP_USED})" "$(scale ${SWAP_FREE})"
@@ -470,7 +470,7 @@ if command -v exiv2 >/dev/null; then
 			local DATETIME="$(exiv2 -pt -qK Exif.Photo.DateTimeOriginal "${1}" 2>/dev/null | awk '{print $(NF-1)}' | sed 's/\:/\//g' | sort -u)"
 			local FILENAME="$(echo "${1}" | awk -F"/" '{print $NF}' | tr '[:upper:]' '[:lower:]')"
 			local PHOTO_DIR="${HOME}/Pictures"
-	
+
 			# sanity checks
 			if [[ -z "${DATETIME}" ]]; then
 				echo "${1}: Abort! DateTime not found" && return 1
@@ -485,7 +485,7 @@ if command -v exiv2 >/dev/null; then
 					echo "${1}: Abort! /bin/date doesn't recognise the detected DateTime as a valid date" && return 1
 				fi
 			fi
-	
+
 			# copy the file into place
 			if [[ -n "${FILENAME}" ]]; then
 				mkdir -p "${PHOTO_DIR}/${DATETIME}"
@@ -550,7 +550,7 @@ if [[ "${OS}" == 'OpenBSD' ]] || [[ -r "/etc/alpine-release" ]]; then
 		read -r MACHINE_NAME
 		stty echo
 		printf '\n'
-	
+
 		if [[ "${HOSTNAME}" == "${MACHINE_NAME}" ]]; then
 			if [[ "${OS}" == 'OpenBSD' ]]; then
 				doas /sbin/shutdown -p now
@@ -822,7 +822,7 @@ if command -v reader >/dev/null && command -v lowdown >/dev/null; then
 			printf "\t* wikipedia WORD  - query Wikipedia, the free encyclopedia\n"
 			printf "\t* wiktionary WORD - query Wiktionary, the free dictionary\n"
 		}
-		
+
 		# escape characters for URL-encoding
 		escape_html() {
 			echo "$@" | sed 's/%/%25/g;
@@ -854,12 +854,12 @@ if command -v reader >/dev/null && command -v lowdown >/dev/null; then
 				s/`/%60/g;
 			'"s/'/%27/g"
 		}
-		
+
 		# browser
 		open_html() {
 			reader -oi "${1}" | lowdown --parse-no-intraemph -st term | less
 		}
-		
+
 		if [[ "${#}" == '0' ]] || [[ "${1}" == '-h' ]] || [[ "${1}" == '--help' ]]; then
 			usage
 			return 0
@@ -879,7 +879,7 @@ if command -v reader >/dev/null && command -v lowdown >/dev/null; then
 			shift
 			local query="$(escape_html "$@")"; readonly query
 		fi
-		
+
 		case "${site}" in
 			apk|alpine)
 				open_html "https://pkgs.alpinelinux.org/packages?name=${query}&branch=edge&arch=x86_64"

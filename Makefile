@@ -9,4 +9,3 @@ dotfiles:
 
 install:
 	sh ./bin/make.sh install
-	
