@@ -40,6 +40,13 @@ repos:
       types: [python]
 - repo: local
   hooks:
+    - id: mypy
+      name: mypy
+      entry: mypy --strict
+      language: system
+      types: [python]
+- repo: local
+  hooks:
     - id: shellcheck
       name: shellcheck
       entry: shellcheck

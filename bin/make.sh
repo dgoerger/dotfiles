@@ -18,6 +18,8 @@ OS="$(uname)"; readonly OS
 CHROMIUM=''
 CHROMIUM_DST='/etc/chromium/policies/managed/policy.json'; readonly CHROMIUM_DST
 CHROMIUM_SRC='sysconfs/chromium.json'; readonly CHROMIUM_SRC
+DAILY_SUMMARY_SRC='bin/daily_summary.py'; readonly DAILY_SUMMARY_SRC
+DAILY_SUMMARY_DST='/usr/local/libexec/daily_summary.py'; readonly DAILY_SUMMARY_DST
 DNSBLOCK_DST='/usr/local/sbin/dnsblock'; readonly DNSBLOCK_DST
 DNSBLOCK_SRC='bin/dnsblock.sh'; readonly DNSBLOCK_SRC
 DOAS=''
@@ -96,6 +98,7 @@ case "${TARGET}" in
 			diff -u "${FONTCONFIG_DST}" "${FONTCONFIG_SRC}"
 		fi
 		if [[ "${OS}" == 'OpenBSD' ]]; then
+			diff -u "${DAILY_SUMMARY_DST}" "${DAILY_SUMMARY_SRC}"
 			diff -u "${KERNEL_BACKUP_DST}" "${KERNEL_BACKUP_SRC}"
 			diff -u "${MANUALS_COMPLETION_DST}" "${MANUALS_COMPLETION_SRC}"
 			diff -u "${NTPD_DST}" "${NTPD_SRC}"
@@ -150,69 +153,73 @@ case "${TARGET}" in
 			# .. OpenBSD lacks '-v', and Alpine/busybox lacks all three
 			if ! cmp -s "${CHROMIUM_SRC}" "${CHROMIUM_DST}" 2>/dev/null; then
 				cp -p "${CHROMIUM_DST}" "${CHROMIUM_DST}.old"
-				install -pm 0444 -o root -g wheel "${CHROMIUM_SRC}" "${CHROMIUM_DST}"
+				install -pm 0444 -o root -g bin "${CHROMIUM_SRC}" "${CHROMIUM_DST}"
 				printf "install: %s -> %s\n" "${CHROMIUM_SRC}" "${CHROMIUM_DST}"
 			fi
 		fi
 		if ! cmp -s "${DNSBLOCK_SRC}" "${DNSBLOCK_DST}" 2>/dev/null; then
 			cp -p "${DNSBLOCK_DST}" "${DNSBLOCK_DST}.old"
-			install -pm 0544 -o root -g wheel "${DNSBLOCK_SRC}" "${DNSBLOCK_DST}"
+			install -pm 0544 -o root -g bin "${DNSBLOCK_SRC}" "${DNSBLOCK_DST}"
 			printf "install: %s -> %s\n" "${DNSBLOCK_SRC}" "${DNSBLOCK_DST}"
 		fi
 		if [[ -n "${DOAS}" ]]; then
 			if ! cmp -s "${DOAS_SRC}" "${DOAS_DST}" 2>/dev/null; then
 				cp -p "${DOAS_DST}" "${DOAS_DST}.old"
-				install -pm 0444 -o root -g wheel "${DOAS_SRC}" "${DOAS_DST}"
+				install -pm 0444 -o root -g bin "${DOAS_SRC}" "${DOAS_DST}"
 				printf "install: %s -> %s\n" "${DOAS_SRC}" "${DOAS_DST}"
 			fi
 		fi
 		if [[ -n "${FIREFOX}" ]]; then
 			if ! cmp -s "${FIREFOX_SRC}" "${FIREFOX_DST}" 2>/dev/null; then
 				cp -p "${FIREFOX_DST}" "${FIREFOX_DST}.old"
-				install -pm 0444 -o root -g wheel "${FIREFOX_SRC}" "${FIREFOX_DST}"
+				install -pm 0444 -o root -g bin "${FIREFOX_SRC}" "${FIREFOX_DST}"
 				printf "install: %s -> %s\n" "${FIREFOX_SRC}" "${FIREFOX_DST}"
 			fi
 		fi
 		if [[ -n "${FONTCONFIG}" ]]; then
 			if ! cmp -s "${FONTCONFIG_SRC}" "${FONTCONFIG_DST}" 2>/dev/null; then
 				cp -p "${FONTCONFIG_DST}" "${FONTCONFIG_DST}.old"
-				install -pm 0444 -o root -g wheel "${FONTCONFIG_SRC}" "${FONTCONFIG_DST}"
+				install -pm 0444 -o root -g bin "${FONTCONFIG_SRC}" "${FONTCONFIG_DST}"
 				printf "install: %s -> %s\n" "${FONTCONFIG_SRC}" "${FONTCONFIG_DST}"
 			fi
 		fi
 		if [[ "${OS}" == 'OpenBSD' ]]; then
+			if ! cmp -s "${DAILY_SUMMARY_SRC}" "${DAILY_SUMMARY_DST}" 2>/dev/null; then
+				install -Cbm 0445 -o root -g bin "${DAILY_SUMMARY_SRC}" "${DAILY_SUMMARY_DST}"
+				printf "install: %s -> %s\n" "${DAILY_SUMMARY_SRC}" "${DAILY_SUMMARY_DST}"
+			fi
 			if ! cmp -s "${KERNEL_BACKUP_SRC}" "${KERNEL_BACKUP_DST}" 2>/dev/null; then
-				install -Cbm 0544 -o root -g wheel "${KERNEL_BACKUP_SRC}" "${KERNEL_BACKUP_DST}"
+				install -Cbm 0544 -o root -g bin "${KERNEL_BACKUP_SRC}" "${KERNEL_BACKUP_DST}"
 				printf "install: %s -> %s\n" "${KERNEL_BACKUP_SRC}" "${KERNEL_BACKUP_DST}"
 			fi
 			if ! cmp -s "${MANUALS_COMPLETION_SRC}" "${MANUALS_COMPLETION_DST}" 2>/dev/null; then
-				install -Cbm 0544 -o root -g wheel "${MANUALS_COMPLETION_SRC}" "${MANUALS_COMPLETION_DST}"
+				install -Cbm 0544 -o root -g bin "${MANUALS_COMPLETION_SRC}" "${MANUALS_COMPLETION_DST}"
 				printf "install: %s -> %s\n" "${MANUALS_COMPLETION_SRC}" "${MANUALS_COMPLETION_DST}"
 			fi
 			if ! cmp -s "${NTPD_SRC}" "${NTPD_DST}" 2>/dev/null; then
-				install -Cbm 0444 -o root -g wheel "${NTPD_SRC}" "${NTPD_DST}"
+				install -Cbm 0444 -o root -g bin "${NTPD_SRC}" "${NTPD_DST}"
 				printf "install: %s -> %s\n" "${NTPD_SRC}" "${NTPD_DST}"
 			fi
 			if ! cmp -s "${OBSD_SYSCTL_SRC}" "${OBSD_SYSCTL_DST}" 2>/dev/null; then
-				install -Cbm 0444 -o root -g wheel "${OBSD_SYSCTL_SRC}" "${OBSD_SYSCTL_DST}"
+				install -Cbm 0444 -o root -g bin "${OBSD_SYSCTL_SRC}" "${OBSD_SYSCTL_DST}"
 				printf "install: %s -> %s\n" "${OBSD_SYSCTL_SRC}" "${OBSD_SYSCTL_DST}"
 			fi
 			if ! cmp -s "${PF_BLOCKLIST_SRC}" "${PF_BLOCKLIST_DST}" 2>/dev/null; then
-				install -Cbm 0544 -o root -g wheel "${PF_BLOCKLIST_SRC}" "${PF_BLOCKLIST_DST}"
+				install -Cbm 0544 -o root -g bin "${PF_BLOCKLIST_SRC}" "${PF_BLOCKLIST_DST}"
 				printf "install: %s -> %s\n" "${PF_BLOCKLIST_SRC}" "${PF_BLOCKLIST_DST}"
 			fi
 			if ! cmp -s "${SYSSTATS_SRC}" "${SYSSTATS_DST}" 2>/dev/null; then
-				install -Cbm 0544 -o root -g wheel "${SYSSTATS_SRC}" "${SYSSTATS_DST}"
+				install -Cbm 0544 -o root -g bin "${SYSSTATS_SRC}" "${SYSSTATS_DST}"
 				printf "install: %s -> %s\n" "${SYSSTATS_SRC}" "${SYSSTATS_DST}"
 			fi
 			if ! cmp -s "${WSCONSCTL_SRC}" "${WSCONSCTL_DST}" 2>/dev/null; then
-				install -Cbm 0444 -o root -g wheel "${WSCONSCTL_SRC}" "${WSCONSCTL_DST}"
+				install -Cbm 0444 -o root -g bin "${WSCONSCTL_SRC}" "${WSCONSCTL_DST}"
 				printf "install: %s -> %s\n" "${WSCONSCTL_SRC}" "${WSCONSCTL_DST}"
 			fi
 		fi
 		if [[ -n "${XENODM}" ]]; then
 			if ! cmp -s "${XENODM_SRC}" "${XENODM_DST}" 2>/dev/null; then
-				install -Cbm 0555 -o root -g wheel "${XENODM_SRC}" "${XENODM_DST}"
+				install -Cbm 0555 -o root -g bin "${XENODM_SRC}" "${XENODM_DST}"
 				printf "install: %s -> %s\n" "${XENODM_SRC}" "${XENODM_DST}"
 			fi
 		fi
