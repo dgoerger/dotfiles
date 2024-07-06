@@ -39,6 +39,7 @@ OBSD_SYSCTL_DST='/etc/sysctl.conf'; readonly OBSD_SYSCTL_DST
 OBSD_SYSCTL_SRC='sysconfs/sysctl.conf'; readonly OBSD_SYSCTL_SRC
 PF_BLOCKLIST_DST='/usr/local/sbin/pf_blocklist'; readonly PF_BLOCKLIST_DST
 PF_BLOCKLIST_SRC='bin/pf_blocklist.sh'; readonly PF_BLOCKLIST_SRC
+SWAY=''
 SYSSTATS_DST='/usr/local/sbin/sysstats.sh'; readonly SYSSTATS_DST
 SYSSTATS_SRC='bin/sysstats.sh'; readonly SYSSTATS_SRC
 WSCONSCTL_DST='/etc/wsconsctl.conf'; readonly WSCONSCTL_DST
@@ -68,7 +69,9 @@ if [[ -d '/etc/fonts' ]]; then
 	FONTCONFIG=1; readonly FONTCONFIG
 fi
 
-if pgrep -f '/usr/X11R6/bin/xenodm' >/dev/null 2>&1; then
+if pgrep -f '/usr/local/bin/sway' >/dev/null 2>&1; then
+	SWAY=1; readonly SWAY
+elif pgrep -f '/usr/X11R6/bin/xenodm' >/dev/null 2>&1; then
 	XENODM=1; readonly XENODM
 fi
 
@@ -126,7 +129,9 @@ case "${TARGET}" in
 			diff -u ~/.exrc exrc
 			diff -u ~/.mailcap mailcap
 			diff -u ~/.mg mg
-			if [[ -n "${XENODM}" ]]; then
+			if [[ -n "${SWAY}" ]]; then
+				diff -u ~/.config/sway/config sway_config
+			elif [[ -n "${XENODM}" ]]; then
 				diff -u ~/.Xresources Xresources
 				diff -u ~/.cwmrc cwmrc
 				diff -u ~/.config/mpv/mpv.conf mpv.conf
