@@ -1,4 +1,5 @@
 #!/bin/ksh -
+# shellcheck disable=SC2174
 set -Cfuo pipefail
 
 umask 0027

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/ksh -
 # OpenBSD: /etc/X11/xenodm/Xsetup_0
 
 if [[ -x /usr/local/bin/sct ]]; then

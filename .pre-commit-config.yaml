@@ -1,0 +1,37 @@
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.6.0
+  hooks:
+    - id: check-added-large-files
+      args: [--maxkb=512]
+    - id: check-ast
+    - id: check-builtin-literals
+    - id: check-case-conflict
+    - id: check-docstring-first
+    - id: check-json
+    - id: check-executables-have-shebangs
+    - id: check-json
+    - id: check-merge-conflict
+    - id: check-shebang-scripts-are-executable
+    - id: check-symlinks
+    - id: check-toml
+    - id: check-xml
+    - id: check-yaml
+    - id: debug-statements
+    - id: destroyed-symlinks
+    - id: detect-private-key
+    - id: end-of-file-fixer
+    - id: forbid-submodules
+    - id: mixed-line-ending
+    - id: pretty-format-json
+      args: [--autofix,--indent,"\t"]
+    - id: trailing-whitespace
+      exclude_types: [text]
+- repo: local
+  hooks:
+  - id: shellcheck
+    name: shellcheck
+    entry: shellcheck
+    language: system
+    types:
+      - shell

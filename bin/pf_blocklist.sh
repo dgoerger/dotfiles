@@ -6,8 +6,8 @@ if [[ "$(uname)" != 'OpenBSD' ]]; then
 	exit 1
 fi
 
-readonly CONF="/etc/pf.conf.deny"
-readonly TMPFILE="$(mktemp -t pf.XXXXXX)"
+CONF="/etc/pf.conf.deny"; readonly CONF
+TMPFILE="$(mktemp -t pf.XXXXXX)"; readonly TMPFILE
 
 chown root:_pkgfetch "${TMPFILE}"
 chmod 0660 "${TMPFILE}"

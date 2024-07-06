@@ -14,17 +14,17 @@
 
 set -Cefuo pipefail
 
-readonly CONFDIR="/usr/local/etc"
-readonly CONFFILE="${CONFDIR}/manuals.list"
-readonly PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/games:/usr/local/bin:/usr/local/sbin:/usr/X11R6/bin
-readonly TMPFILE="$(mktemp)"
+CONFDIR="/usr/local/etc"; readonly CONFDIR
+CONFFILE="${CONFDIR}/manuals.list"; readonly CONFFILE
+PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/games:/usr/local/bin:/usr/local/sbin:/usr/X11R6/bin; readonly PATH
+TMPFILE="$(mktemp)"; readonly TMPFILE
 
 if [[ ! -d "${CONFDIR}" ]]; then
 	printf "ENOENT: directory '%s' does not exist\n" "${CONFDIR}"
-        exit 1
+	exit 1
 elif [[ ! -w "${CONFDIR}" ]]; then
-        printf "EACCES: cannot write to '%s'\n" "${CONFDIR}"
-        exit 1
+	printf "EACCES: cannot write to '%s'\n" "${CONFDIR}"
+	exit 1
 fi
 
 # why is section 1 filled with so much junk?

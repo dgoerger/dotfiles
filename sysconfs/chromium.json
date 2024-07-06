@@ -1,9 +1,4 @@
 {
-	"__comment": {
-		"__compat": "NIX-ONLY",
-		"__docs": "https://chromeenterprise.google/policies/",
-		"__usage": "Set globally for new AND old profiles at /etc/chromium/policies/managed/policy.json"
-	},
 	"AllowFileSelectionDialogs": true,
 	"AutofillAddressEnabled": false,
 	"AutofillCreditCardEnabled": false,
@@ -22,9 +17,9 @@
 	"DefaultCookiesSetting": 4,
 	"DefaultGeolocationSetting": 2,
 	"DefaultSearchProviderEnabled": true,
+	"DefaultSearchProviderIconURL": "https://duckduckgo.com/favicon.ico",
 	"DefaultSearchProviderName": "DuckDuckGo",
 	"DefaultSearchProviderSearchURL": "https://duckduckgo.com/?kae=t&kac=-1&kaj=m&kam=osm&kak=-1&kax=-1&kv=-1&kaq=-1&kap=-1&kg=g&q={searchTerms}",
-	"DefaultSearchProviderIconURL": "https://duckduckgo.com/favicon.ico",
 	"DefaultSensorsSetting": 2,
 	"DefaultWebBluetoothGuardSetting": 2,
 	"DefaultWebUsbGuardSetting": 2,
@@ -51,19 +46,24 @@
 	"PasswordManagerEnabled": false,
 	"PromotionalTabsEnabled": false,
 	"RestrictSigninToPattern": ".*@example.com",
+	"SSLVersionMin": "tls1.2",
 	"SafeBrowsingExtendedReportingEnabled": false,
 	"SavingBrowserHistoryDisabled": true,
 	"ScreenCaptureAllowed": false,
 	"SearchSuggestEnabled": false,
 	"SitePerProcess": true,
-	"SSLVersionMin": "tls1.2",
+	"SpellCheckServiceEnabled": false,
 	"SpellcheckLanguage": [
 		"en-CA"
 	],
-	"SpellCheckServiceEnabled": false,
 	"SyncDisabled": true,
 	"TranslateEnabled": false,
 	"UrlKeyedAnonymizedDataCollectionEnabled": false,
+	"WPADQuickCheckEnabled": false,
 	"WebRtcEventLogCollectionAllowed": false,
-	"WPADQuickCheckEnabled": false
+	"__comment": {
+		"__compat": "NIX-ONLY",
+		"__docs": "https://chromeenterprise.google/policies/",
+		"__usage": "Set globally for new AND old profiles at /etc/chromium/policies/managed/policy.json"
+	}
 }
