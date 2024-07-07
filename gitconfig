@@ -1,5 +1,7 @@
 # ~/.gitconfig, see git-config(1)
 
+[advice]
+	skippedCherryPicks = false
 [alias]
 	blames = !tig blame
 	branches = branch -av
