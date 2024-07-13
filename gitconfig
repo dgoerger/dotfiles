@@ -11,6 +11,7 @@
 	st = status --branch --porcelain
 	submods = submodule update --init --recursive
 	tags = tag -l
+	upload = !/usr/local/libexec/gerrit_uploader.sh
 	upstream = rev-parse --symbolic-full-name @{u}
 	worktrees = worktree list
 [apply]

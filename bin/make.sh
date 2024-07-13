@@ -31,6 +31,8 @@ FIREFOX_SRC='sysconfs/firefox.json'; readonly FIREFOX_SRC
 FONTCONFIG=''
 FONTCONFIG_DST='/etc/fonts/local.conf'; readonly FONTCONFIG_DST
 FONTCONFIG_SRC='sysconfs/fontconfig.xml'; readonly FONTCONFIG_SRC
+GERRIT_UPLOADER_DST='/usr/local/libexec/gerrit_uploader.sh'; readonly GERRIT_UPLOADER_DST
+GERRIT_UPLOADER_SRC='bin/gerrit_uploader.sh'; readonly GERRIT_UPLOADER_SRC
 KERNEL_BACKUP_DST='/usr/local/sbin/kernel_backup'; readonly KERNEL_BACKUP_DST
 KERNEL_BACKUP_SRC='bin/kernel_backup.sh'; readonly KERNEL_BACKUP_SRC
 MANUALS_COMPLETION_DST='/usr/local/sbin/manuals_tab_completion'; readonly MANUALS_COMPLETION_DST
@@ -97,6 +99,7 @@ case "${TARGET}" in
 		if [[ -n "${FONTCONFIG}" ]]; then
 			diff -u "${FONTCONFIG_DST}" "${FONTCONFIG_SRC}"
 		fi
+		diff -u "${GERRIT_UPLOADER_DST}" "${GERRIT_UPLOADER_SRC}"
 		if [[ "${OS}" == 'OpenBSD' ]]; then
 			diff -u "${DAILY_SUMMARY_DST}" "${DAILY_SUMMARY_SRC}"
 			diff -u "${KERNEL_BACKUP_DST}" "${KERNEL_BACKUP_SRC}"
@@ -182,6 +185,11 @@ case "${TARGET}" in
 				install -pm 0444 -o root -g bin "${FONTCONFIG_SRC}" "${FONTCONFIG_DST}"
 				printf "install: %s -> %s\n" "${FONTCONFIG_SRC}" "${FONTCONFIG_DST}"
 			fi
+		fi
+		if ! cmp -s "${GERRIT_UPLOADER_SRC}" "${GERRIT_UPLOADER_DST}" 2>/dev/null; then
+			cp -p "${GERRIT_UPLOADER_DST}" "${GERRIT_UPLOADER_DST}.old"
+			install -pm 0445 -o root -g bin "${GERRIT_UPLOADER_SRC}" "${GERRIT_UPLOADER_DST}"
+			printf "install: %s -> %s\n" "${GERRIT_UPLOADER_SRC}" "${GERRIT_UPLOADER_DST}"
 		fi
 		if [[ "${OS}" == 'OpenBSD' ]]; then
 			if ! cmp -s "${DAILY_SUMMARY_SRC}" "${DAILY_SUMMARY_DST}" 2>/dev/null; then
