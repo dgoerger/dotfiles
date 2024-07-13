@@ -58,6 +58,7 @@ alias listening='netstat -lnp tcp && netstat -lnp udp'
 alias ll='ls -Fhl'
 alias ls='ls -F'
 alias lS='ls -aFhlS'
+alias mtop='top -Co size'
 if command -v mutt >/dev/null; then
 	alias mail=mutt
 fi
@@ -71,6 +72,7 @@ fi
 alias rm='rm -i'
 alias stat='stat -x'
 alias tm='cd && tmux new-session -A -s tm'
+alias top='top -C'
 if command -v nvim >/dev/null; then
 	alias vi='nvim -i NONE'
 fi
@@ -129,7 +131,9 @@ if [[ "${OS}" == 'Darwin' ]]; then
 	alias dns_reset='sudo killall -HUP mDNSResponder; sudo killall mDNSResponderHelper; sudo dscacheutil -flushcache'
 	alias ducks='du -hxd1 | sort -hr'
 	alias ldd='otool -L'
+	unalias mtop
 	alias realpath='readlink'
+	unalias top
 
 elif [[ "${OS}" == 'Linux' ]]; then
 	# env
@@ -209,6 +213,11 @@ elif [[ "${OS}" == 'Linux' ]]; then
 	}
 	if command -v plocate >/dev/null; then
 		alias locate='plocate -iN'
+	fi
+	if command -v atop >/dev/null 2>?dev/null; then
+		alias mtop='atop -m'
+	else
+		alias mtop='top -cso RES'
 	fi
 	alias pscpu='ps -Awwo user,pid,ppid,pgid,pcpu,pmem,lstart,stat,wchan,time,command --sort -pcpu,-pmem'
 	alias psmem='ps -Awwo user,pid,ppid,pgid,pcpu,pmem,lstart,stat,wchan,time,command --sort -pmem,-pcpu'
