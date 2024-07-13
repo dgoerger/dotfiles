@@ -204,11 +204,23 @@
 				"Status": "locked",
 				"Value": false
 			},
+			"browser.urlbar.speculativeConnect.enabled": {
+				"Status": "locked",
+				"Value": false
+			},
 			"dom.allow_cut_copy": {
 				"Status": "locked",
 				"Value": false
 			},
+			"dom.battery.enabled": {
+				"Status": "locked",
+				"Value": false
+			},
 			"dom.event.clipboardevents.enabled": {
+				"Status": "locked",
+				"Value": false
+			},
+			"dom.private-attribution.submission.enabled": {
 				"Status": "locked",
 				"Value": false
 			},
@@ -252,9 +264,17 @@
 				"Status": "locked",
 				"Value": false
 			},
+			"media.navigator.enabled": {
+				"Status": "locked",
+				"Value": false
+			},
 			"media.peerconnection.enabled": {
 				"Status": "locked",
 				"Value": false
+			},
+			"media.peerconnection.ice.default_address_only": {
+				"Status": "locked",
+				"Value": true
 			},
 			"network.IDN_show_punycode": {
 				"Status": "locked",
@@ -283,6 +303,10 @@
 			"print.save_print_settings": {
 				"Status": "locked",
 				"Value": false
+			},
+			"privacy.globalprivacycontrol.enabled": {
+				"Status": "locked",
+				"Value": true
 			},
 			"security.mixed_content.block_active_content": {
 				"Status": "locked",
