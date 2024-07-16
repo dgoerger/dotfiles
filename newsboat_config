@@ -1,6 +1,7 @@
 # ~/.newsboat/config
 # docs: man newsboat
 auto-reload "yes"
+browser "COLUMNS=80 lynx"
 feed-sort-order "unreadarticlecount-asc"
 goto-next-feed "no"
 # stash urls and other site-specific configs in config.site, not here
