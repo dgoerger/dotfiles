@@ -126,6 +126,9 @@ case "${TARGET}" in
 		if command -v lynx >/dev/null 2>&1; then
 			diff -u ~/.lynxrc lynxrc
 		fi
+		if command -v newsboat >/dev/null 2>&1; then
+			diff -u ~/.newsboat/config newsboat_config
+		fi
 		diff -u ~/.config/nvim/init.lua nvim.lua
 		diff -u ~/.pythonrc pythonrc
 		diff -u ~/.tmux.conf tmux.conf

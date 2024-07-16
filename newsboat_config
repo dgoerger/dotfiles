@@ -1,0 +1,9 @@
+# ~/.newsboat/config
+# docs: man newsboat
+auto-reload "yes"
+feed-sort-order "unreadarticlecount-asc"
+goto-next-feed "no"
+# stash urls and other site-specific configs in config.site, not here
+include "~/.newsboat/config.site"
+max-items "5000"
+text-width "80"
