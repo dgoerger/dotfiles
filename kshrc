@@ -214,7 +214,7 @@ elif [[ "${OS}" == 'Linux' ]]; then
 	if command -v plocate >/dev/null; then
 		alias locate='plocate -iN'
 	fi
-	if command -v atop >/dev/null 2>?dev/null; then
+	if command -v atop >/dev/null 2>/dev/null; then
 		alias mtop='atop -m'
 	else
 		alias mtop='top -cso RES'
