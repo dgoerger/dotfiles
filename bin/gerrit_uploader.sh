@@ -6,11 +6,14 @@ usage() {
 }
 
 # TODO: add support for git-worktree(1)
-if [[ ! -x "$(git rev-parse --absolute-git-dir)/hooks/commit-msg" ]] && ! grep -iq gerrit "$(git rev-parse --absolute-git-dir)/hooks/commit-msg)"; then
-	printf "This script can only be used to upload changes to Gerrit Code Review;\n"
-	printf "no commit-msg hook found.\n"
+if [[ ! -x "$(git rev-parse --absolute-git-dir)/hooks/commit-msg" ]] || ! grep -i gerrit "$(git rev-parse --absolute-git-dir)/hooks/commit-msg" >/dev/null 2>&1; then
+	# IF commit-msg is not executable (or does not exist) OR commit-msg exists but is unrelated to gerrit, THEN
+	printf "This script can only be used to upload changes to Gerrit Code Review.\n"
+	printf "No commit-msg hook found.\n"
 	exit 1
 fi
+
+# TODO: warn if the worktree contains unstaged commits, and offer to amend them into the current commit if the current author matches the author of the previous commit
 
 if [[ "${#}" == '0' ]]; then
 	UPSTREAM_BRANCH="$(git rev-parse --symbolic-full-name @\{u\} 2>/dev/null | awk -F'/' '{print $NF}')"
@@ -46,7 +49,7 @@ elif ! git rev-parse --remotes "${UPSTREAM_BRANCH}" >/dev/null 2>&1; then
 fi
 
 if [[ "${UPSTREAM_BRANCH}" != 'main' ]] && [[ "${UPSTREAM_BRANCH}" != 'master' ]]; then
-	printf "Non-standard upstream branch '%s' found. Proceed? (y/N)\n" "${UPSTREAM_BRANCH}"
+	printf "Non-standard upstream branch '%s' found. Proceed? (y/N) " "${UPSTREAM_BRANCH}"
 	read -r yesno
 	if [[ "${yesno}" != 'y' ]] && [[ "${yesno}" != 'yes' ]]; then
 		printf "cancelling upload..\n"
@@ -70,7 +73,7 @@ if [[ -r "$(git rev-parse --show-toplevel)/.pre-commit-config.yaml" ]] && [[ ! -
 	cd "$(git rev-parse --show-toplevel)"
 	pre-commit install
 	cd -
-	pre-commit run --all-files
+	pre-commit run --from-ref "$(git merge-base "@{u}" HEAD)" --to-ref HEAD
 fi
 # TODO: support uploading a rev other than HEAD; conditional on rewrite in a non-bourne language
 exec git push "${REMOTE}" "HEAD:refs/for/${UPSTREAM_BRANCH}"
