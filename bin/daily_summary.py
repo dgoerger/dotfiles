@@ -171,19 +171,19 @@ def weather_forecast(forecast_url: str, forecast_lookahead_in_days: int) -> list
 if __name__ == "__main__":
     latitude, longitude = argparse(sys.argv)
     long_forecast = [6]
-    short_forecast = [12, 18]
+    geo_data = geo_query(latitude, longitude)
     if hour_of_day() in long_forecast:
         forecast_lookahead_in_days = 3
         print(today())
         print(calendar())
+        print(f"Forecast for {geo_data['city']}, {geo_data['state']}")
         print("~~~")
         print(sunstat(latitude, longitude).rstrip("\n"))
         print("~~~\n")
-    elif hour_of_day() in short_forecast:
-        forecast_lookahead_in_days = 1
     else:
         forecast_lookahead_in_days = 0
-    geo_data = geo_query(latitude, longitude)
+        print(f"Current weather in {geo_data['city']}, {geo_data['state']}")
+        print("~~~")
     print(
         "AQI: "
         + air_quality(latitude, longitude, geo_data)
@@ -196,7 +196,7 @@ if __name__ == "__main__":
         f"({current_data['temperature']}ºC, "
         f"{current_data['relativeHumidity']}% humidity)\n"
     )
-    if hour_of_day() in (long_forecast or short_forecast):
+    if hour_of_day() in long_forecast:
         print(
             "\n\n".join(
                 weather_forecast(geo_data["forecast_url"], forecast_lookahead_in_days)
