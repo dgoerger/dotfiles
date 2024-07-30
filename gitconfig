@@ -25,6 +25,8 @@
 	fsmonitor = true
 [diff]
 	algorithm = histogram
+	colorMoved = dimmed-zebra
+	colorMovedWS = ignore-all-space
 	noprefix = true
 	renameLimit = 100000
 [feature]
