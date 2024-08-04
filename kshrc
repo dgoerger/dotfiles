@@ -937,3 +937,11 @@ export GIT_COMMITTER_NAME=${GIT_AUTHOR_NAME}
 if command -v got >/dev/null; then
 	export GOT_AUTHOR="${GIT_AUTHOR_NAME} <${GIT_AUTHOR_EMAIL}>"
 fi
+
+### fix ssh agent forwarding workstation->jumpbox
+if [[ "${HOSTNAME}" == "${SSH_JUMPBOX}" ]] && echo "${SSH_AUTH_SOCK}" | grep -E "^/tmp/ssh-.*/agent\." >/dev/null 2>&1; then
+	if [[ -w "${HOME}" ]] && [[ -S "${SSH_AUTH_SOCK}" ]] && [[ "${SSH_AUTH_SOCK}" != "$(realpath "${SSH_AUTH_SOCK_PATH}" 2>/dev/null)" ]]; then
+		/bin/ln -sf "${SSH_AUTH_SOCK}" "${SSH_AUTH_SOCK_PATH}"
+	fi
+	export SSH_AUTH_SOCK="${SSH_AUTH_SOCK_PATH}"
+fi
