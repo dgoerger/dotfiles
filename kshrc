@@ -42,9 +42,6 @@ export VISUAL="${EDITOR}"
 ## aliases
 alias bc='bc -l'
 alias cal='cal -m'
-if command -v calendar >/dev/null && [[ -r "${HOME}/.calendar" ]]; then
-	alias calendar='calendar -f ${HOME}/.calendar'
-fi
 alias cp='cp -i'
 alias df='df -h'
 alias ducks='du -ahxd1 | sort -hr'
