@@ -13,7 +13,6 @@ set.mouse     = ''      -- disable mouse support (jumpy trackpads)
 set.shada     = ''      -- disable history file
 set.smartcase = true    -- strict case searching CAPS
 set.spelllang = 'en_ca' -- enable spellcheck with ':set spell'
-set.tgc       = true    -- enable truecolour support
 
 -- ctrl+h/j/k/l keybindings for navigating windows
 map('n', '<C-UP>',    '<C-W>k')
@@ -60,14 +59,8 @@ require("lazy").setup({
 			lazy = false,
 		},
 		{
-			'NeogitOrg/neogit',
-			lazy = false,
-			dependencies = {
-				'nvim-lua/plenary.nvim',
-				'sindrets/diffview.nvim',
-				'nvim-telescope/telescope.nvim',
-				'nvim-treesitter/nvim-treesitter',
-			}
+			'nvim-telescope/telescope.nvim',
+			lazy = true,
 		},
 	},
 	-- nota bene: to update, run ':Lazy sync'
@@ -83,78 +76,80 @@ require("lazy").setup({
 		'tohtml',
 		'tutor',
 		'zipPlugin',
-	}}}
-
+	}}},
 })
 
 -- load colour scheme
-require('monokai').setup { palette = require('monokai').pro }
+if (
+	(vim.env.TERM:match '-direct') or (vim.env.TERM:match '-256color'))
+	and not (vim.env.TERM == 'nsterm-256color'
+) then
+	-- assume that all -direct (true) and -256color (mostly true)
+	-- terminals support truecolour. The main exception is macOS's
+	-- Terminal.app (nsterm), so we special case that here.
+	set.termguicolors = true
+	require('monokai').setup {
+		palette = require('monokai').pro
+	}
+	api.nvim_set_hl(0, 'Normal', {
+		guibg=NONE, guifg=NONE, ctermgb=NONE, ctermfg=NONE
+	})
 
--- configure tree-sitter
-local treesitter = require('nvim-treesitter.configs')
-treesitter.setup {
-	ensure_installed = {
-		'bash',
-		'c',
-		'cpp',
-		'css',
-		'go',
-		'groovy',
-		'haskell',
-		'html',
-		'java',
-		'javascript',
-		'json',
-		'lua',
-		'perl',
-		'php',
-		'python',
-		'query',
-		'rust',
-		'typescript',
-		'vim',
-		'vimdoc',
-		'yaml'
-	},
-	sync_install = false,
-	highlight = { enable = true },
-	indent = { enable = true },
-}
-
--- load neogit
-local neogit = require('neogit')
-neogit.setup {
-	graph_style = "unicode",
-	ignored_settings = {
-		"NeogitPushPopup--force-with-lease",
-		"NeogitPushPopup--force",
-		"NeogitPullPopup--rebase",
-		"NeogitCommitPopup--allow-empty",
-		"NeogitRevertPopup--no-edit",
-	},
-	disable_line_numbers = true,
-	console_timeout = 2000,
-	auto_show_console = true,
-	auto_close_console = true,
-	commit_editor = {
-		kind = "tab",
-		show_staged_diff = true,
-		staged_diff_split_kind = "auto",
-	},
-}
+	-- configure tree-sitter
+	local treesitter = require('nvim-treesitter.configs')
+	treesitter.setup {
+		ensure_installed = {
+			'bash',
+			'c',
+			'cpp',
+			'css',
+			'go',
+			'groovy',
+			'haskell',
+			'html',
+			'java',
+			'javascript',
+			'json',
+			'lua',
+			'perl',
+			'php',
+			'python',
+			'query',
+			'rust',
+			'typescript',
+			'vim',
+			'vimdoc',
+			'yaml'
+		},
+		sync_install = false,
+		highlight = { enable = true },
+		incremental_selection = {
+			enable = true,
+			keymaps = {
+				init_selection = false,
+				node_incremental = '.',
+				scope_incremental = false,
+				node_decremental = false,
+			},
+		},
+		indent = { enable = true },
+	}
+else
+	set.termguicolors = false
+end
 
 -- load telescope fuzzy-find
 local builtin = require('telescope.builtin')
 require('telescope').setup{
 	pickers = {
 		find_files = {
-			find_command = { 'rg', '--files', '--iglob', '!.git', '--hidden' },
+			find_command = { 'rg', '--one-file-system', '--files', '--iglob', '!.git', '--hidden' },
 		},
 		grep_string = {
-			additional_args = {'--hidden'}
+			additional_args = {'--one-file-system', '--iglob', '!.git', '--hidden'}
 		},
 		live_grep = {
-			additional_args = {'--hidden'}
+			additional_args = {'--one-file-system', '--iglob', '!.git', '--hidden'}
 		}
 	}
 }
