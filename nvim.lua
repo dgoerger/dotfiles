@@ -165,7 +165,7 @@ vim.cmd [[
 	set nofoldenable
 	autocmd BufRead,BufNewFile /tmp/mutt* set ft=mail spell formatoptions+=aw nosmartindent nocindent indentexpr=
 	autocmd BufRead,BufNewFile *.md,*.markdown set ft=mkd syntax=markdown spell formatoptions+=aw textwidth=70 nosmartindent nocindent indentexpr=
-	autocmd BufRead,BufNewFile Jenkinsfile*,*.jenkinsfile set ft=groovy syntax=groovy
+	autocmd BufRead,BufNewFile Jenkinsfile*,*.jenkinsfile set ft=groovy syntax=groovy softtabstop=4 shiftwidth=4 expandtab
 	autocmd BufRead,BufNewFile *.sls set ft=salt
 ]]
 
