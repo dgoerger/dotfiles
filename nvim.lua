@@ -62,6 +62,14 @@ require("lazy").setup({
 			'nvim-telescope/telescope.nvim',
 			lazy = true,
 		},
+		{
+			'nvim-tree/nvim-tree.lua',
+			lazy = false,
+		},
+		{
+			'lewis6991/gitsigns.nvim',
+			lazy = false,
+		},
 	},
 	-- nota bene: to update, run ':Lazy sync'
 	checker = { enabled = false },
@@ -159,6 +167,95 @@ map('n', '<leader>ff', builtin.find_files, { desc = "find files" })
 map('n', '<leader>fg', builtin.live_grep, { desc = "live grep" })
 map('n', '<leader>fw', builtin.grep_string, { desc = "find word under cursor" })
 map('n', '<leader>gc', builtin.git_commits, { desc = "search git commits" })
+
+-- configure gitsigns
+require('gitsigns').setup({
+	signs_staged_enable = true,
+	signcolumn = false,
+})
+
+-- configure nvim-tree
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+require('nvim-tree').setup({
+	sort = {
+		sorter = "case_sensitive",
+	},
+	view = {
+		width = 30,
+	},
+	renderer = {
+		indent_markers = {
+			enable = true,
+			inline_arrows = true,
+			icons = {
+				corner = '└',
+				edge = '│',
+				item = '├',
+				bottom = '─',
+				none = '│',
+			},
+		},
+		icons = {
+			glyphs = {
+				folder = {
+					arrow_closed = '►',
+					arrow_open = '▼',
+					default = '📁',
+					open = '📂',
+					symlink = '📁',
+					symlink_open = '📂',
+					empty = '📂',
+					empty_open = '📂',
+				},
+				default = '',
+				symlink = '🔗',
+			},
+		},
+		highlight_modified = 'all',
+	},
+	modified = {
+		enable = true,
+		show_on_dirs = true,
+		show_on_open_dirs = true,
+	},
+	actions = {
+		open_file = {
+			window_picker = {
+				enable = false,
+			},
+		},
+	},
+	filters = {
+		dotfiles = true,
+	},
+})
+-- automatically close tree view if it's the only remaining buffer
+api.nvim_create_autocmd("QuitPre", {
+	callback = function()
+		local tree_wins = {}
+		local floating_wins = {}
+		local wins = api.nvim_list_wins()
+		for _, w in ipairs(wins) do
+			local bufname = api.nvim_buf_get_name(vim.api.nvim_win_get_buf(w))
+			if bufname:match("NvimTree_") ~= nil then
+				table.insert(tree_wins, w)
+			end
+			if api.nvim_win_get_config(w).relative ~= '' then
+				table.insert(floating_wins, w)
+			end
+		end
+		if 1 == #wins - #floating_wins - #tree_wins then
+			-- Should quit, so we close all invalid windows.
+			for _, w in ipairs(tree_wins) do
+				api.nvim_win_close(w, true)
+			end
+		end
+	end
+})
+
+-- toggle "IDE mode" tree view + gitsigns with ctrl-a
+map('n', '<C-a>', '<cmd>NvimTreeToggle<CR><BAR>:Gitsigns toggle_signs<CR>')
 
 -- indentation schema
 vim.cmd [[
