@@ -5,16 +5,17 @@ local api = vim.api
 local map = vim.keymap.set
 local set = vim.opt
 
-set.expandtab = true    -- use spaces by default instead of tabs
-set.ignorecase= true    -- ignore case when searching
-set.incsearch = true    -- search as you type
-set.modelines = 0       -- disable modelines for security, see rhbz#1398227
-set.mouse     = ''      -- disable mouse support (jumpy trackpads)
-set.shada     = ''      -- disable history file
-set.smartcase = true    -- strict case searching CAPS
-set.spelllang = 'en_ca' -- enable spellcheck with ':set spell'
+set.expandtab  = true    -- use spaces by default instead of tabs
+set.ignorecase = true    -- ignore case when searching
+set.incsearch  = true    -- search as you type
+set.modelines  = 0       -- disable modelines for security, see rhbz#1398227
+set.mouse      = ''      -- disable mouse support (jumpy trackpads)
+set.shada      = ''      -- disable history file
+set.smartcase  = true    -- strict case searching CAPS
+set.spelllang  = 'en_ca' -- enable spellcheck with ':set spell'
+set.splitbelow = true    -- open new windows below the current one
 
--- ctrl+h/j/k/l keybindings for navigating windows
+-- navigating windows
 map('n', '<C-UP>',    '<C-W>k')
 map('n', '<C-K>',     '<C-W>k')
 map('n', '<C-DOWN>',  '<C-W>j')
@@ -23,6 +24,11 @@ map('n', '<C-LEFT>',  '<C-W>h')
 map('n', '<C-H>',     '<C-W>h')
 map('n', '<C-RIGHT>', '<C-W>l')
 map('n', '<C-L>',     '<C-W>l')
+
+-- navigating tabs
+-- in nvim-tree, open files in new tabs using ctrl+t
+map('n', '<C-n>',     '<cmd>tabnext<CR>')
+map('n', '<C-p>',     '<cmd>tabprev<CR>')
 
 -- bootstrap lazy.nvim plugin manager
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -147,9 +153,20 @@ else
 end
 
 -- load telescope fuzzy-find
-local builtin = require('telescope.builtin')
+local telescope_builtin = require('telescope.builtin')
+local telescope_actions = require('telescope.actions')
 require('telescope').setup{
 	pickers = {
+		buffers = {
+			mappings = {
+				-- switch to the open tab or window rather than
+				-- replace the buffer in the current one
+				i = { ["<CR>"] = telescope_actions.select_tab_drop }
+			},
+			ignore_current_buffer = true,
+			show_all_buffers = false,
+			sort_last_used = true,
+		},
 		find_files = {
 			find_command = { 'rg', '--one-file-system', '--files', '--iglob', '!.git', '--hidden' },
 		},
@@ -163,10 +180,11 @@ require('telescope').setup{
 }
 
 -- telescope keybindings
-map('n', '<leader>ff', builtin.find_files, { desc = "find files" })
-map('n', '<leader>fg', builtin.live_grep, { desc = "live grep" })
-map('n', '<leader>fw', builtin.grep_string, { desc = "find word under cursor" })
-map('n', '<leader>gc', builtin.git_commits, { desc = "search git commits" })
+map('n', '<leader>ff', telescope_builtin.find_files, { desc = "find files" })
+map('n', '<leader>fg', telescope_builtin.live_grep, { desc = "live grep" })
+map('n', '<leader>fw', telescope_builtin.grep_string, { desc = "find word under cursor" })
+map('n', '<leader>gc', telescope_builtin.git_commits, { desc = "search git commits" })
+map('n', '<leader>fb', telescope_builtin.buffers, { desc = "search vim buffers" })
 
 -- configure gitsigns
 require('gitsigns').setup({
@@ -182,7 +200,11 @@ require('nvim-tree').setup({
 		sorter = "case_sensitive",
 	},
 	view = {
-		width = 30,
+		width = {
+			min = 20,
+			max = 40,
+			padding = 0,
+		}
 	},
 	renderer = {
 		indent_markers = {
@@ -255,7 +277,36 @@ api.nvim_create_autocmd("QuitPre", {
 })
 
 -- toggle "IDE mode" tree view + gitsigns with ctrl-a
-map('n', '<C-a>', '<cmd>NvimTreeToggle<CR><BAR>:Gitsigns toggle_signs<CR>')
+local ToggleIDEMode = function()
+	if vim.g.IDEMode then
+		vim.g.IDEMode = false
+		-- Disable line numbers in all open windows of the current tab.
+		-- Without this, line numbers are only disabled in whichever
+		-- window has focus, which might be nvim-tree, :help, etc.
+		local wins = api.nvim_tabpage_list_wins(0)
+		for _, w in ipairs(wins) do
+			api.nvim_set_option_value('number', false, { scope = 'local', win = w })
+		end
+		vim.cmd "NvimTreeClose"
+	else
+		vim.g.IDEMode = true
+		current_win = api.nvim_get_current_win()
+		api.nvim_set_option_value('number', true, { scope = 'local', win = 0 })
+		vim.cmd "NvimTreeOpen"
+		-- nvim-tree likes to steal focus; reset focus to the original window.
+		api.nvim_set_current_win(current_win)
+	end
+	vim.cmd "Gitsigns toggle_linehl"
+end
+map('n', '<C-a>', ToggleIDEMode)
+
+-- shortcut to open an embedded terminal
+local OpenTerminal = function()
+	vim.cmd "25split|terminal"
+end
+map('n', '<C-t>', OpenTerminal)
+-- shortcut to return to 'normal mode' within the terminal
+map('t', '<C-x>', '<C-\\><C-n>')
 
 -- indentation schema
 vim.cmd [[
@@ -264,6 +315,7 @@ vim.cmd [[
 	autocmd BufRead,BufNewFile *.md,*.markdown set ft=mkd syntax=markdown spell formatoptions+=aw textwidth=70 nosmartindent nocindent indentexpr=
 	autocmd BufRead,BufNewFile Jenkinsfile*,*.jenkinsfile,*.groovy set ft=groovy syntax=groovy softtabstop=4 shiftwidth=4 expandtab
 	autocmd BufRead,BufNewFile *.sls set ft=salt
+	autocmd TermOpen * startinsert
 ]]
 
 -- autoformatting for python
