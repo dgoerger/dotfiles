@@ -22,6 +22,7 @@
 [color]
 	ui = auto
 [core]
+	commentString = "⁂"
 	fsmonitor = true
 [diff]
 	algorithm = histogram
