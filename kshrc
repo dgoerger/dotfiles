@@ -18,7 +18,12 @@ umask 077
 
 ## environment variables
 unset  ENV
-export EDITOR=vi
+if command -v nvim >/dev/null; then
+	export EDITOR='nvim -i NONE'
+	alias vi="${EDITOR}"
+else
+	export EDITOR=vi
+fi
 export GIT_AUTHOR_EMAIL="${LOGNAME}@users.noreply.github.com"
 export GIT_AUTHOR_NAME="$(getent passwd "${LOGNAME}" | cut -d: -f5 | cut -d, -f1)"
 export HISTCONTROL=ignoredups
@@ -70,9 +75,6 @@ alias rm='rm -i'
 alias stat='stat -x'
 alias tm='cd && tmux new-session -A -s tm'
 alias top='top -C'
-if command -v nvim >/dev/null; then
-	alias vi='nvim -i NONE'
-fi
 alias w='w -i'
 
 # kaomoji
