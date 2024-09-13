@@ -41,6 +41,7 @@
 	<alias>
 		<family>monospace</family>
 		<prefer>
+			<family>Code New Roman Nerd Font Mono</family>
 			<family>JuliaMono</family>
 			<family>Fira Mono</family>
 			<family>Liberation Mono</family>
