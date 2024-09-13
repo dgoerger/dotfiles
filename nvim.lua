@@ -59,6 +59,7 @@ require("lazy").setup({
 			'tanvirtin/monokai.nvim',
 			lazy = false,
 			priority = 10000,
+			commit = 'b8bd44d5796503173627d7a1fc51f77ec3a08a63', -- 20240912, there are no releases yet
 		},
 		{
 			'nvim-treesitter/nvim-treesitter',
@@ -70,11 +71,13 @@ require("lazy").setup({
 		},
 		{
 			'nvim-tree/nvim-tree.lua',
-			lazy = false,
+			lazy = true,
+			tag = 'v1.6', -- 20240912
 		},
 		{
 			'lewis6991/gitsigns.nvim',
-			lazy = false,
+			lazy = true,
+			tag = 'release',
 		},
 	},
 	-- nota bene: to update, run ':Lazy sync'
@@ -83,7 +86,10 @@ require("lazy").setup({
 	performance = { rtp = { disabled_plugins = {
 		'editorconfig',
 		'gzip',
+		'man',
+		'netrwPlugin',
 		'osc52',
+		'rplugin',
 		'shada',
 		'spellfile',
 		'tarPlugin',
@@ -195,7 +201,6 @@ map('n', '<leader>fb', telescope_builtin.buffers, { desc = "search vim buffers" 
 
 -- configure gitsigns
 require('gitsigns').setup({
-	signs_staged_enable = true,
 	signcolumn = false,
 })
 
@@ -323,6 +328,10 @@ vim.cmd [[
 	autocmd BufRead,BufNewFile Jenkinsfile*,*.jenkinsfile,*.groovy set ft=groovy syntax=groovy softtabstop=4 shiftwidth=4 expandtab
 	autocmd BufRead,BufNewFile *.sls set ft=salt
 	autocmd TermOpen * startinsert
+	" disable unused providers
+	let g:loaded_perl_provider = 0
+	let g:loaded_python3_provider = 0
+	let g:loaded_ruby_provider = 0
 ]]
 
 -- autoformatting for python
