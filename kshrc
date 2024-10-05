@@ -423,16 +423,6 @@ fi
 
 
 ### functions
-# def() look up the definition of a word
-def() {
-	if [[ $# -eq 1 ]]; then
-		printf "D gcide %s\nQ\n" "${1}" | nc dict.org 2628 | grep -Ev "^(150|220|221|250|\.)"
-	else
-		printf "usage:\n\tdef WORD\n"
-		return 1
-	fi
-}
-
 # diff() with syntax highlighting
 diff() {
 	if [[ "${#}" == '0' ]]; then
@@ -458,17 +448,6 @@ diff() {
 	fi
 	unset diff
 }
-
-# fd() find files and directories
-if ! command -v fd >/dev/null; then
-	fd() {
-		if [[ "${#}" != '1' ]]; then
-			printf "usage:\n\tfd FILENAME\n"
-		else
-			find . -iname "*${1}*"
-		fi
-	}
-fi
 
 # photo_import() import photos from an SD card
 if command -v exiv2 >/dev/null; then
@@ -769,16 +748,6 @@ cpu\t%s\n" "${distro}" "${kernel}" "${uptime_int}" "${uptime_unit}" "$(scale ${m
 	unset -f scale
 }
 
-# thesaurus() synonym lookup
-thesaurus() {
-	if [[ $# -eq 1 ]]; then
-		printf "D moby-thesaurus %s\nQ\n" "${1}" | nc dict.org 2628 | grep -Ev "^(150|220|221|250|\.)"
-	else
-		printf "usage:\n\tthesaurus WORD\n"
-		return 1
-	fi
-}
-
 # v() pager
 v() {
 	# within 'less', toggle line numbers with '-N<ENTER>'
@@ -814,112 +783,6 @@ whattimeisitin() {
 		printf "%s: %s\n\n" "${zone}" "$(TZ=${zone} date)"
 	fi
 }
-
-# www() retrieve information from the Internet
-if command -v reader >/dev/null && command -v lowdown >/dev/null; then
-	www() {
-		usage() {
-			printf "usage:\n\twww [KEYWORD] [QUERY]\n\nSupported KEYWORDs:\n"
-			printf "\t* alpine PKG      - search the package repositories for Alpine Linux\n"
-			printf "\t* debian PKG      - search the package repositories for Debian Linux\n"
-			printf "\t* mandebian CMD   - retrieve manuals from the Debian Project\n"
-			printf "\t* manopenbsd CMD  - retrieve manuals from the OpenBSD Project\n"
-			printf "\t* nws ZIPCODE     - retrieve forecasts from the US National Weather Service\n"
-			printf "\t* rfc NUMBER      - retrieve the text of a published IETF RFC\n"
-			printf "\t* wikipedia WORD  - query Wikipedia, the free encyclopedia\n"
-			printf "\t* wiktionary WORD - query Wiktionary, the free dictionary\n"
-		}
-
-		# escape characters for URL-encoding
-		escape_html() {
-			echo "$@" | sed 's/%/%25/g;
-				s/+/%2B/g;
-				s/ /%20/g;
-				s/(/%28/g;
-				s/)/%29/g;
-				s/"/%22/g;
-				s/#/%23/g;
-				s/\$/%24/g;
-				s/&/%26/g;
-				s/,/%2C/g;
-				sx/x%2Fxg;
-				s/:/%3A/g;
-				s/;/%3B/g;
-				s/</%3C/g;
-				s/=/%3D/g;
-				s/>/%3E/g;
-				s/?/%3F/g;
-				s/@/%40/g;
-				s/\[/%5B/g;
-				s/\\/%5C/g;
-				s/\]/%5D/g;
-				s/\^/%5E/g;
-				s/{/%7B/g;
-				s/|/%7C/g;
-				s/}/%7D/g;
-				s/~/%7E/g;
-				s/`/%60/g;
-			'"s/'/%27/g"
-		}
-
-		# browser
-		open_html() {
-			reader -oi "${1}" | lowdown --parse-no-intraemph -st term | less
-		}
-
-		if [[ "${#}" == '0' ]] || [[ "${1}" == '-h' ]] || [[ "${1}" == '--help' ]]; then
-			usage
-			return 0
-		elif [[ "${#}" -eq 1 ]]; then
-			if [[ "${1}" == https* ]]; then
-				open_html "${1}"
-				return $?
-			elif [[ "${1}" == *.html ]] && [[ -r "${1}" ]]; then
-				open_html "${1}"
-				return $?
-			else
-				usage
-				return 1
-			fi
-		else
-			local site="${1}"; readonly site
-			shift
-			local query="$(escape_html "$@")"; readonly query
-		fi
-
-		case "${site}" in
-			apk|alpine)
-				open_html "https://pkgs.alpinelinux.org/packages?name=${query}&branch=edge&arch=x86_64"
-				;;
-			deb|debian)
-				open_html "https://qa.debian.org/madison.php?package=${query}"
-				;;
-			man|manobsd|manopenbsd)
-				open_html "https://man.openbsd.org/?sec=0&arch=default&manpath=OpenBSD-current&query=${query}"
-				;;
-			mandeb|mandebian)
-				open_html "https://manpages.debian.org/jump?q=${query}"
-				;;
-			nws)
-				open_html "https://forecast.weather.gov/zipcity.php?inputstring=${query}&btnSearch=Go&unit=1"
-				;;
-			rfc)
-				open_html "https://tools.ietf.org/rfc/rfc${query}.txt"
-				;;
-			w|wikipedia)
-				open_html "https://en.wikipedia.org/w/index.php?search=${query}&title=Special%3ASearch&go=Go"
-				;;
-			wikt|wiktionary)
-				open_html "https://en.wiktionary.org/w/index.php?search=${query}&title=Special%3ASearch&go=Go"
-				;;
-			*)
-				usage
-				return 1
-				;;
-		esac
-	unset -f escape_html open_html usage
-	}
-fi
 
 ### enable emacs keybindings
 set -o emacs
