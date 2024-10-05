@@ -17,7 +17,6 @@ umask 077
 
 
 ## environment variables
-unset  ENV
 if command -v nvim >/dev/null; then
 	export EDITOR='nvim -i NONE'
 	alias vi="${EDITOR}"
