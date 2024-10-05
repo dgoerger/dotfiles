@@ -138,6 +138,7 @@ if (
 			'markdown',
 			'perl',
 			'php',
+                        'powershell',
 			'python',
 			'query',
 			'rst',
