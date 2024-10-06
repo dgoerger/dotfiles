@@ -9,3 +9,6 @@ dotfiles:
 
 install:
 	sh ./bin/make.sh install
+
+packages:
+	sh ./bin/packages.sh
