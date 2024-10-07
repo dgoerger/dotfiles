@@ -67,9 +67,6 @@ alias mv='mv -i'
 alias pscpu='ps -Awwro user,pid,ppid,pgid,%cpu,%mem,lstart,stat,wchan,time,command'
 alias psmem='ps -Awwmo user,pid,ppid,pgid,%cpu,%mem,lstart,stat,wchan,time,command'
 alias pstree='ps -Awwfo user,pid,ppid,pgid,lstart,%cpu,%mem,stat,wchan,command'
-if ! command -v rg >/dev/null; then
-	alias rg='grep -EIinrs --'
-fi
 alias rm='rm -i'
 alias stat='stat -x'
 alias tm='cd && tmux new-session -A -s tm'
@@ -90,41 +87,6 @@ alias woohoo='echo \\\(ˆ˚ˆ\)/'
 if [[ "${OS}" == 'Darwin' ]]; then
 	export LESSHISTFILE=-
 	export MANWIDTH=80
-
-	getent() {
-		usage() {
-			printf "usage:\n\tgetent group GROUPNAME\n\tgetent hosts HOSTNAME\n\tgetent passwd USERNAME\n"
-		}
-		if [[ "${#}" == '1' ]]; then
-			if [[ "${1}" == '-h' ]] || [[ "${1}" == '--help' ]]; then
-				usage
-				return 0
-			else
-				usage
-				return 1
-			fi
-		elif [[ "${#}" == '2' ]]; then
-			case "${1}" in
-				group)
-					dscacheutil -q group -a name "${2}"
-					;;
-				hosts)
-					dscacheutil -q host -a name "${2}"
-					;;
-				passwd)
-					dscacheutil -q user -a name "${2}"
-					;;
-				*)
-					usage
-					return 1
-					;;
-			esac
-		else
-			usage
-			return 1
-		fi
-		unset -f usage
-	}
 
 	alias dns_reset='sudo killall -HUP mDNSResponder; sudo killall mDNSResponderHelper; sudo dscacheutil -flushcache'
 	alias ducks='du -hxd1 | sort -hr'
@@ -242,7 +204,6 @@ elif [[ "${OS}" == 'Linux' ]]; then
 
 	# distro-specific overrides
 	if [[ -r /etc/alpine-release ]]; then
-		alias checkupdates='apk list -u'
 		alias listening='netstat -antpl'
 		if command -v flatpak >/dev/null 2>&1; then
 			alias pkgup='doas /bin/sh -c "/sbin/apk update && /sbin/apk upgrade && /usr/bin/flatpak update -y && /usr/bin/flatpak uninstall -y --unused && /sbin/apk fix -s"'
@@ -250,9 +211,6 @@ elif [[ "${OS}" == 'Linux' ]]; then
 			alias pkgup='doas /bin/sh -c "/sbin/apk update && /sbin/apk upgrade && /sbin/apk fix -s"'
 		fi
 		unalias realpath
-		if [[ -x /usr/sbin/zzz ]]; then
-			alias zzz='doas /usr/sbin/zzz'
-		fi
 	elif [[ -r /etc/debian_version ]]; then
 		# with less(1) v594, we no-longer need to disable LESSHISTFILE manually
 		# .. https://github.com/gwsw/less/commit/9eba0da958d33ef3582667e09701865980595361
@@ -264,7 +222,6 @@ elif [[ "${OS}" == 'Linux' ]]; then
 			alias cal='/usr/bin/ncal -bM'
 		fi
 		alias date='LC_ALL=C /bin/date'
-		alias checkupdates='apt list --upgradeable'
 		alias listening='ss -lntu'
 		alias pkgextras='apt list "~o"'
 		alias realpath='readlink -ev'
@@ -358,21 +315,13 @@ elif [[ "${OS}" == 'Linux' ]]; then
 
 elif [[ "${OS}" == 'OpenBSD' ]]; then
 	export SSH_AUTH_SOCK_PATH="${HOME}/.ssh/ssh-$(printf "%s@%s" "${LOGNAME}" "${HOSTNAME}" | sha256).socket"
-	if command -v tog >/dev/null; then
-		TOG_COLORS=1; export TOG_COLORS
-	fi
 
 	# aliases
 	apropos() {
 		# search most fields
 		/usr/bin/apropos Nm,Nd,Sh,Ss,Ar,Ic="${1}"
 	}
-	if sysctl -n kern.version | grep -E "\-(current|beta)" >/dev/null 2>&1; then
-		alias checkupdates='doas /bin/ksh -c "/usr/bin/timeout -sINT 3s /usr/sbin/sysupgrade -ns"'
-	else
-		alias checkupdates='doas /usr/sbin/syspatch -c'
-	fi
-	alias patch='patch --posix'
+	alias patch='patch -V none'
 	alias pkgup='doas /bin/ksh -c "/usr/sbin/pkg_add -Vu && /usr/sbin/pkg_delete -a"'
 	pkgextras() {
 		# function to identify files in /usr/local which aren't claimed by an installed package
@@ -396,7 +345,6 @@ if [[ "${0}" == '-ksh' ]] || [[ "${0}" == 'ksh' ]]; then
 	export HOST_LIST=$(awk '/^[a-z]/ {split($1,a,","); print a[1]}' ~/.ssh/known_hosts 2>/dev/null | sort -u)
 
 	set -A complete_git_1 -- add bisect blame checkout clone commit diff log mv pull push rebase reset revert rm stash status submodule
-	set -A complete_got_1 -- add backout blame branch cat checkout cherrypick clone commit diff fetch histedit import info init integrate log rebase ref remove revert stage status tag tree unstage update
 	if command -v ifconfig >/dev/null; then
 		set -A complete_ifconfig_1 -- $(ifconfig | awk -F':' '/^[a-z]/ {print $1}')
 	fi
