@@ -2,17 +2,14 @@
 # docs: https://man.openbsd.org/ksh
 
 ### all operating systems and shells
-## PATH
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin
-
-## terminal settings
 # disable terminal flow control (^S/^Q)
 stty -ixon
 # disable job control (^Z), prevent clobber, set pipefail
 set +m -Co pipefail
 # SIGINFO: see signal(3)
 stty status ^T 2>/dev/null
-# restrict umask (override in ~/.profile.local)
+# restrict umask (can override in ~/.profile.local)
 umask 077
 
 
@@ -23,6 +20,7 @@ if command -v nvim >/dev/null; then
 else
 	export EDITOR=vi
 fi
+# override GIT_AUTHOR_EMAIL in ~/.profile.local as appropriate
 export GIT_AUTHOR_EMAIL="${LOGNAME}@users.noreply.github.com"
 export GIT_AUTHOR_NAME="$(getent passwd "${LOGNAME}" | cut -d: -f5 | cut -d, -f1)"
 export HISTCONTROL=ignoredups
@@ -106,9 +104,6 @@ elif [[ "${OS}" == 'Linux' ]]; then
 	export SSH_AUTH_SOCK_PATH="${HOME}/.ssh/ssh-$(printf "%s@%s" "${LOGNAME}" "${HOSTNAME}" | sha256sum | awk '{print $1}').socket"
 
 	# aliases
-	if ! command -v doas >/dev/null; then
-		alias doas=/usr/bin/sudo
-	fi
 	unalias free
 	function free {
 		# FOR COMPATIBILITY with procps-ng, and to ensure safe scripting, revert
@@ -214,6 +209,7 @@ elif [[ "${OS}" == 'Linux' ]]; then
 	elif [[ -r /etc/debian_version ]]; then
 		# with less(1) v594, we no-longer need to disable LESSHISTFILE manually
 		# .. https://github.com/gwsw/less/commit/9eba0da958d33ef3582667e09701865980595361
+		# TODO: remove LESSHISTFILE workaround once boxes are upgraded to Debian Trixie
 		export LESSHISTFILE=-
 		export LS_COLORS='no=00:fi=00:rs=0:di=00:ln=00:mh=00:pi=00:so=00:do=00:bd=00:cd=00:or=00:mi=00:su=00:sg=00:ca=00:tw=00:ow=00:st=00:ex=00'
 		export QUOTING_STYLE=literal
@@ -374,7 +370,7 @@ fi
 # diff() with syntax highlighting
 diff() {
 	if [[ "${#}" == '0' ]]; then
-		diff="$(git diff 2>/dev/null || got diff 2>/dev/null)"
+		diff="$(git diff 2>/dev/null)"
 		if [[ "${?}" != '0' ]]; then
 			/usr/bin/diff
 			return $?
@@ -449,11 +445,9 @@ pomodoro() {
 		return 0
 	elif [[ ${#} -eq 1 ]]; then
 		local minutes="${1}"
-		local message="Time's up!"
 	elif [[ ${#} -ge 2 ]]; then
-		local minutes="${1}"
-		shift
-		local message="${@}"
+		usage
+		return 1
 	fi
 	case "${minutes}" in
 		''|*[!0-9]*)
@@ -462,10 +456,7 @@ pomodoro() {
 			return 1
 			;;
 		*)
-			if command -v tmux >/dev/null && command -v notify-send >/dev/null && [[ -n "${DESKTOP_SESSION}" ]]; then
-				# libnotify "toaster" popup
-				tmux new -d "sleep $((${minutes}*60)); notify-send POMODORO \"${message}\" --urgency=critical"
-			elif command -v leave >/dev/null; then
+			if command -v leave >/dev/null; then
 				leave "+${minutes}"
 			else
 				printf "Error: unsupported platform\n"
@@ -622,7 +613,7 @@ sshinit() {
 
 # st() git repo status
 st() {
-	git status --branch --porcelain 2>/dev/null || got st 2>/dev/null || (printf "error: '%s' is not a git repo\n" "${PWD}"; return 1)
+	git status --branch --porcelain 2>/dev/null || (printf "error: '%s' is not a git repo\n" "${PWD}"; return 1)
 }
 
 # sysinfo() system profiler
@@ -743,9 +734,6 @@ fi
 ### git variables
 export GIT_COMMITTER_EMAIL=${GIT_AUTHOR_EMAIL}
 export GIT_COMMITTER_NAME=${GIT_AUTHOR_NAME}
-if command -v got >/dev/null; then
-	export GOT_AUTHOR="${GIT_AUTHOR_NAME} <${GIT_AUTHOR_EMAIL}>"
-fi
 
 ### fix ssh agent forwarding workstation->jumpbox
 if [[ "${HOSTNAME}" == "${SSH_JUMPBOX}" ]] && echo "${SSH_AUTH_SOCK}" | grep -E "^/tmp/ssh-.*/agent\." >/dev/null 2>&1; then
