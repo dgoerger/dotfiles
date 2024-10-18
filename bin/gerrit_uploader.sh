@@ -14,6 +14,39 @@ else
 	exit 1
 fi
 
+if [[ "${#}" == '0' ]]; then
+	UPSTREAM_BRANCH="$(git rev-parse --symbolic-full-name "@{u}" 2>/dev/null | awk -F'/' '{print $NF}')"
+	readonly UPSTREAM_BRANCH
+elif [[ "${#}" == '1' ]]; then
+	case "${1}" in
+		-h|--help)
+			usage
+			exit 0
+			;;
+		*[!a-z0-9.-]*)
+			printf "ERROR: invalid branch name '%s'\n" "${1}"
+			usage
+			exit 1
+			;;
+		*)
+			UPSTREAM_BRANCH="${1}"
+			readonly UPSTREAM_BRANCH
+			;;
+	esac
+else
+	usage
+	exit 1
+fi
+
+if [[ -z "${UPSTREAM_BRANCH}" ]]; then
+	printf "No upstream branch found. Please configure an upstream branch\n"
+	printf "using, e.g., 'git branch -u origin/main'\n\n"
+	exit 1
+elif ! git fetch "${REMOTE}" "${UPSTREAM_BRANCH}" || ! git rev-parse --remotes "${UPSTREAM_BRANCH}" >/dev/null 2>&1; then
+	printf "ERROR: cannot find remote tracking branch '%s', cancelling upload.\n" "${UPSTREAM_BRANCH}"
+	exit 1
+fi
+
 # query git author information so we can compare with the author of the previous commit
 if [[ -n "${GIT_AUTHOR_EMAIL}" ]]; then
 	author_email="${GIT_AUTHOR_EMAIL}"
@@ -50,6 +83,12 @@ if ! git diff --quiet >/dev/null 2>&1; then
 				printf "       Please create a new commit.\n\n"
 				printf "prev commit: %s\n" "$(git show -s --pretty=%ae 2>/dev/null)"
 				printf "your email: %s\n" "${author_email}"
+				exit 1
+			fi
+
+			if [[ "$(git log --oneline "$(git merge-base "@{u}" HEAD)" ^HEAD | wc -l)" == '0' ]]; then
+				printf "ERROR: The previous commit is already merged upstream.\n"
+				printf "       Please create a new commit.\n\n"
 				exit 1
 			fi
 			git commit -a --amend
@@ -138,39 +177,6 @@ if [[ ! -x "$(git rev-parse --absolute-git-dir)/hooks/commit-msg" ]] || ! grep -
 	esac
 fi
 
-if [[ "${#}" == '0' ]]; then
-	UPSTREAM_BRANCH="$(git rev-parse --symbolic-full-name @\{u\} 2>/dev/null | awk -F'/' '{print $NF}')"
-	readonly UPSTREAM_BRANCH
-elif [[ "${#}" == '1' ]]; then
-	case "${1}" in
-		-h|--help)
-			usage
-			exit 0
-			;;
-		*[!a-z0-9.-]*)
-			printf "ERROR: invalid branch name '%s'\n" "${1}"
-			usage
-			exit 1
-			;;
-		*)
-			UPSTREAM_BRANCH="${1}"
-			readonly UPSTREAM_BRANCH
-			;;
-	esac
-else
-	usage
-	exit 1
-fi
-
-if [[ -z "${UPSTREAM_BRANCH}" ]]; then
-	printf "No upstream branch found. Please configure an upstream branch\n"
-	printf "using, e.g., 'git branch -u origin/main'\n\n"
-	exit 1
-elif ! git rev-parse --remotes "${UPSTREAM_BRANCH}" >/dev/null 2>&1; then
-	printf "ERROR: cannot find remote tracking branch '%s', cancelling upload.\n" "${UPSTREAM_BRANCH}"
-	exit 1
-fi
-
 if [[ "${UPSTREAM_BRANCH}" != 'main' ]] && [[ "${UPSTREAM_BRANCH}" != 'master' ]]; then
 	printf "Non-standard upstream branch '%s' found. Proceed? (y/N) " "${UPSTREAM_BRANCH}"
 	read -r yesno
@@ -178,6 +184,23 @@ if [[ "${UPSTREAM_BRANCH}" != 'main' ]] && [[ "${UPSTREAM_BRANCH}" != 'master' ]
 		printf "cancelling upload..\n"
 		exit 0
 	fi
+fi
+
+# warn if we're uploading more than one change at a time
+number_of_commits_since_merge_base="$(git log --oneline "$(git merge-base "@{u}" HEAD)" ^HEAD | wc -l)"
+readonly number_of_commits_since_merge_base
+if [[ "${number_of_commits_since_merge_base}" -gt 1 ]]; then
+	printf "WARNING: You're about to upload %s changes. Proceed? (y/N) " "${number_of_commits_since_merge_base}"
+	read -r yesno
+	case "${yesno}" in
+		y|yes|Y|YES)
+			;;
+		*)
+			printf "Cancelling upload. Your merge base is\n"
+			git show -s --pretty=medium "$(git merge-base "@{u}" HEAD)"
+			exit 1
+			;;
+	esac
 fi
 
 # run pre-commit as a pre-upload step
