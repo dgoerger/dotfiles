@@ -68,9 +68,9 @@ does_previous_commit_have_same_author() {
 
 if ! git diff --quiet >/dev/null 2>&1; then
 	printf "WARNING: the current worktree is dirty. Would you like to\n"
-	printf "- (c)reate a new commit\n"
-	printf "- (a)mend the previous commit\n"
-	printf "- (p)rint the diff and exit\n\n"
+	printf "* (c)reate a new commit\n"
+	printf "* (a)mend the previous commit\n"
+	printf "* (p)rint the diff and exit\n\n"
 	printf "Selection: "
 	read -r createOrAmend
 	case "${createOrAmend}" in
@@ -104,9 +104,9 @@ if ! git diff --quiet >/dev/null 2>&1; then
 elif ! does_previous_commit_have_same_author; then
 	printf "WARNING: You're about to upload a change written by '%s'.\n" "$(git show -s --pretty=%ae 2>/dev/null)"
 	printf "Would you like to\n"
-	printf "- (c)ontinue anyway\n"
-	printf "- (r)eset the author (claim authorship)\n"
-	printf "- (p)rint the diff and exit\n\n"
+	printf "* (c)ontinue anyway\n"
+	printf "* (r)eset the author (claim authorship)\n"
+	printf "* (p)rint the diff and exit\n\n"
 	printf "Selection: "
 	read -r continueResetAbort
 	case "${continueResetAbort}" in
