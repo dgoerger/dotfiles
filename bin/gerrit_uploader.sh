@@ -15,7 +15,7 @@ else
 fi
 
 if [[ "${#}" == '0' ]]; then
-	UPSTREAM_BRANCH="$(git rev-parse --symbolic-full-name "@{u}" 2>/dev/null | awk -F'/' '{print $NF}')"
+	UPSTREAM_BRANCH="$(git rev-parse --symbolic-full-name "@{u}" 2>/dev/null | awk -F'/' '{print $NF}' || true)"
 	readonly UPSTREAM_BRANCH
 elif [[ "${#}" == '1' ]]; then
 	case "${1}" in
