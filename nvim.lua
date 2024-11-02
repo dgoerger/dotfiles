@@ -64,6 +64,7 @@ require("lazy").setup({
 		{
 			'nvim-treesitter/nvim-treesitter',
 			lazy = false,
+			tag = 'v0.9.3', -- 20241025
 		},
 		{
 			'nvim-telescope/telescope.nvim',
@@ -72,7 +73,7 @@ require("lazy").setup({
 		{
 			'nvim-tree/nvim-tree.lua',
 			lazy = true,
-			tag = 'v1.6', -- 20240912
+			tag = 'v1.7.1', -- 20240930
 		},
 		{
 			'lewis6991/gitsigns.nvim',
@@ -138,7 +139,7 @@ if (
 			'markdown',
 			'perl',
 			'php',
-                        'powershell',
+			'powershell',
 			'python',
 			'query',
 			'rst',
