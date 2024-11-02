@@ -1,9 +1,6 @@
 # ~/.alacritty.toml
 # docs: man 5 alacritty
 
-# general
-ipc_socket = false
-
 [colors.bright]
 black = "0x625e4c"
 blue = "0x9d65ff"
@@ -34,6 +31,9 @@ TERM = "xterm-256color"
 [font]
 size = 8.0
 
+[general]
+ipc_socket = false
+
 [[hints.enabled]]
 action = "Select"
 regex = '(https://|http://)[^\u0000-\u001F\u007F-\u009F<>"\\s{-}\\^⟨⟩`]+'
@@ -48,12 +48,12 @@ bindings = [
 [selection]
 semantic_escape_chars = ",│`|\"' ()[]{}<>*\t"
 
-[shell]
-program = "ksh"
-args = ["-l"]
-
 [terminal]
 osc52 = "Disabled"
+
+[terminal.shell]
+program = "ksh"
+args = ["-l"]
 
 [window]
 decorations_theme_variant = "Dark"
