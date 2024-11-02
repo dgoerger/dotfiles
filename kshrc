@@ -445,9 +445,11 @@ pomodoro() {
 		return 0
 	elif [[ ${#} -eq 1 ]]; then
 		local minutes="${1}"
+		local message="Time's up!"
 	elif [[ ${#} -ge 2 ]]; then
-		usage
-		return 1
+		local minutes="${1}"
+		shift
+		local message="${@}"
 	fi
 	case "${minutes}" in
 		''|*[!0-9]*)
@@ -456,12 +458,7 @@ pomodoro() {
 			return 1
 			;;
 		*)
-			if command -v leave >/dev/null; then
-				leave "+${minutes}"
-			else
-				printf "Error: unsupported platform\n"
-				return 1
-			fi
+			(sleep $((${minutes} * 60)) && tput bel && echo "${message}" &)
 			;;
 	esac
 	unset -f usage
