@@ -29,15 +29,7 @@ TEXTFIELDS_NEED_ACTIVATION:TRUE
 USE_MOUSE:TRUE
 VI_KEYS_ALWAYS_ON:TRUE
 
-# colours
-COLOR:0:default:default
-COLOR:1:green:default
-COLOR:2:yellow:blue
-#COLOR:3:green:white
-COLOR:4:brightred:default
-COLOR:5:magenta:default
-COLOR:6:yellow:default
-COLOR:7:magenta:cyan
+# disable stylesheet
 COLOR_STYLE:
 
 # protocol management
