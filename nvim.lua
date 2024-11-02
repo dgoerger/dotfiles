@@ -204,6 +204,15 @@ map('n', '<leader>fb', telescope_builtin.buffers, { desc = "search vim buffers" 
 -- configure gitsigns
 require('gitsigns').setup({
 	signcolumn = false,
+	watch_gitdir = {
+		enable = true,
+		follow_files = true
+	},
+	word_diff  = true,
+	on_attach = function(bufnr)
+		local gitsigns = require('gitsigns')
+		map('n', 'gb', function() gitsigns.blame_line{ignore_whitespace=true} end)
+	end
 })
 
 -- configure nvim-tree
