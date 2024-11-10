@@ -212,6 +212,7 @@ require('gitsigns').setup({
 	on_attach = function(bufnr)
 		local gitsigns = require('gitsigns')
 		map('n', 'gb', function() gitsigns.blame_line{ignore_whitespace=true} end)
+		map('n', 'gv', gitsigns.diffthis)
 	end
 })
 
