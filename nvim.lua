@@ -198,7 +198,7 @@ require('telescope').setup{
 map('n', 'ff', telescope_builtin.find_files, { desc = "find files" })
 map('n', 'fg', telescope_builtin.live_grep, { desc = "live grep" })
 map('n', 'fw', telescope_builtin.grep_string, { desc = "find word under cursor" })
-map('n', 'fc', telescope_builtin.git_commits, { desc = "search git commits" })
+map('n', 'fc', telescope_builtin.git_bcommits, { desc = "search git commits" })
 map('n', 'fb', telescope_builtin.buffers, { desc = "search vim buffers" })
 
 -- configure gitsigns
