@@ -80,38 +80,29 @@ case ${OS} in
 			tig--
 		if rcctl ls on | grep xenodm; then
 			pkg_add \
-				alacritty-- \ # x11-only
+				alacritty-- \
 				chromium-- \
 				codenewroman-nerd-fonts-- \
 				dino-- \
-				dmenu-wayland-- \ # wayland-only
 				exfat-fuse-- \
 				exiv2-- \
 				fira-fonts-- \
 				firefox-- \
-				foot-- \ # wayland-only
-				grim-- \ # wayland-only
+				gnumeric-- \
+				iosevka-slab-- \
 				juliamono-- \
 				keepassxc-- \
 				liberation-fonts-- \
-				libinput-openbsd-- \ # wayland-only
+				libinput-openbsd-- \
 				lyx-- \
 				mpv-- \
 				mupdf-- \
-				noto-cjk-- \
-				scrot-- \ # x11-only
-				sct-- \ # x11-only
-				slurp-- \ # wayland-only
-				sway-- \ # wayland-only
-				swayidle-- \ # wayland-only
-				swayimg-- \ # wayland-only
-				swaylock-- \ # wayland-only
+				remmina-- \
+				scrot-- \
+				sct-- \
 				texlive_texmf-full-- \
-				wayfire-- \ # wayland-only
-				wcm-- \ # wayland-only
-				wf-shell-- \ # wayland-only
-				xscreensaver-- \ # x11-only
-				xwallpaper-- # x11-only
+				xscreensaver-- \
+				xwallpaper--
 		else
 			pkg_add \
 				newsboat-- \
