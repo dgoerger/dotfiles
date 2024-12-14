@@ -6,6 +6,7 @@
 	blames = !tig blame
 	branches = branch -av
 	contributors = shortlog -ens --no-merges
+	maint = maintenance run --task=gc --task=commit-graph --task=incremental-repack
 	reflogs = !git reflog --pretty=raw | tig --pretty=raw
 	remotes = remote get-url --all origin
 	st = status --branch --porcelain
