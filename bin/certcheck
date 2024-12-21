@@ -3,6 +3,7 @@
 import re
 import socket
 import ssl
+import struct
 import sys
 import time
 
@@ -90,7 +91,12 @@ def check(verbose: bool, hostname: str, port: int) -> None:
         elif port == 5432:
             # postgresql
             # note: magic number '80877103' per https://www.postgresql.org/docs/current/protocol-message-formats.html
-            print("postgres starttls not supported")
+            ehlo = struct.pack("!ii", 8, 80877103)
+            sock.send(ehlo)
+            resp = sock.recv(1).decode("ascii")
+            if resp != "S":
+                print(f"{hostname} port {port} doesn't support TLS")
+                sys.exit(1)
         with ctx.wrap_socket(sock, server_hostname=hostname) as ssl_sock:
             data = ssl_sock.getpeercert(False)
             expiry_str = str(data["notAfter"])  # type: ignore
