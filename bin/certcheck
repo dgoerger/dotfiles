@@ -29,7 +29,7 @@ def check(verbose: bool, hostname: str, port: int) -> None:
     ctx = ssl.create_default_context()
 
     with socket.create_connection((hostname, port)) as sock:
-        sock.settimeout(3)
+        sock.settimeout(10)
         if port == 25 or port == 587:
             # smtp
             ehlo = bytes(f"EHLO {localhost}\n", "utf-8")
@@ -106,19 +106,19 @@ def check(verbose: bool, hostname: str, port: int) -> None:
                 if expiry_time_in_days <= CRITICAL_THRESHOLD:
                     print(
                         f"{status_prefix}"
-                        + "CRITICAL - expires in {expiry_time_in_days} day(s)"
+                        + f"CRITICAL - expires in {expiry_time_in_days} day(s)"
                     )
                     sys.exit(2)
                 elif expiry_time_in_days <= WARNING_THRESHOLD:
                     print(
                         f"{status_prefix}"
-                        + "WARNING - expires in {expiry_time_in_days} day(s)"
+                        + f"WARNING - expires in {expiry_time_in_days} day(s)"
                     )
                     sys.exit(1)
                 else:
                     print(
                         f"{status_prefix}"
-                        + "OK - expires in {expiry_time_in_days} day(s)"
+                        + f"OK - expires in {expiry_time_in_days} day(s)"
                     )
                     sys.exit(0)
         except ssl.SSLError as e:
