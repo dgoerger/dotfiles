@@ -1,5 +1,17 @@
 #!/usr/bin/env python3
+"""
+Verify TLS certificate configuration and expiry.
 
+Return codes
+  0 - OK
+  1 - WARNING
+  2 - CRITICAL
+  3 - UNKNOWN STATUS / not implemented
+
+These return codes provide compatibility with icinga.
+"""
+
+import argparse
 import re
 import socket
 import ssl
@@ -9,49 +21,8 @@ import time
 
 localhost = socket.gethostname()
 
-ALERT_THRESHOLD = 25
-
-
-def argparse(args: list[str]) -> list[str]:
-    usage = f"Usage:\n\t{args[0]} [-v] hostname [port]"
-    if len(args) < 2 or len(args) > 4:
-        print(usage)
-        sys.exit(1)
-    elif len(args) == 2:
-        verbose = ""
-        hostname = args[1]
-        port = "443"
-    elif len(args) == 3:
-        if str(args[1]) == "-v" or str(args[1]) == "--verbose":
-            verbose = "true"
-            hostname = args[2]
-            port = "443"
-        else:
-            verbose = ""
-            hostname = args[1]
-            port = args[2]
-    elif len(args) == 4:
-        if str(args[1]) == "-v" or str(args[1]) == "--verbose":
-            verbose = "true"
-        else:
-            print(usage)
-            sys.exit(1)
-        hostname = args[2]
-        port = args[3]
-
-    port_pattern = re.compile("^[0-9]+$")
-
-    if not port_pattern.match(port):
-        print(usage)
-        sys.exit(1)
-
-    try:
-        socket.getaddrinfo(hostname, port)
-    except Exception:
-        print(usage)
-        sys.exit(1)
-
-    return [verbose, hostname, port]
+WARNING_THRESHOLD = 15
+CRITICAL_THRESHOLD = 5
 
 
 def check(verbose: bool, hostname: str, port: int) -> None:
@@ -70,16 +41,16 @@ def check(verbose: bool, hostname: str, port: int) -> None:
             # response code 5xx represents an error, e.g. 503 'bad
             # sequence of commands' i.e. command 'starttls' not recognised
             if bool(re.match("^5", resp)):
-                print(f"{hostname} port {port} doesn't support TLS")
-                sys.exit(1)
+                print(f"{hostname} port {port} doesn't support TLS.")
+                sys.exit(2)
         elif port == 389:
             # ldap
-            print("not supported. please use ldaps/636.")
-            sys.exit(1)
+            print("ldap starttls not supported. please use ldaps/636.")
+            sys.exit(3)
         elif port == 3306:
             # mysql
-            print("mysql starttls not supported")
-            sys.exit(1)
+            print("mysql starttls not supported.")
+            sys.exit(3)
         elif port == 5222 or port == 5269:
             # xmpp
             ehlo = bytes(
@@ -94,8 +65,8 @@ def check(verbose: bool, hostname: str, port: int) -> None:
             sock.send(b"<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>\n")
             resp = sock.recv(4096).decode("ascii")
             if resp != "<proceed xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>":
-                print(f"{hostname} port {port} doesn't support TLS")
-                sys.exit(1)
+                print(f"{hostname} port {port} doesn't support TLS.")
+                sys.exit(2)
         elif port == 5432:
             # postgresql
             # ref: magic number '80877103' per https://www.postgresql.org/docs/current/protocol-message-formats.html
@@ -103,8 +74,8 @@ def check(verbose: bool, hostname: str, port: int) -> None:
             sock.send(ehlo)
             resp = sock.recv(1).decode("ascii")
             if resp != "S":
-                print(f"{hostname} port {port} doesn't support TLS")
-                sys.exit(1)
+                print(f"{hostname} port {port} doesn't support TLS.")
+                sys.exit(2)
         try:
             with ctx.wrap_socket(sock, server_hostname=hostname) as ssl_sock:
                 data = ssl_sock.getpeercert(False)
@@ -114,25 +85,61 @@ def check(verbose: bool, hostname: str, port: int) -> None:
                 expiry_time_in_days = int(
                     (certificate_expiry - current_time) / (60 * 60 * 24)
                 )
-                if verbose:
-                    # issuer organizationName
-                    issuer = str(data["issuer"][1][0][1])  # type: ignore
+
+                # hide extraneous information when running without a tty,
+                # e.g. from crontab, icinga, or other monitoring system.
+                status_prefix = "Status: " if sys.stdout.isatty() else ""
+
+                if sys.stdout.isatty() and verbose:
+                    try:
+                        # most CAs have two levels to issuer organizationName
+                        issuer = str(data["issuer"][1][0][1])  # type: ignore
+                    except Exception:
+                        # .. some only have one
+                        issuer = str(data["issuer"][0][0][1])  # type: ignore
                     cipher = str(ssl_sock.cipher()[0])  # type: ignore
                     tls_version = str(ssl_sock.version())
                     print(f"Issuer: {issuer}")
                     print(f"Cipher: {cipher} ({tls_version})")
                     print(f"Expiry: {expiry_str}")
-                if expiry_time_in_days <= ALERT_THRESHOLD:
-                    print(f"Status: WARNING - expires in {expiry_time_in_days} day(s)")
+
+                if expiry_time_in_days <= CRITICAL_THRESHOLD:
+                    print(
+                        f"{status_prefix}"
+                        + "CRITICAL - expires in {expiry_time_in_days} day(s)"
+                    )
+                    sys.exit(2)
+                elif expiry_time_in_days <= WARNING_THRESHOLD:
+                    print(
+                        f"{status_prefix}"
+                        + "WARNING - expires in {expiry_time_in_days} day(s)"
+                    )
                     sys.exit(1)
                 else:
-                    print(f"Status: OK - expires in {expiry_time_in_days} day(s)")
+                    print(
+                        f"{status_prefix}"
+                        + "OK - expires in {expiry_time_in_days} day(s)"
+                    )
                     sys.exit(0)
         except ssl.SSLError as e:
             print(e)
-            sys.exit(1)
+            sys.exit(2)
 
 
 if __name__ == "__main__":
-    verbose, hostname, port = argparse(sys.argv)
-    check(bool(verbose), hostname, int(port))
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        help="print additional diagnostic information (requires tty)",
+        action="store_true",
+    )
+    parser.add_argument("hostname", type=str, help="host to query")
+    parser.add_argument("port", type=int, help="service port", nargs="?", default=443)
+    args = parser.parse_args()
+    try:
+        socket.getaddrinfo(args.hostname, args.port)
+    except Exception:
+        print(f"'{args.hostname}' not found in DNS.")
+        sys.exit(3)
+    check(args.verbose, args.hostname, args.port)
