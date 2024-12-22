@@ -29,7 +29,7 @@ foreground = "0xf0f3f6"
 TERM = "xterm-256color"
 
 [font]
-size = 8.0
+size = 10.0
 
 [general]
 ipc_socket = false
