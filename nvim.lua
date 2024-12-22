@@ -73,7 +73,7 @@ require("lazy").setup({
 		{
 			'nvim-tree/nvim-tree.lua',
 			lazy = true,
-			tag = 'v1.8.0', -- 20241109
+			tag = 'v1.9.0', -- 20241207
 		},
 		{
 			'lewis6991/gitsigns.nvim',
