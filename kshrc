@@ -317,6 +317,7 @@ elif [[ "${OS}" == 'OpenBSD' ]]; then
 		# search most fields
 		/usr/bin/apropos Nm,Nd,Sh,Ss,Ar,Ic="${1}"
 	}
+	alias finger='finger -hmp'
 	alias patch='patch -V none'
 	alias pkgup='doas /bin/ksh -c "/usr/sbin/pkg_add -Vu && /usr/sbin/pkg_delete -a"'
 	pkgextras() {
