@@ -50,7 +50,9 @@ WSCONSCTL_DST='/etc/wsconsctl.conf'; readonly WSCONSCTL_DST
 WSCONSCTL_SRC='sysconfs/wsconsctl.conf'; readonly WSCONSCTL_SRC
 XENODM=''
 XENODM_DST='/etc/X11/xenodm/Xsetup_0'; readonly XENODM_DST
-XENODM_SRC='sysconfs/Xsetup'
+XENODM_SRC='sysconfs/Xsetup'; readonly XENODM_SRC
+XMPPBOT_DST='/usr/local/libexec/xmppbot.py'; readonly XMPPBOT_DST
+XMPPBOT_SRC='bin/xmppbot.py'; readonly XMPPBOT_SRC
 
 # check whether state applies to this host
 if [[ -d '/etc/chromium/policies/managed' ]]; then
@@ -109,6 +111,7 @@ case "${TARGET}" in
 			diff -u "${PF_BLOCKLIST_DST}" "${PF_BLOCKLIST_SRC}"
 			diff -u "${SYSSTATS_DST}" "${SYSSTATS_SRC}"
 			diff -u "${WSCONSCTL_DST}" "${WSCONSCTL_SRC}"
+			diff -u "${XMPPBOT_DST}" "${XMPPBOT_SRC}"
 		fi
 		if [[ -n "${XENODM}" ]]; then
 			diff -u "${XENODM_DST}" "${XENODM_SRC}"
@@ -226,6 +229,10 @@ case "${TARGET}" in
 			if ! cmp -s "${WSCONSCTL_SRC}" "${WSCONSCTL_DST}" 2>/dev/null; then
 				install -Cbm 0444 -o root -g bin "${WSCONSCTL_SRC}" "${WSCONSCTL_DST}"
 				printf "install: %s -> %s\n" "${WSCONSCTL_SRC}" "${WSCONSCTL_DST}"
+			fi
+			if ! cmp -s "${XMPPBOT_SRC}" "${XMPPBOT_DST}" 2>/dev/null; then
+				install -Cbm 0445 -o root -g bin "${XMPPBOT_SRC}" "${XMPPBOT_DST}"
+				printf "install: %s -> %s\n" "${XMPPBOT_SRC}" "${XMPPBOT_DST}"
 			fi
 		fi
 		if [[ -n "${XENODM}" ]]; then
