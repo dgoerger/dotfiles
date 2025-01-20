@@ -53,6 +53,7 @@
 	<alias>
 		<family>emoji</family>
 		<prefer>
+			<family>OpenMoji Color</family>
 			<family>Twemoji</family>
 			<family>Twemoji Mozilla</family>
 			<family>Noto Color Emoji</family>
