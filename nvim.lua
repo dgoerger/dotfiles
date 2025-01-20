@@ -80,6 +80,21 @@ require("lazy").setup({
 			lazy = true,
 			tag = 'release',
 		},
+		{
+			'neovim/nvim-lspconfig',
+			lazy = false,
+			tag = 'v1.3.0', -- 20250112
+		},
+		{
+			'hrsh7th/nvim-cmp',
+			lazy = true,
+			tag = 'v0.0.2', -- 20250112
+		},
+		{
+			'hrsh7th/cmp-nvim-lsp',
+			lazy = true,
+			commit = '99290b3ec1322070bcfb9e846450a46f6efa50f0', -- 20250112
+		}
 	},
 	-- nota bene: to update, run ':Lazy sync'
 	checker = { enabled = false },
@@ -298,6 +313,47 @@ api.nvim_create_autocmd("QuitPre", {
 			end
 		end
 	end
+})
+
+-- language server protocol
+local capabilities = require("cmp_nvim_lsp").default_capabilities()
+local lspconfig = require('lspconfig')
+local servers = { 'pylsp' }
+for _, lsp in ipairs(servers) do
+	lspconfig[lsp].setup {
+		capabilities = capabilities,
+	}
+end
+lspconfig.pylsp.setup({
+	init_options = {
+		settings = { pylsp = { plugins = {
+			-- formatter options
+			black = { enabled = false },
+			autopep8 = { enabled = false },
+			yapf = { enabled = false },
+			-- linter options
+			pylint = { enabled = false },
+			pyflakes = { enabled = false },
+			pycodestyle = { enabled = false },
+			-- type checker
+			pylsp_mypy = { enabled = true },
+			-- auto-completion options
+			jedi_completion = { fuzzy = true },
+			-- import sorting
+			pyls_isort = { enabled = false },
+		}}}
+	}
+})
+lspconfig.ruff.setup({
+	init_options = {
+		settings = {
+			lineLength = 100,
+			lint = {
+				select = {"E", "F", "UP", "B", "SIM", "I"}
+			},
+			showSyntaxErrors = true,
+		}
+	}
 })
 
 -- toggle "IDE mode" tree view + gitsigns with ctrl-a
