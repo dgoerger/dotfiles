@@ -1,0 +1,18 @@
+# ~/.config/helix/config.toml
+# docs: https://docs.helix-editor.com/configuration.html
+#
+# vim-inspired bindings
+# via https://github.com/LGUG2Z/helix-vim/blob/master/config.toml
+theme = 'monokai_pro_machine'
+
+[editor]
+bufferline = 'multiple'
+mouse = false
+text-width = 72
+true-color = true
+
+[keys.normal]
+"$" = "goto_line_end"
+"^" = "goto_first_nonwhitespace"
+G = "goto_file_end"
+y = ["extend_to_line_end", "yank_main_selection_to_clipboard", "collapse_selection"]
