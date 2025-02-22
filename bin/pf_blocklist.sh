@@ -13,8 +13,11 @@ TMPFILE="$(mktemp -t pf.XXXXXX)"; readonly TMPFILE
 BLOCKLISTDE_BOTS='https://lists.blocklist.de/lists/bots.txt'
 BLOCKLISTDE_LONGTERM='http://lists.blocklist.de/lists/strongips.txt'
 BLOCKLISTDE_TELEPHONY='http://lists.blocklist.de/lists/sip.txt'
+BYTEDANCE_ASN='https://raw.githubusercontent.com/ipverse/asn-ip/refs/heads/master/as/396986/ipv4-aggregated.txt'
 DSHIELD_TOP20='https://feeds.dshield.org/block.txt'
 GREENSNOW='https://blocklist.greensnow.co/greensnow.txt'
+HUAWEI_ASN='https://raw.githubusercontent.com/ipverse/asn-ip/refs/heads/master/as/136907/ipv4-aggregated.txt'
+HUAWEI_CLOUD_ASN='https://raw.githubusercontent.com/ipverse/asn-ip/refs/heads/master/as/55990/ipv4-aggregated.txt'
 SPAMHAUS_DROP_V4='https://www.spamhaus.org/drop/drop.txt'
 SPAMHAUS_DROP_V6='https://www.spamhaus.org/drop/dropv6.txt'
 STOPFORUMSPAM='https://www.stopforumspam.com/downloads/toxic_ip_cidr.txt'
@@ -25,7 +28,8 @@ chmod 0660 "${TMPFILE}"
 # download IP blocklists and parse
 /usr/bin/su -s/bin/ksh _pkgfetch -c "/usr/bin/ftp -VMo - \
         ${BLOCKLISTDE_BOTS} ${BLOCKLISTDE_LONGTERM} ${BLOCKLISTDE_TELEPHONY} \
-        ${GREENSNOW} ${SPAMHAUS_DROP_V4} ${SPAMHAUS_DROP_V6} ${STOPFORUMSPAM} | \
+        ${GREENSNOW} ${SPAMHAUS_DROP_V4} ${SPAMHAUS_DROP_V6} ${STOPFORUMSPAM} \
+        ${BYTEDANCE_ASN} ${HUAWEI_ASN} ${HUAWEI_CLOUD_ASN} | \
         awk '/^[1-9]/' | cut -d ' ' -f1 | \
         sort -uV | tee -a ${TMPFILE}" >/dev/null
 /usr/bin/su -s/bin/ksh _pkgfetch -c "/usr/bin/ftp -VMo - \
