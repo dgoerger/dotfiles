@@ -25,6 +25,7 @@
 [core]
 	commentString = "⁂"
 	fsmonitor = true
+	notesRef = refs/notes/review
 [diff]
 	algorithm = histogram
 	colorMoved = dimmed-zebra
