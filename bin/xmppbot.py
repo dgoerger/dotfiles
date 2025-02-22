@@ -95,7 +95,11 @@ def wmo_code(weather_code: int) -> str:
             return "Heavy snow showers."
         case 95, 96, 99:
             return "Thunderstorm."
-    return "An unknown weather phenomenon is in progress. Everything's fine. Probably."
+    fallthrough = (
+        "An unknown weather phenomenon is in progress. "
+        + f"Everything's fine. Probably. (WMO Code {weather_code})"
+    )
+    return fallthrough
 
 
 def get_weather(
