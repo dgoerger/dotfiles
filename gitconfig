@@ -39,6 +39,8 @@
 [grep]
 	lineNumber = true
 	patternType = extended
+[http]
+	cookiefile = ~/.gitcookies
 [init]
 	defaultBranch = main
 [log]
