@@ -36,9 +36,12 @@
 	manyFiles = true
 [fetch]
 	prune = true
+	pruneTags = true
 [grep]
 	lineNumber = true
 	patternType = extended
+[help]
+	autoCorrect = prompt
 [http]
 	cookiefile = ~/.gitcookies
 [init]
@@ -46,13 +49,14 @@
 [log]
 	date = iso8601
 [merge]
-	conflictstyle = diff3
+	conflictstyle = zdiff3
 [mergetool]
 	prompt = false
 [pull]
 	rebase = true
 [push]
 	default = simple
+	followTags = true
 [rebase]
 	autoSquash = true
 	autoStash = true
@@ -60,3 +64,6 @@
 	updateRefs = true
 [rerere]
 	enabled = true
+	autoUpdate = true
+[tag]
+	sort = version:refname
