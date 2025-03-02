@@ -21,6 +21,7 @@ case ${OS} in
 				fd \
 				file \
 				git \
+				helix \
 				less \
 				loksh \
 				lsblk \
@@ -37,7 +38,7 @@ case ${OS} in
 				tmux \
 				util-linux-misc
 			if lspci 2>/dev/null | grep -i virtio; then
-				# install drivers for OpenBSD's vmm(4)
+				# install drivers for OpenBSD's vmm(4) + a graphical desktop
 				apk add \
 					adwaita-icon-theme \
 					adwaita-xfce-icon-theme \
@@ -56,9 +57,9 @@ case ${OS} in
 					xorg-server \
 					xrdp
 			else
+				# otherwise we're running on physical hardware
 				apk add fwupd \
-					hwinfo \
-					simple-mtpfs
+					hwinfo
 			fi
 		fi
 		;;
@@ -67,6 +68,7 @@ case ${OS} in
 			bat-- \
 			fd-- \
 			git-- \
+			helix-- \
 			lowdown-- \
 			lynx-- \
 			ncdu-- \
@@ -106,8 +108,7 @@ case ${OS} in
 		else
 			pkg_add \
 				newsboat-- \
-				tut-- \
-				weechat--
+				tut--
 		fi
 		;;
 esac
