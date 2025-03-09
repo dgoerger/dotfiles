@@ -14,7 +14,10 @@ umask 077
 
 
 ## environment variables
-if command -v nvim >/dev/null; then
+if command -v hx >/dev/null; then
+	export EDITOR=hx
+	alias vi=${EDITOR}
+elif command -v nvim >/dev/null; then
 	export EDITOR='nvim -i NONE'
 	alias vi="${EDITOR}"
 else
