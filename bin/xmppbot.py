@@ -10,6 +10,7 @@ import sys
 import time
 import urllib.parse
 import urllib.request
+from datetime import datetime
 from math import floor
 
 import psutil
@@ -242,6 +243,41 @@ def get_sysinfo() -> str:
     return message
 
 
+def vanguard_parse_date(timestamp: str) -> str:
+    date = datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%S%z")
+    return date.strftime("%Y-%m-%d")
+
+
+def get_vanguard(fund: str) -> str:
+    url = f"https://investor.vanguard.com/vmf/api/{fund}/price"
+    try:
+        with urllib.request.urlopen(urllib.request.Request(url)) as fund_info:
+            fund_json = json.loads(fund_info.read())
+    except Exception:
+        return f"Fund {fund} not found."
+    current = fund_json["currentPrice"]["dailyPrice"]["regular"]
+    historical_json = fund_json["historicalPrice"]["nav"][0]["item"]
+    historical = ""
+    max_lookback = 6
+    if max_lookback < len(historical_json):
+        vanguard_lookback = max_lookback
+    else:
+        vanguard_lookback = len(historical_json)
+    for iter in range(1, vanguard_lookback):
+        historical += (
+            f" - {vanguard_parse_date(historical_json[iter]['asOfDate'])}: "
+            + f"${historical_json[iter]['price']}\n"
+        )
+    fund = (
+        f"{fund} price as of "
+        + f"{vanguard_parse_date(current['asOfDate'])}: "
+        + f"{current['price']} ({current['priceChangePct']}%)\n\n"
+        + "Trends\n"
+        + f"{historical}\n"
+    )
+    return fund
+
+
 class EchoBot(ClientXMPP):
     def __init__(self, jid, password):
         ClientXMPP.__init__(self, jid, password)
@@ -290,6 +326,9 @@ class EchoBot(ClientXMPP):
             elif cmd.startswith("news"):
                 query = re.sub("^news ", "", cmd)
                 message = get_miniflux(query)
+            elif cmd.startswith("vanguard"):
+                query = re.sub("^vanguard ", "", cmd).upper()
+                message = get_vanguard(query)
             elif cmd.startswith("wikipedia") or cmd.startswith("wiki"):
                 query = re.sub("^(wiki|wikipedia) ", "", cmd)
                 message = get_wikipedia(query)
