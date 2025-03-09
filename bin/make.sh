@@ -121,6 +121,7 @@ case "${TARGET}" in
 		diff -u ~/.alacritty.toml alacritty.toml
 		diff -u ~/.gitconfig gitconfig
 		diff -u ~/.config/helix/config.toml helix.toml
+		diff -u ~/.config/helix/languages.toml helix_languages.toml
 		if [[ "${SHELL}" == '/bin/ksh' ]]; then
 			diff -u ~/.kshrc kshrc
 			diff -u ~/.profile profile

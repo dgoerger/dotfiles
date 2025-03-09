@@ -1,0 +1,78 @@
+# ~/.config/helix/languages.toml
+# docs: /usr/local/share/helix/languages.toml
+
+[[language]]
+name = "bash"
+scope = "source.bash"
+injection-regex = "(shell|bash|ksh|zsh|sh)"
+file-types = ["sh", "bash", "ksh", "zsh", ".bash_login", ".bash_logout", ".bash_profile", ".bashrc", ".kshrc", ".profile", ".zshenv", ".zlogin", ".zlogout", ".zprofile", ".zshrc", "APKBUILD", "PKGBUILD", "eclass", "ebuild", "bazelrc", ".bash_aliases"]
+shebangs = ["sh", "bash", "dash", "ksh", "zsh"]
+roots = []
+comment-token = "#"
+indent = { tab-width = 4, unit = "  " }
+
+[[language]]
+name = "python"
+auto-format = true
+language-servers = [
+  "pylsp",
+  "ruff"
+]
+roots = [
+  "pyproject.toml",
+  "uv.lock",
+  "poetry.lock",
+  "setup.py",
+  ".git",
+  ".jj",
+  ".venv/"
+]
+formatter = { command = "ruff", args = [ "format", "-" ] }
+
+[language-server.pylsp.config.pylsp]
+plugins.black.enabled = false
+plugins.flake8.enabled = true
+plugins.flake8.maxLineLength = 100
+plugins.pycodestyle.enabled = false
+plugins.pyflakes.enabled = false
+plugins.ruff.enabled = true
+
+[language-server.ruff]
+command = "ruff"
+args = [ "server" ]
+environment = { "RUFF_TRACE" = "messages" }
+
+[language-server.ruff.config.settings]
+lineLength = 100
+logLevel = "warn"
+
+[language-server.ruff.config.lint]
+preview = true
+select = [
+  "ANN",  # annotations
+  "ARG",
+  "ASYNC",
+  "B",  # flake8-bugbear
+  "E",  # pycodestyle
+  "ERA",
+  "F",  # pyflakes
+  "I",  # isort
+  "LOG",  # flake8-logging
+  "N",
+  "PTH",
+  "RUFF",
+  "S",
+  "SIM",  # flake8-simplify
+  "TCH",  # flake8-type-checking
+  "UP",  # pyupgrade
+  "W",  # pycodestyle warnings
+]
+ignore = [
+  "E721"  # type-comparison. Unsafe per https://github.com/astral-sh/ruff/issues/12765
+]
+
+[language-server.ruff.config.settings.format]
+preview = true
+docstring-code-format = true
+indent-style = "space"
+quote-style = "double"
