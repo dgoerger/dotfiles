@@ -12,8 +12,8 @@ case ${OS} in
 	Linux)
 		if [[ -r /etc/alpine-release ]]; then
 			apk add \
-				atop \
 				bat \
+				btop \
 				curl \
 				doas \
 				docs \

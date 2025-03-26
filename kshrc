@@ -172,11 +172,7 @@ elif [[ "${OS}" == 'Linux' ]]; then
 	if command -v plocate >/dev/null; then
 		alias locate='plocate -iN'
 	fi
-	if command -v atop >/dev/null 2>/dev/null; then
-		alias mtop='atop -m'
-	else
-		alias mtop='top -cso RES'
-	fi
+	unalias mtop
 	alias pscpu='ps -Awwo user,pid,ppid,pgid,pcpu,pmem,lstart,stat,wchan,time,command --sort -pcpu,-pmem'
 	alias psmem='ps -Awwo user,pid,ppid,pgid,pcpu,pmem,lstart,stat,wchan,time,command --sort -pmem,-pcpu'
 	unalias pstree
