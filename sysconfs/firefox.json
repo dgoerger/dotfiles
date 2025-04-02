@@ -136,6 +136,10 @@
 				"Status": "locked",
 				"Value": false
 			},
+			"browser.ml.chat.enabled": {
+				"Status": "locked",
+				"Value": false
+			},
 			"browser.newtabpage.activity-stream.default.sites": {
 				"Status": "locked",
 				"Value": ""
