@@ -1,6 +1,10 @@
 # ~/.config/helix/languages.toml
 # docs: /usr/local/share/helix/languages.toml
 
+[language-server.harper-ls]
+command = "harper-ls"
+args = ["--stdio"]
+
 [[language]]
 name = "bash"
 scope = "source.bash"
@@ -10,6 +14,13 @@ shebangs = ["sh", "bash", "dash", "ksh", "zsh"]
 roots = []
 comment-token = "#"
 indent = { tab-width = 4, unit = "  " }
+
+[[language]]
+name = "markdown"
+language-servers = ["default-servers", "harper-ls"]
+soft-wrap.enable = true
+soft-wrap.wrap-at-text-width = true
+text-width = 80
 
 [[language]]
 name = "python"

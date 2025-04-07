@@ -6,6 +6,7 @@ theme = 'monokai_pro_machine'
 [editor]
 bufferline = 'multiple'
 mouse = false
+soft-wrap.wrap-indicator = ""
 text-width = 72
 true-color = true
 
