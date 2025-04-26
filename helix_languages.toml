@@ -18,6 +18,7 @@ indent = { tab-width = 4, unit = "  " }
 [[language]]
 name = "markdown"
 language-servers = ["default-servers", "harper-ls"]
+auto-format = true
 soft-wrap.enable = true
 soft-wrap.wrap-at-text-width = true
 text-width = 80

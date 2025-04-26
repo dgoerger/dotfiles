@@ -12,8 +12,8 @@ case ${OS} in
 	Linux)
 		if [[ -r /etc/alpine-release ]]; then
 			apk add \
+				atop \
 				bat \
-				btop \
 				curl \
 				doas \
 				docs \
@@ -28,7 +28,6 @@ case ${OS} in
 				make \
 				mandoc-apropos \
 				ncdu \
-				neovim \
 				pciutils \
 				plocate \
 				procps \
@@ -69,21 +68,17 @@ case ${OS} in
 			fd-- \
 			git-- \
 			helix-- \
-			lowdown-- \
 			lynx-- \
 			ncdu-- \
-			neovim-- \
 			pre-commit-- \
 			py3-mypy-- \
 			python--%3 \
 			ripgrep-- \
 			shellcheck-- \
-			sysclean-- \
-			tig--
+			sysclean--
 		if rcctl ls on | grep xenodm; then
 			pkg_add \
 				alacritty-- \
-				chromium-- \
 				codenewroman-nerd-fonts-- \
 				dino-- \
 				exfat-fuse-- \
@@ -99,16 +94,18 @@ case ${OS} in
 				lyx-- \
 				mpv-- \
 				mupdf-- \
+				openmoji-- \
 				remmina-- \
 				scrot-- \
 				sct-- \
 				texlive_texmf-full-- \
+				ungoogled-chromium-- \
 				xscreensaver-- \
 				xwallpaper--
 		else
 			pkg_add \
 				newsboat-- \
-				tut--
+				zola
 		fi
 		;;
 esac

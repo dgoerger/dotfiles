@@ -13,5 +13,6 @@ true-color = true
 [keys.normal]
 "$" = "goto_line_end"
 "^" = "goto_first_nonwhitespace"
-D = [ "extend_to_line_end", "delete_selection"]
+C-s = ":w"
+D = "kill_to_line_end"
 G = "goto_file_end"

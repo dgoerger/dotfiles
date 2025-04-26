@@ -9,7 +9,7 @@ stty -ixon
 set +m -Co pipefail
 # SIGINFO: see signal(3)
 stty status ^T 2>/dev/null
-# restrict umask (can override in ~/.profile.local)
+# restrict umask
 umask 077
 
 
@@ -50,6 +50,7 @@ alias cal='cal -m'
 alias cp='cp -i'
 alias df='df -h'
 alias ducks='du -ahxd1 | sort -hr'
+alias finger='finger -hmp'
 alias free='top | grep -E "^Memory"'
 alias l='ls -1F'
 alias lA='ls -AF'
@@ -85,18 +86,15 @@ alias woohoo='echo \\\(ˆ˚ˆ\)/'
 
 
 ### OS-specific overrides
-if [[ "${OS}" == 'Darwin' ]]; then
-	export LESSHISTFILE=-
-	export MANWIDTH=80
-
-	alias dns_reset='sudo killall -HUP mDNSResponder; sudo killall mDNSResponderHelper; sudo dscacheutil -flushcache'
-	alias ducks='du -hxd1 | sort -hr'
-	alias ldd='otool -L'
-	unalias mtop
-	alias realpath='readlink'
-	unalias top
-
-elif [[ "${OS}" == 'Linux' ]]; then
+#if [[ "${OS}" == 'Darwin' ]]; then
+#	export LESSHISTFILE=-
+#	export MANWIDTH=80
+#
+#	alias dns_reset='sudo killall -HUP mDNSResponder; sudo killall mDNSResponderHelper; sudo dscacheutil -flushcache'
+#	alias ducks='du -hxd1 | sort -hr'
+#	alias ldd='otool -L'
+#	alias realpath='readlink'
+if [[ "${OS}" == 'Linux' ]]; then
 	# env
 	if [[ -L "/bin" ]]; then
 		export PATH=/usr/local/bin:/bin:/sbin
@@ -107,6 +105,7 @@ elif [[ "${OS}" == 'Linux' ]]; then
 	export SSH_AUTH_SOCK_PATH="${HOME}/.ssh/ssh-$(printf "%s@%s" "${LOGNAME}" "${HOSTNAME}" | sha256sum | awk '{print $1}').socket"
 
 	# aliases
+	unalias finger
 	unalias free
 	function free {
 		# FOR COMPATIBILITY with procps-ng, and to ensure safe scripting, revert
@@ -316,7 +315,6 @@ elif [[ "${OS}" == 'OpenBSD' ]]; then
 		# search most fields
 		/usr/bin/apropos Nm,Nd,Sh,Ss,Ar,Ic="${1}"
 	}
-	alias finger='finger -hmp'
 	alias patch='patch -V none'
 	alias pkgup='doas /bin/ksh -c "/usr/sbin/pkg_add -Vu && /usr/sbin/pkg_delete -a"'
 	pkgextras() {
@@ -367,32 +365,6 @@ fi
 
 
 ### functions
-# diff() with syntax highlighting
-diff() {
-	if [[ "${#}" == '0' ]]; then
-		diff="$(git diff 2>/dev/null)"
-		if [[ "${?}" != '0' ]]; then
-			/usr/bin/diff
-			return $?
-		fi
-	elif [[ "${#}" == '3' ]] && [[ "${1}" == '-u' ]] && [[ -r "${2}" ]] && [[ -r "${3}" ]]; then
-		diff="$(/usr/bin/diff -u "${2}" "${3}")"
-	else
-		/usr/bin/diff "${@}"
-		return $?
-	fi
-	# nota bene: [[ -t 1 ]] => "is output to stdout," versus to a pipe or file
-	if [[ -t 1 ]]; then
-		printf "%s" "${diff}" | awk '/^\@/ {printf "\033[0;96m%s\033[0;0m\n", $0}
-			/^\-/ {printf "\033[38;5;125m%s\033[38;5;m\n", $0}
-			/^\+/ {printf "\033[38;5;28m%s\033[38;5;m\n", $0}
-			/^(\ |[a-z])/ {printf "\033[0;0m%s\033[0;0m\n", $0}'
-	else
-		printf "%s\n" "${diff}"
-	fi
-	unset diff
-}
-
 # photo_import() import photos from an SD card
 if command -v exiv2 >/dev/null; then
 	photo_import() {
@@ -606,11 +578,6 @@ sshinit() {
 	else
 		printf "ssh-agent is already listening on %s\n" "${SSH_AUTH_SOCK}" && return 1
 	fi
-}
-
-# st() git repo status
-st() {
-	git status --branch --porcelain 2>/dev/null || (printf "error: '%s' is not a git repo\n" "${PWD}"; return 1)
 }
 
 # sysinfo() system profiler
