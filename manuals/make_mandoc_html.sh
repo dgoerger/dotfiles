@@ -3,7 +3,7 @@ set -Cefuo pipefail
 
 mkdir -m 755 outdir
 if [[ -r /usr/share/misc/mandoc.css ]]; then
-        cp /usr/share/misc/mandoc.css mandoc.css
+        install -pm 444 /usr/share/misc/mandoc.css mandoc.css
         ln mandoc.css outdir/mandoc.css
 fi
 
