@@ -236,9 +236,9 @@ def get_sysinfo() -> str:
         f"{os.uname().release} ({os.uname().machine})\n"
         f"uptime:\t{uptime}\n"
         f"memory:\t{psutil.virtual_memory().percent}% of "
-        f"{round(psutil.virtual_memory().total / (1024*1024*1024))}G\n"
-        f"load:\t{round(loadavg[0],2)} {round(loadavg[1],2)} "
-        f"{round(loadavg[2],2)} ({cpu_count}cpu)\n"
+        f"{round(psutil.virtual_memory().total / (1024 * 1024 * 1024))}G\n"
+        f"load:\t{round(loadavg[0], 2)} {round(loadavg[1], 2)} "
+        f"{round(loadavg[2], 2)} ({cpu_count}cpu)\n"
     )
     return message
 
