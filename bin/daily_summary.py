@@ -18,7 +18,7 @@ def argparse(args: list[str]) -> list[str]:
     latitude = args[1]
     longitude = args[2]
 
-    coordinate_pattern = re.compile("^(\+)?(\-)?[0-9]+\.[0-9]+$")
+    coordinate_pattern = re.compile("^(\\+)?(\\-)?[0-9]+\\.[0-9]+$")
 
     if not coordinate_pattern.match(latitude) or not coordinate_pattern.match(
         longitude
