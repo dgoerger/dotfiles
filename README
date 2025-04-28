@@ -15,11 +15,3 @@ Dotfiles, as well as a subset of sysconfs and bin scripts, are also
 regularly battle-tested against Alpine- and Debian-stable.
 
 macOS is tested infrequently, and dotfiles-only.
-
-
-Testing
--------
-
-Besides daily use, scripts should pass the following linters:
-
-- shell scripts: https://github.com/koalaman/shellcheck
