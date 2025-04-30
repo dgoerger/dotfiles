@@ -41,6 +41,7 @@
 		"ExtensionUpdate": true,
 		"Extensions": {
 			"Install": [
+				"https://addons.mozilla.org/firefox/downloads/latest/awesome-rss/latest.xpi",
 				"https://addons.mozilla.org/firefox/downloads/latest/noscript/latest.xpi",
 				"https://addons.mozilla.org/firefox/downloads/latest/single-file/latest.xpi",
 				"https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi"
