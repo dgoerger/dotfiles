@@ -1,0 +1,67 @@
+# ~/.config/jj/config.toml
+# docs: https://jj-vcs.github.io/jj/latest/config
+#
+# nota bene: define user.name and user.email in
+#   ~/.config/jj/conf.d/user.toml to avoid hard-coding here
+[aliases]
+delta = [
+  '''--config-toml=ui.pager=[
+      "delta", "--line-numbers", "--navigate", "--side-by-side"
+  ]''',
+  "diff",
+  "--git"
+]
+
+[gerrit]
+# set to true in repo configs to enable support for Gerrit's Change-Id
+# jj config set --repo gerrit.enabled true
+enabled = false
+url = 'https://changeme.arpa.home'
+
+[git]
+write-change-id-header = true
+
+[template-aliases]
+'format_short_change_id(id)' = 'id.shortest()'
+'format_short_commit_header(commit)' = '''
+  separate(" ",
+    format_short_change_id_with_hidden_and_divergent_info(commit),
+    format_timestamp(commit_timestamp(commit)),
+    commit.tags(),
+    commit.working_copies(),
+    format_short_commit_id(commit.commit_id()),
+    if(has_change_id(commit.description()),
+      "[" ++
+      concat(
+        config("gerrit.url").as_string()
+        ++ "/q/"
+        ++ coalesce(
+          commit.description().lines().map(|line|
+            if(line.starts_with("Change-Id: "),
+              line.remove_prefix("Change-Id: ")
+            )
+          ).join(""),
+          format_short_change_id(commit.change_id())
+        )
+      )
+      ++ "]"
+    ),
+    if(commit.git_head(), label("git_head", "git_head()")),
+    if(commit.conflict(), label("conflict", "conflict")),
+  )
+'''
+'format_timestamp(ts)' = '"[" ++ ts.ago() ++ "]"'
+'gerrit_change_id(c, n)' = '"I" ++ raw_escape_sequence(c.normal_hex().substr(0, n)) ++ if(n > 31, "6a6a636c")'
+'gerrit_change_id(c)' = 'gerrit_change_id(c, 40)'
+'has_change_id(s)' = 's.contains("Change-Id: I")'
+
+[templates]
+commit_trailers = '''
+   if(
+     config("gerrit.enabled").as_boolean() && !has_change_id(description),
+     "Change-Id: " ++ gerrit_change_id(change_id) ++ "\n"
+   )
+'''
+
+[ui.diff]
+format = "git"

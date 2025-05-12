@@ -65,6 +65,7 @@ case ${OS} in
 	OpenBSD)
 		pkg_add \
 			bat-- \
+			delta-- \
 			fd-- \
 			git-- \
 			helix-- \
