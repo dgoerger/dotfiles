@@ -3,12 +3,11 @@
 
 ### all operating systems and shells
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin
+stty status ^T 2>/dev/null
 # disable terminal flow control (^S/^Q)
 stty -ixon
 # disable job control (^Z), prevent clobber, set pipefail
 set +m -Co pipefail
-# SIGINFO: see signal(3)
-stty status ^T 2>/dev/null
 # restrict umask
 umask 077
 
@@ -17,22 +16,19 @@ umask 077
 if command -v hx >/dev/null; then
 	export EDITOR=hx
 	alias vi=${EDITOR}
-elif command -v nvim >/dev/null; then
-	export EDITOR='nvim -i NONE'
-	alias vi="${EDITOR}"
 else
 	export EDITOR=vi
 fi
 # override GIT_AUTHOR_EMAIL in ~/.profile.local as appropriate
-export GIT_AUTHOR_EMAIL="${LOGNAME}@users.noreply.github.com"
+export GIT_AUTHOR_EMAIL="${LOGNAME}@arpa.home"
 export GIT_AUTHOR_NAME="$(getent passwd "${LOGNAME}" | cut -d: -f5 | cut -d, -f1)"
 export HISTCONTROL=ignoredups
 export HISTFILE="${HOME}/.history"
 export HISTSIZE=20736
-export HOSTNAME="$(hostname -s)"
+export HOST="$(hostname -s)"
 export LC_ALL="en_CA.UTF-8"
 export LESSSECURE=1
-if [[ -r "${HOME}/.lynxrc" ]]; then
+if command -v lynx >/dev/null && [[ -r "${HOME}/.lynxrc" ]]; then
 	export LYNX_CFG="${HOME}/.lynxrc"
 	alias lynx='COLUMNS=80 lynx'
 fi
@@ -53,7 +49,6 @@ alias ducks='du -ahxd1 | sort -hr'
 alias finger='finger -hmp'
 alias free='top | grep -E "^Memory"'
 alias l='ls -1F'
-alias lA='ls -AF'
 alias la='ls -aFhl'
 alias larth='ls -aFhlrt'
 alias less='less -iLMR'
@@ -66,6 +61,7 @@ if command -v mutt >/dev/null; then
 	alias mail=mutt
 fi
 alias mv='mv -i'
+alias patch='patch -V none'
 alias pscpu='ps -Awwro user,pid,ppid,pgid,%cpu,%mem,lstart,stat,wchan,time,command'
 alias psmem='ps -Awwmo user,pid,ppid,pgid,%cpu,%mem,lstart,stat,wchan,time,command'
 alias pstree='ps -Awwfo user,pid,ppid,pgid,lstart,%cpu,%mem,stat,wchan,command'
@@ -75,36 +71,20 @@ alias tm='cd && tmux new-session -A -s tm'
 alias top='top -C'
 alias w='w -i'
 
-# kaomoji
-alias disapprove='echo '\''ಠ_ಠ'\'''
-alias kilroy='echo '\''ฅ^•ﻌ•^ฅ'\'''
-alias rage='echo '\''(╯°□°）╯︵ ┻━┻'\'''
-alias shrug='echo '\''¯\_(ツ)_/¯'\'''
-alias stare='echo '\''(•_•)'\'''
-alias sunglasses='echo '\''(■_■¬)'\'''
-alias woohoo='echo \\\(ˆ˚ˆ\)/'
-
 
 ### OS-specific overrides
 #if [[ "${OS}" == 'Darwin' ]]; then
-#	export LESSHISTFILE=-
-#	export MANWIDTH=80
-#
 #	alias dns_reset='sudo killall -HUP mDNSResponder; sudo killall mDNSResponderHelper; sudo dscacheutil -flushcache'
-#	alias ducks='du -hxd1 | sort -hr'
 #	alias ldd='otool -L'
-#	alias realpath='readlink'
 if [[ "${OS}" == 'Linux' ]]; then
-	# env
 	if [[ -L "/bin" ]]; then
 		export PATH=/usr/local/bin:/bin:/sbin
 	fi
 	if [[ -d "${HOME}/bin" ]]; then
 		export PATH=${HOME}/bin:${PATH}
 	fi
-	export SSH_AUTH_SOCK_PATH="${HOME}/.ssh/ssh-$(printf "%s@%s" "${LOGNAME}" "${HOSTNAME}" | sha256sum | awk '{print $1}').socket"
+	export SSH_AUTH_SOCK_PATH="${HOME}/.ssh/ssh-$(printf "%s@%s" "${LOGNAME}" "${HOST}" | sha256sum | awk '{print $1}').socket"
 
-	# aliases
 	unalias finger
 	unalias free
 	function free {
@@ -192,7 +172,7 @@ if [[ "${OS}" == 'Linux' ]]; then
 		alias which=/usr/bin/which
 	fi
 	if [[ "${SHELL}" == '/bin/ksh' ]]; then
-		export PS1="${HOSTNAME}$ "
+		export PS1="${HOST}$ "
 	fi
 
 	# distro-specific overrides
@@ -209,7 +189,7 @@ if [[ "${OS}" == 'Linux' ]]; then
 		# .. https://github.com/gwsw/less/commit/9eba0da958d33ef3582667e09701865980595361
 		# TODO: remove LESSHISTFILE workaround once boxes are upgraded to Debian Trixie
 		export LESSHISTFILE=-
-		export LS_COLORS='no=00:fi=00:rs=0:di=00:ln=00:mh=00:pi=00:so=00:do=00:bd=00:cd=00:or=00:mi=00:su=00:sg=00:ca=00:tw=00:ow=00:st=00:ex=00'
+		export MANWIDTH=80
 		export QUOTING_STYLE=literal
 
 		if [[ -x /usr/bin/ncal ]]; then
@@ -217,6 +197,8 @@ if [[ "${OS}" == 'Linux' ]]; then
 		fi
 		alias date='LC_ALL=C /bin/date'
 		alias listening='ss -lntu'
+		alias man='man --nh --nj'
+		unalias patch
 		alias pkgextras='apt list "~o"'
 		alias realpath='readlink -ev'
 		unalias w
@@ -300,22 +282,14 @@ if [[ "${OS}" == 'Linux' ]]; then
 			fi
 		done
 	}
-
-	# manual pages
-	if [[ "$(realpath /usr/bin/man)" != '/usr/bin/mandoc' ]]; then
-		export MANWIDTH=80
-		alias man='man --nh --nj'
-	fi
-
 elif [[ "${OS}" == 'OpenBSD' ]]; then
-	export SSH_AUTH_SOCK_PATH="${HOME}/.ssh/ssh-$(printf "%s@%s" "${LOGNAME}" "${HOSTNAME}" | sha256).socket"
+	export SSH_AUTH_SOCK_PATH="${HOME}/.ssh/ssh-$(printf "%s@%s" "${LOGNAME}" "${HOST}" | sha256).socket"
 
 	# aliases
 	apropos() {
 		# search most fields
 		/usr/bin/apropos Nm,Nd,Sh,Ss,Ar,Ic="${1}"
 	}
-	alias patch='patch -V none'
 	alias pkgup='doas /bin/ksh -c "/usr/sbin/pkg_add -Vu && /usr/sbin/pkg_delete -a"'
 	pkgextras() {
 		# function to identify files in /usr/local which aren't claimed by an installed package
@@ -445,7 +419,7 @@ if [[ "${OS}" == 'OpenBSD' ]] || [[ -r "/etc/alpine-release" ]]; then
 		stty echo
 		printf '\n'
 
-		if [[ "${HOSTNAME}" == "${MACHINE_NAME}" ]]; then
+		if [[ "${HOST}" == "${MACHINE_NAME}" ]]; then
 			if [[ "${OS}" == 'OpenBSD' ]]; then
 				doas /sbin/shutdown -p now
 			elif [[ -r "/etc/alpine-release" ]]; then
@@ -453,7 +427,7 @@ if [[ "${OS}" == 'OpenBSD' ]] || [[ -r "/etc/alpine-release" ]]; then
 			fi
 		else
 			stty -echo
-			printf "\nWrong hostname. Refusing to power off '%s'...\n\n[press ENTER]" "${HOSTNAME}"
+			printf "\nWrong hostname. Refusing to power off '%s'...\n\n[press ENTER]" "${HOST}"
 			read -r CONFIRM
 			stty echo
 			printf "\n"
@@ -468,11 +442,11 @@ reboot() {
 	stty echo
 	printf '\n'
 
-	if [[ "${HOSTNAME}" == "${MACHINE_NAME}" ]]; then
+	if [[ "${HOST}" == "${MACHINE_NAME}" ]]; then
 		doas /sbin/reboot
 	else
 		stty -echo
-		printf "\nWrong hostname. Refusing to reboot '%s'...\n\n[press ENTER]" "${HOSTNAME}"
+		printf "\nWrong hostname. Refusing to reboot '%s'...\n\n[press ENTER]" "${HOST}"
 		read -r CONFIRM
 		stty echo
 		printf "\n"
@@ -700,7 +674,7 @@ export GIT_COMMITTER_EMAIL=${GIT_AUTHOR_EMAIL}
 export GIT_COMMITTER_NAME=${GIT_AUTHOR_NAME}
 
 ### fix ssh agent forwarding workstation->jumpbox
-if [[ "${HOSTNAME}" == "${SSH_JUMPBOX}" ]] && echo "${SSH_AUTH_SOCK}" | grep -E "^/tmp/ssh-.*/agent\." >/dev/null 2>&1; then
+if [[ "${HOST}" == "${SSH_JUMPBOX}" ]] && echo "${SSH_AUTH_SOCK}" | grep -E "^/tmp/ssh-.*/agent\." >/dev/null 2>&1; then
 	if [[ -w "${HOME}" ]] && [[ -S "${SSH_AUTH_SOCK}" ]] && [[ "${SSH_AUTH_SOCK}" != "$(realpath "${SSH_AUTH_SOCK_PATH}" 2>/dev/null)" ]]; then
 		/bin/ln -sf "${SSH_AUTH_SOCK}" "${SSH_AUTH_SOCK_PATH}"
 	fi
