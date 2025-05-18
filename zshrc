@@ -29,16 +29,3 @@ zstyle ':completion:*:cd:*' tag-order local-directories
 zstyle ':completion:*' use-cache yes
 autoload -Uz compinit
 compinit -i -D
-
-## source shell-agnostic aliases and functions
-if [[ -r ${HOME}/.kshrc ]]; then
-	. ${HOME}/.kshrc
-fi
-
-if [[ -w "${HOME}" ]]; then
-	if [[ -n "${HISTSIZE}" ]]; then
-		export SAVEHIST="${HISTSIZE}"
-	elif [[ -n "${HISTFILE}" ]]; then
-		unset HISTFILE
-	fi
-fi
