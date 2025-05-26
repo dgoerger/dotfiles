@@ -11,6 +11,9 @@ delta = [
   "diff",
   "--git"
 ]
+retrunk = ["rebase", "-d", "trunk()"]
+reheat = ["rebase", "-d", "trunk()", "-s", "all:roots(trunk()..stack(@))"]
+tug = ["bookmark", "move", "--from", "heads(::@- & bookmarks())", "--to", "@-"]
 
 [gerrit]
 # set to true in repo configs to enable support for Gerrit's Change-Id
@@ -19,7 +22,11 @@ enabled = false
 url = 'https://changeme.arpa.home'
 
 [git]
+colocate = true
 write-change-id-header = true
+
+[revset-aliases]
+'trunk()' = 'latest((present(main) | present(master)) & remote_bookmarks())'
 
 [template-aliases]
 'format_short_change_id(id)' = 'id.shortest()'
@@ -68,7 +75,6 @@ draft_commit_description ='''
     )
 '''
 
-[templates]
 commit_trailers = '''
    if(
      config("gerrit.enabled").as_boolean() && !has_change_id(description),
@@ -76,5 +82,11 @@ commit_trailers = '''
    )
 '''
 
-[ui.diff]
-format = "git"
+[ui]
+conflict-marker-style = "git"
+default-command = "status"
+diff.format = "git"
+pager = { command = [ "delta", "-s" ] }
+
+[merge-tools.delta]
+diff-expected-exit-codes = [0, 1]
