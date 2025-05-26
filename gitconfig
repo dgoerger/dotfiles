@@ -22,6 +22,8 @@
 	sort = -committerdate
 [color]
 	ui = auto
+[commit]
+	verbose = true
 [core]
 	commentString = "⁂"
 	fsmonitor = true

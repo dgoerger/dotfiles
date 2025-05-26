@@ -56,6 +56,19 @@ write-change-id-header = true
 'has_change_id(s)' = 's.contains("Change-Id: I")'
 
 [templates]
+draft_commit_description ='''
+    concat(
+      coalesce(description, default_commit_description, "\n"),
+      surround(
+        "\nJJ: This commit contains the following changes:\n", "",
+        indent("JJ:     ", diff.stat(72)),
+      ),
+      "\nJJ: ignore-rest\n",
+      diff.git(),
+    )
+'''
+
+[templates]
 commit_trailers = '''
    if(
      config("gerrit.enabled").as_boolean() && !has_change_id(description),
