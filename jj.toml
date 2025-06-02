@@ -26,6 +26,9 @@ colocate = true
 write-change-id-header = true
 
 [revset-aliases]
+'stack()' = 'ancestors(reachable(@, mutable()), 2)'
+'stack(x)' = 'ancestors(reachable(x, mutable()), 2)'
+'stack(x, n)' = 'ancestors(reachable(x, mutable()), n)'
 'trunk()' = 'latest((present(main) | present(master)) & remote_bookmarks())'
 
 [template-aliases]
