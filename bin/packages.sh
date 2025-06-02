@@ -22,6 +22,7 @@ case ${OS} in
 				file \
 				git \
 				helix \
+				helix-tree-sitter-vendor \
 				less \
 				loksh \
 				lsblk \
