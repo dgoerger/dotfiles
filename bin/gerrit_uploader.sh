@@ -48,10 +48,10 @@ elif ! git fetch "${REMOTE}" "${UPSTREAM_BRANCH}" || ! git rev-parse --remotes "
 fi
 
 # query git author information so we can compare with the author of the previous commit
-if [[ -n "${GIT_AUTHOR_EMAIL}" ]]; then
-	author_email="${GIT_AUTHOR_EMAIL}"
-elif git config get user.email >/dev/null 2>&1; then
+if git config get user.email >/dev/null 2>&1; then
 	author_email="$(git config get user.email 2>/dev/null)"
+elif [[ -n "${GIT_AUTHOR_EMAIL}" ]]; then
+	author_email="${GIT_AUTHOR_EMAIL}"
 else
 	printf "ERROR: please configure 'git config set user.email user@example.com'\n"
 	exit 1
