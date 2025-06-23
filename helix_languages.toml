@@ -27,7 +27,6 @@ text-width = 80
 name = "python"
 auto-format = true
 language-servers = [
-  "pylsp",
   "ruff"
 ]
 roots = [
@@ -41,22 +40,13 @@ roots = [
 ]
 formatter = { command = "ruff", args = [ "format", "-" ] }
 
-[language-server.pylsp.config.pylsp]
-plugins.black.enabled = false
-plugins.flake8.enabled = true
-plugins.flake8.maxLineLength = 100
-plugins.pycodestyle.enabled = false
-plugins.pyflakes.enabled = false
-plugins.ruff.enabled = true
-
 [language-server.ruff]
 command = "ruff"
 args = [ "server" ]
-environment = { "RUFF_TRACE" = "messages" }
 
 [language-server.ruff.config.settings]
 lineLength = 100
-logLevel = "warn"
+logLevel = "error"
 
 [language-server.ruff.config.lint]
 preview = true
