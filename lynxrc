@@ -2,7 +2,7 @@
 # docs: https://lynx.invisible-island.net/lynx_help/
 
 # homepage
-STARTFILE:https://search.marginalia.nu/
+STARTFILE:https://www.marginalia-search.com/
 
 # sane defaults
 ACCEPT_ALL_COOKIES:TRUE
