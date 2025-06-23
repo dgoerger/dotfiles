@@ -43,7 +43,6 @@ OBSD_SYSCTL_DST='/etc/sysctl.conf'; readonly OBSD_SYSCTL_DST
 OBSD_SYSCTL_SRC='sysconfs/sysctl.conf'; readonly OBSD_SYSCTL_SRC
 PF_BLOCKLIST_DST='/usr/local/sbin/pf_blocklist'; readonly PF_BLOCKLIST_DST
 PF_BLOCKLIST_SRC='bin/pf_blocklist.sh'; readonly PF_BLOCKLIST_SRC
-SWAY=''
 SYSSTATS_DST='/usr/local/sbin/sysstats.sh'; readonly SYSSTATS_DST
 SYSSTATS_SRC='bin/sysstats.sh'; readonly SYSSTATS_SRC
 WSCONSCTL_DST='/etc/wsconsctl.conf'; readonly WSCONSCTL_DST
@@ -75,9 +74,7 @@ if [[ -d '/etc/fonts' ]]; then
 	FONTCONFIG=1; readonly FONTCONFIG
 fi
 
-if pgrep -f '/usr/local/bin/sway' >/dev/null 2>&1; then
-	SWAY=1; readonly SWAY
-elif pgrep -f '/usr/X11R6/bin/xenodm' >/dev/null 2>&1; then
+if pgrep -f '/usr/X11R6/bin/xenodm' >/dev/null 2>&1; then
 	XENODM=1; readonly XENODM
 fi
 
@@ -135,7 +132,6 @@ case "${TARGET}" in
 		if command -v newsboat >/dev/null 2>&1; then
 			diff -u ~/.newsboat/config newsboat_config
 		fi
-		diff -u ~/.config/nvim/init.lua nvim.lua
 		diff -u ~/.pythonrc pythonrc
 		diff -u ~/.tmux.conf tmux.conf
 		if [[ "${OS}" == 'Linux' ]]; then
@@ -144,12 +140,15 @@ case "${TARGET}" in
 			diff -u ~/.exrc exrc
 			diff -u ~/.mailcap mailcap
 			diff -u ~/.mg mg
-			if [[ -n "${SWAY}" ]]; then
-				diff -u ~/.config/sway/config sway_config
+			if command -v mpv >/dev/null 2>&1; then
+				diff -u ~/.config/mpv/mpv.conf mpv.conf
+			fi
+			if command -v startwayfire.sh >/dev/null 2>&1; then
+				diff -u ~/.config/wayfire.ini wayfire.ini
+				diff -u ~/.config/wf-shell.ini wf-shell.ini
 			elif [[ -n "${XENODM}" ]]; then
 				diff -u ~/.Xresources Xresources
 				diff -u ~/.cwmrc cwmrc
-				diff -u ~/.config/mpv/mpv.conf mpv.conf
 				diff -u ~/.xscreensaver xscreensaver
 				diff -u ~/.xsession xsession
 			fi
