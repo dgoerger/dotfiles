@@ -4,6 +4,7 @@
 # mypy: ignore-errors
 
 import json
+import openbsd
 import os
 import re
 import sys
@@ -13,7 +14,7 @@ import urllib.request
 from datetime import datetime
 from math import floor
 
-import psutil
+# import psutil
 from slixmpp import ClientXMPP
 from slixmpp.exceptions import IqError, IqTimeout
 
@@ -94,7 +95,7 @@ def wmo_code(weather_code: int) -> str:
             return "Light snow showers."
         case 86:
             return "Heavy snow showers."
-        case 95, 96, 99:
+        case 95 | 96 | 99:
             return "Thunderstorm."
     fallthrough = (
         "An unknown weather phenomenon is in progress. "
@@ -231,12 +232,15 @@ def get_sysinfo() -> str:
     else:
         uptime = f"{floor(uptime_seconds)} seconds"
     loadavg = os.getloadavg()
+    memory_total = (os.sysconf("SC_PAGE_SIZE") * os.sysconf("SC_PHYS_PAGES")) / (
+        1024.0**3
+    )
     message = (
         f"os:\t\t{os.uname().sysname} "
         f"{os.uname().release} ({os.uname().machine})\n"
         f"uptime:\t{uptime}\n"
-        f"memory:\t{psutil.virtual_memory().percent}% of "
-        f"{round(psutil.virtual_memory().total / (1024 * 1024 * 1024))}G\n"
+        #        f"memory:\t{psutil.virtual_memory().percent}% of "
+        f"{round(memory_total)}G\n"
         f"load:\t{round(loadavg[0], 2)} {round(loadavg[1], 2)} "
         f"{round(loadavg[2], 2)} ({cpu_count}cpu)\n"
     )
@@ -347,6 +351,9 @@ if __name__ == "__main__":
     except OSError:
         print("ERROR: Configuration file not found.")
         sys.exit(1)
+    # rpath is needed, but I'm not sure why
+    openbsd.pledge("stdio rpath inet dns unveil error")
+    openbsd.unveil(None, None)
     xmpp_account = config.get("xmpp_account")
     xmpp_password = config.get("xmpp_password")
     miniflux_server = config.get("miniflux_server")
