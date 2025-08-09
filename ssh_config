@@ -9,7 +9,7 @@ Host *
 	# .. as with VSCode's ssh plugin; by default, background
 	# .. processes use QoS cs1, which is not appropriate for
 	# .. interactive shell and/or coding sessions
-	IPQoS af21
+	IPQoS ef
 	# don't drop the connection if the network is down temporarily
 	TCPKeepAlive no
 	# but do send ssh keepalives so that dropped connections exit after 30s
