@@ -88,7 +88,7 @@ commit_trailers = '''
 [ui]
 conflict-marker-style = "git"
 default-command = "status"
-diff.format = "git"
+diff.diff-formatter = ":git"
 pager = { command = [ "delta", "-s" ] }
 
 [merge-tools.delta]
