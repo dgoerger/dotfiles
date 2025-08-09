@@ -14,6 +14,7 @@ true-color = true
 [keys.normal]
 "$" = "goto_line_end"
 "^" = "goto_first_nonwhitespace"
+B = ":sh git log -n 1 --format='format:%%h (%%al: %%cs): %%s' --no-patch -L%{cursor_line},+1:%{buffer_name}"
 C-s = ":w"
 D = "kill_to_line_end"
 G = "goto_file_end"
