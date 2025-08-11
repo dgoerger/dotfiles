@@ -4,6 +4,9 @@
 theme = 'monokai_pro_machine'
 
 [editor]
+# disable atomic save, which breaks crontab(1)
+# ref: https://github.com/helix-editor/helix/issues/13077
+atomic-save = false
 bufferline = 'multiple'
 mouse = false
 smart-tab.enable = false
